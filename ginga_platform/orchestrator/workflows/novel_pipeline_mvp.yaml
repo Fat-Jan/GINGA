@@ -2,7 +2,7 @@
 #
 # 来源：ARCHITECTURE.md §4.4 + ROADMAP §1.2.3 P-2 + jury-1/3/4 共识（砍至 12 step）
 # 12 step：A-H（创作主干）+ R1-R3（终稿三件套）+ V1（版本验证）
-# Phase 2 deferred：N0/N1 / P1-P3 / D1-D3 / V2（不在 MVP）
+# Workflow deferred：N0/N1 / P1-P3 / D1-D3 / V2（不在当前 MVP workflow）
 #
 # 关键约束（jury-2 字段补丁 5）：
 #   uses_capability 必须用资产 id（如 base-template-protagonist），不许文件路径
@@ -17,7 +17,7 @@ version: "1.0"
 description: |
   MVP 12 step workflow：输入创意 → 第一章正文 + 完整 runtime_state。
   支持 dark-fantasy immersive_mode（连续多章不打断 state 更新）。
-  N/P/D/V 阶段 Phase 2 deferred。
+  N/P/D/V 阶段仍为 workflow deferred，不代表 RAG Phase 2 状态。
 
 flags:
   immersive_mode:
@@ -169,7 +169,7 @@ steps:
     postconditions:
       - checker:dod-final
 
-# Phase 2 deferred 阶段（明示，不在 MVP）：
+# Workflow deferred 阶段（明示，不在当前 MVP workflow）：
 #   N0 / N1 立项市场调研（决策 6 DEFER）
 #   P1-P3 后处理 / 排版 / 发布
 #   D1-D3 数据分析 / 复盘

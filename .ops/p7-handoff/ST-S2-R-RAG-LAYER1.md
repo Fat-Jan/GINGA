@@ -78,6 +78,8 @@ OK   # 全量回归：14 旧 + 33 同期 + 6 新，全过
 
 ## 技术债 / 后续
 
+历史说明：这些是 ST-S2-R 完成时的后续建议；S3 Layer 2/3、461 prompts 标注、native sqlite-vec 与真实召回评估后续已完成，当前下一步见 `STATUS.md`。
+
 无新增技术债。后续建议（不在 ST-S2-R 范围）：
 1. S3 接入 Layer 2 向量召回时，`cold_start.enabled_layers` 会自动切到 `[1, 2]`，本任务的 `cold_recall_fallback` 保留 Layer 1 only 兜底路径
 2. workflow YAML 需在 G_chapter_draft / R1 / R2 等 step 上加 `retrieval_hint:` 字段（stage/topic/asset_type/...），dispatch hook 才能取到 hint；空 hint 时 hook 仍会调 recall 但全 wildcard（落到全表 + quality_floor 过滤）

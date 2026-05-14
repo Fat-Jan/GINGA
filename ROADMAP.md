@@ -4,12 +4,17 @@
 **取代**：`_distillation-plan.md` §八（保留作历史档案）
 **作者**：主 agent 综合
 **完成日期**：2026-05-13
+**状态更新**：2026-05-14（依据 `STATUS.md`；本文件保留为历史规划 + 当前状态对照）
 **对应架构**：`ARCHITECTURE.md` v1
+
+> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入与 RAG 真实召回质量评估。下一步 P2：补 Layer 1 空召回 metadata，并为评估查询维护 `expected_ids` / `relevant_ids`。
+>
+> 若本文件与 `STATUS.md` 冲突，以 `STATUS.md` 为当前状态真值。
 
 **核心调整（修订 jury-4 P0 + jury-1 Q3）**：
 - 原 S1（schema only） + S2（skill 集成）→ **新 S1（schema 最小子集 + 双 skill 集成 + 端到端跑通第一章）**
 - 每个 sprint 必须独立产出可感知用户价值
-- workflow 在 S1 内就砍到 12 step MVP，N/P/D/V 全部 Phase 2
+- workflow 在 S1 内就砍到 12 step MVP，N/P/D/V 作为 workflow deferred
 
 ---
 
@@ -17,10 +22,10 @@
 
 | Sprint | 周期 | 核心交付 | 用户能力 | 状态 |
 |---|---|---|---|---|
-| **S1: MVP 跑通第一章** ⭐ critical path | 1-2 周 | Foundation schema 最小子集 + 双 skill contract + workflow 12 step + 端到端 CLI demo | "输入创意，得到第一章正文 + 状态文件" | ⏳ 待启动 |
-| **S2: 多章连载 + 基础召回** | 1-2 周 | 完整 runtime_state + RAG Layer 1 + 461 prompts 标注（A/A- 优先） + immersive_mode | "写到第 N 章不崩 + 召回辅助卡片 + 沉浸写作模式" | ⏳ 阻塞于 S1 |
-| **S3: RAG 增强 + 标注扩展** | 1 周 | RAG Layer 2/3 + B/B+ 卡补示例 + scout-1 风险治理 | "向量召回 + LLM rerank + 召回质量提升" | ⏳ 阻塞于 S2 |
-| **S4: Phase 2 缺口 + 用户反馈循环** | 持续 | N/P/D/V 阶段 + 多技能扩展 + 4 scout 全部建议落地 | "完整 pipeline + 持续优化" | ⏳ 持续 |
+| **S1: MVP 跑通第一章** ⭐ critical path | 1-2 周 | Foundation schema 最小子集 + 双 skill contract + workflow 12 step + 端到端 CLI demo | "输入创意，得到第一章正文 + 状态文件" | ✅ 已完成 |
+| **S2: 多章连载 + 基础召回** | 1-2 周 | 完整 runtime_state + RAG Layer 1 + 461 prompts 标注（A/A- 优先） + immersive_mode | "写到第 N 章不崩 + 召回辅助卡片 + 沉浸写作模式" | ✅ 已完成 |
+| **S3: RAG 增强 + 标注扩展** | 1 周 | RAG Layer 2/3 + B/B+ 卡补示例 + scout-1 风险治理 | "向量召回 + LLM rerank + 召回质量提升" | ✅ 已完成 |
+| **S4: Phase 2 缺口 + 用户反馈循环** | 持续 | N/P/D/V 阶段 + 多技能扩展 + 4 scout 全部建议落地 | "完整 pipeline + 持续优化" | 🔄 持续；native `sqlite-vec` + RAG 真实召回质量评估已完成 |
 
 **总周期估计**：MVP 上线 3-5 周（S1+S2+S3）；Phase 2 持续。
 
@@ -37,65 +42,65 @@
 
 #### 1.2.1 Foundation 最小子集（4 天）
 
-- [ ] **F-1**：写 `foundation/schema/genre_profile.yaml`（含 `profile_type` 字段，jury-2 字段补丁 2）
-- [ ] **F-2**：写 `foundation/schema/template.yaml`（含 `template_family`、`fields_required`）
-- [ ] **F-3**：写 `foundation/schema/methodology.yaml`（含 `method_family`、`rule_type`，jury-2 字段补丁 3）
-- [ ] **F-4**：写 `foundation/schema/checker_or_schema_ref.yaml`
-- [ ] **F-5**：写 `foundation/schema/prompt_card.yaml`（基于 scout-3 schema 定稿，含 `dedup_against`，jury-2 字段补丁 4）
-- [ ] **F-6**：写 `foundation/schema/runtime_state.yaml`（完整字段子定义，jury-2 P1 / 见 ARCHITECTURE §3.5）
-- [ ] **F-7**：扩展 `stage` 枚举为 12 值（+ `cross_cutting` / `profile`，jury-2 P0）
-- [ ] **F-8**：定 S1 必填 frontmatter 8 字段约定（jury-1 P2）
-- [ ] **F-9**：建 `foundation/raw_ideas/` 目录 + README（jury-3 P0）
-- [ ] **F-10**：写 `foundation/rag/recall_config.yaml`（冷暖启动配置，jury-2 字段补丁 6）
+- [x] **F-1**：写 `foundation/schema/genre_profile.yaml`（含 `profile_type` 字段，jury-2 字段补丁 2）
+- [x] **F-2**：写 `foundation/schema/template.yaml`（含 `template_family`、`fields_required`）
+- [x] **F-3**：写 `foundation/schema/methodology.yaml`（含 `method_family`、`rule_type`，jury-2 字段补丁 3）
+- [x] **F-4**：写 `foundation/schema/checker_or_schema_ref.yaml`
+- [x] **F-5**：写 `foundation/schema/prompt_card.yaml`（基于 scout-3 schema 定稿，含 `dedup_against`，jury-2 字段补丁 4）
+- [x] **F-6**：写 `foundation/schema/runtime_state.yaml`（完整字段子定义，jury-2 P1 / 见 ARCHITECTURE §3.5）
+- [x] **F-7**：扩展 `stage` 枚举为 12 值（+ `cross_cutting` / `profile`，jury-2 P0）
+- [x] **F-8**：定 S1 必填 frontmatter 8 字段约定（jury-1 P2）
+- [x] **F-9**：建 `foundation/raw_ideas/` 目录 + README（jury-3 P0）
+- [x] **F-10**：写 `foundation/rag/recall_config.yaml`（冷暖启动配置，jury-2 字段补丁 6）
 
 **F 验收**：5 类 schema 跑 yaml lint 通过 + 8 字段标注规则文档化。
 
 #### 1.2.2 Meta 层核心 guard + checker（2 天）
 
-- [ ] **M-1**：写 `meta/constitution.yaml`：20 条上位法主索引（来自 scout-2）
-- [ ] **M-2**：写 3 个核心 guard：`no-fake-read` / `latest-text-priority` / `crosscheck-required`
-- [ ] **M-3**：写 3 个核心 checker（默认 warn-only）：`aigc-style-detector` / `character-iq-checker` / `cool-point-payoff-checker`（jury-3 P1）
-- [ ] **M-4**：写 `meta/user_overrides/checker_mode.yaml` 模板（作家可调 off/warn/block）
+- [x] **M-1**：写 `meta/constitution.yaml`：20 条上位法主索引（来自 scout-2）
+- [x] **M-2**：写 3 个核心 guard：`no-fake-read` / `latest-text-priority` / `crosscheck-required`
+- [x] **M-3**：写 3 个核心 checker（默认 warn-only）：`aigc-style-detector` / `character-iq-checker` / `cool-point-payoff-checker`（jury-3 P1）
+- [x] **M-4**：写 `meta/user_overrides/checker_mode.yaml` 模板（作家可调 off/warn/block）
 
 **M 验收**：guard 在 demo workflow 中能前置硬阻断；checker 在 demo 中能 warn-only 不阻塞。
 
 #### 1.2.3 Platform 拆子层 + 双 skill 集成（5 天，critical path）
 
-- [ ] **P-1**：建 `ginga_platform/orchestrator/` + `ginga_platform/skills/` 目录结构
-- [ ] **P-2**：写 `ginga_platform/orchestrator/workflows/novel_pipeline_mvp.yaml`（12 step DSL，见 ARCHITECTURE §4.4）
-- [ ] **P-3**：实现 `ginga_platform/orchestrator/runner/dsl_parser.py`（YAML → step list）
-- [ ] **P-4**：实现 `ginga_platform/orchestrator/runner/step_dispatch.py`（step → capability 调用）
-- [ ] **P-5**：实现 `ginga_platform/orchestrator/runner/state_io.py`（唯一 state 读写入口，带事务 + audit_log）
-- [ ] **P-6**：实现 `ginga_platform/orchestrator/meta_integration/guard_invoker.py`（preconditions hook）
-- [ ] **P-7**：实现 `ginga_platform/orchestrator/meta_integration/checker_invoker.py`（postconditions hook，warn-only 默认）
-- [ ] **P-8**：把思路 2 文档放入 `ginga_platform/skills/dark_fantasy_ultimate_engine/skill.md`（不动原文）
-- [ ] **P-9**：写 `ginga_platform/skills/dark_fantasy_ultimate_engine/contract.yaml`（jury-1 P0，含 immersive_mode 子节点）
-- [ ] **P-10**：写 `ginga_platform/skills/dark_fantasy_ultimate_engine/adapter.py`（双向 IO 转换）
-- [ ] **P-11**：把思路 3 文档放入 `ginga_platform/skills/planning_with_files/skill.md` + 写 `contract.yaml` + `adapter.py`
-- [ ] **P-12**：写 `ginga_platform/skills/registry.yaml`（列双 skill + 路由优先级）
-- [ ] **P-13**：实现 `skill-router` 逻辑（按 contract.yaml priority 决定 G_chapter_draft 走哪个 skill）
+- [x] **P-1**：建 `ginga_platform/orchestrator/` + `ginga_platform/skills/` 目录结构
+- [x] **P-2**：写 `ginga_platform/orchestrator/workflows/novel_pipeline_mvp.yaml`（12 step DSL，见 ARCHITECTURE §4.4）
+- [x] **P-3**：实现 `ginga_platform/orchestrator/runner/dsl_parser.py`（YAML → step list）
+- [x] **P-4**：实现 `ginga_platform/orchestrator/runner/step_dispatch.py`（step → capability 调用）
+- [x] **P-5**：实现 `ginga_platform/orchestrator/runner/state_io.py`（唯一 state 读写入口，带事务 + audit_log）
+- [x] **P-6**：实现 `ginga_platform/orchestrator/meta_integration/guard_invoker.py`（preconditions hook）
+- [x] **P-7**：实现 `ginga_platform/orchestrator/meta_integration/checker_invoker.py`（postconditions hook，warn-only 默认）
+- [x] **P-8**：把思路 2 文档放入 `ginga_platform/skills/dark_fantasy_ultimate_engine/skill.md`（不动原文）
+- [x] **P-9**：写 `ginga_platform/skills/dark_fantasy_ultimate_engine/contract.yaml`（jury-1 P0，含 immersive_mode 子节点）
+- [x] **P-10**：写 `ginga_platform/skills/dark_fantasy_ultimate_engine/adapter.py`（双向 IO 转换）
+- [x] **P-11**：把思路 3 文档放入 `ginga_platform/skills/planning_with_files/skill.md` + 写 `contract.yaml` + `adapter.py`
+- [x] **P-12**：写 `ginga_platform/skills/registry.yaml`（列双 skill + 路由优先级）
+- [x] **P-13**：实现 `skill-router` 逻辑（按 contract.yaml priority 决定 G_chapter_draft 走哪个 skill）
 
 **P 验收**：12 step workflow 能完整 run；双 skill contract.yaml 各 ≥30 字段定义；adapter 跑 unit test 通过。
 
 #### 1.2.4 端到端 demo（3 天）
 
-- [ ] **D-1**：写 demo CLI：`ginga init <book_id> --topic 玄幻黑暗`
-- [ ] **D-2**：写 demo CLI：`ginga run <book_id>` → 触发 workflow MVP 跑通 A→H 第一章
-- [ ] **D-3**：用 1-2 个基座样例 + 1-2 prompts 样例做 frontmatter 标注，验证 schema 完备性
-- [ ] **D-4**：跑 demo：输入 "玄幻黑暗 + 主角是失忆刺客 + 50 万字目标" → 输出第一章正文 + 完整 runtime_state 文件
-- [ ] **D-5**：跑 jury-3 创作场景压力测试 1（新人作家 8 万字短篇从零开始）
+- [x] **D-1**：写 demo CLI：`ginga init <book_id> --topic 玄幻黑暗`
+- [x] **D-2**：写 demo CLI：`ginga run <book_id>` → 触发 workflow MVP 跑通 A→H 第一章
+- [x] **D-3**：用 1-2 个基座样例 + 1-2 prompts 样例做 frontmatter 标注，验证 schema 完备性
+- [x] **D-4**：跑 demo：输入 "玄幻黑暗 + 主角是失忆刺客 + 50 万字目标" → 输出第一章正文 + 完整 runtime_state 文件
+- [x] **D-5**：跑 jury-3 创作场景压力测试 1（新人作家 8 万字短篇从零开始）
 
 **D 验收**：demo 不报错跑通 + 输出 1 章 ≥3000 字正文 + state 文件 ≥ 8 个（locked + entity_runtime + workspace）。
 
 ### 1.3 Sprint 1 DoD（必须全过才进 S2）
 
-- [ ] 5 类 schema yaml 全跑 lint 通过
-- [ ] 双 skill contract.yaml 字段完整 + adapter 跑 unit test
-- [ ] workflow MVP 12 step 全部 run 通过
-- [ ] guard 3 个 + checker 3 个 全跑通
-- [ ] demo CLI 跑通"输入创意 → 输出第一章"端到端
-- [ ] 8 决策中 BLOCKER 3 个（决策 1/3/5）在代码中明示落地
-- [ ] foundation/raw_ideas/ 灵感暂存区可用
+- [x] 5 类 schema yaml 全跑 lint 通过
+- [x] 双 skill contract.yaml 字段完整 + adapter 跑 unit test
+- [x] workflow MVP 12 step 全部 run 通过
+- [x] guard 3 个 + checker 3 个全跑通
+- [x] demo CLI 跑通「输入创意 → 输出第一章」端到端
+- [x] 8 决策中 BLOCKER 3 个（决策 1/3/5）在代码中明示落地
+- [x] foundation/raw_ideas/ 灵感暂存区可用
 
 ### 1.4 Sprint 1 风险与缓解
 
@@ -129,44 +134,44 @@ P-8/9/10 ──┘  (双 skill contract.yaml + adapter，最高风险段)
 
 #### 2.2.1 完整 runtime_state + 多章循环（3 天）
 
-- [ ] **S-1**：实现 runtime_state.entity_runtime 完整字段（CHARACTER_STATE 全子字段 / RESOURCE_LEDGER / FORESHADOW_STATE / GLOBAL_SUMMARY）
-- [ ] **S-2**：实现 runtime_state.locked 域 patch 流程（jury-3 P1 / ARCHITECTURE §3.5）：`meta/patches/<patch_id>.yaml`
-- [ ] **S-3**：实现 R1/R2/R3 终稿三件套 step + checker 联动
-- [ ] **S-4**：实现 V1 验收 checker（DoD-final）
-- [ ] **S-5**：多章 demo：连续跑 5 章不崩 + state 一致
+- [x] **S-1**：实现 runtime_state.entity_runtime 完整字段（CHARACTER_STATE 全子字段 / RESOURCE_LEDGER / FORESHADOW_STATE / GLOBAL_SUMMARY）
+- [x] **S-2**：实现 runtime_state.locked 域 patch 流程（jury-3 P1 / ARCHITECTURE §3.5）：`meta/patches/<patch_id>.yaml`
+- [x] **S-3**：实现 R1/R2/R3 终稿三件套 step + checker 联动
+- [x] **S-4**：实现 V1 验收 checker（DoD-final）
+- [x] **S-5**：多章 demo：连续跑 5 章不崩 + state 一致
 
 #### 2.2.2 RAG Layer 1 frontmatter 召回（3 天）
 
-- [ ] **R-1**：写 `rag/index_builder.py`（扫 foundation/assets/ + 生成 sqlite 索引）
-- [ ] **R-2**：实现 Layer 1 召回：按 stage / topic / asset_type 过滤 + quality_grade 排序
-- [ ] **R-3**：实现冷启动逻辑：向量库不存在时降级到 Layer 1（jury-2 P0）
-- [ ] **R-4**：实现 stage-specific top_k（jury-2 P0 / §5.2 配置驱动）
-- [ ] **R-5**：实现 `workflow.rag_mode=off` 全局关闭机制（jury-3 P1）
+- [x] **R-1**：写 `rag/index_builder.py`（扫 foundation/assets/ + 生成 sqlite 索引）
+- [x] **R-2**：实现 Layer 1 召回：按 stage / topic / asset_type 过滤 + quality_grade 排序
+- [x] **R-3**：实现冷启动逻辑：向量库不存在时降级到 Layer 1（jury-2 P0）
+- [x] **R-4**：实现 stage-specific top_k（jury-2 P0 / §5.2 配置驱动）
+- [x] **R-5**：实现 `workflow.rag_mode=off` 全局关闭机制（jury-3 P1）
 
 #### 2.2.3 461 prompts 标注（4 天，A/A- 优先）
 
-- [ ] **L-1**：写半自动化标注工具（基于 scout-3 quality.json 草稿 + LLM 辅助 + 人工 review）
-- [ ] **L-2**：A/A- 级卡（约 230 张）标注 frontmatter 完整（必填 8 字段）
-- [ ] **L-3**：B+/B 级卡（约 200 张）标注必填字段 + dedup_verdict
-- [ ] **L-4**：C/D 级卡（约 30 张）暂留为低优先级标记
-- [ ] **L-5**：跑双库去重判定（jury-2 P0 / ARCHITECTURE §3.7 三段判定流程）
+- [x] **L-1**：写半自动化标注工具（基于 scout-3 quality.json 草稿 + LLM 辅助 + 人工 review）
+- [x] **L-2**：A/A- 级卡（约 230 张）标注 frontmatter 完整（必填 8 字段）
+- [x] **L-3**：B+/B 级卡（约 200 张）标注必填字段 + dedup_verdict
+- [x] **L-4**：C/D 级卡（约 30 张）暂留为低优先级标记
+- [x] **L-5**：跑双库去重判定（jury-2 P0 / ARCHITECTURE §3.7 三段判定流程）
 
 #### 2.2.4 dark-fantasy immersive_mode（2 天）
 
-- [ ] **I-1**：在 dark-fantasy adapter 实现 `immersive_mode=true` 行为
-- [ ] **I-2**：实现 `chapter_block_end` signal 触发批量结算
-- [ ] **I-3**：immersive 期内 checker 全静默
-- [ ] **I-4**：退出 immersive 时跑 R2 一致性 + apply pending_updates
-- [ ] **I-5**：demo：连续 5 章 immersive 写作 → 退出时一次结算
+- [x] **I-1**：在 dark-fantasy adapter 实现 `immersive_mode=true` 行为
+- [x] **I-2**：实现 `chapter_block_end` signal 触发批量结算
+- [x] **I-3**：immersive 期内 checker 全静默
+- [x] **I-4**：退出 immersive 时跑 R2 一致性 + apply pending_updates
+- [x] **I-5**：demo：连续 5 章 immersive 写作 → 退出时一次结算
 
 ### 2.3 Sprint 2 DoD
 
-- [ ] runtime_state 全部字段实现 + patch 流程跑通
-- [ ] RAG Layer 1 召回跑通 + 冷启动验证
-- [ ] A/A- 级 prompt 卡（约 230 张）标注完成
-- [ ] 双库去重三段流程跑通（≥50 对样本验证）
-- [ ] immersive_mode 跑通连续 5 章 demo
-- [ ] jury-3 创作场景压力测试 2（老作家 30 万字插新支线）跑通
+- [x] runtime_state 全部字段实现 + patch 流程跑通
+- [x] RAG Layer 1 召回跑通 + 冷启动验证
+- [x] A/A- 级 prompt 卡（约 230 张）标注完成
+- [x] 双库去重三段流程跑通（≥50 对样本验证）
+- [x] immersive_mode 跑通连续 5 章 demo
+- [x] jury-3 创作场景压力测试 2（老作家 30 万字插新支线）跑通
 
 ### 2.4 Sprint 2 风险与缓解
 
@@ -186,20 +191,20 @@ P-8/9/10 ──┘  (双 skill contract.yaml + adapter，最高风险段)
 
 ### 3.2 任务清单
 
-- [ ] **V-1**：选型向量库（sqlite-vec / faiss / chromadb），写 spike
-- [ ] **V-2**：实现 RAG Layer 2 向量召回（top_k 默认 10）
-- [ ] **V-3**：实现 RAG Layer 3 LLM rerank（默认关闭，jury-1 P2 / refinement stage 强制开启）
-- [ ] **V-4**：B/B+ 卡补示例 + 升 A（约 200 张，scout-3 优化点）
-- [ ] **V-5**：基座方法论按 method_family / rule_type 拆 sub-section（决策 4）
-- [ ] **V-6**：scout-1 风险治理（基座中识别的命名混乱、字段冗余等）
-- [ ] **V-7**：jury-3 创作场景压力测试 1+2 重跑 + 对比 S2 体验提升量化
+- [x] **V-1**：选型向量库（sqlite-vec / faiss / chromadb），写 spike
+- [x] **V-2**：实现 RAG Layer 2 向量召回（top_k 默认 10）
+- [x] **V-3**：实现 RAG Layer 3 LLM rerank（默认关闭，jury-1 P2 / refinement stage 强制开启）
+- [x] **V-4**：B/B+ 卡补示例 + 升 A（约 200 张，scout-3 优化点）
+- [x] **V-5**：基座方法论按 method_family / rule_type 拆 sub-section（决策 4）
+- [x] **V-6**：scout-1 风险治理（基座中识别的命名混乱、字段冗余等）
+- [x] **V-7**：jury-3 创作场景压力测试 1+2 重跑 + 对比 S2 体验提升量化
 
 ### 3.3 Sprint 3 DoD
 
-- [ ] Layer 2 召回 + Layer 3 rerank 工作（refinement stage 自动启用 rerank）
-- [ ] 全 461 prompts 标注完成（含 dedup_verdict）
-- [ ] 基座方法论拆 sub-section 完成（决策 4 落地）
-- [ ] 创作场景压力测试 1+2 通过率 ≥80%
+- [x] Layer 2 召回 + Layer 3 rerank 工作（refinement stage 自动启用 rerank）
+- [x] 全 461 prompts 标注完成（含 dedup_verdict）
+- [x] 基座方法论拆 sub-section 完成（决策 4 落地）
+- [x] 创作场景压力测试 1+2 通过率 ≥80%
 
 ---
 
@@ -209,7 +214,18 @@ P-8/9/10 ──┘  (双 skill contract.yaml + adapter，最高风险段)
 
 > 按真实需求驱动 Phase 2 缺口实施；用户反馈循环常态化。
 
-### 4.2 任务清单（按触发条件优先级）
+### 4.2 已完成增补（2026-05-14）
+
+- [x] **S4-RAG-1**：native `sqlite-vec` 接入完成。
+- [x] **S4-RAG-2**：RAG 真实召回质量评估完成，可跑 `scripts/evaluate_rag_recall.py`。
+
+### 4.3 当前下一步
+
+- [ ] **P2-1**：补 Layer 1 空召回 metadata，明确空结果原因与诊断字段。
+- [ ] **P2-2**：为评估查询维护 `expected_ids` / `relevant_ids`。
+- [ ] **P2-3**：把 RAG 质量评估从「能跑」升级为可追踪、可回归。
+
+### 4.4 任务清单（按触发条件优先级，尚未触发）
 
 - [ ] **F2-1**：N0/N1 立项市场层（决策 6 / 触发：用户主动需要立项调研）
 - [ ] **F2-2**：P1-P3 后处理与排版（触发：用户发布到 Coding/CNB）
@@ -217,7 +233,7 @@ P-8/9/10 ──┘  (双 skill contract.yaml + adapter，最高风险段)
 - [ ] **F2-4**：V2 版本管理（触发：项目 ≥10 部作品）
 - [ ] **F2-5**：第 3+ skill 接入（按用户需求）
 
-### 4.3 用户反馈循环（持续）
+### 4.5 用户反馈循环（持续）
 
 - 每周收 jury-3 / jury-4 类压力测试反馈
 - 每月做 1 轮 ark-jury-court 多模型评审检查"是否漂移"
@@ -301,7 +317,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 - [x] Jury 修订追踪表（jury 23 条建议全部归属到具体任务编号，§七）
 - [x] 8 决策落地到 ARCHITECTURE §七 + 本文件任务编号
 
-**下一步**：Sprint 1 启动（实施 F-1..F-10 + M-1..M-4 + P-1..P-13 + D-1..D-5）。
+**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-14，下一步是 P2：补 Layer 1 空召回 metadata，并维护评估查询的 `expected_ids` / `relevant_ids`。
 
 ---
 

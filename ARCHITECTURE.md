@@ -66,7 +66,7 @@
 │  │ Orchestrator: workflow DSL + runner            │               │
 │  │  - 唯一 state 操作入口                           │               │
 │  │  - workflow MVP 12 step (A-H + R1-R3 + V1)     │               │
-│  │  - N/P/D 阶段全部 Phase 2 deferred             │               │
+│  │  - N/P/D 阶段为 workflow deferred              │               │
 │  └────────────────────────────────────────────────┘               │
 │  ┌────────────────────────────────────────────────┐               │
 │  │ Skill Runtime: skill registry + adapter        │               │
@@ -79,8 +79,9 @@
                                 ↓ 召回
 ┌──────────────────────────────────────────────────────────────────┐
 │  RAG 层 — 召回 / 上下文适配 / 卡片注入                             │
-│  - Phase 1（MVP）：Layer 1 frontmatter 标签过滤 + top 3 召回       │
-│  - Phase 2：Layer 2 向量召回 + Layer 3 LLM rerank                │
+│  - 已落地：Layer 1 frontmatter 标签过滤 + Layer 2 native sqlite-vec│
+│  - 已落地：Layer 3 rerank fail-open                              │
+│  - 当前 P2：补空召回 metadata + expected/relevant ids             │
 │  - 修订（jury-2 P0）：冷启动 / 暖启动状态区分 + stage-specific top_k │
 │  - 修订（jury-3 P1）：召回默认可关闭，作家可选"不要打扰我"模式      │
 └──────────────────────────────────────────────────────────────────┘
@@ -92,7 +93,7 @@
 |---|---|---|---|
 | Platform 拆子层 | jury-1 P0 | 单层聚合 4 职责 | Orchestrator + Skill Runtime 显式划分 |
 | 双 skill contract | jury-1 P0 | "映射表 + 不能动列表" | ginga_platform/skills/*/contract.yaml（io schema / 优先级 / forbidden mutation list） |
-| workflow 砍至 12 step | jury-1/3/4 三票 | 29 step (N0-V2) | MVP 12 step (A-H + R1-R3 + V1) / 其余 Phase 2 |
+| workflow 砍至 12 step | jury-1/3/4 三票 | 29 step (N0-V2) | MVP 12 step (A-H + R1-R3 + V1) / 其余 workflow deferred |
 | stage 枚举扩展 | jury-2 P0 | 10 阶段 | 12 阶段（+ cross_cutting + profile） |
 | 双库去重可执行规则 | jury-2 P0 | "retain/merge/drop" 三态描述 | 三段判定流程（asset_type 粗筛 → 字段相似度 → 优先级裁决） |
 | RAG 冷暖启动 | jury-2 P0 | 单一三层召回 | 冷启动降级 + stage-specific top_k 配置 |
@@ -501,7 +502,7 @@ steps:
     postconditions: [checker:dod-final]
 ```
 
-**Phase 2 deferred 阶段**（明示，不在 MVP）：
+**仍按需 deferred 的 workflow 阶段**（不影响已完成的 RAG Layer 2/3 与评估能力）：
 
 - N0 / N1 立项市场调研（jury-4 决策 6 DEFER）
 - P1-P3 后处理 / 排版 / 发布
@@ -522,27 +523,28 @@ steps:
 
 ---
 
-## 五、RAG 层：分 Phase 实施
+## 五、RAG 层：已落地三层召回
 
 ### 5.1 三层召回策略（v1 final，修订 jury-2 P0 + jury-3 P1）
 
 ```
-Layer 1 — frontmatter 标签过滤（MVP 必做）
+Layer 1 — frontmatter 标签过滤（已完成）
   - 输入：当前 stage / topic / asset_type 过滤器
   - 输出：候选集（按 quality_grade 排序）
   - 冷启动：✅ 直接可用
   - 实现：sqlite + JSON-Path
 
-Layer 2 — 向量召回（Phase 2）
+Layer 2 — 向量召回（已完成）
   - 输入：当前 prompt context 嵌入向量
   - 输出：top_k 召回（按余弦相似度）
-  - 冷启动：❌ 需先嵌入 461 卡 + 部分基座
-  - 实现：sqlite-vec 或 faiss
+  - 当前索引：461 prompt cards / 461 vectors；fallback=none
+  - 实现：native sqlite-vec
 
-Layer 3 — LLM rerank（Phase 2，可选）
+Layer 3 — rerank（已完成）
   - 输入：Layer 2 输出 top 10
   - 输出：rerank top 3
-  - 性价比：jury-1 P2 提示待验证，默认关闭
+  - 策略：fail-open；按 stage 配置启用
+  - 当前 P2 重点：让召回评估可追踪、可回归
 ```
 
 ### 5.2 冷暖启动策略（v1 final，修订 jury-2 P0）
@@ -580,14 +582,16 @@ enable_rerank_by_stage:
 - 不召回 raw_ideas/（保持灵感原始形态）
 - **新增**：作家可全局关闭召回（`workflow.rag_mode=off`），系统不主动注入卡片
 
-### 5.4 召回源（保持）
+### 5.4 召回源（当前配置）
 
 ```yaml
 recall_sources:
-  - prompts/                              # 461 卡（quality_grade A/A- 优先标注）
-  - 基座/方法论/                          # 写作 / 创意 / 市场 / 平台
-  - 基座/题材/网文/                       # 题材 profile（jury-2 字段补丁 2 区分 full_spectrum / parameter_only）
+  - foundation/assets/prompts/            # 461 prompt cards，已完成标注并进入评估路径
+  - foundation/assets/methodology/        # 12 methodology assets
+  - foundation/assets/checkers_or_schema_refs/  # schema-ref 相关资产；checker 规则本体不注入 prompt
 ```
+
+profile / template 当前以 `foundation/schema/*.yaml` 为 schema 定义；若未来落资产目录，再补 recall source。实际配置以 `foundation/rag/recall_config.yaml` 为准。
 
 ---
 
@@ -622,7 +626,7 @@ recall_sources:
 | 2 | prompts/ 461 是否全入 RAG | 全入 | DEFER | **APPROVE 全入**（按 quality_grade 排序） | MVP 只用 Layer 1 + A/A- 优先标注 |
 | 3 | runtime_state 单一/分布式 | 合一 schema 物理分文件 | **BLOCKER** | **APPROVE 合一** | 字段子定义 §3.5 完整化（jury-2 P1） + locked patch 流程（jury-3 P1） |
 | 4 | 方法论是否拆 sub-section | 拆 | DEFER | **APPROVE 拆** | 加 rule_type 字段（jury-2 字段补丁 3） |
-| 5 | workflow 29 step vs MVP 12 step | MVP 12 step | **BLOCKER** | **APPROVE MVP 12 step** | 三票一致；N/P/D/V Phase 2 deferred |
+| 5 | workflow 29 step vs MVP 12 step | MVP 12 step | **BLOCKER** | **APPROVE MVP 12 step** | 三票一致；N/P/D/V workflow deferred |
 | 6 | 补 N0/N1 立项市场层 | 是 | DEFER | **DEFER Phase 2** | 不在 MVP；用户可手动跑 |
 | 7 | 风格锁定硬绑定 玄幻黑暗 | 默认硬绑 + override | IMPORTANT | **APPROVE 默认硬绑 + 显式 override** | checker 默认 warn-only（jury-3 P1） |
 | 8 | terminal output 格式 | .md + frontmatter / 章节正文纯文本 | IMPORTANT | **APPROVE 双轨格式** | 默认输出位置在 workspace/output/ |
@@ -633,7 +637,9 @@ recall_sources:
 
 ---
 
-## 八、MVP 边界 vs Phase 2 deferred 清单
+## 八、MVP 边界 vs workflow deferred / Phase 2 对照
+
+> 状态说明：本节保留原 MVP vs deferred 边界，不代表当前完成度；当前完成度与下一步以 `STATUS.md` 为准。
 
 ### MVP（Sprint 1-3 完成，~3-5 周）
 
@@ -645,26 +651,28 @@ recall_sources:
 - ✅ 双 skill immersive_mode（dark-fantasy 沉浸专线）
 - ✅ 端到端 demo：从创意输入到第一章产出（S1 末尾）+ 多章连载（S2 末尾）
 
-**不包含**（明示）：
+**原 MVP 不包含 / 仍按需触发**（明示）：
 - ❌ workflow N0/N1 立项市场层（决策 6 DEFER）
 - ❌ workflow P/D/V 后处理与版本管理（决策 5 配套 DEFER）
-- ❌ RAG Layer 2/3（向量召回 + rerank，Phase 2）
-- ❌ 461 prompts 全量 quality_grade 标注（A/A- 优先，其他迭代）
-- ❌ B/B+ 卡补示例（scout-3 优化点，Phase 2）
 - ❌ 第 3 个 skill 接入（仅双 skill MVP）
+
+**已从原 deferred 清单中完成**：
+- ✅ RAG Layer 2 native `sqlite-vec` + Layer 3 rerank
+- ✅ 461 prompt cards 全量标注
+- ✅ B/B+ / 弱示例修复，prompt quality `weak_examples=0`
+- ✅ RAG 真实召回质量评估
 
 ### Phase 2（持续，按需推进）
 
 | Phase 2 项 | 触发条件 | 预估投入 |
 |---|---|---|
-| RAG Layer 2 向量召回 | MVP 跑通 5+ 长篇 / 召回不准抱怨 | 1-2 周 |
-| RAG Layer 3 rerank | Layer 2 召回精度不达标 | 1 周（可选） |
+| Layer 1 空召回 metadata | 当前 P2 | 补诊断字段与空结果原因 |
+| 评估查询 expected/relevant ids | 当前 P2 | 维护 `expected_ids` / `relevant_ids`，支持可回归评估 |
 | N0/N1 市场层 | 用户主动需要立项调研 | 1 周 |
 | P1-P3 后处理 | 用户开始发布到 Coding/CNB | 1 周 |
 | D1-D3 数据分析 | 已有发布数据可分析 | 1-2 周 |
 | V2 版本管理 | 项目 ≥10 部作品 | 1 周 |
 | 第 3+ skill 接入 | 用户提出新需求 | 1-2 周 / skill |
-| B/B+ 卡补示例 | RAG 召回质量提升需要 | 持续 |
 
 ---
 
@@ -691,8 +699,8 @@ ginga/
 │   └── skills/
 └── rag/
     ├── recall_config.yaml
-    ├── prompt_card_index.json           # Phase 2
-    └── vector_store/                    # Phase 2
+    ├── indexes / sqlite artifacts       # RAG 索引产物，当前含 native sqlite-vec
+    └── eval fixtures                    # RAG 召回质量评估查询与 expected/relevant ids
 ```
 
 **asset_id 命名规范**（jury-2 P1 配套）：
@@ -746,7 +754,7 @@ ginga/
 - [x] 8 个待审决策全部落定（§七）
 - [x] 4 jury 23 条建议全部归属表对齐（附录 B）
 - [x] MVP 边界明示（§八）
-- [x] Phase 2 deferred 清单明示（§八）
+- [x] workflow deferred / Phase 2 对照清单明示（§八）
 - [x] Killer Use Case 集中陈述（§〇）
 
-**最终阶段**：S1 实施启动，进入 Sprint 1（MVP 跑通第一章）。
+**当前实施状态**：S1/S2/S3 已完成；S4/Phase 2 native `sqlite-vec` + RAG 真实召回质量评估已完成。下一步以 `STATUS.md` 为准。

@@ -19,10 +19,11 @@ dedup_against: []
 
 网络文学提示词工程索引
 
-提示词库版本：3.0 
-文件总数：405
+提示词库版本：3.0
+治理状态：461 prompt cards 已完成 frontmatter 标注与 strict 校验。
+当前资产目录：`foundation/assets/prompts/prompts-card-*.md`。
+原始来源目录：`_原料/提示词库参考/prompts/`。
 适用范围：DeepSeek V3/R1
-目录结构：所有提示词文件位于 `prompts/` 目录下，按数字序号命名。
 
 ## 索引列表
 
@@ -50,7 +51,7 @@ dedup_against: []
 [349.md](prompts/349.md): 细纲：反派行动逻辑表 (Villain Action Plan) - 动态世界
 [364.md](prompts/364.md): 流程：配角加戏 (Side Character Flesh-out) - 配角塑造
 [398.md](prompts/398.md): 流派：反派的自我修养 (Villain Manifesto) - 反派魅力
-[461.md](prompts/320.md): 写作工具：反派智商检测器 (Villain Logic Check) - 逻辑自查
+[320.md](prompts/320.md): 写作工具：反派智商检测器 (Villain Logic Check) - 逻辑自查
 
 #### 1.3 情感与人际关系 (Relationships & Emotions)
 [23.md](prompts/23.md): 真假千金反转剧本 - 身份错位爽文

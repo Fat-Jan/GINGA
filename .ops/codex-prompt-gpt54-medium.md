@@ -1,5 +1,7 @@
 # Codex GPT-5.4 执行 Sprint 2 收尾任务
 
+> 历史 prompt：Sprint 2 收尾任务已完成；不要按本文重新执行。当前状态以 `STATUS.md` 为准。
+
 ## 推荐配置
 
 **模型**：GPT-5.4（OpenAI o3-mini 或同等）  

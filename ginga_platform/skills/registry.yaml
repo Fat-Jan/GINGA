@@ -115,4 +115,4 @@ registration_guide: |
     2. 写 contract.yaml（schema 见 ARCHITECTURE §4.3）
     3. 写 adapter.py（实现 4 方法接口：input_transform / output_transform / enter_immersive_mode / exit_immersive_mode）
     4. 在本 registry.yaml 追加条目（contract / skill_doc / adapter / adapter_class / priority_routing）
-    5. 跑 platform.skill_runtime 的 contract validator（S2/S3 Phase 引入）
+    5. 跑现有 skill_runtime contract validator，并纳入 python3 scripts/verify_all.py 收口验证

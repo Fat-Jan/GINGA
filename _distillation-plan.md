@@ -2,6 +2,9 @@
 
 **版本**：v1 草案
 **作者**：主 agent（基于 4 scout 全量证据综合）
+
+> 历史说明：本文件是 2026-05-13 阶段 2 蒸馏草案，已被 `ARCHITECTURE.md` / `ROADMAP.md` 吸收；当前完成度与下一步以 `STATUS.md` 为准。截至 2026-05-14，S1/S2/S3 与 S4/Phase 2 native `sqlite-vec` + RAG 真实召回质量评估均已完成。
+
 **输入**：
 - `.ops/scout-reports/scout1-base.md`（30KB / 50 文件实读 / 基座 3 层结构 + schema + Top 18 模板）
 - `.ops/scout-reports/scout2-doctrine.md`（25KB / 3 文件完整读 / 用户创作宪法 20 条 + 2 个完整 skill 画像）
@@ -806,6 +809,8 @@ workflow:
 
 ## 八、实施路线图
 
+> 历史快照：以下路线图是阶段 2 草案，不代表当前待办。当前状态见 `STATUS.md`；下一步 P2 是补 Layer 1 空召回 metadata，并维护 `expected_ids` / `relevant_ids`。
+
 ### 8.1 阶段分割
 
 按"先骨架后补肉"原则，分 4 个 sprint：
@@ -854,6 +859,8 @@ workflow:
 
 ## 九、给 Jury Court 的评审输入（阶段 3）
 
+> 历史快照：Jury Court 已在阶段 3 完成并吸收到 `ARCHITECTURE.md` / `ROADMAP.md`，本节仅保留当时评审输入。
+
 按 notepad 设计，阶段 3 由 4 角法庭评审本蒸馏方案。建议评审重点：
 
 ### Jury 1 - 架构师视角
@@ -899,6 +906,8 @@ workflow:
 ---
 
 ## 十一、关键决策（待 Jury 审）
+
+> 历史快照：这些决策已在 `ARCHITECTURE.md` §七落定；本节仅记录阶段 2 待审输入。
 
 以下 8 个决策需要 Jury 表态：
 

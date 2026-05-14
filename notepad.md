@@ -6,7 +6,7 @@
 - 四层目标：**Meta（用户宪法）→ Foundation（数据本体）→ Platform（agent + workflow）→ RAG（检索）**。
 - **当前阶段**：阶段 0..4 全部完成 ✅ + **Sprint 1 全部完成 ✅** + **Sprint 2 全部完成 ✅** + **Sprint 3 全部收口 ✅** + **S4/Phase 2 native sqlite-vec 接入 + RAG 真实召回质量评估完成 ✅**；下一步 P2：补 Layer 1 空召回 metadata + 为评估查询维护 expected/relevant ids。
 - 最终架构：`ARCHITECTURE.md` v1（36.5KB / 8 章节 + Killer Use Case + 8 决策最终判决 + Jury 判决归属表 23 条）
-- 实施路线：`ROADMAP.md` v1（17.6KB / 4 sprint + S1 critical path + 风险登记册 10 条 + Jury 修订追踪表）
+- 实施路线：`ROADMAP.md` v1（已补 2026-05-14 状态更新；历史规划 + 当前状态对照）
 - **Sprint 2 进度（2026-05-14 02:35 收口复核）**：
   - ✅ ST-S2-PHASE0（capability_registry + op_translator + 12 step integration，33 tests PASS）
   - ✅ ST-S2-R-RAG-LAYER1（RAG Layer 1，53 tests PASS）
@@ -70,15 +70,15 @@ _原料/
 - 总览（本文件）：`notepad.md`
 - **Agent 入口**：`AGENTS.md`（新会话先读顺序、边界、验证命令、禁区）
 - **当前状态真值**：`STATUS.md`（最新完成度与下一步；优先级高于 `ROADMAP.md`）
-- **架构最终版**：`ARCHITECTURE.md`（v1，已完成，36.5KB）
-- **路线图**：`ROADMAP.md`（v1，已完成，17.6KB）
+- **架构最终版**：`ARCHITECTURE.md`（v1，已完成；完成度与下一步以 `STATUS.md` 为准）
+- **路线图**：`ROADMAP.md`（v1，已补当前状态对照；历史待办不作为真值）
 - 蒸馏方案历史档案：`_distillation-plan.md`（阶段 2 草稿，47.6KB，保留）
 - 看板：`.ops/subagents/board.json`（全 done）
 - Scout 扫描报告：`.ops/scout-reports/scout{1-4}-*.md`
 - Jury 评审：`.ops/jury/jury-{1-4}-*.md`
 - Jury prompt 模板：`.ops/jury-prompts/jury-{1-4}-*.md`
 
-## 四层架构（草稿，由 Scout 报告 + 陪审修订）
+## 四层架构（摘要；权威版本见 `ARCHITECTURE.md`）
 
 ```
 ┌────────────────────────────────────────────────────────────┐
@@ -104,9 +104,9 @@ _原料/
                           ↓ 召回
 ┌────────────────────────────────────────────────────────────┐
 │  RAG 层（检索 + 上下文适配）                                │
-│  来源：基座 + 提示词库 + 思路 全量                          │
-│  形态：向量库 + 元数据过滤器 + 上下文拼装                   │
-│  作用：根据当前创作状态动态注入合适提示词                   │
+│  来源：foundation/assets 中已治理资产；不召回 Meta / raw_ideas│
+│  形态：native sqlite-vec + 元数据过滤器 + 上下文适配         │
+│  作用：按当前创作状态提供候选卡片 / 方法论上下文            │
 └────────────────────────────────────────────────────────────┘
 ```
 
@@ -120,7 +120,7 @@ _原料/
 | 3 | Ark Jury Court 4 角法庭 | ✅ 完成 | `.ops/jury/jury-{1-4}-*.md`（4 票 revise） |
 | 4 | 综合判决与交付 | ✅ 完成 | `ARCHITECTURE.md` + `ROADMAP.md` |
 
-**下一阶段**：Sprint 1 实施启动（任务清单见 `ROADMAP.md` §一）。
+**下一步**：P2：补 Layer 1 空召回 metadata，并为评估查询维护 `expected_ids` / `relevant_ids`；当前完成度以 `STATUS.md` 为准。
 
 ## 验证
 

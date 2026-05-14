@@ -474,4 +474,4 @@ examples:
     last_safe_state:
       snapshot_at_ch: 4
       snapshot_ts: '2026-05-13T09:30:00+08:00'
-      state_hash: sha256:placeholder
+      state_hash: "sha256:<example-state-hash>"  # 示例值，不可作为真实 state_hash

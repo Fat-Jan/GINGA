@@ -1,6 +1,6 @@
 # ST-S3-R-LAYER23 Heartbeat
 
-Task: RAG Layer 2 vector recall + Layer 3 rerank skeleton.
+Task: Sprint 3 RAG Layer 2/3 implementation handoff. 后续已完成 native sqlite-vec 接入与 RAG 真实召回质量评估，当前状态见 `STATUS.md`。
 Protocol: `.ops/subagents/dispatch-protocol.md`.
 Write set:
 - `rag/index_builder.py`

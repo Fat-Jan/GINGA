@@ -1,5 +1,7 @@
 # ST-S2-R-RAG-LAYER1：RAG Layer 1 frontmatter 召回 + 冷启动 + 全局关闭（P7）
 
+> 历史执行 prompt：仅描述 ST-S2-R 当时任务边界；Layer 2/3 后续已完成。不要把本文当当前状态。
+
 ## 你是谁
 
 你是 ginga 项目 Sprint 2 的 **P7-R 骨干**，独立于 Phase 0（不依赖 capability_registry）。任务是搭起 RAG 召回最小可工作版本，让 workflow step 在 drafting/refinement 阶段能召回 prompt cards 注入 prompt context。

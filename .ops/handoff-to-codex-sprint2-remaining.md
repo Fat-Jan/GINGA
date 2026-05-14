@@ -1,5 +1,7 @@
 # Handoff to Codex: Sprint 2 剩余收尾任务
 
+> 历史说明：这是 Sprint 2 收尾 handoff 快照，任务已在本文件 `2026-05-14T02:35:38+08:00 | TASK-CLOSEOUT` 段落收口。当前状态以 `STATUS.md` 为准。
+
 ## 任务清单（2 条独立任务）
 
 ### Task 1: P7-S 真实 5 章 demo 重跑（endpoint 故障恢复后）
@@ -147,7 +149,9 @@ codex-companion task \
 
 ---
 
-## 附录：当前项目状态快照
+## 附录：历史项目状态快照（2026-05-14T00:05+08:00）
+
+> 此快照已过期，后续 closeout 见本文件 `2026-05-14T02:35:38+08:00 | TASK-CLOSEOUT` 段落；当前以 `STATUS.md` 为准。
 
 - Sprint 2 已完成：PHASE0 / R-RAG-LAYER1 / I-IMMERSIVE（全 done + 看板已更新）
 - Sprint 2 待收尾：S-MULTI-CHAPTER（代码 done + 18 tests PASS，真实 demo 因 endpoint 故障中断）/ L-ANNOTATION（265/461 完成）
