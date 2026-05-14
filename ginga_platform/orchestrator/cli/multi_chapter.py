@@ -17,6 +17,10 @@ from pathlib import Path
 from typing import Any
 
 from ginga_platform.orchestrator.cli.demo_pipeline import _call_llm, run_workflow
+from ginga_platform.orchestrator.cli.demo_pipeline import (
+    MOCK_HARNESS_MODE,
+    REAL_LLM_DEMO_MODE,
+)
 from ginga_platform.orchestrator.meta_integration.checker_invoker import (
     CheckerBlocked,
     CheckerLoadError,
@@ -40,6 +44,10 @@ def _call_llm_for_polish(text: str, endpoint: str) -> str:
         f"{text}"
     )
     return _call_llm(polish_prompt, endpoint, max_tokens=6144)
+
+
+def _mock_polish(text: str) -> str:
+    return text.rstrip() + "\n\n<!-- mock_harness: R1 polish skipped -->\n"
 
 
 def _r2_consistency_check(
@@ -126,15 +134,13 @@ def _r3_final_pack(
     r2_results: list[dict[str, Any]],
 ) -> Path:
     """R3: 把 polished 正文 + metadata table 写到 chapter_NN.md（覆盖 run_workflow 草稿）."""
-    out_path = sio.state_dir / f"chapter_{chapter_no:02d}.md"
     meta_table = _build_chapter_metadata_table(sio, chapter_no, polished_text, r2_results)
-    out_path.write_text(polished_text.rstrip() + meta_table, encoding="utf-8")
-    sio.audit(
+    out_path = sio.write_artifact(
+        f"chapter_{chapter_no:02d}.md",
+        polished_text.rstrip() + meta_table,
         source=f"multi_chapter.R3_final_pack.ch{chapter_no}",
-        severity="info",
-        msg=f"chapter {chapter_no} final pack written: {out_path.stat().st_size} bytes",
-        action="log",
-        payload={"path": str(out_path), "bytes": out_path.stat().st_size},
+        artifact_type="chapter_text",
+        payload={"chapter_no": chapter_no, "stage": "R3_final_pack"},
     )
     return out_path
 
@@ -187,6 +193,8 @@ def run_multi_chapter(
     word_target: int = 3500,
     min_bytes: int = 3000,
     min_pool: int = 1,
+    state_root: Path | str | None = None,
+    mock_llm: bool = False,
 ) -> dict[str, Any]:
     """N 章连跑 runner：依次 G(run_workflow) → R1 → R2 → R3，结束跑 V1 DoD.
 
@@ -204,7 +212,10 @@ def run_multi_chapter(
     """
     if chapters < 1:
         raise ValueError(f"chapters must be >= 1, got {chapters}")
-    sio = StateIO(book_id, autoload=True)
+    sio_kwargs: dict[str, Any] = {"autoload": True}
+    if state_root is not None:
+        sio_kwargs["state_root"] = state_root
+    sio = StateIO(book_id, **sio_kwargs)
     chapters_done = 0
     chapter_paths: list[str] = []
     errors: list[dict[str, Any]] = []
@@ -216,14 +227,16 @@ def run_multi_chapter(
                 llm_endpoint=llm_endpoint,
                 word_target=word_target,
                 chapter_no=ch_no,
+                state_root=state_root,
+                mock_llm=mock_llm,
             )
             if draft_path is None:
                 errors.append({"chapter": ch_no, "issue": "run_workflow_returned_none"})
                 break
             # run_workflow 落盘后重新 autoload sio（rollup 已写到磁盘）.
-            sio = StateIO(book_id, autoload=True)
+            sio = StateIO(book_id, **sio_kwargs)
             original = Path(draft_path).read_text(encoding="utf-8")
-            polished = _call_llm_for_polish(original, llm_endpoint)
+            polished = _mock_polish(original) if mock_llm else _call_llm_for_polish(original, llm_endpoint)
             r2_results = _r2_consistency_check(sio, ch_no, polished)
             final_path = _r3_final_pack(sio, ch_no, polished, r2_results)
             chapter_paths.append(str(final_path))
@@ -239,10 +252,11 @@ def run_multi_chapter(
             break
 
     # 重新加载 state，跑 V1 DoD（不管中途 break）
-    sio = StateIO(book_id, autoload=True)
+    sio = StateIO(book_id, **sio_kwargs)
     dod_report = _v1_release_check(sio, min_bytes=min_bytes, min_pool=min_pool)
     return {
         "ok": chapters_done == chapters and dod_report["pass"],
+        "execution_mode": MOCK_HARNESS_MODE if mock_llm else REAL_LLM_DEMO_MODE,
         "chapters_done": chapters_done,
         "chapter_paths": chapter_paths,
         "dod_report": dod_report,

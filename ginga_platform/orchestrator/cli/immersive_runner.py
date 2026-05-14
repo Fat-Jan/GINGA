@@ -24,6 +24,7 @@ from typing import Any, Callable, Dict, Optional
 
 from ginga_platform.skills.dark_fantasy_ultimate_engine.adapter import DarkFantasyAdapter
 from ginga_platform.orchestrator.runner.state_io import StateIO
+from ginga_platform.orchestrator.cli.demo_pipeline import MOCK_HARNESS_MODE, REAL_LLM_DEMO_MODE
 
 
 # 默认 LLM 调用器（subprocess ask-llm）——延迟 import 避免 demo_pipeline 依赖闭环
@@ -103,6 +104,7 @@ class ImmersiveRunner:
         llm_endpoint: str = "windhub",
         word_target: int = 3500,
         start_chapter_no: int = 1,
+        execution_mode: str | None = None,
     ) -> Dict[str, Any]:
         """跑一个连续 N 章的沉浸块.
 
@@ -155,9 +157,16 @@ class ImmersiveRunner:
                 self.adapter.output_transform(skill_output)
 
                 # 落 chapter_<NN>.md（独立写盘；exit 时 batch apply 不重写文件）
-                fp = self.state_io.state_dir / f"chapter_{ch_no:02d}.md"
-                fp.parent.mkdir(parents=True, exist_ok=True)
-                fp.write_text(chapter_text, encoding="utf-8")
+                mode = execution_mode or (
+                    MOCK_HARNESS_MODE if self.llm_caller is not _default_llm_caller else REAL_LLM_DEMO_MODE
+                )
+                fp = self.state_io.write_artifact(
+                    f"chapter_{ch_no:02d}.md",
+                    chapter_text,
+                    source="immersive_runner",
+                    artifact_type="chapter_text",
+                    payload={"chapter_no": ch_no, "execution_mode": mode},
+                )
                 chapter_paths.append(str(fp))
 
                 # audit 每章生成（immersive 期内只 audit, checker 已静默）

@@ -222,13 +222,14 @@ P-8/9/10 ──┘  (双 skill contract.yaml + adapter，最高风险段)
 - [x] **P2-2**：为评估查询维护 `expected_ids` / `relevant_ids`。
 - [x] **P2-3**：把 RAG 质量评估从「能跑」升级为可追踪、可回归。
 - [x] **P2-4**：RAG 质量小迭代完成：补充高影响 topic/stage/card_intent 扩展与候选排序先验，Layer 2 `recall@5` 从 0.425 提升到 0.614，`expected_recall@5` 从 0.875 提升到 0.917。
+- [x] **P2-5**：Agent harness hardening 完成：`scripts/run_agent_harness.py` 离线覆盖 `ginga init`、单章 `run`、`--chapters` 多章、`--immersive` 和错误退出路径；mock LLM + 临时 `state_root`，检查 state 域、audit_log、chapter artifacts、错误路径与 CLI 退出码。
+- [x] **P2-5A**：StateIO 写入边界审计完成：`runtime_state` YAML 域写入保持在 `StateIO` / locked patch flow；章节正文 `chapter_NN.md` 通过 `StateIO.write_artifact()` 明确标注为 `chapter_text` artifact。
+- [x] **P2-5B**：demo 真实性标识完成：CLI / harness / 报告区分 `mock_harness`、`deterministic_eval` 与 `real_llm_demo`，mock harness 报告显式声明不证明 production readiness。
+- [x] **P2-6**：RAG 残余小迭代完成：Layer 2 `recall@5=0.614`、`expected_recall@5=0.917`，剩余 `candidate_k` / `asset_type` blocker 转为后续观察项。
 
 ### 4.3 当前下一步
 
-- [ ] **P2-5**：Agent harness hardening（主线）。新增离线 harness 覆盖 `ginga init`、单章 `run`、`--chapters` 多章、`--immersive` 四条路径；用 mock LLM + 临时 `state_root` 复现完整执行，断言 state 域、audit_log、chapter artifacts、错误路径与 CLI 退出码。
-- [ ] **P2-5A**：StateIO 写入边界审计。把 `runtime_state` YAML 域写入统一压到 `StateIO` 或现有封装路径；章节正文 `chapter_NN.md` 作为 artifact 明确标注，避免后续 agent 把直接写 YAML 当成捷径。
-- [ ] **P2-5B**：demo 真实性标识。CLI / harness / 报告中区分 mock、deterministic eval 与真实 LLM demo，禁止用 mock 结果声明真实生产链路已完成。
-- [ ] **P2-6**：RAG 残余小迭代（sidecar）。按 `.ops/reports/rag_recall_quality_report.md` 的 blocker summary 处理残余 `candidate_k` / `asset_type` blocker，守住 Layer 2 `recall@5 >= 0.500` 与 `expected_recall@5 >= 0.875`，再决定是否让部分 methodology 以跨资产类型进入评估候选。
+- [ ] **P2-7**：Platform runner 收敛（后续主线）：以 P2-5 harness 为回归门，逐步减少单章 `demo_pipeline` 的简化 wire-up，把真实路径向 workflow DSL + skill adapters + `StateIO` 统一编排收拢。
 
 ### 4.4 任务清单（按触发条件优先级，尚未触发）
 

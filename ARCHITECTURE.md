@@ -380,7 +380,7 @@ ginga_platform/
 
 ### 4.2 Orchestrator 核心约束
 
-1. **唯一 state 入口**：任何 workflow step 要读写 runtime_state，必须经 `state_io.py`（带事务、带 audit_log）。skill 本身不直接动 state。
+1. **唯一 state 入口**：任何 workflow step 要读写 runtime_state YAML 域，必须经 `state_io.py`（带事务、带 audit_log）。skill 本身不直接动 state。章节正文 `chapter_NN.md` 是 artifact，不是 YAML state 域；写入必须走 `StateIO.write_artifact()` 并在 audit payload 标注 `artifact_type=chapter_text`。
 2. **DSL → runtime 拆离**：workflow YAML 是声明式，runner 是命令式；DSL 演化不影响 runner，runner 优化不破坏 DSL。
 3. **uses_capability 用资产 id**（修订 jury-2 P1）：原方案用文件路径，改为 `uses_capability: base-template-protagonist`，由 registry 解析为路径。
 

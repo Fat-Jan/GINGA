@@ -13,7 +13,9 @@ import sys
 from pathlib import Path
 
 from ginga_platform.orchestrator.cli.demo_pipeline import (
+    MOCK_HARNESS_MODE,
     init_book,
+    _mock_chapter_text,
     run_workflow,
     show_status,
 )
@@ -41,6 +43,11 @@ def main(argv: list[str] | None = None) -> int:
         default=500000,
         help="字数目标（默认 500000）",
     )
+    p_init.add_argument(
+        "--state-root",
+        type=Path,
+        help="runtime_state 根目录；测试/harness 可传临时目录，默认 foundation/runtime_state",
+    )
 
     p_run = sub.add_parser("run", help="跑 workflow MVP（A-H 12 step，G 调 dark-fantasy 生成第一章）")
     p_run.add_argument("book_id")
@@ -67,9 +74,24 @@ def main(argv: list[str] | None = None) -> int:
         default=1,
         help="章节数：>=2 触发 multi_chapter runner（S-3/S-4/S-5 R1-R3 + V1 DoD）；仅 --immersive 时走沉浸专线",
     )
+    p_run.add_argument(
+        "--state-root",
+        type=Path,
+        help="runtime_state 根目录；测试/harness 可传临时目录，默认 foundation/runtime_state",
+    )
+    p_run.add_argument(
+        "--mock-llm",
+        action="store_true",
+        help="离线 harness 模式：不调用 ask-llm，只生成固定 mock 章节；不得用于声明真实 LLM demo 完成",
+    )
 
     p_status = sub.add_parser("status", help="查看 book 当前 state 状态")
     p_status.add_argument("book_id")
+    p_status.add_argument(
+        "--state-root",
+        type=Path,
+        help="runtime_state 根目录；测试/harness 可传临时目录，默认 foundation/runtime_state",
+    )
 
     p_idea = sub.add_parser("idea", help="raw idea 暂存区：只落盘，不进 state/RAG")
     idea_sub = p_idea.add_subparsers(dest="idea_cmd", required=True)
@@ -81,18 +103,37 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.cmd == "init":
-        init_book(args.book_id, topic=args.topic, premise=args.premise, word_target=args.word_target)
-        print(f"✅ init done: foundation/runtime_state/{args.book_id}/")
+        init_book(
+            args.book_id,
+            topic=args.topic,
+            premise=args.premise,
+            word_target=args.word_target,
+            state_root=args.state_root,
+        )
+        state_root = args.state_root or Path("foundation/runtime_state")
+        print(f"✅ init done: {state_root / args.book_id}")
         return 0
     elif args.cmd == "run":
         # immersive 分支：dispatch 到 ImmersiveRunner.run_block
         if getattr(args, "immersive", False):
             from ginga_platform.orchestrator.cli.immersive_runner import ImmersiveRunner
-            runner = ImmersiveRunner(args.book_id)
+            llm_caller = None
+            execution_mode = None
+            if getattr(args, "mock_llm", False):
+                execution_mode = MOCK_HARNESS_MODE
+
+                def llm_caller(prompt: str, endpoint: str, **_kw: object) -> str:
+                    chapter_no = len(getattr(llm_caller, "_calls", [])) + 1
+                    getattr(llm_caller, "_calls", []).append(chapter_no)
+                    return _mock_chapter_text(chapter_no, args.word_target)
+
+                setattr(llm_caller, "_calls", [])
+            runner = ImmersiveRunner(args.book_id, state_root=args.state_root, llm_caller=llm_caller)
             result = runner.run_block(
                 chapters=args.chapters,
                 llm_endpoint=args.llm_endpoint,
                 word_target=args.word_target,
+                execution_mode=execution_mode,
             )
             if result.get("last_error"):
                 print(f"❌ immersive run failed: {result['last_error']}", file=sys.stderr)
@@ -108,6 +149,8 @@ def main(argv: list[str] | None = None) -> int:
                 chapters=args.chapters,
                 llm_endpoint=args.llm_endpoint,
                 word_target=args.word_target,
+                state_root=args.state_root,
+                mock_llm=args.mock_llm,
             )
             if not result["ok"]:
                 print(
@@ -122,7 +165,13 @@ def main(argv: list[str] | None = None) -> int:
                 f"foreshadow_pool={result['dod_report']['foreshadow_pool_size']}"
             )
             return 0
-        chapter_path = run_workflow(args.book_id, llm_endpoint=args.llm_endpoint, word_target=args.word_target)
+        chapter_path = run_workflow(
+            args.book_id,
+            llm_endpoint=args.llm_endpoint,
+            word_target=args.word_target,
+            state_root=args.state_root,
+            mock_llm=args.mock_llm,
+        )
         if chapter_path is None:
             print("❌ run failed", file=sys.stderr)
             return 1
@@ -130,7 +179,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"✅ run done: {chapter_path} ({size} bytes)")
         return 0
     elif args.cmd == "status":
-        show_status(args.book_id)
+        show_status(args.book_id, state_root=args.state_root)
         return 0
     elif args.cmd == "idea":
         if args.idea_cmd == "add":

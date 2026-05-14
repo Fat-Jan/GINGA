@@ -1,0 +1,132 @@
+{
+  "generated_from": "scripts/run_agent_harness.py",
+  "execution_mode": "mock_harness",
+  "disclaimer": "mock_harness does not prove production readiness or real LLM demo completion",
+  "state_root": "<temporary mock harness state_root>",
+  "passed": true,
+  "cases": [
+    {
+      "name": "init",
+      "argv": [
+        "init",
+        "harness-init",
+        "--topic",
+        "玄幻黑暗",
+        "--premise",
+        "offline harness init premise",
+        "--word-target",
+        "50000",
+        "--state-root",
+        "<temporary mock harness state_root>"
+      ],
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "execution_mode": "cli_state_only",
+      "stdout_tail": "✅ init done: <temporary mock harness state_root>/harness-init\n",
+      "stderr_tail": "",
+      "checks": {
+        "state_domains": true,
+        "audit_log": true
+      },
+      "passed": true
+    },
+    {
+      "name": "single_run",
+      "argv": [
+        "run",
+        "harness-single",
+        "--mock-llm",
+        "--word-target",
+        "800",
+        "--state-root",
+        "<temporary mock harness state_root>"
+      ],
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "execution_mode": "mock_harness",
+      "stdout_tail": "✅ run done: <temporary mock harness state_root>/harness-single/chapter_01.md (2416 bytes)\n",
+      "stderr_tail": "📝 mock_harness 生成第 1 章 (目标 800 字，不调用 ask-llm)...\n✓ LLM 返回 1316 字符 / 485 个汉字\n",
+      "checks": {
+        "state_domains": true,
+        "chapter_artifact": true,
+        "artifact_audit": true,
+        "rollup_audit": true
+      },
+      "passed": true
+    },
+    {
+      "name": "multi_chapter",
+      "argv": [
+        "run",
+        "harness-multi",
+        "--mock-llm",
+        "--chapters",
+        "2",
+        "--word-target",
+        "1200",
+        "--state-root",
+        "<temporary mock harness state_root>"
+      ],
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "execution_mode": "mock_harness",
+      "stdout_tail": "✅ multi_chapter done: 2/2 chapters, DoD PASS, total_words=1420, foreshadow_pool=3\n",
+      "stderr_tail": "📝 mock_harness 生成第 1 章 (目标 1200 字，不调用 ask-llm)...\n✓ LLM 返回 1856 字符 / 710 个汉字\n📝 mock_harness 生成第 2 章 (目标 1200 字，不调用 ask-llm)...\n✓ LLM 返回 1856 字符 / 710 个汉字\n",
+      "checks": {
+        "state_domains": true,
+        "chapter_artifacts": true,
+        "artifact_audit": true,
+        "dod_audit": true
+      },
+      "passed": true
+    },
+    {
+      "name": "immersive",
+      "argv": [
+        "run",
+        "harness-immersive",
+        "--mock-llm",
+        "--immersive",
+        "--chapters",
+        "2",
+        "--word-target",
+        "800",
+        "--state-root",
+        "<temporary mock harness state_root>"
+      ],
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "execution_mode": "mock_harness",
+      "stdout_tail": "✅ immersive done: 2 chapters, applied=2, paths=['<temporary mock harness state_root>/harness-immersive/chapter_01.md', '<temporary mock harness state_root>/harness-immersive/chapter_02.md']\n",
+      "stderr_tail": "",
+      "checks": {
+        "state_domains": true,
+        "chapter_artifacts": true,
+        "artifact_audit": true,
+        "batch_audit": true
+      },
+      "passed": true
+    },
+    {
+      "name": "missing_state_error",
+      "argv": [
+        "run",
+        "harness-missing",
+        "--mock-llm",
+        "--state-root",
+        "<temporary mock harness state_root>"
+      ],
+      "expected_exit_code": 1,
+      "exit_code": 1,
+      "execution_mode": "mock_harness",
+      "stdout_tail": "",
+      "stderr_tail": "❌ state seed not found for book=harness-missing; run `ginga init` first\n❌ run failed\n",
+      "checks": {
+        "exit_code_nonzero": true,
+        "error_message": true,
+        "no_chapter_artifact": true
+      },
+      "passed": true
+    }
+  ]
+}

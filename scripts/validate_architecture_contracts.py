@@ -17,6 +17,17 @@ SKILLS_DIR = Path("ginga_platform/skills")
 SKILL_ROUTER_PATH = Path("ginga_platform/orchestrator/router/skill_router.py")
 FOUNDATION_ASSETS_DIR = Path("foundation/assets")
 RECALL_CONFIG_PATH = Path("foundation/rag/recall_config.yaml")
+CODE_STATE_WRITE_ALLOWLIST = {
+    Path("ginga_platform/orchestrator/runner/state_io.py"),
+    Path("ginga_platform/orchestrator/cli/locked_patch.py"),
+}
+STATE_DOMAIN_FILENAMES = {
+    "locked.yaml",
+    "entity_runtime.yaml",
+    "workspace.yaml",
+    "retrieved.yaml",
+    "audit_log.yaml",
+}
 
 ALLOWED_STATE_TOPS = {
     "locked",
@@ -286,6 +297,42 @@ def validate_recall_config(repo_root: Path, report: dict[str, Any]) -> None:
     add_check(report, "recall forbidden paths", not missing, f"contains {len(forbidden_paths)} path(s)")
 
 
+def validate_state_write_boundaries(repo_root: Path, report: dict[str, Any]) -> None:
+    """Ensure runtime_state YAML writes stay behind StateIO or locked patch flow."""
+    suspicious: list[str] = []
+    for base in ("ginga_platform", "scripts"):
+        root = repo_root / base
+        if not root.exists():
+            continue
+        for path in sorted(root.rglob("*.py")):
+            rel = path.relative_to(repo_root)
+            if rel in CODE_STATE_WRITE_ALLOWLIST:
+                continue
+            lines = path.read_text(encoding="utf-8").splitlines()
+            for lineno, line in enumerate(lines, start=1):
+                writes_text = ".write_text(" in line or ".open(" in line or "open(" in line
+                writes_yaml = "yaml.safe_dump" in line or "yaml.dump" in line
+                names_state_domain = any(name in line for name in STATE_DOMAIN_FILENAMES)
+                names_runtime_state = "foundation/runtime_state" in line or "runtime_state/" in line
+                if (writes_text or writes_yaml) and (names_state_domain or names_runtime_state):
+                    suspicious.append(f"{rel}:{lineno}")
+
+    unique = sorted(set(suspicious))
+    if unique:
+        add_error(
+            report,
+            Path("ginga_platform"),
+            "StateIO boundary",
+            f"possible direct runtime_state YAML write outside StateIO: {unique}",
+        )
+    add_check(
+        report,
+        "StateIO write boundary",
+        not unique,
+        "runtime_state YAML writes are limited to StateIO / locked patch flow",
+    )
+
+
 def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     root = (repo_root or Path.cwd()).resolve()
     root_text = str(root)
@@ -302,6 +349,7 @@ def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     validate_workflow(root, report)
     validate_skill_contracts(root, report)
     validate_recall_config(root, report)
+    validate_state_write_boundaries(root, report)
     report["status"] = "FAIL" if report["errors"] else "PASS"
     return report
 

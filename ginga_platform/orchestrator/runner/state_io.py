@@ -177,6 +177,54 @@ class StateIO:
         if self._tx_depth == 0:
             self._flush_audit_only()
 
+    def write_artifact(
+        self,
+        name: str,
+        content: str,
+        *,
+        source: str,
+        artifact_type: str,
+        payload: Optional[dict[str, Any]] = None,
+    ) -> Path:
+        """Write a non-state artifact under this book's state directory.
+
+        YAML state domains still must be changed via ``apply`` / ``audit``. This
+        helper exists for chapter artifacts such as ``chapter_01.md`` so their
+        boundary is explicit and audit-visible.
+        """
+        if not name or not isinstance(name, str):
+            raise StateIOError(f"artifact name must be non-empty str, got {name!r}")
+        rel = Path(name)
+        if rel.is_absolute() or ".." in rel.parts:
+            raise StateIOError(f"artifact path must stay under state_dir, got {name!r}")
+        if rel.name in {f"{domain}.yaml" for domain in _TOP_DOMAINS}:
+            raise StateIOError(
+                f"{rel.name} is a runtime_state domain file; use StateIO.apply/audit instead"
+            )
+        if rel.suffix in {".yaml", ".yml"}:
+            raise StateIOError(
+                f"YAML artifacts are not allowed through write_artifact: {name!r}"
+            )
+        artifact_path = self.state_dir / rel
+        artifact_path.parent.mkdir(parents=True, exist_ok=True)
+        artifact_path.write_text(content, encoding="utf-8")
+        artifact_payload = dict(payload or {})
+        artifact_payload.update(
+            {
+                "artifact_type": artifact_type,
+                "path": str(artifact_path),
+                "bytes": artifact_path.stat().st_size,
+            }
+        )
+        self.audit(
+            source=source,
+            severity="info",
+            msg=f"artifact written: {name}",
+            action="log",
+            payload=artifact_payload,
+        )
+        return artifact_path
+
     # -- transaction ---------------------------------------------------------
 
     @contextmanager

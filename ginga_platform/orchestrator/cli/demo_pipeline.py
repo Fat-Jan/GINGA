@@ -41,12 +41,67 @@ from ginga_platform.orchestrator.runner.op_translator import (
 from ginga_platform.orchestrator.runner.state_io import StateIO
 
 
+# ---------- execution mode ---------------------------------------------------
+
+
+MOCK_HARNESS_MODE = "mock_harness"
+DETERMINISTIC_EVAL_MODE = "deterministic_eval"
+REAL_LLM_DEMO_MODE = "real_llm_demo"
+
+
+def _mock_chapter_text(chapter_no: int, word_target: int) -> str:
+    """Deterministic offline chapter body used by the P2-5 harness."""
+    table = (
+        "| 写作自检 | 内容 |\n|---|---|\n"
+        "| 当前锚定 | mock_harness / 微粒 / 天堑 |\n"
+        f"| 当前微粒 | {chapter_no * 10} |\n"
+        f"| 预计微粒变化 | {chapter_no * 10} |\n"
+        "| 主要冲突 | 离线 harness 验证 CLI 与 StateIO 边界 |\n\n"
+    )
+    body_unit = (
+        f"# 第{chapter_no}章 · 离线演练\n\n"
+        "这是一段 mock harness 章节正文，只用于验证 CLI、StateIO、audit_log 和 artifact 边界。"
+        "它不调用真实 LLM，也不代表真实创作质量或生产链路完成。"
+    )
+    repeated = body_unit * max(3, min(16, word_target // 80))
+    hook = (
+        f"\n\n<!-- foreshadow: id=fh-mock-{chapter_no:02d} planted_ch={chapter_no} "
+        f"expected_payoff={chapter_no + 10} summary=mock harness chapter {chapter_no} hook -->\n"
+    )
+    return table + repeated + hook
+
+
+def _call_llm_or_mock(
+    prompt: str,
+    endpoint: str,
+    *,
+    max_tokens: int = 4096,
+    mock_llm: bool = False,
+    chapter_no: int = 1,
+    word_target: int = 3500,
+) -> tuple[str, str]:
+    if mock_llm:
+        return _mock_chapter_text(chapter_no, word_target), MOCK_HARNESS_MODE
+    return _call_llm(prompt, endpoint, max_tokens=max_tokens), REAL_LLM_DEMO_MODE
+
+
+def _state_io_kwargs(state_root: Path | str | None) -> dict[str, Any]:
+    return {"state_root": state_root} if state_root is not None else {}
+
+
 # ---------- init_book --------------------------------------------------------
 
 
-def init_book(book_id: str, topic: str, premise: str, word_target: int) -> None:
+def init_book(
+    book_id: str,
+    topic: str,
+    premise: str,
+    word_target: int,
+    *,
+    state_root: Path | str | None = None,
+) -> None:
     """初始化书：建空 state + 写入 locked + entity_runtime seed."""
-    sio = StateIO(book_id)
+    sio = StateIO(book_id, **_state_io_kwargs(state_root))
 
     # locked 域 seed（用户决策后锁定，禁止 patch 流程外修改）
     sio.apply(
@@ -480,6 +535,9 @@ def run_workflow(
     llm_endpoint: str = "windhub",
     word_target: int = 3500,
     chapter_no: int = 1,
+    *,
+    state_root: Path | str | None = None,
+    mock_llm: bool = False,
 ) -> str | None:
     """跑简化版 workflow MVP：G_chapter_draft 真调 LLM 生成指定章节.
 
@@ -490,7 +548,7 @@ def run_workflow(
 
     Returns: chapter_NN.md 的绝对路径；失败返回 None.
     """
-    sio = StateIO(book_id, autoload=True)
+    sio = StateIO(book_id, autoload=True, **_state_io_kwargs(state_root))
     state = sio.state  # 直接拿 dict-of-dict 视图，不要走 snapshot（snapshot 嵌套到 .state 子键）
 
     if not state.get("locked", {}).get("STORY_DNA"):
@@ -503,14 +561,26 @@ def run_workflow(
 
     sio.audit("cli.run.A_through_F", severity="info", msg="setup steps skipped (seeded by init)")
 
-    # G_chapter_draft：真调 LLM
-    print(
-        f"📝 调用 ask-llm {llm_endpoint} 生成第 {chapter_no} 章 (目标 {word_target} 字)...",
-        file=sys.stderr,
-    )
+    # G_chapter_draft：真实 demo 调 LLM；mock harness 只走固定离线章节。
+    if mock_llm:
+        print(
+            f"📝 mock_harness 生成第 {chapter_no} 章 (目标 {word_target} 字，不调用 ask-llm)...",
+            file=sys.stderr,
+        )
+    else:
+        print(
+            f"📝 调用 ask-llm {llm_endpoint} 生成第 {chapter_no} 章 (目标 {word_target} 字)...",
+            file=sys.stderr,
+        )
     prompt = _build_chapter_prompt(state, word_target, chapter_no=chapter_no)
     try:
-        chapter_text = _call_llm(prompt, llm_endpoint)
+        chapter_text, execution_mode = _call_llm_or_mock(
+            prompt,
+            llm_endpoint,
+            mock_llm=mock_llm,
+            chapter_no=chapter_no,
+            word_target=word_target,
+        )
     except Exception as exc:
         sio.audit(
             f"cli.run.G_chapter_draft.ch{chapter_no}",
@@ -525,8 +595,13 @@ def run_workflow(
     print(f"✓ LLM 返回 {len(chapter_text)} 字符 / {word_count} 个汉字", file=sys.stderr)
 
     # 落 chapter_NN.md（两位补零）
-    chapter_path = sio.state_dir / f"chapter_{chapter_no:02d}.md"
-    chapter_path.write_text(chapter_text, encoding="utf-8")
+    chapter_path = sio.write_artifact(
+        f"chapter_{chapter_no:02d}.md",
+        chapter_text,
+        source=f"cli.run.G_chapter_draft.ch{chapter_no}",
+        artifact_type="chapter_text",
+        payload={"chapter_no": chapter_no, "execution_mode": execution_mode},
+    )
 
     # H_chapter_settle：滚动更新 entity_runtime（多章 wire-up）
     apply_chapter_rollup(
@@ -550,9 +625,9 @@ def run_workflow(
 # ---------- show_status ------------------------------------------------------
 
 
-def show_status(book_id: str) -> None:
+def show_status(book_id: str, *, state_root: Path | str | None = None) -> None:
     """打印 book 当前 state 摘要."""
-    sio = StateIO(book_id, autoload=True)
+    sio = StateIO(book_id, autoload=True, **_state_io_kwargs(state_root))
     state = sio.state
     print(f"=== book_id: {book_id} ===")
     print(f"state_dir: {sio.state_dir}")

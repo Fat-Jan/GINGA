@@ -92,6 +92,44 @@ class StateIOTest(unittest.TestCase):
             with self.assertRaises(self.mod.StateIOError):
                 sio.apply({"forbidden.something": 1})
 
+    def test_write_artifact_marks_chapter_boundary_without_yaml_domain_write(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            sio = self._new(Path(d))
+            path = sio.write_artifact(
+                "chapter_01.md",
+                "# 第一章\n\nmock",
+                source="unit.artifact",
+                artifact_type="chapter_text",
+                payload={"execution_mode": "mock_harness"},
+            )
+            self.assertTrue(path.exists())
+            self.assertEqual(path.name, "chapter_01.md")
+            self.assertTrue(
+                any(
+                    entry.get("payload", {}).get("artifact_type") == "chapter_text"
+                    and entry.get("payload", {}).get("execution_mode") == "mock_harness"
+                    for entry in sio.audit_log
+                )
+            )
+
+    def test_write_artifact_rejects_yaml_state_domain_shortcut(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            sio = self._new(Path(d))
+            with self.assertRaises(self.mod.StateIOError):
+                sio.write_artifact(
+                    "locked.yaml",
+                    "STORY_DNA: {}",
+                    source="unit.bad",
+                    artifact_type="state_domain",
+                )
+            with self.assertRaises(self.mod.StateIOError):
+                sio.write_artifact(
+                    "../escape.md",
+                    "bad",
+                    source="unit.bad",
+                    artifact_type="chapter_text",
+                )
+
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
