@@ -2,7 +2,7 @@
 id: prompts-card-design_system_shop-83
 asset_type: prompt_card
 title: 系统商城定价策略
-topic: [系统]
+topic: [系统, 玄幻, 经济, 奖励]
 stage: setting
 quality_grade: B
 source_path: _原料/提示词库参考/prompts/83.md

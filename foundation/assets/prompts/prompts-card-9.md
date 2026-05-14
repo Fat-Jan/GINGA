@@ -2,7 +2,7 @@
 id: prompts-card-create_character_profile-9
 asset_type: prompt_card
 title: 主角详细档案
-topic: [通用]
+topic: [通用, 角色, 状态]
 stage: setting
 quality_grade: A
 source_path: _原料/提示词库参考/prompts/9.md

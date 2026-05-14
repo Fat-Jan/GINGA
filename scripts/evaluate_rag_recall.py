@@ -26,6 +26,7 @@ from rag.layer2_vector import (
     search_vector,
     vector_ready,
 )
+from rag.cold_start import load_recall_config
 
 DEFAULT_PROMPTS_DIR = REPO_ROOT / "foundation" / "assets" / "prompts"
 DEFAULT_METHODOLOGY_DIR = REPO_ROOT / "foundation" / "assets" / "methodology"
@@ -33,22 +34,13 @@ DEFAULT_SOURCES = [DEFAULT_PROMPTS_DIR, DEFAULT_METHODOLOGY_DIR]
 DEFAULT_INDEX_PATH = REPO_ROOT / ".ops" / "validation" / "rag_recall_eval.sqlite"
 DEFAULT_JSON_PATH = REPO_ROOT / ".ops" / "validation" / "rag_recall_quality.json"
 DEFAULT_REPORT_PATH = REPO_ROOT / ".ops" / "reports" / "rag_recall_quality_report.md"
+DEFAULT_RECALL_CONFIG_PATH = REPO_ROOT / "foundation" / "rag" / "recall_config.yaml"
 EVAL_MODEL_ID = "rag-recall-eval-deterministic-v1"
 MODEL_ID = EVAL_MODEL_ID
 TOP_K = 5
 CANDIDATE_K = 20
-LAYER1_FILTER_EXPANSION = {
-    "stage": {
-        "drafting": ["drafting", "outline", "setting"],
-        "framework": ["framework", "outline", "analysis", "refinement"],
-    },
-    "card_intent": {
-        "prose_generation": ["prose_generation", "outline_planning", "prototype_creation"],
-        "structural_design": ["structural_design", "simulation"],
-        "outline_planning": ["outline_planning", "checker_diagnostic"],
-        "generator": ["generator", "prototype_creation", "structural_design"],
-    },
-}
+EVAL_RECALL_CONFIG = load_recall_config(DEFAULT_RECALL_CONFIG_PATH)
+LAYER1_FILTER_EXPANSION = EVAL_RECALL_CONFIG.get("layer1_filter_expansion", {})
 BLOCKER_KEYS = [
     "stage",
     "topic",
@@ -551,10 +543,7 @@ def evaluate_query(
         top_k=candidate_k,
         quality_floor=quality_floor,
         index_path=index_path,
-        config={
-            "stage_specific_top_k": {"default": candidate_k},
-            "layer1_filter_expansion": LAYER1_FILTER_EXPANSION,
-        },
+        config=EVAL_RECALL_CONFIG,
     )
     layer1_ids = [str(hit.get("id", "")) for hit in layer1_hits]
     layer1_diagnostics = build_layer1_diagnostics(
@@ -963,6 +952,11 @@ def make_recommendations(results: list[dict[str, Any]]) -> list[str]:
     if expected_recall < 0.7:
         recommendations.append(
             f"下一轮目标先把 Layer 2 expected_recall@{TOP_K} 拉到 0.700+，recall@{TOP_K} 再逐步追。"
+        )
+    elif recall >= 0.5:
+        recommendations.append(
+            f"Layer 2 expected_recall@{TOP_K} 已达到 {expected_recall:.3f}，"
+            f"recall@{TOP_K} 已达到 {recall:.3f}；下一轮优先压低 candidate_k 残余 blocker 并守住 0.500+。"
         )
     else:
         recommendations.append(

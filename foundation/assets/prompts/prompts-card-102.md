@@ -2,7 +2,7 @@
 id: prompts-card-simulate_fantasy_economy-102
 asset_type: prompt_card
 title: 异世界经济与通货膨胀模拟
-topic: [玄幻]
+topic: [玄幻, 经济, 黑暗]
 stage: setting
 quality_grade: B
 source_path: _原料/提示词库参考/prompts/102.md

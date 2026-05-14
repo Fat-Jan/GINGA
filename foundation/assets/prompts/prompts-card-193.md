@@ -2,7 +2,7 @@
 id: prompts-card-create-assassin_creed
 asset_type: prompt_card
 title: 杀手/刺客组织的信条与戒律
-topic: [都市]
+topic: [都市, 悬疑, 武侠]
 stage: setting
 quality_grade: B+
 source_path: _原料/提示词库参考/prompts/193.md

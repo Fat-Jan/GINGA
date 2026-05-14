@@ -2,7 +2,7 @@
 id: prompts-card-manage_guild_resources-119
 asset_type: prompt_card
 title: 宗门/公会资源管理系统
-topic: [玄幻, 都市, 系统]
+topic: [玄幻, 都市, 系统, 经济]
 stage: auxiliary
 quality_grade: B+
 source_path: _原料/提示词库参考/prompts/119.md

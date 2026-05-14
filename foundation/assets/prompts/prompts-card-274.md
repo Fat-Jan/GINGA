@@ -2,7 +2,7 @@
 id: prompts-card-write_currency_creation-274
 asset_type: prompt_card
 title: 种田：从零建立货币体系
-topic: [种田, 基建, 穿越]
+topic: [种田, 基建, 穿越, 玄幻]
 stage: setting
 quality_grade: A-
 card_intent: prose_generation

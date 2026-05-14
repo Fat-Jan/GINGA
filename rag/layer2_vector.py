@@ -353,7 +353,9 @@ def search_vector(
         _LOG.warning("rag.layer2_vector: query embed failed: %s", exc)
         return []
     query_terms = _lexical_terms(query_text or "")
-    wanted = {str(x) for x in candidate_ids} if candidate_ids is not None else None
+    ordered_candidate_ids = _ordered_candidate_ids(candidate_ids)
+    wanted = set(ordered_candidate_ids) if ordered_candidate_ids is not None else None
+    candidate_prior = _candidate_prior_map(ordered_candidate_ids)
     if wanted is not None and not wanted:
         return []
 
@@ -367,6 +369,7 @@ def search_vector(
             candidate_ids=wanted,
             model_id=model_id,
             query_terms=query_terms,
+            candidate_prior=candidate_prior,
         )
         if backend_hits:
             return backend_hits
@@ -403,7 +406,9 @@ def search_vector(
             item["_vector_score"] = score
             lexical_score = _lexical_score(query_terms, item)
             item["_lexical_score"] = lexical_score
-            item["_score"] = score + lexical_score
+            prior_score = candidate_prior.get(str(item.get("id", "")), 0.0)
+            item["_candidate_prior_score"] = prior_score
+            item["_score"] = score + lexical_score + prior_score
             out.append(item)
     out.sort(key=lambda item: (-float(item.get("_score", 0.0)), str(item.get("id", ""))))
     return out[: max(0, int(top_k))]
@@ -478,6 +483,30 @@ def _lexical_score(query_terms: set[str], item: Mapping[str, Any]) -> float:
     return 0.08 * (len(overlap) / max(1, len(query_terms)))
 
 
+def _ordered_candidate_ids(candidate_ids: Optional[Iterable[str]]) -> Optional[list[str]]:
+    if candidate_ids is None:
+        return None
+    out: list[str] = []
+    seen: set[str] = set()
+    for raw in candidate_ids:
+        candidate_id = str(raw)
+        if candidate_id in seen:
+            continue
+        seen.add(candidate_id)
+        out.append(candidate_id)
+    return out
+
+
+def _candidate_prior_map(candidate_ids: Optional[Sequence[str]]) -> dict[str, float]:
+    if not candidate_ids:
+        return {}
+    denominator = max(1, len(candidate_ids))
+    return {
+        str(candidate_id): 0.02 * ((denominator - index) / denominator)
+        for index, candidate_id in enumerate(candidate_ids)
+    }
+
+
 def _count(conn: sqlite3.Connection, table: str) -> int:
     try:
         return int(conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0] or 0)
@@ -524,6 +553,7 @@ def _search_sqlite_vec_backend(
     candidate_ids: Optional[set[str]],
     model_id: Optional[str],
     query_terms: set[str],
+    candidate_prior: Mapping[str, float],
 ) -> list[dict[str, Any]]:
     with closing(backend.connect(index_path)) as conn:
         conn.row_factory = backend.row_factory
@@ -560,7 +590,9 @@ def _search_sqlite_vec_backend(
         item["_vector_score"] = 1.0 / (1.0 + max(0.0, distance))
         lexical_score = _lexical_score(query_terms, item)
         item["_lexical_score"] = lexical_score
-        item["_score"] = item["_vector_score"] + lexical_score
+        prior_score = float(candidate_prior.get(str(item.get("id", "")), 0.0))
+        item["_candidate_prior_score"] = prior_score
+        item["_score"] = item["_vector_score"] + lexical_score + prior_score
         out.append(item)
     out.sort(key=lambda item: (-float(item.get("_score", 0.0)), str(item.get("id", ""))))
     return out[: max(0, int(top_k))]

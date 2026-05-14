@@ -2,7 +2,7 @@
 id: prompts-card-lock-style_and_restrictions
 asset_type: prompt_card
 title: 文风与禁区锁
-topic: [通用]
+topic: [通用, 文风]
 stage: auxiliary
 quality_grade: A
 source_path: _原料/提示词库参考/prompts/2.md

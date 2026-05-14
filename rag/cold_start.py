@@ -132,13 +132,34 @@ def _builtin_defaults() -> dict[str, Any]:
         "layer1_filter_expansion": {
             "stage": {
                 "drafting": ["drafting", "outline", "setting"],
-                "framework": ["framework", "outline", "analysis", "refinement"],
+                "setting": ["setting", "outline", "auxiliary"],
+                "framework": ["framework", "outline", "analysis", "refinement", "drafting", "auxiliary"],
+                "refinement": ["refinement", "auxiliary"],
+                "business": ["business", "analysis"],
             },
             "card_intent": {
                 "prose_generation": ["prose_generation", "outline_planning", "prototype_creation"],
-                "structural_design": ["structural_design", "simulation"],
-                "outline_planning": ["outline_planning", "checker_diagnostic"],
-                "generator": ["generator", "prototype_creation", "structural_design"],
+                "structural_design": [
+                    "structural_design",
+                    "simulation",
+                    "generator",
+                    "management_tracking",
+                    "prose_generation",
+                    "outline_planning",
+                ],
+                "outline_planning": [
+                    "outline_planning",
+                    "checker_diagnostic",
+                    "generator",
+                    "editing_transformation",
+                ],
+                "generator": ["generator", "prototype_creation", "structural_design", "prose_generation"],
+                "editing_transformation": [
+                    "editing_transformation",
+                    "persona_setup",
+                    "simulation",
+                    "structural_design",
+                ],
             },
         },
     }

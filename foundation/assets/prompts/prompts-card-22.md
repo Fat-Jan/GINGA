@@ -2,7 +2,7 @@
 id: prompts-card-generate_exchange_list-22
 asset_type: prompt_card
 title: 主神空间强化兑换列表
-topic: [系统流, 无限流]
+topic: [系统流, 无限流, 奖励]
 stage: setting
 quality_grade: B
 source_path: _原料/提示词库参考/prompts/22.md

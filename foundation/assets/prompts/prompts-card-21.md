@@ -2,7 +2,7 @@
 id: prompts-card-design_infinite_dungeon-21
 asset_type: prompt_card
 title: 原创副本世界观设计
-topic: [无限流]
+topic: [无限流, 玄幻, 通用, 世界观]
 stage: setting
 quality_grade: B+
 source_path: _原料/提示词库参考/prompts/21.md

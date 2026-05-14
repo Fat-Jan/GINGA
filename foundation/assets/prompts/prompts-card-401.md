@@ -2,7 +2,7 @@
 id: prompts-card-design-many_children_system-401
 asset_type: prompt_card
 title: 设计多子多福系统
-topic: [玄幻, 系统]
+topic: [玄幻, 系统, 多子多福]
 stage: setting
 quality_grade: B
 source_path: _原料/提示词库参考/prompts/401.md

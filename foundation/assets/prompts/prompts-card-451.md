@@ -2,7 +2,7 @@
 id: prompts-card-mimic_character_voice-451
 asset_type: prompt_card
 title: 润色：角色语气模仿 (Character Voice Mimicry)
-topic: [同人]
+topic: [同人, 文风]
 stage: refinement
 quality_grade: B
 source_path: _原料/提示词库参考/prompts/451.md

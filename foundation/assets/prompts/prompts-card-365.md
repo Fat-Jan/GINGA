@@ -2,7 +2,7 @@
 id: prompts-card-check_foreshadowing_payoff-365
 asset_type: prompt_card
 title: 流程：伏笔回收检查 (Foreshadowing Payoff)
-topic: [通用]
+topic: [通用, 悬疑, 伏笔]
 stage: refinement
 quality_grade: B
 source_path: _原料/提示词库参考/prompts/365.md

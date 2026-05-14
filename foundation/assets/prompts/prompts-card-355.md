@@ -2,7 +2,7 @@
 id: prompts-card-choreograph_fight_scene-355
 asset_type: prompt_card
 title: 流程：打斗动作细化 (Combat Choreography)
-topic: [玄幻, 都市, 武侠]
+topic: [玄幻, 都市, 武侠, 动作]
 stage: drafting
 quality_grade: B+
 source_path: _原料/提示词库参考/prompts/355.md

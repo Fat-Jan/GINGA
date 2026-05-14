@@ -60,6 +60,7 @@ class RagRecallEvaluationTest(unittest.TestCase):
         from scripts.evaluate_rag_recall import topic_intersects
 
         self.assertTrue(topic_intersects(["规则怪谈"], ["怪谈"]))
+        self.assertTrue(topic_intersects(["惊悚"], ["怪谈"]))
         self.assertTrue(topic_intersects(["general"], ["通用"]))
         self.assertTrue(topic_intersects(["战斗"], ["动作"]))
         self.assertTrue(topic_intersects(["系统流"], ["系统"]))
@@ -69,13 +70,29 @@ class RagRecallEvaluationTest(unittest.TestCase):
 
         self.assertTrue(filter_value_matches("stage", "framework", "outline"))
         self.assertTrue(filter_value_matches("stage", "framework", "analysis"))
+        self.assertTrue(filter_value_matches("stage", "framework", "drafting"))
+        self.assertTrue(filter_value_matches("stage", "framework", "auxiliary"))
+        self.assertTrue(filter_value_matches("stage", "setting", "auxiliary"))
+        self.assertTrue(filter_value_matches("stage", "setting", "outline"))
+        self.assertTrue(filter_value_matches("stage", "business", "analysis"))
+        self.assertTrue(filter_value_matches("stage", "refinement", "auxiliary"))
         self.assertTrue(filter_value_matches("stage", "drafting", "outline"))
         self.assertTrue(filter_value_matches("stage", "drafting", "setting"))
         self.assertFalse(filter_value_matches("stage", "drafting", "analysis"))
         self.assertTrue(filter_value_matches("card_intent", "structural_design", "simulation"))
+        self.assertTrue(filter_value_matches("card_intent", "structural_design", "generator"))
+        self.assertTrue(filter_value_matches("card_intent", "structural_design", "management_tracking"))
+        self.assertTrue(filter_value_matches("card_intent", "structural_design", "prose_generation"))
+        self.assertTrue(filter_value_matches("card_intent", "structural_design", "outline_planning"))
         self.assertTrue(filter_value_matches("card_intent", "prose_generation", "outline_planning"))
         self.assertTrue(filter_value_matches("card_intent", "prose_generation", "prototype_creation"))
+        self.assertTrue(filter_value_matches("card_intent", "outline_planning", "generator"))
+        self.assertTrue(filter_value_matches("card_intent", "outline_planning", "editing_transformation"))
         self.assertTrue(filter_value_matches("card_intent", "generator", "prototype_creation"))
+        self.assertTrue(filter_value_matches("card_intent", "generator", "prose_generation"))
+        self.assertTrue(filter_value_matches("card_intent", "editing_transformation", "persona_setup"))
+        self.assertTrue(filter_value_matches("card_intent", "editing_transformation", "simulation"))
+        self.assertTrue(filter_value_matches("card_intent", "editing_transformation", "structural_design"))
         self.assertFalse(filter_value_matches("card_intent", "prose_generation", "simulation"))
 
     def test_evaluation_query_intents_are_prompt_card_schema_values(self) -> None:

@@ -2,7 +2,7 @@
 id: prompts-card-generate_dungeon_rewards-27
 asset_type: prompt_card
 title: 生成高评级地下城奖励结算画面
-topic: [无限流, 游戏流]
+topic: [无限流, 游戏流, 奖励]
 stage: auxiliary
 quality_grade: B
 source_path: _原料/提示词库参考/prompts/27.md

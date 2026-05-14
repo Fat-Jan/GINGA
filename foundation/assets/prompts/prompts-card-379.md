@@ -2,7 +2,7 @@
 id: prompts-card-differentiate-379
 asset_type: prompt_card
 title: 润色：群像文人物区分
-topic: [通用]
+topic: [通用, 文风]
 stage: refinement
 quality_grade: A
 source_path: _原料/提示词库参考/prompts/379.md

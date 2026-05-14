@@ -50,11 +50,12 @@ _DEFAULT_QUALITY_FLOOR = "B"
 
 _TOPIC_ALIAS_GROUPS: tuple[tuple[str, ...], ...] = (
     ("通用", "general"),
-    ("怪谈", "规则怪谈"),
+    ("怪谈", "规则怪谈", "惊悚", "恐怖", "SCP", "都市传说"),
     ("动作", "战斗"),
     ("系统", "系统流"),
     ("玄幻", "无限流"),
     ("言情", "女频", "豪门", "反转", "大纲", "细纲"),
+    ("文风", "角色语气", "角色声音", "同人"),
 )
 
 _TOPIC_ALIAS_MAP: dict[str, frozenset[str]] = {
@@ -147,11 +148,11 @@ def recall(
         if wanted_topics:
             rows = [r for r in rows if _topic_hit(r.get("topic", []), wanted_topics)]
 
-    # 排序：quality_grade ASC → topic specificity DESC → last_updated DESC.
+    # 排序：topic specificity DESC → quality_grade ASC → last_updated DESC.
     rows.sort(
         key=lambda r: (
-            _quality_score(r.get("quality_grade", "")),
             -_topic_match_count(r.get("topic", []), wanted_topics),
+            _quality_score(r.get("quality_grade", "")),
             _negate_str(r.get("last_updated", "")),
         )
     )

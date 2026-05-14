@@ -2,7 +2,7 @@
 id: prompts-card-check_foreshadowing-146
 asset_type: prompt_card
 title: 伏笔回收与反转设计检查表
-topic: [悬疑]
+topic: [悬疑, 伏笔, 通用]
 stage: analysis
 quality_grade: B
 source_path: _原料/提示词库参考/prompts/146.md

@@ -2,7 +2,7 @@
 id: prompts-card-inject-cliffhanger-362
 asset_type: prompt_card
 title: 流程：悬念钩子植入 (Cliffhanger Injector)
-topic: [general]
+topic: [general, 通用, 悬疑]
 stage: drafting
 quality_grade: B
 source_path: _原料/提示词库参考/prompts/362.md

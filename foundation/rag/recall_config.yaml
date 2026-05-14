@@ -88,11 +88,23 @@ layer1_filter_expansion:
       - drafting
       - outline
       - setting
+    setting:
+      - setting
+      - outline
+      - auxiliary
     framework:
       - framework
       - outline
       - analysis
       - refinement
+      - drafting
+      - auxiliary
+    refinement:
+      - refinement
+      - auxiliary
+    business:
+      - business
+      - analysis
   card_intent:
     prose_generation:
       - prose_generation
@@ -101,12 +113,24 @@ layer1_filter_expansion:
     structural_design:
       - structural_design
       - simulation
+      - generator
+      - management_tracking
+      - prose_generation
+      - outline_planning
     outline_planning:
       - outline_planning
       - checker_diagnostic
+      - generator
+      - editing_transformation
     generator:
       - generator
       - prototype_creation
+      - structural_design
+      - prose_generation
+    editing_transformation:
+      - editing_transformation
+      - persona_setup
+      - simulation
       - structural_design
 
 # ---------------------------------------------------------------------------

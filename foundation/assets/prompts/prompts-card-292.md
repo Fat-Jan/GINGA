@@ -2,7 +2,7 @@
 id: prompts-card-generate_foreshadowing-292
 asset_type: prompt_card
 title: 伏笔埋设技巧 (Foreshadowing Tool)
-topic: [通用]
+topic: [通用, 悬疑, 伏笔]
 stage: auxiliary
 quality_grade: B+
 source_path: _原料/提示词库参考/prompts/292.md

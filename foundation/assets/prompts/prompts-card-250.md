@@ -2,7 +2,7 @@
 id: prompts-card-design_safe_house_rules-250
 asset_type: prompt_card
 title: 规则怪谈：安全屋规则设计
-topic: [惊悚]
+topic: [惊悚, 怪谈]
 stage: setting
 quality_grade: B+
 source_path: _原料/提示词库参考/prompts/250.md

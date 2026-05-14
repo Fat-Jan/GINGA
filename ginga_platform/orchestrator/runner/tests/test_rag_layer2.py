@@ -288,6 +288,60 @@ class RagLayer2Test(unittest.TestCase):
             self.assertEqual(hits[0]["id"], "card-many-children")
             self.assertGreater(hits[0]["_lexical_score"], hits[1]["_lexical_score"])
 
+    def test_search_vector_preserves_ordered_candidate_prior(self) -> None:
+        from rag.index_builder import build_index
+        from rag.layer2_vector import build_vector_index, search_vector
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            src = root / "prompts"
+            src.mkdir()
+            _write_card_md(
+                src,
+                "metadata-best",
+                {
+                    "id": "card-metadata-best",
+                    "asset_type": "prompt_card",
+                    "title": "Metadata best",
+                    "topic": ["玄幻"],
+                    "stage": "setting",
+                    "quality_grade": "A",
+                    "card_intent": "structural_design",
+                    "source_path": "metadata-best.md",
+                    "last_updated": "2026-05-10",
+                },
+                "shared vector body",
+            )
+            _write_card_md(
+                src,
+                "metadata-later",
+                {
+                    "id": "card-metadata-later",
+                    "asset_type": "prompt_card",
+                    "title": "Metadata later",
+                    "topic": ["玄幻"],
+                    "stage": "setting",
+                    "quality_grade": "A",
+                    "card_intent": "structural_design",
+                    "source_path": "metadata-later.md",
+                    "last_updated": "2026-05-10",
+                },
+                "shared vector body",
+            )
+            idx = root / "index.sqlite"
+            build_index([src], idx)
+            build_vector_index(idx)
+
+            hits = search_vector(
+                idx,
+                "shared vector body",
+                top_k=2,
+                candidate_ids=["card-metadata-later", "card-metadata-best"],
+            )
+
+            self.assertEqual([hit["id"] for hit in hits], ["card-metadata-later", "card-metadata-best"])
+            self.assertGreater(hits[0]["_candidate_prior_score"], hits[1]["_candidate_prior_score"])
+
     def test_retriever_uses_default_embedding_when_vector_index_ready(self) -> None:
         from rag.layer2_vector import build_vector_index
         from rag.retriever import recall_cards

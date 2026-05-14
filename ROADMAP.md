@@ -7,7 +7,7 @@
 **状态更新**：2026-05-15（依据 `STATUS.md`；本文件保留为历史规划 + 当前状态对照）
 **对应架构**：`ARCHITECTURE.md` v1
 
-> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估与 P2 可回归评估收口。下一步按 RAG 报告 blocker summary 提升 metadata/同义词质量。
+> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口与 RAG 质量小迭代。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。下一步主线转入 agent harness 补强，RAG 残余 blocker 作为 sidecar 处理。
 >
 > 若本文件与 `STATUS.md` 冲突，以 `STATUS.md` 为当前状态真值。
 
@@ -25,7 +25,7 @@
 | **S1: MVP 跑通第一章** ⭐ critical path | 1-2 周 | Foundation schema 最小子集 + 双 skill contract + workflow 12 step + 端到端 CLI demo | "输入创意，得到第一章正文 + 状态文件" | ✅ 已完成 |
 | **S2: 多章连载 + 基础召回** | 1-2 周 | 完整 runtime_state + RAG Layer 1 + 461 prompts 标注（A/A- 优先） + immersive_mode | "写到第 N 章不崩 + 召回辅助卡片 + 沉浸写作模式" | ✅ 已完成 |
 | **S3: RAG 增强 + 标注扩展** | 1 周 | RAG Layer 2/3 + B/B+ 卡补示例 + scout-1 风险治理 | "向量召回 + LLM rerank + 召回质量提升" | ✅ 已完成 |
-| **S4: Phase 2 缺口 + 用户反馈循环** | 持续 | N/P/D/V 阶段 + 多技能扩展 + 4 scout 全部建议落地 | "完整 pipeline + 持续优化" | 🔄 持续；native `sqlite-vec` + RAG 真实召回质量评估已完成 |
+| **S4: Phase 2 缺口 + 用户反馈循环** | 持续 | N/P/D/V 阶段 + 多技能扩展 + 4 scout 全部建议落地 + agent harness 补强 | "完整 pipeline + 持续优化" | 🔄 持续；RAG 评估与质量小迭代已完成，下一步 agent harness |
 
 **总周期估计**：MVP 上线 3-5 周（S1+S2+S3）；Phase 2 持续。
 
@@ -221,10 +221,14 @@ P-8/9/10 ──┘  (双 skill contract.yaml + adapter，最高风险段)
 - [x] **P2-1**：补 Layer 1 空召回 metadata，明确空结果原因与诊断字段。
 - [x] **P2-2**：为评估查询维护 `expected_ids` / `relevant_ids`。
 - [x] **P2-3**：把 RAG 质量评估从「能跑」升级为可追踪、可回归。
+- [x] **P2-4**：RAG 质量小迭代完成：补充高影响 topic/stage/card_intent 扩展与候选排序先验，Layer 2 `recall@5` 从 0.425 提升到 0.614，`expected_recall@5` 从 0.875 提升到 0.917。
 
 ### 4.3 当前下一步
 
-- [ ] **P2-4**：按 `.ops/reports/rag_recall_quality_report.md` 的 blocker summary 补 topic/card_intent/stage metadata 与少量领域同义词，优先把 Layer 2 `recall@5` 从 0.425 往 0.500+ 推。
+- [ ] **P2-5**：Agent harness hardening（主线）。新增离线 harness 覆盖 `ginga init`、单章 `run`、`--chapters` 多章、`--immersive` 四条路径；用 mock LLM + 临时 `state_root` 复现完整执行，断言 state 域、audit_log、chapter artifacts、错误路径与 CLI 退出码。
+- [ ] **P2-5A**：StateIO 写入边界审计。把 `runtime_state` YAML 域写入统一压到 `StateIO` 或现有封装路径；章节正文 `chapter_NN.md` 作为 artifact 明确标注，避免后续 agent 把直接写 YAML 当成捷径。
+- [ ] **P2-5B**：demo 真实性标识。CLI / harness / 报告中区分 mock、deterministic eval 与真实 LLM demo，禁止用 mock 结果声明真实生产链路已完成。
+- [ ] **P2-6**：RAG 残余小迭代（sidecar）。按 `.ops/reports/rag_recall_quality_report.md` 的 blocker summary 处理残余 `candidate_k` / `asset_type` blocker，守住 Layer 2 `recall@5 >= 0.500` 与 `expected_recall@5 >= 0.875`，再决定是否让部分 methodology 以跨资产类型进入评估候选。
 
 ### 4.4 任务清单（按触发条件优先级，尚未触发）
 
@@ -318,7 +322,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 - [x] Jury 修订追踪表（jury 23 条建议全部归属到具体任务编号，§七）
 - [x] 8 决策落地到 ARCHITECTURE §七 + 本文件任务编号
 
-**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-15，下一步是按 RAG 报告 blocker summary 提升 metadata/同义词质量。
+**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-15，下一步主线是 agent harness 补强，RAG 残余 `candidate_k` / `asset_type` blocker 作为 sidecar 处理。
 
 ---
 

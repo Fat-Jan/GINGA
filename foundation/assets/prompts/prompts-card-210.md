@@ -2,7 +2,7 @@
 id: prompts-card-generate_achievements-210
 asset_type: prompt_card
 title: 成就系统与称号设计
-topic: [系统, 网游]
+topic: [系统, 网游, 奖励]
 stage: setting
 quality_grade: B+
 source_path: _原料/提示词库参考/prompts/210.md
