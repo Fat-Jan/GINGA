@@ -1,0 +1,23 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Local agent/workflow runtime logs and validation byproducts.
+.ops/*.log
+.ops/**/*.stdout
+.ops/**/*.stderr
+.ops/validation/*.sqlite
+.ops/validation/*.db
+
+# Local vector indexes / generated databases.
+rag/*.sqlite
+rag/*.db
+
+# Python local environments and cache.
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

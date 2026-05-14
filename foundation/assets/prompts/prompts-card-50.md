@@ -1,0 +1,61 @@
+---
+id: prompts-card-design-50
+asset_type: prompt_card
+title: 赛博朋克义体改装方案
+topic: [赛博朋克, 未来科幻]
+stage: setting
+quality_grade: A
+source_path: _原料/提示词库参考/prompts/50.md
+last_updated: 2026-05-13
+card_intent: structural_design
+card_kind: setup_card
+task_verb: design
+task_full: design_cybernetic_implants
+granularity: character
+output_kind: schema_json
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 50. 赛博朋克义体改装方案
+
+## 提示词内容
+
+```json
+{
+  "task": "design_cybernetic_implants",
+  "character_role": "{{role}}",
+  "combat_style": "Stealth / Tank / Hacker / Speed",
+  "loadout": [
+    {
+      "slot": "Eyes",
+      "name": "Kiroshi Optics Mk.III",
+      "function": "Thermal vision, trajectory prediction",
+      "side_effect": "Dry eyes, HUD glitch"
+    },
+    {
+      "slot": "Arms",
+      "name": "Mantis Blades / Gorilla Arms",
+      "function": "Melee damage",
+      "side_effect": "High calorie consumption"
+    },
+    {
+      "slot": "Nervous System",
+      "name": "Sandevistan (Time Dilation)",
+      "function": "Slow down time perception",
+      "side_effect": "Mental instability (Cyberpsychosis risk)"
+    }
+  ],
+  "visual_aesthetic": "Chrome / Rusty / Flesh-like"
+}
+```
+
+## 使用场景
+赛博朋克/未来科幻。设计角色的装备和能力体系。
+
+## 最佳实践要点
+1.  **代价机制**：强调 `side_effect`（如赛博精神病），增加力量的沉重感。
+2.  **风格统一**：通过 `visual_aesthetic` 确立角色的视觉风格（高端或废土）。
+
+## 示例输入
+将 `{{role}}` 替换为“贫民窟赏金猎人”。

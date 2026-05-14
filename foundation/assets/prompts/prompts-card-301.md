@@ -1,0 +1,52 @@
+---
+id: prompts-card-create_dnd_character_sheet-301
+asset_type: prompt_card
+title: 生成DND角色属性卡
+topic: [西幻, 跑团]
+stage: setting
+quality_grade: B+
+source_path: _原料/提示词库参考/prompts/301.md
+last_updated: 2026-05-13
+card_intent: prototype_creation
+card_kind: setup_card
+task_verb: create
+task_full: create_dnd_character_sheet
+granularity: character
+output_kind: schema_json
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 301. TRPG/跑团：DND 属性车卡 (Character Sheet)
+
+## 提示词内容
+
+```json
+{
+  "task": "create_dnd_character_sheet",
+  "race": "Elf / Tiefling / Dwarf",
+  "class": "Warlock / Paladin / Rogue",
+  "background": "Noble / Urchin / Sage",
+  "alignment": "Chaotic Neutral / Lawful Evil",
+  "stats": {
+    "STR": "8 (-1)",
+    "DEX": "16 (+3)",
+    "CON": "14 (+2)",
+    "INT": "10 (0)",
+    "WIS": "12 (+1)",
+    "CHA": "18 (+4)"
+  },
+  "traits": "Flaws, Ideals, Bonds",
+  "equipment": "Starting gear + one trinket"
+}
+```
+
+## 使用场景
+西幻/跑团文/游戏文。快速生成符合 D&D 规则的角色卡。
+
+## 最佳实践要点
+1.  **数值平衡**：依据 5E 规则生成合理的属性点。
+2.  **角色深度**：通过“缺陷 (Flaw)”和“羁绊 (Bond)”让角色更立体。
+
+## 示例输入
+创建一个“混乱中立”的提夫林术士，背景是流浪儿。

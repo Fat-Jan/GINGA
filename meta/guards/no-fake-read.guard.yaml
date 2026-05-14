@@ -1,0 +1,53 @@
+# Guard: no-fake-read
+# 类别：工作纪律 / 防伪造
+# 上位法：constitution const-001 / const-003
+# 落地：jury-1 P1 显式划分 guard（前置硬阻断）；ARCHITECTURE §2.2
+# 调用：Orchestrator 在 step preconditions 阶段触发
+
+id: no-fake-read
+category: 工作纪律
+description: |
+  防伪造：禁止声称读了某文件 / 章节 / 资料但实际未读。
+  step 若在 preconditions 中包含 `guard:no-fake-read`，则 runner 必须验证
+  audit_log 中存在对应的 read_event（含 file path / read_ts / byte_count）。
+  缺证据 → 中断 workflow + 报错。
+
+constitution_refs:
+  - const-001  # 不确定就查，不要装懂
+  - const-003  # 不能伪造已读
+
+# 触发条件：当 step.preconditions 包含 guard:no-fake-read，或检测到声明性读取陈述
+trigger_when:
+  any_of:
+    - step.preconditions.includes: guard:no-fake-read
+    - llm_output.contains_phrase:
+        - "我已读"
+        - "已读取"
+        - "根据章节 X 的内容"
+        - "查阅了"
+    - step.declared_reads.non_empty: true
+
+# 校验逻辑：runner 必须能在 audit_log 中找到对应的 read_event
+verification:
+  required_evidence:
+    - audit_log.entries[].source == "file_read"
+    - audit_log.entries[].path matches claimed_path
+    - audit_log.entries[].byte_count > 0
+    - audit_log.entries[].read_ts within current step window
+  failure_mode: missing_or_mismatched_read_event
+
+# 强制级别：硬阻断，不可关闭，不可 bypass
+enforcement: block
+bypass_allowed: false
+error_message: |
+  [GUARD:no-fake-read BLOCK]
+  Step <step_id> 在 preconditions / output 中声明读取 <claimed_file>，
+  但 audit_log 中无对应 read_event 或 byte_count=0。
+  这违反 constitution const-001/const-003（防伪造）。
+  请：(1) 真实调用 read tool；(2) 等 audit_log 落 read_event；(3) 再继续。
+
+# 审计：阻断事件写入 audit_log
+audit:
+  on_block: append_to runtime_state.audit_log
+  severity: error
+  source: guard:no-fake-read

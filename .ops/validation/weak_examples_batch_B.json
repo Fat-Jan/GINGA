@@ -1,0 +1,414 @@
+{
+  "batch": "B",
+  "count": 51,
+  "items": [
+    {
+      "file": "foundation/assets/prompts/prompts-card-133.md",
+      "title": "拍卖行/黑市物品清单生成",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-134.md",
+      "title": "设计用于学院流/学霸文的硬核考试题目",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-135.md",
+      "title": "社交媒体热搜榜单模拟",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-136.md",
+      "title": "房地产/地皮开发策划案",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-137.md",
+      "title": "宗教/教派教义生成",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-139.md",
+      "title": "模拟病毒/瘟疫传播模型",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-143.md",
+      "title": "赛博朋克黑客网络空间可视化",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-144.md",
+      "title": "规则怪谈：错误与异常档案 (SCP风)",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-145.md",
+      "title": "无限流主神任务发布机制",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-147.md",
+      "title": "悬念 (Cliffhanger) 设计生成器",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-150.md",
+      "title": "多人对话场面调度 (谁在说话)",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-151.md",
+      "title": "意识流/心理独白写法",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-152.md",
+      "title": "生成历史文官制与爵位体系",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-153.md",
+      "title": "魔法/阵法符文视觉设计",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-154.md",
+      "title": "废土载具改装方案",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-157.md",
+      "title": "生成战术小队手势与战术用语",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-158.md",
+      "title": "变身/机甲着装流程 (变身动画)",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-159.md",
+      "title": "史诗感演说/战前动员",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-160.md",
+      "title": "平行宇宙差异点设计",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-161.md",
+      "title": "非人类视角叙事 (动物/物品)",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-162.md",
+      "title": "游戏化叙事：UI 与系统日志设计",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-163.md",
+      "title": "微短剧特效与转场脚本",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-166.md",
+      "title": "设计语言学/解密游戏谜题",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-168.md",
+      "title": "互动式小说分支选项设计",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-171.md",
+      "title": "跨物种沟通语言学",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-172.md",
+      "title": "魔法/超能力决斗裁判解说",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-175.md",
+      "title": "异能失控/暴走状态描写",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-176.md",
+      "title": "生成间谍/特工装备库清单",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-179.md",
+      "title": "虫族蜂群意识沟通逻辑",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-181.md",
+      "title": "傲娇 (Tsundere) 台词生成器",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-183.md",
+      "title": "综漫/无限流角色能力适配",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-184.md",
+      "title": "高智商智斗：博弈论应用",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-186.md",
+      "title": "深夜食堂/解忧杂货店风格的治愈系故事",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-187.md",
+      "title": "宠物视角：人类真奇怪",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-189.md",
+      "title": "时间线管理工具",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-191.md",
+      "title": "魔法少女变身系设定 (黑深残版)",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-193.md",
+      "title": "杀手/刺客组织的信条与戒律",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-194.md",
+      "title": "废柴流逆袭节奏表 (退婚流)",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-195.md",
+      "title": "龙与地下城 (DND) 怪物遭遇战设计",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-197.md",
+      "title": "校园霸凌反击战术",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-199.md",
+      "title": "蒸汽朋克飞艇空战",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-20.md",
+      "title": "极品亲戚生成器 (打脸专用)",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-202.md",
+      "title": "维多利亚/蒸汽朋克侦探事务所",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-204.md",
+      "title": "病娇 (Yandere) 行为与台词",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-206.md",
+      "title": "红鲱鱼 (Red Herring) 误导线索",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-208.md",
+      "title": "设计天空城/浮空岛生态系统",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-210.md",
+      "title": "成就系统与称号设计",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-212.md",
+      "title": "魔法反制/见招拆招逻辑",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-213.md",
+      "title": "壁咚/强吻情节描写",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-219.md",
+      "title": "动作戏节奏表",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    },
+    {
+      "file": "foundation/assets/prompts/prompts-card-222.md",
+      "title": "入殓师/遗体整容师日常",
+      "quality_grade": "B+",
+      "reasons": [
+        "example_none"
+      ]
+    }
+  ]
+}

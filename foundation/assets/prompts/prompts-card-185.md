@@ -1,0 +1,54 @@
+---
+id: prompts-card-design_domino_plot-185
+asset_type: prompt_card
+title: 幕后布局：多米诺骨牌效应
+topic: [高智商, 刺客]
+stage: framework
+quality_grade: A-
+source_path: _原料/提示词库参考/prompts/185.md
+last_updated: 2026-05-13
+card_intent: structural_design
+card_kind: setup_card
+task_verb: design
+task_full: design_domino_plot
+granularity: methodology
+output_kind: schema_json
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 185. 幕后布局：多米诺骨牌效应
+
+## 提示词内容
+
+```json
+{
+  "task": "design_domino_plot",
+  "goal": "Assassinate the King",
+  "start_action": "MC buys a specific flower",
+  "chain_reaction": [
+    "Flower triggers allergy in maid",
+    "Maid opens window for air",
+    "Draft blows out candle",
+    "Guard moves to relight it",
+    "Sniper gets clear line of sight"
+  ],
+  "reveal": "It looked like an accident."
+}
+```
+
+## 使用场景
+高智商/刺客文。描写通过微小扰动实现宏大目标的布局。
+
+## 最佳实践要点
+1.  **看似无关**：初始行动（买花）与最终结果（杀王）必须看似毫无关联。
+2.  **精密计算**：强调主角对因果律的绝对掌控。
+
+## 示例输入
+```json
+{
+  "goal": "让叛军首领在宴会上失去护卫",
+  "start_action": "主角送出一盒无害香料",
+  "reveal": "所有意外串联后像自然事故"
+}
+```

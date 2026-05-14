@@ -1,0 +1,52 @@
+---
+id: prompts-card-design_spy_code-132
+asset_type: prompt_card
+title: 谍战/卧底接头暗号设计
+topic: [谍战, 悬疑]
+stage: setting
+quality_grade: B+
+source_path: _原料/提示词库参考/prompts/132.md
+last_updated: 2026-05-13
+card_intent: structural_design
+card_kind: setup_card
+task_verb: design
+task_full: design_spy_code
+granularity: scene
+output_kind: dialogue
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 132. 谍战/卧底接头暗号设计
+
+## 提示词内容
+
+```json
+{
+  "task": "design_spy_code",
+  "location": "Teahouse / Park Bench / Bookstore",
+  "code_type": "Dialogue / Object placement / Book cipher",
+  "exchange": [
+    {"A": "The weather is surprisingly dry today.", "meaning": "Are you safe?"},
+    {"B": "Yes, but the fish aren't biting.", "meaning": "Safe, but followed."}
+  ],
+  "emergency_signal": "Ordering a specific tea / Dropping a handkerchief"
+}
+```
+
+## 使用场景
+谍战/悬疑文。设计充满张力的接头情节。
+
+## 最佳实践要点
+1.  **日常化**：暗号必须听起来像普通对话，融入环境，不易被旁人察觉。
+2.  **容错率**：设计紧急中止信号，体现间谍工作的危险性。
+
+## 示例输入
+```json
+{
+  "location": "旧书店二楼",
+  "code_type": "书名暗号 + 茶杯摆放",
+  "exchange": ["A：这本书缺了第七页。", "B：那就从第八页开始读。"],
+  "emergency_signal": "把红书签夹在封面外侧"
+}
+```

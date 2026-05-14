@@ -1,0 +1,181 @@
+# Planning With Files — Skill Contract (v9.2.0-repo-grounded)
+#
+# 来源：ARCHITECTURE.md §4.3 / §6.3 + jury-1 P0（双 skill 必须有 contract.yaml）+ scout-2 实地画像
+# 配套：skill.md（思路 3 原文）+ adapter.py（workspace 三件套双向同步）
+#
+# 关键设计（vs dark-fantasy）：
+#   - 不与 dark-fantasy 抢路由：默认 score 0；workspace_managed=true 时 score 50
+#   - cross-cutting 定位：不动正文 state（runtime_state.entity_runtime 全锁）
+#   - 不含 immersive_mode（仅 dark-fantasy 独有）
+
+skill_id: planning-with-files
+version: "9.2.0-repo-grounded"
+status: active
+
+# ---------- 输入契约 ----------
+inputs:
+  task_description:
+    type: string
+    required: true
+    description: 用户本轮任务描述
+  task_category:
+    type: "enum: [正文创作, 设定工作, 历史考据, 质量审查, 规划维护]"
+    required: true
+    description: 任务类别（思路 3 5 分类）
+  runtime_state.workspace.task_plan:
+    type: ref<task_plan.md>
+    required: true
+    description: 目标 / 阶段 / 关键问题 / 决策 / 错误记录
+  runtime_state.workspace.findings:
+    type: ref<findings.md>
+    required: true
+    description: 事实 / 资料结论 / 人物状态 / 设定补丁 / 未决问题
+  runtime_state.workspace.progress:
+    type: ref<progress.md>
+    required: true
+    description: 本会话进度 / 动作 / 验证结果 / 阻塞项
+  runtime_state.workspace.character_relationships:
+    type: ref<character_relationships.md>
+    required: false
+    description: 人物关系矩阵（思路 3 仓库实况）
+  runtime_state.chapters:
+    type: array<chapter_ref>
+    required: false
+    description: 仓库内分卷正文（卷*.md），按需读取最近 3-10 个
+  runtime_state.retrieved.references:
+    type: array<ref>
+    required: false
+    description: 小说资料 / imported_history 等参考库召回（按需）
+  user_guidance:
+    type: string
+    required: false
+    description: 用户本轮明确要求与硬约束（信息源优先级最高）
+  mode:
+    type: "enum: [全量冷启动, 增量热更新]"
+    required: false
+    default: 增量热更新
+    description: 思路 3 双模式（默认增量）
+
+# ---------- 输出契约 ----------
+outputs:
+  self_check_table:
+    type: object
+    format: markdown_table
+    fields:
+      context_range: string
+      current_anchor: string
+      plan_files_status: "enum: [已更新, 部分更新, 未启用]"
+      historical_verification: string
+      main_conflict: string
+      risk_scan: string[]
+    description: 任务前置外显自检表（思路 3 输出规范）
+  task_plan_update:
+    type: string
+    format: markdown
+    required: false
+    description: task_plan.md 更新片段（按阶段 / 决策 / 错误记录）
+  findings_update:
+    type: string
+    format: markdown
+    required: false
+    description: findings.md 追加片段（新事实 / 新结论 / 设定补丁）
+  progress_update:
+    type: string
+    format: markdown
+    required: false
+    description: progress.md 追加片段（动作 / 验证 / 阻塞）
+  result:
+    type: string
+    format: markdown
+    description: |
+      任务实际产出（正文 / 设定结论 / 考据报告 / 审查清单 / 规划文件）。
+      正文创作时由 dark-fantasy 或 default writer 完成，本 skill 不直接写正文。
+
+# state_updates：workspace 三件套增量
+state_updates:
+  runtime_state.workspace.task_plan: write_or_append
+  runtime_state.workspace.findings: append
+  runtime_state.workspace.progress: append
+  audit_log.entries: append
+
+# ---------- 优先级（cross-cutting，不与 dark-fantasy 抢路由）----------
+priority:
+  - when: "workspace_managed=true and task_category in [规划维护, 历史考据]"
+    score: 50
+    description: 仅对规划与考据类任务有路由权重
+  - when: "task_category=质量审查 and target=workspace"
+    score: 30
+    description: 审查 workspace 三件套时弱介入
+  - default: 0
+    description: 不路由到本 skill（避免与 dark-fantasy 抢正文创作）
+
+# ---------- forbidden mutation：planning skill 不能动的字段 ----------
+# planning skill 是 cross-cutting 工具型 skill，不动正文 state 与锁定域
+forbidden_mutation:
+  - runtime_state.locked.*
+  - runtime_state.locked.STORY_DNA
+  - runtime_state.locked.WORLD
+  - runtime_state.locked.PLOT_ARCHITECTURE
+  - runtime_state.locked.GENRE_LOCKED
+  - runtime_state.entity_runtime.CHARACTER_STATE
+  - runtime_state.entity_runtime.RESOURCE_LEDGER
+  - runtime_state.entity_runtime.FORESHADOW_STATE
+  - runtime_state.entity_runtime.GLOBAL_SUMMARY
+  - chapter_text
+  - meta/constitution.yaml
+  - meta/guards/*
+  - meta/checkers/*
+
+# ---------- 双向 adapter 约定 ----------
+adapter:
+  module: ginga_platform.skills.planning_with_files.adapter
+  class: PlanningWithFilesAdapter
+  input_transform: input_transform
+  output_transform: output_transform
+  state_sync_mode: explicit
+  description: |
+    workspace 三件套通过 adapter 双向同步到 runtime_state.workspace.*。
+    skill 内部维护的文档（task_plan/findings/progress）通过 adapter 转换为 state_updates。
+    runtime_state.workspace 是 true source，skill 内部表述为缓存。
+
+# ---------- allowed-tools（来自思路 3 frontmatter）----------
+allowed_tools:
+  - read_file
+  - write_file
+  - replace
+  - glob
+  - web_fetch
+  - google_web_search
+
+hooks:
+  - matcher: "write_file|replace|read_file"
+    actions:
+      - type: command
+        command: "echo '【planning-with-files】正在同步计划文件与上下文锚点...'"
+
+# ---------- 模式声明（思路 3 双模式）----------
+modes:
+  full_cold_start:
+    when: "用户明确要求梳理全书 / 复盘伏笔 / 重做卷纲 / 设定重构"
+    action: 列文件、建全局拓扑、抽人物状态/关键事件/时间线/未回收伏笔，落 findings.md
+  incremental_warm_update:
+    default: true
+    action: 默认读最近 3-10 章；长线伏笔/跨卷人物/重大伤势/长期交易链才扩到 10-30
+
+# ---------- 元数据 ----------
+metadata:
+  source_doctrine: _原料/思路/待整理思路 3
+  scout_report: .ops/scout-reports/scout2-doctrine.md
+  task_categories:
+    - 正文创作
+    - 设定工作
+    - 历史考据
+    - 质量审查
+    - 规划维护
+  source_type_lock: 港综年代商黑结合
+  protagonist_lock: 沈轩（极致利己 / 讲收益 / 讲底线 / 讲代价）
+  hard_constraints:
+    - 不伪造已读内容
+    - 不机械追读 100 章
+    - 不滥用联网
+    - 不暴露思维链

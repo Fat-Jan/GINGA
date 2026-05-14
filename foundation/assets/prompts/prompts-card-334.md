@@ -1,0 +1,44 @@
+---
+id: prompts-card-write_forbidden_spell_chant-334
+asset_type: prompt_card
+title: 奇幻：吟唱禁咒 (Forbidden Spell)
+topic: [奇幻, 魔法, 战争]
+stage: drafting
+quality_grade: A
+source_path: _原料/提示词库参考/prompts/334.md
+last_updated: 2026-05-13
+card_intent: prose_generation
+card_kind: scene_card
+task_verb: write
+task_full: write_forbidden_spell_chant
+granularity: scene
+output_kind: schema_json
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 334. 奇幻：吟唱禁咒 (Forbidden Spell)
+
+## 提示词内容
+
+```json
+{
+  "task": "write_forbidden_spell_chant",
+  "spell_name": "Armageddon / Void Collapse / Soul Sacrifice",
+  "chant": "Ancient language / Resonating with the universe",
+  "environment": "Sky turning black / Earth shaking / Mana draining",
+  "cost": "Life force / Sanity / Eye bleeding",
+  "interruption": "Enemy trying to stop the chant / MC protecting the caster",
+  "release": "Blinding light / Absolute silence / Destruction"
+}
+```
+
+## 使用场景
+西幻/魔法/战争。决定战局的终极力量。
+
+## 最佳实践要点
+1.  **读条**：吟唱过程越长，威力越大，保护法师的战斗越激烈。
+2.  **代价**：施放禁咒往往意味着施法者的牺牲。
+
+## 示例输入
+大法师燃烧生命吟唱“流星火雨”，阻挡兽人大军。

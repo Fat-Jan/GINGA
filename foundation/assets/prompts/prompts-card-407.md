@@ -1,0 +1,44 @@
+---
+id: prompts-card-write_rebirth_investment-407
+asset_type: prompt_card
+title: 都市重生投资流写作提示
+topic: [都市]
+stage: setting
+quality_grade: B+
+source_path: _原料/提示词库参考/prompts/407.md
+last_updated: 2026-05-13
+card_intent: prose_generation
+card_kind: setup_card
+task_verb: write
+task_full: write_rebirth_investment
+granularity: world
+output_kind: schema_json
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 407. 流派：都市重生投资流 (Rebirth Investment)
+
+## 提示词内容
+
+```json
+{
+  "task": "write_rebirth_investment",
+  "timeline": "1990s / 2000s / 2010s (Bitcoin)",
+  "target": "Stocks / Real Estate / Tech Unicorns",
+  "advantage": "Future Knowledge (K-line / Policy)",
+  "obstacle": "Lack of Capital / Competitors / Family Doubt",
+  "action": "High leverage gamble / Snatching opportunities",
+  "outcome": "Massive Wealth -> Changing History"
+}
+```
+
+## 使用场景
+都市重生文。利用信息差进行降维打击，弥补前世遗憾。
+
+## 最佳实践要点
+1.  **时代感**：还原当年的物价、环境和风口（如非典、奥运、比特币）。
+2.  **豪赌**：主角确信会赢的“赌博”与旁人担忧的对比。
+
+## 示例输入
+主角重生回2014年，卖掉房子全仓买入比特币，并在世界杯期间重注德国7:1巴西。

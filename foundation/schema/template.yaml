@@ -1,0 +1,254 @@
+# foundation/schema/template.yaml
+# 通用模板资产类 schema
+#
+# 资产来源：_原料/基座/模板/*（角色、伏笔、悬念、大纲、世界观、项目）
+# 用途：跨题材可复用的数据骨架 / 实体结构 / 表单模板
+# 关键修订：jury-1 P2（必填 8 字段精简） + jury-2（专属字段 template_family）
+
+$schema: ginga/foundation/v1
+asset_type: template
+description: 通用模板资产，提供跨题材可复用的结构化骨架（角色卡、伏笔表、章纲等）
+
+# ---------------------------------------------------------------------------
+# S1 必填 8 字段
+# ---------------------------------------------------------------------------
+
+required_fields:
+  - id
+  - asset_type
+  - title
+  - topic
+  - stage
+  - quality_grade
+  - source_path
+  - last_updated
+
+# ---------------------------------------------------------------------------
+# 选填字段
+# ---------------------------------------------------------------------------
+
+optional_fields:
+  - template_family                # 角色 / 伏笔 / 悬念 / 大纲 / 项目 / 世界观
+  - fields_required                # 模板必填字段清单（模板内嵌）
+  - fields_optional                # 模板选填字段清单
+  - render_format                  # yaml / markdown_table / mermaid / xml
+  - supports_incremental_update    # 是否支持运行时滚动更新
+  - input_contract                 # 上游需要准备什么
+  - output_contract                # 产出哪些结构
+  - state_entities                 # 关联的状态实体
+  - dependencies                   # 依赖的其它资产
+  - dedup_verdict
+  - dedup_against
+  - reuse_scope
+  - safety_level
+  - status
+  - notes
+
+# ---------------------------------------------------------------------------
+# 字段类型与说明
+# ---------------------------------------------------------------------------
+
+fields:
+  id:
+    type: string
+    description: 全局唯一 id，建议命名 base-template-<family>-<slug>
+    example: base-template-character-protagonist
+  asset_type:
+    type: enum
+    enum: [template]
+    description: 资产类型固定为 template
+    example: template
+  title:
+    type: string
+    description: 模板标题
+    example: 主角卡通用模板
+  topic:
+    type: string[]
+    description: 题材标签数组，通用模板可为 [通用]
+    example: [通用]
+  stage:
+    type: enum
+    enum:
+      - ideation
+      - setting
+      - framework
+      - outline
+      - drafting
+      - refinement
+      - analysis
+      - advanced
+      - business
+      - auxiliary
+      - cross_cutting              # 横切规则模板（如 state-schema）
+      - profile
+    description: 12 枚举值；template 按内容显式标注，多数落在 setting/framework/outline
+    example: setting
+  quality_grade:
+    type: enum
+    enum: [A, A-, B+, B, C, D]
+    description: 质量分级
+    example: A
+  source_path:
+    type: string
+    description: 原始文件路径
+    example: _原料/基座/模板/角色/主角.md
+  last_updated:
+    type: date
+    description: ISO 日期
+    example: '2026-05-13'
+
+  # 专属字段
+
+  template_family:
+    type: enum
+    enum:
+      - 角色                       # 主角 / 反派 / 配角 / 通用
+      - 伏笔                       # 伏笔表 / 回收追踪
+      - 悬念                       # 悬念表 / 期待兑现
+      - 大纲                       # 主大纲 / 章节大纲
+      - 项目                       # 创意简报 / 项目卡
+      - 世界观                     # 世界观构建 / 体系
+    description: 模板二级分类（jury-2 配套）
+    example: 角色
+
+  fields_required:
+    type: string[]
+    description: 模板里的必填字段清单（实例化时必须填的字段）
+    example: [姓名, 性别, 年龄, 核心动机, 红线]
+
+  fields_optional:
+    type: string[]
+    description: 模板的选填字段清单
+    example: [外貌, 口头禅, 童年阴影, 标志性物品]
+
+  render_format:
+    type: enum
+    enum:
+      - yaml
+      - markdown_table
+      - mermaid
+      - xml
+      - markdown_section
+    description: 模板的渲染形式
+    example: markdown_section
+
+  supports_incremental_update:
+    type: enum
+    enum: [true, false]
+    description: 是否支持运行时滚动更新（角色卡 / 伏笔表通常为 true）
+    example: true
+
+  input_contract:
+    type: string[]
+    description: 上游需要准备的输入
+    example: [创意简报 已锁定核心 premise]
+
+  output_contract:
+    type: string[]
+    description: 产出哪些结构
+    example: [主角全字段卡 + 状态历史段]
+
+  state_entities:
+    type: string[]
+    description: 关联的 runtime_state 实体类型
+    example: [CHARACTER_STATE]
+
+  dependencies:
+    type: string[]
+    description: 依赖的其它资产 id 列表
+    example: [base-template-project-creative-brief]
+
+  dedup_verdict:
+    type: enum
+    enum: [retain, merge, drop]
+    description: 双库去重判定
+    example: retain
+
+  dedup_against:
+    type: string[]
+    description: 可能重复的资产 id 列表
+    example: []
+
+  reuse_scope:
+    type: enum
+    enum: [single_genre, cross_genre, universal]
+    description: 复用范围；通用模板默认 universal
+    example: universal
+
+  safety_level:
+    type: enum
+    enum: [normal, sensitive, redline-heavy]
+    description: 内容敏感性
+    example: normal
+
+  status:
+    type: enum
+    enum: [draft, active, deprecated]
+    description: 资产生命周期
+    example: active
+
+  notes:
+    type: string[]
+    description: 迁移备注
+    example: []
+
+# ---------------------------------------------------------------------------
+# 示例资产
+# ---------------------------------------------------------------------------
+
+examples:
+  - id: base-template-character-protagonist
+    asset_type: template
+    title: 主角卡通用模板
+    topic: [通用]
+    stage: setting
+    quality_grade: A
+    source_path: _原料/基座/模板/角色/主角.md
+    last_updated: '2026-05-13'
+    template_family: 角色
+    fields_required: [姓名, 性别, 年龄, 核心动机, 红线, 能力, 当前状态]
+    fields_optional: [外貌, 口头禅, 童年阴影, 成长规划]
+    render_format: markdown_section
+    supports_incremental_update: true
+    output_contract: [主角全字段卡 + 状态历史段]
+    state_entities: [CHARACTER_STATE]
+    reuse_scope: universal
+    safety_level: normal
+    status: active
+
+  - id: base-template-outline-chapter
+    asset_type: template
+    title: 章节大纲模板
+    topic: [通用]
+    stage: outline
+    quality_grade: A
+    source_path: _原料/基座/模板/大纲/章节大纲.md
+    last_updated: '2026-05-13'
+    template_family: 大纲
+    fields_required: [本章目标, 阻力, 代价, 局部收益, 残留风险]
+    fields_optional: [钩子类型, 场景切换数, 信息密度]
+    render_format: markdown_section
+    supports_incremental_update: false
+    output_contract: [章节大纲 + 冲突经济学预算]
+    state_entities: [PLOT_ARCHITECTURE]
+    reuse_scope: universal
+    safety_level: normal
+    status: active
+
+  - id: base-template-foreshadow
+    asset_type: template
+    title: 伏笔模板
+    topic: [通用]
+    stage: cross_cutting
+    quality_grade: A
+    source_path: _原料/基座/模板/伏笔/伏笔模板.md
+    last_updated: '2026-05-13'
+    template_family: 伏笔
+    fields_required: [伏笔 id, 埋设章节, 预期回收章节, 当前状态]
+    fields_optional: [关联角色, 暗示密度, 回收风险]
+    render_format: markdown_table
+    supports_incremental_update: true
+    state_entities: [FORESHADOW_STATE]
+    reuse_scope: universal
+    safety_level: normal
+    status: active

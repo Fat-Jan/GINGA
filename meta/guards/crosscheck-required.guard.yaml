@@ -1,0 +1,62 @@
+# Guard: crosscheck-required
+# 类别：工作纪律 / 防迷信
+# 上位法：constitution const-002 / const-016
+# 落地：scout-2 §"必须做 - 关键信息交叉验证"；ARCHITECTURE §2.2
+# 调用：Orchestrator 在涉及关键事实（年代/政策/金融/军事/地理/术语）的 step 之前触发
+
+id: crosscheck-required
+category: 工作纪律
+description: |
+  防迷信：禁止单一信源拍板核心事实。
+  当 step 输出涉及"关键事实"（年代、政策、金融、军事、地理、术语）时，
+  必须有至少 2-3 个独立信源交叉验证，冲突需显式指出。
+  违反 → 中断 workflow + 要求作家或 LLM 补查。
+
+constitution_refs:
+  - const-002  # 任何关键事实必须交叉验证
+  - const-016  # 联网只补硬事实，不替代作品内已写明的剧情真相
+
+# 关键事实类别（强制交叉验证）
+critical_fact_categories:
+  - 年代细节        # 历史年份、朝代、事件先后
+  - 政策法规        # 法律、行政区划、政府机构
+  - 金融数据        # 货币、汇率、市场数据
+  - 军事装备        # 武器代号、装备参数、组织编制
+  - 地理位置        # 城市、地名、地形、距离
+  - 专业术语        # 医学、法律、科技、宗教术语
+  - 真人姓名        # 历史人物、公众人物（避免诽谤）
+
+# 触发条件
+trigger_when:
+  any_of:
+    - step.preconditions.includes: guard:crosscheck-required
+    - llm_output.contains_fact_in_categories: $critical_fact_categories
+    - step.declared_external_facts.non_empty: true
+
+# 校验逻辑：至少 2 个独立信源
+verification:
+  required_evidence:
+    min_independent_sources: 2
+    source_independence_check: |
+      两个信源不能都是同一聚合站（如 wiki + wiki 镜像 = 1 个有效）；
+      网络结果与作品内已写剧情冲突时，作品内为准（const-016）。
+    conflict_declaration: |
+      若信源间存在冲突，必须在输出中显式说明并选择一个，
+      不许静默吞冲突。
+  failure_mode: single_source_or_unchecked_critical_fact
+
+# 强制级别：硬阻断
+enforcement: block
+bypass_allowed: false
+error_message: |
+  [GUARD:crosscheck-required BLOCK]
+  Step <step_id> 输出涉及关键事实 <fact_category>: <fact_value>，
+  但仅来自 <source_count> 个信源（< 2）或信源相互依赖。
+  违反 constitution const-002/const-016（防单源迷信）。
+  请：(1) 联网核查至少 2 个独立信源；(2) 在输出中标注信源；(3) 冲突时显式指出。
+
+# 审计
+audit:
+  on_block: append_to runtime_state.audit_log
+  severity: error
+  source: guard:crosscheck-required

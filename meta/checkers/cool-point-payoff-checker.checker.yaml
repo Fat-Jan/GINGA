@@ -1,0 +1,95 @@
+# Checker: cool-point-payoff-checker
+# 类别：爽点 / 因果审计
+# 上位法：constitution const-009 / const-012 / const-014 / const-017
+# 落地：jury-3 P1 红线（default_mode=warn）；ARCHITECTURE §2.2 / §2.4
+# 调用：Orchestrator 在 step postconditions 阶段触发（H_chapter_settle 之后）
+
+id: cool-point-payoff-checker
+category: 爽点审计
+description: |
+  检测章节正文中是否存在"爽点未兑现"、"机械降神"、"账本未结算"、
+  "包装与正文脱节" 等问题。
+  jury-3 P1 明确要求：default 必须 warn-only，作家有自己的爽点节奏，
+  不能被系统硬 block 成标准网文模板。
+
+constitution_refs:
+  - const-005  # 把文件系统当长期记忆
+  - const-009  # 拒绝机械降神
+  - const-012  # 爽点必须兑现且有因果与代价
+  - const-014  # 长篇必须有账本意识
+  - const-017  # 书名/简介/开篇三件套必须协同
+  - const-018  # 章节类型差异化
+
+# 目标 state 字段
+target_state_field: runtime_state.entity_runtime.FORESHADOW_STATE
+
+# 检查逻辑：规则 + LLM 双轨
+check_logic:
+  type: hybrid
+  rule_based:
+    - name: cool_point_promised_not_delivered_3ch
+      detect: |
+        FORESHADOW_STATE.pool[] 中 type=cool_point 的伏笔，
+        若 planted_ch 距当前章节 ≥ 3 章未变为 paid_off，
+        且无明显 still_setup 标记，severity=warn。
+      severity: warn
+      message: "爽点伏笔 ≥3 章未兑现"
+    - name: deus_ex_machina_detection
+      detect: |
+        本章出现 protagonist 的关键解决方案，
+        但该方案对应 ability / item / info 在 CHARACTER_STATE / RESOURCE_LEDGER
+        中无对应铺垫记录（events 内无 acquired 事件）。
+      severity: warn
+      message: "解决方案缺铺垫（机械降神嫌疑）"
+    - name: chapter_advances_without_state_update
+      detect: |
+        本章 chapter_text 长度 ≥ 2000 字，
+        但 H_chapter_settle 之后 entity_runtime.RESOURCE_LEDGER / FORESHADOW_STATE
+        / CHARACTER_STATE 全部无 delta。
+      severity: warn
+      message: "章节推进但账本无更新（违反 const-014）"
+    - name: resource_gain_without_ledger_delta
+      detect: |
+        chapter_text 含"得到 X 单位资源"类描述，
+        但 RESOURCE_LEDGER 对应字段 delta=0。
+      severity: warn
+      message: "正文写收益但账本无增量"
+  llm_prompt_based:
+    enabled_when: stage in [refinement]
+    prompt_template: |
+      下面是章节正文 + FORESHADOW_STATE + RESOURCE_LEDGER 快照。
+      判断：
+      1. 本章爽点是否有因果支撑（铺垫 → 兑现 → 代价）
+      2. 是否存在机械降神（突然出现解决方案）
+      3. 账本是否同步更新（资源、收益、伏笔状态）
+      4. 章节类型是否单一（连续 N 章只剩战斗模板）
+      输出 JSON: {issues: [{type, evidence_chapter, evidence_state, suggestion}]}
+    severity_on_detection: warn
+
+# 严重级别梯度
+severity_levels: [info, warn, block]
+
+# 【关键】默认 warn-only（jury-3 P1 红线）
+default_mode: warn
+
+# 覆盖入口
+override_via: meta/user_overrides/checker_mode.yaml
+
+# 输出契约
+output_contract:
+  write_to: runtime_state.audit_log
+  entry_format:
+    ts: datetime
+    source: checker:cool-point-payoff-checker
+    severity: enum<info,warn,block>
+    msg: string
+    evidence_chapter: string
+    evidence_state: string
+    suggestion: string
+    action: enum<warn_only,block_workflow,user_review_required>
+
+# 调用方式（非阻塞）
+invocation:
+  phase: postconditions
+  blocks_workflow: false
+  blocks_workflow_when_user_sets: block

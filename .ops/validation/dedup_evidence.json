@@ -1,0 +1,1252 @@
+{
+  "status": "ok",
+  "inputs": {
+    "prompts_dir": "foundation/assets/prompts",
+    "base_dir": "_原料/基座"
+  },
+  "prompt_card_count": 461,
+  "base_doc_count": 541,
+  "sample_count": 25,
+  "decision_counts": {
+    "retain": 461,
+    "merge": 0,
+    "drop": 0,
+    "unknown": 0,
+    "raw": {
+      "retain": 461
+    }
+  },
+  "sample_method": "deterministic per-verdict spread; title/card_intent/file keywords scored against base filenames and content token counts",
+  "samples": [
+    {
+      "file": "prompts-card-1.md",
+      "title": "加载全能网文主编角色",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "加载全能网文主编角色",
+        "persona",
+        "setup",
+        "persona_setup"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "325-多子多福-微观-节奏把控.md",
+          "score": 8,
+          "matched_keywords": [
+            "setup"
+          ]
+        },
+        {
+          "file": "327-多子多福-微观-高潮设计.md",
+          "score": 8,
+          "matched_keywords": [
+            "setup"
+          ]
+        },
+        {
+          "file": "272-多子多福-进阶技巧-战斗场景.md",
+          "score": 6,
+          "matched_keywords": [
+            "setup"
+          ]
+        },
+        {
+          "file": "324-多子多福-微观-章节规划.md",
+          "score": 6,
+          "matched_keywords": [
+            "setup"
+          ]
+        },
+        {
+          "file": "326-多子多福-微观-伏笔设置.md",
+          "score": 6,
+          "matched_keywords": [
+            "setup"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-20.md",
+      "title": "极品亲戚生成器 (打脸专用)",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "极品亲戚生成器",
+        "打脸专用",
+        "prototype",
+        "creation",
+        "prototype_creation"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "273-多子多福-进阶技巧-日常场景.md",
+          "score": 8,
+          "matched_keywords": [
+            "creation"
+          ]
+        },
+        {
+          "file": "264-多子多福-框架阶段-场景设计.md",
+          "score": 7,
+          "matched_keywords": [
+            "creation"
+          ]
+        },
+        {
+          "file": "439-黑暗多子多福-势力-统治场景.md",
+          "score": 7,
+          "matched_keywords": [
+            "creation"
+          ]
+        },
+        {
+          "file": "012-创意阶段-项目立项评估.md",
+          "score": 6,
+          "matched_keywords": [
+            "creation"
+          ]
+        },
+        {
+          "file": "085-辅助工具-拆书分析.md",
+          "score": 6,
+          "matched_keywords": [
+            "creation"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-39.md",
+      "title": "番茄风主角人设卡",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "番茄风主角人设卡",
+        "prototype",
+        "creation",
+        "prototype_creation"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "273-多子多福-进阶技巧-日常场景.md",
+          "score": 8,
+          "matched_keywords": [
+            "creation"
+          ]
+        },
+        {
+          "file": "264-多子多福-框架阶段-场景设计.md",
+          "score": 7,
+          "matched_keywords": [
+            "creation"
+          ]
+        },
+        {
+          "file": "439-黑暗多子多福-势力-统治场景.md",
+          "score": 7,
+          "matched_keywords": [
+            "creation"
+          ]
+        },
+        {
+          "file": "012-创意阶段-项目立项评估.md",
+          "score": 6,
+          "matched_keywords": [
+            "creation"
+          ]
+        },
+        {
+          "file": "085-辅助工具-拆书分析.md",
+          "score": 6,
+          "matched_keywords": [
+            "creation"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-58.md",
+      "title": "功法/技能取名生成器",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "功法",
+        "技能取名生成器",
+        "generator"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "模板/角色/实体关系图.md",
+          "score": 6,
+          "matched_keywords": [
+            "功法"
+          ]
+        },
+        {
+          "file": "题材/网文/gaowu.md",
+          "score": 5,
+          "matched_keywords": [
+            "功法"
+          ]
+        },
+        {
+          "file": "题材/网文/xiuxian.md",
+          "score": 5,
+          "matched_keywords": [
+            "功法"
+          ]
+        },
+        {
+          "file": "384-欲念描写专家-微观-占有欲呈现.md",
+          "score": 4,
+          "matched_keywords": [
+            "功法"
+          ]
+        },
+        {
+          "file": "385-欲念描写专家-微观-征服描写.md",
+          "score": 4,
+          "matched_keywords": [
+            "功法"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-77.md",
+      "title": "刑侦/法医尸检报告生成",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "刑侦",
+        "法医尸检报告生成",
+        "generator"
+      ],
+      "possible_dedup_against": [],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-96.md",
+      "title": "穿越者与土著的文化冲突",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "穿越者与土著的文化冲突",
+        "prose",
+        "generation",
+        "prose_generation"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "189-规则怪谈-辅助工具-规则生成.md",
+          "score": 8,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "063-1-商业化-AI-Beta读者反馈.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "103-世情文-设定阶段-世界观设定.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "319-多子多福-中观-亲密关系设定.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "329-多子多福-微观-情感节奏设计.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-115.md",
+      "title": "漫画/条漫分镜脚本描述",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "漫画",
+        "条漫分镜脚本描述",
+        "prose",
+        "generation",
+        "prose_generation"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "189-规则怪谈-辅助工具-规则生成.md",
+          "score": 8,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "063-1-商业化-AI-Beta读者反馈.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "103-世情文-设定阶段-世界观设定.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "319-多子多福-中观-亲密关系设定.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "329-多子多福-微观-情感节奏设计.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-134.md",
+      "title": "设计用于学院流/学霸文的硬核考试题目",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "设计用于学院流",
+        "学霸文的硬核考试题目",
+        "structural",
+        "design",
+        "structural_design"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "151-知乎短篇-创意阶段-市场定位.md",
+          "score": 12,
+          "matched_keywords": [
+            "design",
+            "structural",
+            "structural_design"
+          ]
+        },
+        {
+          "file": "193-规则怪谈-辅助工具-整书拆解.md",
+          "score": 12,
+          "matched_keywords": [
+            "design",
+            "structural"
+          ]
+        },
+        {
+          "file": "024-设定阶段-反派角色塑造.md",
+          "score": 8,
+          "matched_keywords": [
+            "design"
+          ]
+        },
+        {
+          "file": "027-设定阶段-金手指设计.md",
+          "score": 8,
+          "matched_keywords": [
+            "design"
+          ]
+        },
+        {
+          "file": "032-创作阶段-黄金三章设计.md",
+          "score": 8,
+          "matched_keywords": [
+            "design"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-153.md",
+      "title": "魔法/阵法符文视觉设计",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "魔法",
+        "阵法符文视觉设计",
+        "scene",
+        "description",
+        "scene_description"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "204-替身文-宏观-世界观构建.md",
+          "score": 22,
+          "matched_keywords": [
+            "description",
+            "scene",
+            "scene_description",
+            "魔法"
+          ]
+        },
+        {
+          "file": "116-玄幻小说-创作阶段-章节创作.md",
+          "score": 21,
+          "matched_keywords": [
+            "description",
+            "scene",
+            "scene_description"
+          ]
+        },
+        {
+          "file": "267-多子多福-创作阶段-章节创作.md",
+          "score": 21,
+          "matched_keywords": [
+            "description",
+            "scene",
+            "scene_description"
+          ]
+        },
+        {
+          "file": "408-黑暗多子多福-设定-战斗系统.md",
+          "score": 20,
+          "matched_keywords": [
+            "description",
+            "scene",
+            "scene_description"
+          ]
+        },
+        {
+          "file": "105-世情文-框架阶段-大纲制作.md",
+          "score": 19,
+          "matched_keywords": [
+            "description",
+            "scene",
+            "scene_description"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-172.md",
+      "title": "魔法/超能力决斗裁判解说",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "魔法",
+        "超能力决斗裁判解说",
+        "generator"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "462-黑暗多子多福-微观-死亡描写.md",
+          "score": 8,
+          "matched_keywords": [
+            "魔法"
+          ]
+        },
+        {
+          "file": "113-玄幻小说-设定阶段-世界观设定.md",
+          "score": 7,
+          "matched_keywords": [
+            "魔法"
+          ]
+        },
+        {
+          "file": "506-黑暗多子多福-微观-Tentacles.md",
+          "score": 6,
+          "matched_keywords": [
+            "魔法"
+          ]
+        },
+        {
+          "file": "题材/网文/xihuan.md",
+          "score": 6,
+          "matched_keywords": [
+            "魔法"
+          ]
+        },
+        {
+          "file": "395-黑暗多子多福-宏观-世界观构建.md",
+          "score": 5,
+          "matched_keywords": [
+            "魔法"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-191.md",
+      "title": "魔法少女变身系设定 (黑深残版)",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "魔法少女变身系设定",
+        "黑深残版",
+        "structural",
+        "design",
+        "structural_design"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "151-知乎短篇-创意阶段-市场定位.md",
+          "score": 12,
+          "matched_keywords": [
+            "design",
+            "structural",
+            "structural_design"
+          ]
+        },
+        {
+          "file": "193-规则怪谈-辅助工具-整书拆解.md",
+          "score": 12,
+          "matched_keywords": [
+            "design",
+            "structural"
+          ]
+        },
+        {
+          "file": "024-设定阶段-反派角色塑造.md",
+          "score": 8,
+          "matched_keywords": [
+            "design"
+          ]
+        },
+        {
+          "file": "027-设定阶段-金手指设计.md",
+          "score": 8,
+          "matched_keywords": [
+            "design"
+          ]
+        },
+        {
+          "file": "032-创作阶段-黄金三章设计.md",
+          "score": 8,
+          "matched_keywords": [
+            "design"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-210.md",
+      "title": "成就系统与称号设计",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "成就系统与称号设计",
+        "generator"
+      ],
+      "possible_dedup_against": [],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-229.md",
+      "title": "蒸汽朋克：飞空艇空难逃生",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "蒸汽朋克",
+        "飞空艇空难逃生",
+        "prose",
+        "generation",
+        "prose_generation"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "189-规则怪谈-辅助工具-规则生成.md",
+          "score": 8,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "063-1-商业化-AI-Beta读者反馈.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "103-世情文-设定阶段-世界观设定.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "319-多子多福-中观-亲密关系设定.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "329-多子多福-微观-情感节奏设计.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-248.md",
+      "title": "魔法体系平衡：代价与限制",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "魔法体系平衡",
+        "代价与限制",
+        "checker",
+        "diagnostic",
+        "checker_diagnostic"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "方法论/市场/读者吸引力分类法.md",
+          "score": 8,
+          "matched_keywords": [
+            "checker"
+          ]
+        },
+        {
+          "file": "075-1-数据分析-读者反馈分析.md",
+          "score": 4,
+          "matched_keywords": [
+            "diagnostic"
+          ]
+        },
+        {
+          "file": "方法论/创意/黄金三章.md",
+          "score": 4,
+          "matched_keywords": [
+            "checker"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-267.md",
+      "title": "都市：金融市场的惊天博弈",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "都市",
+        "金融市场的惊天博弈",
+        "prose",
+        "generation",
+        "prose_generation"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "189-规则怪谈-辅助工具-规则生成.md",
+          "score": 8,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "方法论/市场/读者吸引力分类法.md",
+          "score": 8,
+          "matched_keywords": [
+            "都市"
+          ]
+        },
+        {
+          "file": "010-创意阶段-灵感收集整理.md",
+          "score": 7,
+          "matched_keywords": [
+            "都市"
+          ]
+        },
+        {
+          "file": "011-创意阶段-市场定位分析.md",
+          "score": 6,
+          "matched_keywords": [
+            "都市"
+          ]
+        },
+        {
+          "file": "062-数据分析-章节质量评分.md",
+          "score": 5,
+          "matched_keywords": [
+            "都市"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-286.md",
+      "title": "奇幻：魔宠孵化/幼崽日常 (Pet Hatching)",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "奇幻",
+        "魔宠孵化",
+        "幼崽日常",
+        "pet",
+        "hatching",
+        "prose",
+        "generation",
+        "prose_generation"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "503-黑暗多子多福-微观-Pet Play.md",
+          "score": 12,
+          "matched_keywords": [
+            "pet"
+          ]
+        },
+        {
+          "file": "189-规则怪谈-辅助工具-规则生成.md",
+          "score": 8,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "483-黑暗多子多福-辅助-世界观完善器.md",
+          "score": 6,
+          "matched_keywords": [
+            "奇幻"
+          ]
+        },
+        {
+          "file": "063-1-商业化-AI-Beta读者反馈.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "101-世情文-创意阶段-市场定位.md",
+          "score": 4,
+          "matched_keywords": [
+            "奇幻"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-305.md",
+      "title": "美食探店：街头小吃描写",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "美食探店",
+        "街头小吃描写",
+        "prose",
+        "generation",
+        "prose_generation"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "189-规则怪谈-辅助工具-规则生成.md",
+          "score": 8,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "063-1-商业化-AI-Beta读者反馈.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "103-世情文-设定阶段-世界观设定.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "319-多子多福-中观-亲密关系设定.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "329-多子多福-微观-情感节奏设计.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-324.md",
+      "title": "悬疑：梦境解析 (Dream Analysis)",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "悬疑",
+        "梦境解析",
+        "dream",
+        "analysis",
+        "prose",
+        "generation",
+        "prose_generation"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "101-世情文-创意阶段-市场定位.md",
+          "score": 12,
+          "matched_keywords": [
+            "analysis",
+            "悬疑"
+          ]
+        },
+        {
+          "file": "011-创意阶段-市场定位分析.md",
+          "score": 10,
+          "matched_keywords": [
+            "analysis",
+            "悬疑"
+          ]
+        },
+        {
+          "file": "013-创意阶段-作品定位策略.md",
+          "score": 9,
+          "matched_keywords": [
+            "analysis",
+            "悬疑"
+          ]
+        },
+        {
+          "file": "043-创作阶段-语言润色.md",
+          "score": 8,
+          "matched_keywords": [
+            "analysis"
+          ]
+        },
+        {
+          "file": "075-1-数据分析-读者反馈分析.md",
+          "score": 8,
+          "matched_keywords": [
+            "analysis"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-343.md",
+      "title": "细纲：期待感管理 (Expectation Management)",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "细纲",
+        "期待感管理",
+        "expectation",
+        "management",
+        "tracking",
+        "management_tracking"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "311-多子多福-中观-后宫体系.md",
+          "score": 18,
+          "matched_keywords": [
+            "expectation",
+            "management",
+            "tracking"
+          ]
+        },
+        {
+          "file": "338-多子多福-微观-后宫管理.md",
+          "score": 15,
+          "matched_keywords": [
+            "expectation",
+            "management"
+          ]
+        },
+        {
+          "file": "266-多子多福-框架阶段-细纲.md",
+          "score": 14,
+          "matched_keywords": [
+            "management",
+            "细纲"
+          ]
+        },
+        {
+          "file": "344-多子多福-进阶-系统平衡设计.md",
+          "score": 14,
+          "matched_keywords": [
+            "expectation",
+            "management"
+          ]
+        },
+        {
+          "file": "267-多子多福-创作阶段-章节创作.md",
+          "score": 12,
+          "matched_keywords": [
+            "management",
+            "细纲"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-362.md",
+      "title": "流程：悬念钩子植入 (Cliffhanger Injector)",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "流程",
+        "悬念钩子植入",
+        "cliffhanger",
+        "injector",
+        "editing",
+        "transformation",
+        "editing_transformation"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "354-欲念描写专家-欲念转化.md",
+          "score": 8,
+          "matched_keywords": [
+            "transformation"
+          ]
+        },
+        {
+          "file": "409-黑暗多子多福-设定-资源转化.md",
+          "score": 8,
+          "matched_keywords": [
+            "transformation"
+          ]
+        },
+        {
+          "file": "443-黑暗多子多福-中观-身体恐怖.md",
+          "score": 8,
+          "matched_keywords": [
+            "transformation"
+          ]
+        },
+        {
+          "file": "421-黑暗多子多福-势力-利益相关者.md",
+          "score": 7,
+          "matched_keywords": [
+            "transformation"
+          ]
+        },
+        {
+          "file": "209-替身文-中观-男主塑造.md",
+          "score": 6,
+          "matched_keywords": [
+            "transformation"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-381.md",
+      "title": "赛博空间/黑客潜入场景生成",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "赛博空间",
+        "黑客潜入场景生成",
+        "prose",
+        "generation",
+        "prose_generation"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "189-规则怪谈-辅助工具-规则生成.md",
+          "score": 8,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "063-1-商业化-AI-Beta读者反馈.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "103-世情文-设定阶段-世界观设定.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "319-多子多福-中观-亲密关系设定.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "329-多子多福-微观-情感节奏设计.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-400.md",
+      "title": "完结：创作心路历程复盘 (Writer's Retrospective)",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "完结",
+        "创作心路历程复盘",
+        "writer",
+        "retrospective",
+        "prose",
+        "generation",
+        "prose_generation"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "189-规则怪谈-辅助工具-规则生成.md",
+          "score": 8,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "192-规则怪谈-辅助工具-卡文急救.md",
+          "score": 5,
+          "matched_keywords": [
+            "writer"
+          ]
+        },
+        {
+          "file": "243-替身文-微观-卡文急救.md",
+          "score": 5,
+          "matched_keywords": [
+            "writer"
+          ]
+        },
+        {
+          "file": "063-1-商业化-AI-Beta读者反馈.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "103-世情文-设定阶段-世界观设定.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-419.md",
+      "title": "流派：领主种田流 (Kingdom Building)",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "流派",
+        "领主种田流",
+        "kingdom",
+        "building",
+        "prose",
+        "generation",
+        "prose_generation"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "189-规则怪谈-辅助工具-规则生成.md",
+          "score": 8,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "319-多子多福-中观-亲密关系设定.md",
+          "score": 8,
+          "matched_keywords": [
+            "building",
+            "generation"
+          ]
+        },
+        {
+          "file": "280-多子多福-辅助工具-单章拆解.md",
+          "score": 6,
+          "matched_keywords": [
+            "building"
+          ]
+        },
+        {
+          "file": "084-辅助工具-单章拆解.md",
+          "score": 5,
+          "matched_keywords": [
+            "building"
+          ]
+        },
+        {
+          "file": "110-玄幻小说-创意阶段-灵感收集.md",
+          "score": 5,
+          "matched_keywords": [
+            "building"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-438.md",
+      "title": "我的英雄学院同人场景生成",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "我的英雄学院同人场景生成",
+        "prose",
+        "generation",
+        "prose_generation"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "189-规则怪谈-辅助工具-规则生成.md",
+          "score": 8,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "063-1-商业化-AI-Beta读者反馈.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "103-世情文-设定阶段-世界观设定.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "319-多子多福-中观-亲密关系设定.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        },
+        {
+          "file": "329-多子多福-微观-情感节奏设计.md",
+          "score": 4,
+          "matched_keywords": [
+            "generation"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    },
+    {
+      "file": "prompts-card-457.md",
+      "title": "润色：传说物品描写",
+      "dedup_verdict": "retain",
+      "declared_dedup_against": [],
+      "sample_keywords": [
+        "润色",
+        "传说物品描写",
+        "scene",
+        "description",
+        "scene_description"
+      ],
+      "possible_dedup_against": [
+        {
+          "file": "116-玄幻小说-创作阶段-章节创作.md",
+          "score": 21,
+          "matched_keywords": [
+            "description",
+            "scene",
+            "scene_description"
+          ]
+        },
+        {
+          "file": "267-多子多福-创作阶段-章节创作.md",
+          "score": 21,
+          "matched_keywords": [
+            "description",
+            "scene",
+            "scene_description"
+          ]
+        },
+        {
+          "file": "408-黑暗多子多福-设定-战斗系统.md",
+          "score": 20,
+          "matched_keywords": [
+            "description",
+            "scene",
+            "scene_description"
+          ]
+        },
+        {
+          "file": "105-世情文-框架阶段-大纲制作.md",
+          "score": 19,
+          "matched_keywords": [
+            "description",
+            "scene",
+            "scene_description"
+          ]
+        },
+        {
+          "file": "109-世情文-辅助工具-素材收集.md",
+          "score": 19,
+          "matched_keywords": [
+            "description",
+            "scene",
+            "scene_description"
+          ]
+        }
+      ],
+      "evidence_note": "retain decision has independent lexical/title sample"
+    }
+  ],
+  "limitations": [
+    "Lexical overlap is evidence for review, not semantic duplicate proof.",
+    "Chinese tokenization uses simple contiguous Han-character chunks and does not perform word segmentation.",
+    "Retain labels are validated by sampled candidate absence/weakness only; source prompt cards are not modified."
+  ]
+}

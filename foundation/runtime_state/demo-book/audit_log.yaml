@@ -1,0 +1,87 @@
+entries:
+- ts: '2026-05-13T11:01:59+00:00'
+  source: cli.init.A-E_setup
+  severity: info
+  msg: applied 10 update(s)
+  action: log
+  payload:
+    paths:
+    - locked.STORY_DNA.premise
+    - locked.STORY_DNA.conflict_engine
+    - locked.STORY_DNA.payoff_promise
+    - locked.STORY_DNA.word_target
+    - locked.GENRE_LOCKED.topic
+    - locked.GENRE_LOCKED.style_lock
+    - locked.WORLD.cosmology
+    - locked.WORLD.economy
+    - locked.PLOT_ARCHITECTURE.acts
+    - locked.PLOT_ARCHITECTURE.pivot_points
+- ts: '2026-05-13T11:01:59+00:00'
+  source: cli.init.F_state_init
+  severity: info
+  msg: applied 6 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.CHARACTER_STATE
+    - entity_runtime.RESOURCE_LEDGER.particles
+    - entity_runtime.RESOURCE_LEDGER.items
+    - entity_runtime.FORESHADOW_STATE.pool
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - entity_runtime.GLOBAL_SUMMARY.arc_summaries
+- ts: '2026-05-13T11:01:59+00:00'
+  source: cli.init.workspace_seed
+  severity: info
+  msg: applied 3 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.task_plan
+    - workspace.findings
+    - workspace.progress
+- ts: '2026-05-13T11:01:59+00:00'
+  source: cli.init
+  severity: info
+  msg: 'book initialized: id=demo-book topic=玄幻黑暗 target=500000'
+  action: log
+  payload:
+    locked_premise: 主角是一个失忆的刺客，醒来发现自己被卷入了一场跨越四重天堑的微粒争夺战
+- ts: '2026-05-13T11:06:16+00:00'
+  source: cli.run.A_through_F
+  severity: info
+  msg: setup steps skipped (seeded by init)
+  action: log
+  payload: {}
+- ts: '2026-05-13T11:08:58+00:00'
+  source: cli.run.H_chapter_settle
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - entity_runtime.GLOBAL_SUMMARY.arc_summaries
+- ts: '2026-05-13T11:08:58+00:00'
+  source: cli.run.R1_style_polish
+  severity: info
+  msg: R1_style_polish stub (S2 implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T11:08:58+00:00'
+  source: cli.run.R2_consistency_check
+  severity: info
+  msg: R2_consistency_check stub (S2 implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T11:08:58+00:00'
+  source: cli.run.R3_final_pack
+  severity: info
+  msg: R3_final_pack stub (S2 implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T11:08:58+00:00'
+  source: cli.run.V1_release_check
+  severity: info
+  msg: V1_release_check stub (S2 implements full)
+  action: log
+  payload: {}

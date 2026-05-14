@@ -1,0 +1,47 @@
+---
+id: prompts-card-write_system_starter_pack-291
+asset_type: prompt_card
+title: 系统：新手大礼包开启 (Starter Pack)
+topic: [系统, 爽文, 开局]
+stage: setting
+quality_grade: A-
+source_path: _原料/提示词库参考/prompts/291.md
+last_updated: 2026-05-13
+card_intent: prose_generation
+card_kind: setup_card
+task_verb: write
+task_full: write_system_starter_pack
+granularity: world
+output_kind: schema_json
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 291. 系统：新手大礼包开启 (Starter Pack)
+
+## 提示词内容
+
+```json
+{
+  "task": "write_system_starter_pack",
+  "trigger": "System activation / First sign-in",
+  "anticipation": "MC rubbing hands / Praying to gods",
+  "rewards": [
+    {"name": "SSS Rank Talent", "effect": "100x XP gain"},
+    {"name": "Legendary Weapon", "effect": "One-hit kill"},
+    {"name": "Mystery Box", "effect": "Unknown"}
+  ],
+  "mc_reaction": "Shock / Laughing maniacally / 'This is too OP!'",
+  "comparison": "Other players get trash / MC gets god-tier items"
+}
+```
+
+## 使用场景
+系统/爽文/开局。全书第一个大爽点，奠定主角优势。
+
+## 最佳实践要点
+1.  **极度超模**：新手礼包必须足够强，强到打破平衡。
+2.  **视觉特效**：金光闪闪的特效描写。
+
+## 示例输入
+系统激活，开启新手大礼包，获得“言出法随”技能。

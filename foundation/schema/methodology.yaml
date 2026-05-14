@@ -1,0 +1,295 @@
+# foundation/schema/methodology.yaml
+# 方法论资产类 schema
+#
+# 资产来源：_原料/基座/方法论/*（写作 / 创意 / 市场 / 平台 四大类）
+# 用途：写作 / 创意 / 市场 / 平台方法论，提供枚举、规则、评分、平台边界
+# 关键修订：jury-2 字段补丁 3（method_family + rule_type enum），决策 4（方法论拆 sub-section）
+
+$schema: ginga/foundation/v1
+asset_type: methodology
+description: 方法论资产，提供写作 / 创意 / 市场 / 平台四大族的指导与硬约束
+
+# ---------------------------------------------------------------------------
+# S1 必填 8 字段
+# ---------------------------------------------------------------------------
+
+required_fields:
+  - id
+  - asset_type
+  - title
+  - topic
+  - stage
+  - quality_grade
+  - source_path
+  - last_updated
+
+# ---------------------------------------------------------------------------
+# 选填字段
+# ---------------------------------------------------------------------------
+
+optional_fields:
+  - method_family                  # 写作 / 创意 / 市场 / 平台
+  - rule_type                      # constraint / enumeration / schema / guide
+  - normative_strength             # guide / hard_rule / schema
+  - targets                        # 面向哪些题材 / 平台 / 阶段
+  - integrates_with                # 上下游集成点（如 creative-brief / state-schema）
+  - sub_sections                   # 决策 4：方法论拆 sub-section
+  - input_contract
+  - output_contract
+  - platform_scope
+  - dedup_verdict
+  - dedup_against
+  - reuse_scope
+  - safety_level
+  - status
+  - notes
+
+# ---------------------------------------------------------------------------
+# 字段类型与说明
+# ---------------------------------------------------------------------------
+
+fields:
+  id:
+    type: string
+    description: 全局唯一 id，建议命名 base-methodology-<family>-<slug>
+    example: base-methodology-creative-golden-three
+  asset_type:
+    type: enum
+    enum: [methodology]
+    description: 资产类型固定为 methodology
+    example: methodology
+  title:
+    type: string
+    description: 方法论标题
+    example: 黄金三章开篇方法论
+  topic:
+    type: string[]
+    description: 适用题材标签；跨题材方法论可为 [通用]
+    example: [通用]
+  stage:
+    type: enum
+    enum:
+      - ideation
+      - setting
+      - framework
+      - outline
+      - drafting
+      - refinement
+      - analysis
+      - advanced
+      - business
+      - auxiliary
+      - cross_cutting
+      - profile
+    description: 12 枚举值；methodology 按 method_family 路由（写作→drafting/创意→ideation/市场→business/平台→advanced）
+    example: ideation
+  quality_grade:
+    type: enum
+    enum: [A, A-, B+, B, C, D]
+    description: 质量分级
+    example: A
+  source_path:
+    type: string
+    description: 原始文件路径
+    example: _原料/基座/方法论/创意/黄金三章.md
+  last_updated:
+    type: date
+    description: ISO 日期
+    example: '2026-05-13'
+
+  # 专属字段（jury-2 字段补丁 3）
+
+  method_family:
+    type: enum
+    enum:
+      - 写作                       # 反 AI 味 / 角色命名 / 母题目录 / 古代官制
+      - 创意                       # 黄金三章 / 平台分析 / 投稿
+      - 市场                       # 2026 市场趋势 / 吸引力分类法 / state-schema
+      - 平台                       # 跨平台规范 / 适配矩阵
+    description: 方法论一级家族（jury-2 字段补丁 3）
+    example: 创意
+
+  rule_type:
+    type: enum
+    enum:
+      - constraint                 # 约束（checker 直接调用）
+      - enumeration                # 受控枚举表（生成器调用）
+      - schema                     # 数据结构定义（runtime_state 引用）
+      - guide                      # 指南型（提供方向，不强制）
+    description: 方法论的规范强度类型（jury-2 字段补丁 3，区分 checker / 生成器消费场景）
+    example: enumeration
+
+  normative_strength:
+    type: enum
+    enum: [guide, hard_rule, schema]
+    description: 规范化强度等级
+    example: hard_rule
+
+  targets:
+    type: object
+    description: 面向哪些题材 / 平台 / 阶段；可用于 RAG 路由条件
+    example:
+      topics: [通用]
+      platforms: [番茄, 七猫, 起点]
+      stages: [ideation, framework]
+
+  integrates_with:
+    type: string[]
+    description: 上下游集成点，列出资产 id 或逻辑接口名
+    example:
+      - base-template-project-creative-brief
+      - bees-golden-three-checker
+      - platform-config
+
+  sub_sections:
+    type: object
+    description: 决策 4 / 方法论拆 sub-section；按 normative_strength 二次分块
+    example:
+      hard_rule:
+        - 第 1 章必须在 200 字内出钩子
+        - 第 3 章必须出第一次代价
+      guide:
+        - 优先选用悬念钩 + 危机钩组合
+
+  input_contract:
+    type: string[]
+    description: 上游需要准备什么
+    example: [题材已锁定, 目标平台已选]
+
+  output_contract:
+    type: string[]
+    description: 产出哪些结构
+    example: [黄金三章拆解 + 章末钩 + 平台适配建议]
+
+  platform_scope:
+    type: string[]
+    description: 平台适配范围
+    example: [番茄, 七猫, 起点, 晋江]
+
+  dedup_verdict:
+    type: enum
+    enum: [retain, merge, drop]
+    description: 双库去重判定
+    example: retain
+
+  dedup_against:
+    type: string[]
+    description: 可能重复的资产 id 列表
+    example: []
+
+  reuse_scope:
+    type: enum
+    enum: [single_genre, cross_genre, universal]
+    description: 复用范围
+    example: universal
+
+  safety_level:
+    type: enum
+    enum: [normal, sensitive, redline-heavy]
+    description: 内容敏感性
+    example: normal
+
+  status:
+    type: enum
+    enum: [draft, active, deprecated]
+    description: 资产生命周期
+    example: active
+
+  notes:
+    type: string[]
+    description: 迁移备注
+    example: []
+
+# ---------------------------------------------------------------------------
+# 示例资产
+# ---------------------------------------------------------------------------
+
+examples:
+  - id: base-methodology-creative-golden-three
+    asset_type: methodology
+    title: 黄金三章开篇方法论
+    topic: [通用]
+    stage: ideation
+    quality_grade: A
+    source_path: _原料/基座/方法论/创意/黄金三章.md
+    last_updated: '2026-05-13'
+    method_family: 创意
+    rule_type: constraint
+    normative_strength: hard_rule
+    targets:
+      topics: [通用]
+      platforms: [番茄, 七猫, 起点]
+      stages: [ideation, framework]
+    integrates_with:
+      - base-template-project-creative-brief
+      - bees-golden-three-checker
+    sub_sections:
+      hard_rule:
+        - 第 1 章前 200 字必须出第一个钩子
+        - 第 3 章必须出第一次代价或反差
+      guide:
+        - 优先用悬念钩 + 危机钩组合
+        - 避免开局信息倾倒
+    reuse_scope: universal
+    safety_level: normal
+    status: active
+
+  - id: base-methodology-market-state-schema
+    asset_type: methodology
+    title: 运行时 state schema 方法论
+    topic: [通用]
+    stage: cross_cutting
+    quality_grade: A
+    source_path: _原料/基座/方法论/市场/state-schema.md
+    last_updated: '2026-05-13'
+    method_family: 市场
+    rule_type: schema
+    normative_strength: schema
+    integrates_with:
+      - foundation/schema/runtime_state.yaml
+      - base-template-character-protagonist
+      - base-template-foreshadow
+    output_contract: [entities.characters/items/locations/factions 统一 state 结构]
+    reuse_scope: universal
+    safety_level: normal
+    status: active
+    notes: [scout-1 关键发现 5 提到的关键桥梁]
+
+  - id: base-methodology-writing-anti-ai-style
+    asset_type: methodology
+    title: 反 AI 味写作方法论
+    topic: [通用]
+    stage: refinement
+    quality_grade: A-
+    source_path: _原料/基座/方法论/写作/反AI味.md
+    last_updated: '2026-05-13'
+    method_family: 写作
+    rule_type: constraint
+    normative_strength: hard_rule
+    integrates_with:
+      - meta/checkers/aigc-style-detector.checker.yaml
+    output_contract: [反 AI 味 checker 评分 + 改写建议]
+    reuse_scope: universal
+    safety_level: normal
+    status: active
+
+  - id: base-methodology-writing-ancient-officialdom
+    asset_type: methodology
+    title: 古代官职体系方法论
+    topic: [古代, 宫斗, 历史]
+    stage: cross_cutting
+    quality_grade: A
+    source_path: _原料/基座/方法论/写作/古代官职体系.md
+    last_updated: '2026-05-13'
+    method_family: 写作
+    rule_type: schema
+    normative_strength: hard_rule
+    targets:
+      topics: [古代, 宫斗, 历史]
+    integrates_with:
+      - base-template-outline-master
+    output_contract: [官职真值表 + 一票否决项]
+    reuse_scope: single_genre
+    safety_level: normal
+    status: active
+    notes: [按条件路由：命中古代/宫斗/历史时才加载]

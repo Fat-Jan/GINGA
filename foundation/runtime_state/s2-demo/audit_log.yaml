@@ -1,0 +1,496 @@
+entries:
+- ts: '2026-05-13T18:26:53+00:00'
+  source: cli.init.A-E_setup
+  severity: info
+  msg: applied 10 update(s)
+  action: log
+  payload:
+    paths:
+    - locked.STORY_DNA.premise
+    - locked.STORY_DNA.conflict_engine
+    - locked.STORY_DNA.payoff_promise
+    - locked.STORY_DNA.word_target
+    - locked.GENRE_LOCKED.topic
+    - locked.GENRE_LOCKED.style_lock
+    - locked.WORLD.cosmology
+    - locked.WORLD.economy
+    - locked.PLOT_ARCHITECTURE.acts
+    - locked.PLOT_ARCHITECTURE.pivot_points
+- ts: '2026-05-13T18:26:53+00:00'
+  source: cli.init.F_state_init
+  severity: info
+  msg: applied 6 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.CHARACTER_STATE
+    - entity_runtime.RESOURCE_LEDGER.particles
+    - entity_runtime.RESOURCE_LEDGER.items
+    - entity_runtime.FORESHADOW_STATE.pool
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - entity_runtime.GLOBAL_SUMMARY.arc_summaries
+- ts: '2026-05-13T18:26:53+00:00'
+  source: cli.init.workspace_seed
+  severity: info
+  msg: applied 3 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.task_plan
+    - workspace.findings
+    - workspace.progress
+- ts: '2026-05-13T18:26:53+00:00'
+  source: cli.init
+  severity: info
+  msg: 'book initialized: id=s2-demo topic=玄幻黑暗 target=17500'
+  action: log
+  payload:
+    locked_premise: 宗门弃徒踏入黑雾遗迹寻回血脉真相，五章呈现五个镜头
+- ts: '2026-05-13T18:26:53+00:00'
+  source: cli.run.A_through_F
+  severity: info
+  msg: setup steps skipped (seeded by init)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:27:40+00:00'
+  source: demo_pipeline.apply_chapter_rollup.ch1
+  severity: info
+  msg: applied 3 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.FORESHADOW_STATE.pool
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - entity_runtime.CHARACTER_STATE.protagonist.events
+- ts: '2026-05-13T18:27:40+00:00'
+  source: cli.run.chapter_1.rollup
+  severity: info
+  msg: 'chapter 1 rolled up: words+=2882 new_hooks=1 particle_delta=0'
+  action: log
+  payload:
+    new_hook_ids:
+    - fh-001
+- ts: '2026-05-13T18:27:40+00:00'
+  source: cli.run.R1_style_polish.ch1
+  severity: info
+  msg: R1_style_polish stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:27:40+00:00'
+  source: cli.run.R2_consistency_check.ch1
+  severity: info
+  msg: R2_consistency_check stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:27:40+00:00'
+  source: cli.run.R3_final_pack.ch1
+  severity: info
+  msg: R3_final_pack stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:27:40+00:00'
+  source: cli.run.V1_release_check.ch1
+  severity: info
+  msg: V1_release_check stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:28:07+00:00'
+  source: multi_chapter.R2_consistency_check.ch1
+  severity: warn
+  msg: 'checker character-iq-checker load failed (schema?): character-iq-checker.checker.yaml
+    check_logic must be list, got dict'
+  action: log
+  payload:
+    checker_id: character-iq-checker
+    skipped: true
+- ts: '2026-05-13T18:28:07+00:00'
+  source: multi_chapter.R2_consistency_check.ch1
+  severity: warn
+  msg: 'checker cool-point-payoff-checker load failed (schema?): cool-point-payoff-checker.checker.yaml
+    check_logic must be list, got dict'
+  action: log
+  payload:
+    checker_id: cool-point-payoff-checker
+    skipped: true
+- ts: '2026-05-13T18:28:07+00:00'
+  source: multi_chapter.R2_consistency_check.ch1
+  severity: info
+  msg: R2 ran 2 checkers
+  action: log
+  payload:
+    results:
+    - id: character-iq-checker
+      hit: null
+    - id: cool-point-payoff-checker
+      hit: null
+- ts: '2026-05-13T18:28:07+00:00'
+  source: multi_chapter.R3_final_pack.ch1
+  severity: info
+  msg: 'chapter 1 final pack written: 10095 bytes'
+  action: log
+  payload:
+    path: foundation/runtime_state/s2-demo/chapter_01.md
+    bytes: 10095
+- ts: '2026-05-13T18:28:07+00:00'
+  source: cli.run.A_through_F
+  severity: info
+  msg: setup steps skipped (seeded by init)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:28:53+00:00'
+  source: demo_pipeline.apply_chapter_rollup.ch2
+  severity: info
+  msg: applied 3 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.FORESHADOW_STATE.pool
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - entity_runtime.CHARACTER_STATE.protagonist.events
+- ts: '2026-05-13T18:28:53+00:00'
+  source: cli.run.chapter_2.rollup
+  severity: info
+  msg: 'chapter 2 rolled up: words+=2727 new_hooks=1 particle_delta=0'
+  action: log
+  payload:
+    new_hook_ids:
+    - fh-002
+- ts: '2026-05-13T18:28:53+00:00'
+  source: cli.run.R1_style_polish.ch2
+  severity: info
+  msg: R1_style_polish stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:28:53+00:00'
+  source: cli.run.R2_consistency_check.ch2
+  severity: info
+  msg: R2_consistency_check stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:28:53+00:00'
+  source: cli.run.R3_final_pack.ch2
+  severity: info
+  msg: R3_final_pack stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:28:53+00:00'
+  source: cli.run.V1_release_check.ch2
+  severity: info
+  msg: V1_release_check stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:29:17+00:00'
+  source: multi_chapter.R2_consistency_check.ch2
+  severity: warn
+  msg: 'checker character-iq-checker load failed (schema?): character-iq-checker.checker.yaml
+    check_logic must be list, got dict'
+  action: log
+  payload:
+    checker_id: character-iq-checker
+    skipped: true
+- ts: '2026-05-13T18:29:17+00:00'
+  source: multi_chapter.R2_consistency_check.ch2
+  severity: warn
+  msg: 'checker cool-point-payoff-checker load failed (schema?): cool-point-payoff-checker.checker.yaml
+    check_logic must be list, got dict'
+  action: log
+  payload:
+    checker_id: cool-point-payoff-checker
+    skipped: true
+- ts: '2026-05-13T18:29:17+00:00'
+  source: multi_chapter.R2_consistency_check.ch2
+  severity: info
+  msg: R2 ran 2 checkers
+  action: log
+  payload:
+    results:
+    - id: character-iq-checker
+      hit: null
+    - id: cool-point-payoff-checker
+      hit: null
+- ts: '2026-05-13T18:29:17+00:00'
+  source: multi_chapter.R3_final_pack.ch2
+  severity: info
+  msg: 'chapter 2 final pack written: 9274 bytes'
+  action: log
+  payload:
+    path: foundation/runtime_state/s2-demo/chapter_02.md
+    bytes: 9274
+- ts: '2026-05-13T18:29:18+00:00'
+  source: cli.run.A_through_F
+  severity: info
+  msg: setup steps skipped (seeded by init)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:30:09+00:00'
+  source: demo_pipeline.apply_chapter_rollup.ch3
+  severity: info
+  msg: applied 3 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.FORESHADOW_STATE.pool
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - entity_runtime.CHARACTER_STATE.protagonist.events
+- ts: '2026-05-13T18:30:09+00:00'
+  source: cli.run.chapter_3.rollup
+  severity: info
+  msg: 'chapter 3 rolled up: words+=3268 new_hooks=1 particle_delta=0'
+  action: log
+  payload:
+    new_hook_ids:
+    - fh-003
+- ts: '2026-05-13T18:30:09+00:00'
+  source: cli.run.R1_style_polish.ch3
+  severity: info
+  msg: R1_style_polish stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:30:09+00:00'
+  source: cli.run.R2_consistency_check.ch3
+  severity: info
+  msg: R2_consistency_check stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:30:09+00:00'
+  source: cli.run.R3_final_pack.ch3
+  severity: info
+  msg: R3_final_pack stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:30:09+00:00'
+  source: cli.run.V1_release_check.ch3
+  severity: info
+  msg: V1_release_check stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:30:41+00:00'
+  source: multi_chapter.R2_consistency_check.ch3
+  severity: warn
+  msg: 'checker character-iq-checker load failed (schema?): character-iq-checker.checker.yaml
+    check_logic must be list, got dict'
+  action: log
+  payload:
+    checker_id: character-iq-checker
+    skipped: true
+- ts: '2026-05-13T18:30:41+00:00'
+  source: multi_chapter.R2_consistency_check.ch3
+  severity: warn
+  msg: 'checker cool-point-payoff-checker load failed (schema?): cool-point-payoff-checker.checker.yaml
+    check_logic must be list, got dict'
+  action: log
+  payload:
+    checker_id: cool-point-payoff-checker
+    skipped: true
+- ts: '2026-05-13T18:30:41+00:00'
+  source: multi_chapter.R2_consistency_check.ch3
+  severity: info
+  msg: R2 ran 2 checkers
+  action: log
+  payload:
+    results:
+    - id: character-iq-checker
+      hit: null
+    - id: cool-point-payoff-checker
+      hit: null
+- ts: '2026-05-13T18:30:41+00:00'
+  source: multi_chapter.R3_final_pack.ch3
+  severity: info
+  msg: 'chapter 3 final pack written: 11371 bytes'
+  action: log
+  payload:
+    path: foundation/runtime_state/s2-demo/chapter_03.md
+    bytes: 11371
+- ts: '2026-05-13T18:30:41+00:00'
+  source: cli.run.A_through_F
+  severity: info
+  msg: setup steps skipped (seeded by init)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:31:30+00:00'
+  source: demo_pipeline.apply_chapter_rollup.ch4
+  severity: info
+  msg: applied 3 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.FORESHADOW_STATE.pool
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - entity_runtime.CHARACTER_STATE.protagonist.events
+- ts: '2026-05-13T18:31:30+00:00'
+  source: cli.run.chapter_4.rollup
+  severity: info
+  msg: 'chapter 4 rolled up: words+=2854 new_hooks=1 particle_delta=0'
+  action: log
+  payload:
+    new_hook_ids:
+    - fh-004
+- ts: '2026-05-13T18:31:31+00:00'
+  source: cli.run.R1_style_polish.ch4
+  severity: info
+  msg: R1_style_polish stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:31:31+00:00'
+  source: cli.run.R2_consistency_check.ch4
+  severity: info
+  msg: R2_consistency_check stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:31:31+00:00'
+  source: cli.run.R3_final_pack.ch4
+  severity: info
+  msg: R3_final_pack stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:31:31+00:00'
+  source: cli.run.V1_release_check.ch4
+  severity: info
+  msg: V1_release_check stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:32:03+00:00'
+  source: multi_chapter.R2_consistency_check.ch4
+  severity: warn
+  msg: 'checker character-iq-checker load failed (schema?): character-iq-checker.checker.yaml
+    check_logic must be list, got dict'
+  action: log
+  payload:
+    checker_id: character-iq-checker
+    skipped: true
+- ts: '2026-05-13T18:32:03+00:00'
+  source: multi_chapter.R2_consistency_check.ch4
+  severity: warn
+  msg: 'checker cool-point-payoff-checker load failed (schema?): cool-point-payoff-checker.checker.yaml
+    check_logic must be list, got dict'
+  action: log
+  payload:
+    checker_id: cool-point-payoff-checker
+    skipped: true
+- ts: '2026-05-13T18:32:03+00:00'
+  source: multi_chapter.R2_consistency_check.ch4
+  severity: info
+  msg: R2 ran 2 checkers
+  action: log
+  payload:
+    results:
+    - id: character-iq-checker
+      hit: null
+    - id: cool-point-payoff-checker
+      hit: null
+- ts: '2026-05-13T18:32:03+00:00'
+  source: multi_chapter.R3_final_pack.ch4
+  severity: info
+  msg: 'chapter 4 final pack written: 9165 bytes'
+  action: log
+  payload:
+    path: foundation/runtime_state/s2-demo/chapter_04.md
+    bytes: 9165
+- ts: '2026-05-13T18:32:03+00:00'
+  source: cli.run.A_through_F
+  severity: info
+  msg: setup steps skipped (seeded by init)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:33:02+00:00'
+  source: demo_pipeline.apply_chapter_rollup.ch5
+  severity: info
+  msg: applied 4 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.FORESHADOW_STATE.pool
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - entity_runtime.CHARACTER_STATE.protagonist.events
+    - entity_runtime.GLOBAL_SUMMARY.arc_summaries
+- ts: '2026-05-13T18:33:03+00:00'
+  source: cli.run.chapter_5.rollup
+  severity: info
+  msg: 'chapter 5 rolled up: words+=3514 new_hooks=1 particle_delta=0'
+  action: log
+  payload:
+    new_hook_ids:
+    - fh-005
+- ts: '2026-05-13T18:33:03+00:00'
+  source: cli.run.R1_style_polish.ch5
+  severity: info
+  msg: R1_style_polish stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:33:03+00:00'
+  source: cli.run.R2_consistency_check.ch5
+  severity: info
+  msg: R2_consistency_check stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:33:03+00:00'
+  source: cli.run.R3_final_pack.ch5
+  severity: info
+  msg: R3_final_pack stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:33:03+00:00'
+  source: cli.run.V1_release_check.ch5
+  severity: info
+  msg: V1_release_check stub (multi_chapter.py implements full)
+  action: log
+  payload: {}
+- ts: '2026-05-13T18:33:36+00:00'
+  source: multi_chapter.R2_consistency_check.ch5
+  severity: warn
+  msg: 'checker character-iq-checker load failed (schema?): character-iq-checker.checker.yaml
+    check_logic must be list, got dict'
+  action: log
+  payload:
+    checker_id: character-iq-checker
+    skipped: true
+- ts: '2026-05-13T18:33:36+00:00'
+  source: multi_chapter.R2_consistency_check.ch5
+  severity: warn
+  msg: 'checker cool-point-payoff-checker load failed (schema?): cool-point-payoff-checker.checker.yaml
+    check_logic must be list, got dict'
+  action: log
+  payload:
+    checker_id: cool-point-payoff-checker
+    skipped: true
+- ts: '2026-05-13T18:33:36+00:00'
+  source: multi_chapter.R2_consistency_check.ch5
+  severity: info
+  msg: R2 ran 2 checkers
+  action: log
+  payload:
+    results:
+    - id: character-iq-checker
+      hit: null
+    - id: cool-point-payoff-checker
+      hit: null
+- ts: '2026-05-13T18:33:36+00:00'
+  source: multi_chapter.R3_final_pack.ch5
+  severity: info
+  msg: 'chapter 5 final pack written: 12467 bytes'
+  action: log
+  payload:
+    path: foundation/runtime_state/s2-demo/chapter_05.md
+    bytes: 12467
+- ts: '2026-05-13T18:33:37+00:00'
+  source: multi_chapter.V1_release_check
+  severity: info
+  msg: 'V1 DoD PASS: 0 issues'
+  action: log
+  payload:
+    pass: true
+    fails: []
+    chapters_checked: 5
+    chapter_sizes:
+    - name: chapter_01.md
+      bytes: 10095
+    - name: chapter_02.md
+      bytes: 9274
+    - name: chapter_03.md
+      bytes: 11371
+    - name: chapter_04.md
+      bytes: 9165
+    - name: chapter_05.md
+      bytes: 12467
+    foreshadow_pool_size: 5
+    total_words: 15245

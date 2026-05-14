@@ -1,0 +1,86 @@
+# Checker: character-iq-checker
+# 类别：人物审计 / 防降智
+# 上位法：constitution const-007 / const-008 / const-011 / const-019 / const-020
+# 落地：jury-3 P1 红线（default_mode=warn）；ARCHITECTURE §2.2 / §2.4
+# 调用：Orchestrator 在 step postconditions 阶段触发（H_chapter_settle / R2_consistency_check 之后）
+
+id: character-iq-checker
+category: 人物审计
+description: |
+  检测章节正文中是否存在"为推剧情让人物降智"、"配角沦为工具人"、
+  "关系突变无事件驱动"、"女性角色被写成情绪摆设" 等问题。
+  jury-3 P1 明确要求：default 必须 warn-only，老作家有自己的人物节奏，
+  不能被系统硬 block。
+
+constitution_refs:
+  - const-007  # 人物行为必须服从过往经历+当前利益+性格底色
+  - const-008  # 禁止为推剧情让人物突然降智
+  - const-011  # 配角不是工具人
+  - const-019  # 女性角色不能被写成情绪摆设
+  - const-020  # 关系变化必须事件驱动
+
+# 目标 state 字段
+target_state_field: runtime_state.entity_runtime.CHARACTER_STATE
+
+# 检查逻辑：以 LLM 推理为主，规则为辅
+check_logic:
+  type: hybrid
+  rule_based:
+    - name: protagonist_loses_known_info
+      detect: |
+        本章 protagonist 行动假设不知道 X，
+        但 CHARACTER_STATE.<protagonist>.events 中明确记录他已知 X。
+      severity: warn
+      message: "主角忘记了应该知道的信息（降智嫌疑）"
+    - name: relation_score_jump_without_event
+      detect: |
+        runtime_state.entity_runtime.CHARACTER_STATE.<char>.relations[].score
+        本章 delta ≥ 30 但 events 中无对应触发事件。
+      severity: warn
+      message: "关系值突变无事件驱动"
+    - name: npc_no_self_interest
+      detect: |
+        本章新出场 NPC 没有 stated_goal / fear / leverage 中任一项。
+      severity: info
+      message: "配角缺 B 面（工具人嫌疑）"
+  llm_prompt_based:
+    enabled_when: stage in [drafting, refinement]
+    prompt_template: |
+      下面是章节正文 + 涉及人物的 CHARACTER_STATE 快照。
+      判断：
+      1. 主角 / 反派 / 配角行为是否符合"过往经历 + 当前利益 + 性格底色"
+      2. 是否有为推剧情而降智（如：明明能想到却没想到）
+      3. 配角是否有目标 / 恐惧 / 筹码 / 误判
+      4. 女性角色是否仅作为情绪摆设
+      5. 关系变化是否有事件驱动
+      输出 JSON: {issues: [{character, type, evidence_chapter, evidence_state, suggestion}]}
+    severity_on_detection: warn
+
+# 严重级别梯度
+severity_levels: [info, warn, block]
+
+# 【关键】默认 warn-only（jury-3 P1 红线）
+default_mode: warn
+
+# 覆盖入口
+override_via: meta/user_overrides/checker_mode.yaml
+
+# 输出契约
+output_contract:
+  write_to: runtime_state.audit_log
+  entry_format:
+    ts: datetime
+    source: checker:character-iq-checker
+    severity: enum<info,warn,block>
+    msg: string
+    character: string
+    evidence_chapter: string
+    evidence_state: string
+    suggestion: string
+    action: enum<warn_only,block_workflow,user_review_required>
+
+# 调用方式（非阻塞）
+invocation:
+  phase: postconditions
+  blocks_workflow: false
+  blocks_workflow_when_user_sets: block

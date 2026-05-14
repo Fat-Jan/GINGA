@@ -1,0 +1,122 @@
+[
+  {
+    "src_path": "_原料/提示词库参考/prompts/1.md",
+    "target_id": "prompts-card-1",
+    "pre_grade": "B+",
+    "pre_title": "全能网文主编角色加载"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/117.md",
+    "target_id": "prompts-card-117",
+    "pre_grade": "B+",
+    "pre_title": "远古神话生成器"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/134.md",
+    "target_id": "prompts-card-134",
+    "pre_grade": "B+",
+    "pre_title": "学院大考/测试题目"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/135.md",
+    "target_id": "prompts-card-135",
+    "pre_grade": "B+",
+    "pre_title": "社交媒体热搜模拟"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/139.md",
+    "target_id": "prompts-card-139",
+    "pre_grade": "B+",
+    "pre_title": "病毒/瘟疫传播模型"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/147.md",
+    "target_id": "prompts-card-147",
+    "pre_grade": "B+",
+    "pre_title": "悬念设计生成器"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/175.md",
+    "target_id": "prompts-card-175",
+    "pre_grade": "B+",
+    "pre_title": "异能失控/暴走"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/179.md",
+    "target_id": "prompts-card-179",
+    "pre_grade": "B+",
+    "pre_title": "虫族/蜂群意识沟通"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/193.md",
+    "target_id": "prompts-card-193",
+    "pre_grade": "B+",
+    "pre_title": "杀手/刺客信条"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/20.md",
+    "target_id": "prompts-card-20",
+    "pre_grade": "B+",
+    "pre_title": "极品亲戚生成器"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/231.md",
+    "target_id": "prompts-card-231",
+    "pre_grade": "B+",
+    "pre_title": "被监视的恐惧"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/232.md",
+    "target_id": "prompts-card-232",
+    "pre_grade": "B+",
+    "pre_title": "魔物娘异种族生态"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/87.md",
+    "target_id": "prompts-card-87",
+    "pre_grade": "B+",
+    "pre_title": "侦探/解谜线索板"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/92.md",
+    "target_id": "prompts-card-92",
+    "pre_grade": "B+",
+    "pre_title": "黑客攻防战描写"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/102.md",
+    "target_id": "prompts-card-102",
+    "pre_grade": "B",
+    "pre_title": "异世界经济与通货膨胀"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/148.md",
+    "target_id": "prompts-card-148",
+    "pre_grade": "B",
+    "pre_title": "动态环境描写"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/174.md",
+    "target_id": "prompts-card-174",
+    "pre_grade": "B",
+    "pre_title": "战舰内部结构图"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/229.md",
+    "target_id": "prompts-card-229",
+    "pre_grade": "B",
+    "pre_title": "飞空艇空难逃生"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/44.md",
+    "target_id": "prompts-card-44",
+    "pre_grade": "B",
+    "pre_title": "对话优化"
+  },
+  {
+    "src_path": "_原料/提示词库参考/prompts/97.md",
+    "target_id": "prompts-card-97",
+    "pre_grade": "B",
+    "pre_title": "校园文暗恋细节"
+  }
+]

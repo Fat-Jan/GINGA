@@ -1,0 +1,77 @@
+CHARACTER_STATE:
+  protagonist:
+    name: 未命名刺客
+    inventory:
+    - item: 刻有古老符文的短刃
+      count: 1
+    abilities:
+    - skill: 影迹潜行
+      level: 5
+      cooldown: 0
+    body:
+      hp: 100
+      mp: 80
+      status:
+      - 失忆
+      - 微粒残留
+    psyche:
+      mood: 警觉
+      beliefs:
+      - 不信任任何人
+      traumas:
+      - 记忆缺失带来的存在性恐惧
+    relations: []
+    events:
+    - ch: 1
+      type: draft
+      impact: 第1章草稿生成（2882字，新增1个伏笔）
+    - ch: 2
+      type: draft
+      impact: 第2章草稿生成（2727字，新增1个伏笔）
+    - ch: 3
+      type: draft
+      impact: 第3章草稿生成（3268字，新增1个伏笔）
+    - ch: 4
+      type: draft
+      impact: 第4章草稿生成（2854字，新增1个伏笔）
+    - ch: 5
+      type: draft
+      impact: 第5章草稿生成（3514字，新增1个伏笔）
+RESOURCE_LEDGER:
+  particles: 0
+  items: []
+FORESHADOW_STATE:
+  pool:
+  - id: fh-001
+    planted_ch: 1
+    expected_payoff: 30
+    status: open
+    summary: 短刃上的古老符文
+  - id: fh-002
+    planted_ch: 2
+    expected_payoff: 3
+    status: tickled
+    summary: 主角通过短刃刺激，首次“看见”内宇宙中微粒洪流的片段与其中庞大结构体的模糊轮廓，暗示跨天堑生态的存在
+    tickled_at_ch: 3
+  - id: fh-003
+    planted_ch: 3
+    expected_payoff: 15
+    status: open
+    summary: 主角体内烙印与掠夺网络的共振，暗示烙印可能是双刃剑，既能被追踪，也可能成为反向渗透或干扰网络的潜在媒介
+  - id: fh-004
+    planted_ch: 4
+    expected_payoff: 10
+    status: open
+    summary: 主角体内烙印与短刃共鸣，窥见“血池”与“暗金瞳孔”碎片，暗示其血脉/烙印来源与某个古老、吞噬性的恐怖存在直接相关，且短刃可能是关键媒介。
+  - id: fh-005
+    planted_ch: 5
+    expected_payoff: 12
+    status: open
+    summary: 影蛾临死前的意识反馈显示，其隶属“清道夫”网络，且烙印波动被标记为高优先级清除目标。暗示主角已成为遗迹微粒掠夺体系的明确猎物，且其烙印类型（α型）引发更高层级关注。
+GLOBAL_SUMMARY:
+  total_words: 15245
+  arc_summaries:
+  - arc: chapter_1-5
+    summary: 第 1-5 章已生成
+    words: 3514
+    anchor_ch: 5

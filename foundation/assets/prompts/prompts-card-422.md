@@ -1,0 +1,44 @@
+---
+id: prompts-card-write_world_arc-422
+asset_type: prompt_card
+title: 快穿流世界弧线生成器
+topic: [古风, 校园, 末世, 娱乐圈]
+stage: setting
+quality_grade: B+
+source_path: _原料/提示词库参考/prompts/422.md
+last_updated: 2026-05-13
+card_intent: prose_generation
+card_kind: setup_card
+task_verb: write
+task_full: write_world_arc
+granularity: world
+output_kind: schema_json
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 422. 流派：快穿流 (Quick Transmigration)
+
+## 提示词内容
+
+```json
+{
+  "task": "write_world_arc",
+  "setting": "Ancient Palace / School / Apocalypse / Showbiz",
+  "mission": "Seduce Villain / Slap Scum / Counterattack",
+  "host_fate": "Tragic Death / Betrayed / Substitute",
+  "cheat": "System Item / Max Acting / Beauty",
+  "climax": "Revenge completed / Truth revealed",
+  "outcome": "Mission SSS Rank / Move to next world"
+}
+```
+
+## 使用场景
+女频/综合。在不同世界扮演不同角色，完成执念或任务。
+
+## 最佳实践要点
+1.  **节奏快**：一个世界一个故事，爽点密集。
+2.  **虐渣**：原主越惨，主角逆袭时的报复越要狠。
+
+## 示例输入
+主角穿越成被影帝抛弃的糟糠之妻，凭借满级演技复出，夺得影后，在颁奖典礼上公开感谢前夫的不娶之恩。

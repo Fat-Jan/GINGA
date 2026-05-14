@@ -1,0 +1,268 @@
+# foundation/schema/genre_profile.yaml
+# 题材 profile 资产类 schema
+#
+# 资产来源：_原料/基座/题材/网文/*.md（25 个题材 profile，scout-1 报告 §样本覆盖）
+# 用途：题材级读者期待、黄金三章、留存/爽点/禁忌参数
+# 形态：可配置 profile，被 Meta / Platform 层引用
+# 关键修订：jury-2 字段补丁 2（profile_type 字段区分 full_spectrum / parameter_only）
+
+$schema: ginga/foundation/v1
+asset_type: genre_profile
+description: 题材 profile 配置，定义某个网文题材的读者画像、爽点系统、禁忌、平台策略
+
+# ---------------------------------------------------------------------------
+# S1 必填 8 字段（ARCHITECTURE §3.2，全 schema 共用）
+# ---------------------------------------------------------------------------
+
+required_fields:
+  - id                             # 全局唯一 id（命名见附录 A）
+  - asset_type                     # 5 类资产之一，本文件强制 = genre_profile
+  - title                          # 题材标题
+  - topic                          # 题材标签数组
+  - stage                          # 12 枚举值之一，本类默认 = profile
+  - quality_grade                  # A / A- / B+ / B / C / D
+  - source_path                    # 原始文件路径
+  - last_updated                   # ISO 日期
+
+# ---------------------------------------------------------------------------
+# 选填字段（S2-S3 渐进补全）
+# ---------------------------------------------------------------------------
+
+optional_fields:
+  - profile_type                   # 全集指南 / 参数包（jury-2 字段补丁 2）
+  - reader_profile                 # 读者画像
+  - golden_three_outline           # 黄金三章结构
+  - retention_targets              # 留存目标
+  - emotion_curve                  # 情绪曲线
+  - chapter_structure              # 章节结构约定
+  - hook_strategy                  # 钩子策略
+  - hook_types                     # 钩子类型列表
+  - cool_point_types               # 爽点类型列表
+  - cool_point_density             # 爽点密度
+  - taboos                         # 禁忌清单
+  - style_guide                    # 风格指南
+  - platform_scope                 # 平台适配范围
+  - dedup_verdict                  # retain / merge / drop
+  - dedup_against                  # 可能重复的基座资产 id
+  - reuse_scope                    # single_genre / cross_genre / universal
+  - safety_level                   # normal / sensitive / redline-heavy
+  - status                         # draft / active / deprecated
+  - notes                          # 迁移备注
+
+# ---------------------------------------------------------------------------
+# 字段类型与说明
+# ---------------------------------------------------------------------------
+
+fields:
+  id:
+    type: string
+    description: 全局唯一 id，建议命名 base-profile-<topic>-<slug>
+    example: base-profile-guize-guaitan
+  asset_type:
+    type: enum
+    enum: [genre_profile]
+    description: 资产类型固定为 genre_profile
+    example: genre_profile
+  title:
+    type: string
+    description: 题材标题，去掉"创作指南"等通用尾缀，保留核心题材名
+    example: 规则怪谈题材创作指南
+  topic:
+    type: string[]
+    description: 题材标签数组，至少 1 个
+    example: [规则怪谈, 悬疑]
+  stage:
+    type: enum
+    enum:
+      - ideation                   # 立项 / 创意
+      - setting                    # 世界观 / 设定
+      - framework                  # 故事框架 / 三幕结构
+      - outline                    # 大纲
+      - drafting                   # 章节起稿
+      - refinement                 # 章节润色 / 终稿
+      - analysis                   # 数据分析 / 复盘
+      - advanced                   # 进阶技巧
+      - business                   # 商业化 / 市场
+      - auxiliary                  # 辅助工具
+      - cross_cutting              # 横切规则（schema、风格锁定、宪法）
+      - profile                    # 题材全集配置（本类默认）
+    description: 12 枚举值；genre_profile 默认 stage=profile（不强行套创作流程）
+    default: profile
+    example: profile
+  quality_grade:
+    type: enum
+    enum: [A, A-, B+, B, C, D]
+    description: 质量分级，A/A- 优先入 RAG（jury-3 提议 A/A- 优先标注）
+    example: A-
+  source_path:
+    type: string
+    description: 原始文件路径（仓内相对）
+    example: _原料/基座/题材/网文/guize-guaitan.md
+  last_updated:
+    type: date
+    description: ISO 日期，YYYY-MM-DD 格式
+    example: '2026-05-13'
+
+  # 专属字段（jury-2 字段补丁 2）
+
+  profile_type:
+    type: enum
+    enum:
+      - full_spectrum              # 全集指南，覆盖读者画像/爽点/禁忌/平台等所有维度
+      - parameter_only             # 参数包，只提供部分可调参数
+    description: 区分题材 profile 的完备程度；full_spectrum 可独立驱动 workflow
+    example: full_spectrum
+
+  reader_profile:
+    type: object
+    description: 读者画像对象，含年龄、性别、付费触发点等
+    example:
+      age: 18-35
+      gender: mixed
+      pay_triggers: [规则揭秘前夕, 副本高潮]
+
+  golden_three_outline:
+    type: object
+    description: 黄金三章结构，1/2/3 章各自钩子与节奏
+    example:
+      ch1: 异常情境引入 + 第一条规则曝光
+      ch2: 角色反应 + 第二条规则反差
+      ch3: 副本结构揭露 + 第一次代价
+
+  retention_targets:
+    type: object
+    description: 留存目标对象，常含 ch3 / ch10 / ch30 等关键节点的预期读者留存率
+    example:
+      ch3: 0.55
+      ch10: 0.32
+
+  emotion_curve:
+    type: string[]
+    description: 情绪曲线关键节点描述
+    example: [紧张-缓和-悬念-推进-震撼]
+
+  chapter_structure:
+    type: object
+    description: 章节结构约定，如章长、信息密度、章末钩
+    example:
+      avg_words: 2500
+      chapter_end_hook: required
+
+  hook_strategy:
+    type: object
+    description: 钩子策略对象，含主要钩子类型 + 部署位置
+    example:
+      primary: 悬念钩
+      end_of_chapter: 危机钩
+
+  hook_types:
+    type: string[]
+    description: 钩子类型列表（来源 scout-1 读者吸引力分类法）
+    example: [危机钩, 悬念钩, 情绪钩]
+
+  cool_point_types:
+    type: string[]
+    description: 爽点类型列表
+    example: [规则破解, 反转求生, 智斗通关]
+
+  cool_point_density:
+    type: enum
+    enum: [low, medium, high, very_high]
+    description: 爽点密度，决定章均爽点数量
+    example: high
+
+  taboos:
+    type: string[]
+    description: 题材禁忌清单（写到雷区会掉读者）
+    example: [滥用 deus ex machina, 主角降智, 节奏拖沓]
+
+  style_guide:
+    type: object
+    description: 风格指南，含语气、描写重点、句长等
+    example:
+      tone: 冷峻 + 黑色幽默
+      sentence_length: short_to_medium
+      sensory_focus: [听觉, 触觉]
+
+  platform_scope:
+    type: string[]
+    description: 平台适配范围
+    example: [番茄, 七猫]
+
+  dedup_verdict:
+    type: enum
+    enum: [retain, merge, drop]
+    description: 双库去重判定结果（jury-2 字段补丁 4 配套）
+    example: retain
+
+  dedup_against:
+    type: string[]
+    description: 可能重复的基座资产 id 列表
+    example: []
+
+  reuse_scope:
+    type: enum
+    enum: [single_genre, cross_genre, universal]
+    description: 资产复用范围
+    example: single_genre
+
+  safety_level:
+    type: enum
+    enum: [normal, sensitive, redline-heavy]
+    description: 内容敏感性等级，影响默认审校强度
+    example: normal
+
+  status:
+    type: enum
+    enum: [draft, active, deprecated]
+    description: 资产生命周期状态
+    example: active
+
+  notes:
+    type: string[]
+    description: 迁移或治理备注（自由文本）
+    example: [来自 scout-1 Top 18 #17]
+
+# ---------------------------------------------------------------------------
+# 示例资产（基于 scout-1 §样本覆盖）
+# ---------------------------------------------------------------------------
+
+examples:
+  - id: base-profile-guize-guaitan
+    asset_type: genre_profile
+    title: 规则怪谈题材创作指南
+    topic: [规则怪谈, 悬疑]
+    stage: profile
+    quality_grade: A
+    source_path: _原料/基座/题材/网文/guize-guaitan.md
+    last_updated: '2026-05-13'
+    profile_type: full_spectrum
+    reader_profile:
+      age: 18-35
+      gender: mixed
+      pay_triggers: [规则揭秘前夕, 副本高潮]
+    hook_types: [危机钩, 悬念钩]
+    cool_point_types: [规则破解, 反转求生, 智斗通关]
+    cool_point_density: high
+    taboos: [规则不可验证, 恐怖与逻辑割裂]
+    platform_scope: [番茄, 七猫]
+    reuse_scope: single_genre
+    safety_level: normal
+    status: active
+
+  - id: base-profile-niandai
+    asset_type: genre_profile
+    title: 年代文题材创作指南
+    topic: [年代, 现实, 温馨奋斗]
+    stage: profile
+    quality_grade: A
+    source_path: _原料/基座/题材/网文/niandai.md
+    last_updated: '2026-05-13'
+    profile_type: full_spectrum
+    style_guide:
+      tone: 朴实 + 时代质感
+      sensory_focus: [听觉, 嗅觉]
+    platform_scope: [番茄, 七猫, 起点]
+    reuse_scope: single_genre
+    safety_level: normal
+    status: active

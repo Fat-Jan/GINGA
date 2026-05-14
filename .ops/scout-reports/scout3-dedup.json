@@ -1,0 +1,509 @@
+[
+  {
+    "prompt_file": "413.md",
+    "prompt_title": "413. 流派：校花贴身高手 (School Bodyguard)",
+    "task": "write_school_bodyguard",
+    "keywords": [
+      "校花",
+      "贴身"
+    ],
+    "base_matches": [
+      "200-替身文-宏观-灵感捕捉.md",
+      "322-多子多福-微观-女主细节.md",
+      "456-黑暗多子多福-中观-物资垄断.md"
+    ],
+    "match_count": 3,
+    "verdict": "review for merge (few matches)"
+  },
+  {
+    "prompt_file": "158.md",
+    "prompt_title": "158. 变身/机甲着装流程 (变身动画)",
+    "task": "write_transformation_sequence",
+    "keywords": [
+      "变身",
+      "机甲",
+      "着装"
+    ],
+    "base_matches": [
+      "338-多子多福-微观-后宫管理.md",
+      "507-黑暗多子多福-微观-Body Modification.md",
+      "方法论/写作/世界观母题目录.md"
+    ],
+    "match_count": 3,
+    "verdict": "review for merge (few matches)"
+  },
+  {
+    "prompt_file": "34.md",
+    "prompt_title": "34. 完本总结与新书预告",
+    "task": "write_post_mortem",
+    "keywords": [
+      "完本",
+      "新书"
+    ],
+    "base_matches": [
+      "011-创意阶段-市场定位分析.md",
+      "012-创意阶段-项目立项评估.md",
+      "014-创意阶段-市场扫榜分析.md",
+      "054-进阶技巧-节奏校准.md",
+      "064-1-商业化-营销文案生成.md",
+      "075-1-数据分析-读者反馈分析.md",
+      "092-额外功能-营销文案.md",
+      "方法论/创意/平台分析指南.md"
+    ],
+    "match_count": 9,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "439.md",
+    "prompt_title": "439. 同人：死神/境界 (Fanfic: Bleach)",
+    "task": "write_bleach_scene",
+    "keywords": [
+      "同人",
+      "死神"
+    ],
+    "base_matches": [
+      "056-进阶技巧-日常场景.md",
+      "063-数据分析-文风视角规范.md",
+      "072-商业化-热度预测.md",
+      "116-玄幻小说-创作阶段-章节创作.md",
+      "120-情满四合院-创意阶段-灵感收集.md",
+      "121-情满四合院-创意阶段-市场定位.md",
+      "122-情满四合院-设定阶段-人物设定.md",
+      "124-情满四合院-框架阶段-故事框架.md"
+    ],
+    "match_count": 18,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "267.md",
+    "prompt_title": "267. 都市：金融市场的惊天博弈",
+    "task": "write_market_manipulation",
+    "keywords": [
+      "金融",
+      "博弈"
+    ],
+    "base_matches": [
+      "011-创意阶段-市场定位分析.md",
+      "013-创意阶段-作品定位策略.md",
+      "117-玄幻小说-进阶技巧-战斗场景.md",
+      "239-替身文-微观-追妻描写.md",
+      "330-多子多福-微观-心理描写.md",
+      "333-多子多福-微观-暧昧拉扯.md",
+      "343-多子多福-进阶-后宫互动设计.md",
+      "346-欲念描写专家-工作流程.md"
+    ],
+    "match_count": 39,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "160.md",
+    "prompt_title": "160. 平行宇宙差异点设计",
+    "task": "design_parallel_universe",
+    "keywords": [
+      "平行宇宙",
+      "差异点"
+    ],
+    "base_matches": [],
+    "match_count": 0,
+    "verdict": "retain (no overlap)"
+  },
+  {
+    "prompt_file": "138.md",
+    "prompt_title": "138. 星际战舰参数设计",
+    "task": "design_spaceship",
+    "keywords": [
+      "星际",
+      "战舰"
+    ],
+    "base_matches": [
+      "204-替身文-宏观-世界观构建.md",
+      "390-黑暗多子多福-系统角色.md",
+      "392-黑暗多子多福-宏观-灵感捕捉.md",
+      "395-黑暗多子多福-宏观-世界观构建.md",
+      "419-黑暗多子多福-设定-战争资产.md",
+      "方法论/写作/世界观母题目录.md",
+      "题材/网文/gaowu.md"
+    ],
+    "match_count": 7,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "90.md",
+    "prompt_title": "90. 魔法学院分院仪式",
+    "task": "design_sorting_ceremony",
+    "keywords": [
+      "魔法学院",
+      "分院"
+    ],
+    "base_matches": [],
+    "match_count": 0,
+    "verdict": "retain (no overlap)"
+  },
+  {
+    "prompt_file": "73.md",
+    "prompt_title": "73. 学院流课程表与考核",
+    "task": "design_academy_curriculum",
+    "keywords": [
+      "学院",
+      "课程"
+    ],
+    "base_matches": [
+      "450-黑暗多子多福-中观-洗脑教育.md",
+      "方法论/写作/反AI味.md",
+      "方法论/市场/state-schema.md",
+      "方法论/市场/读者吸引力分类法.md",
+      "题材/网文/gaowu.md",
+      "题材/网文/xihuan.md"
+    ],
+    "match_count": 6,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "68.md",
+    "prompt_title": "68. 综艺节目流程设计",
+    "task": "design_variety_show",
+    "keywords": [
+      "综艺"
+    ],
+    "base_matches": [
+      "方法论/写作/世界观母题目录.md"
+    ],
+    "match_count": 1,
+    "verdict": "merge candidate (single match in base)"
+  },
+  {
+    "prompt_file": "197.md",
+    "prompt_title": "197. 校园霸凌反击战术",
+    "task": "plot_bullying_revenge",
+    "keywords": [
+      "校园霸凌"
+    ],
+    "base_matches": [],
+    "match_count": 0,
+    "verdict": "retain (no overlap)"
+  },
+  {
+    "prompt_file": "85.md",
+    "prompt_title": "85. 都市商战布局 (反收购/做空)",
+    "task": "plot_business_war",
+    "keywords": [
+      "商战",
+      "做空"
+    ],
+    "base_matches": [
+      "方法论/市场/读者吸引力分类法.md"
+    ],
+    "match_count": 1,
+    "verdict": "merge candidate (single match in base)"
+  },
+  {
+    "prompt_file": "8.md",
+    "prompt_title": "8. 规则怪谈/副本生成",
+    "task": "generate_rules_dungeon",
+    "keywords": [
+      "规则怪谈",
+      "副本"
+    ],
+    "base_matches": [
+      "010-创意阶段-灵感收集整理.md",
+      "011-创意阶段-市场定位分析.md",
+      "170-规则怪谈-创意阶段-灵感收集.md",
+      "171-规则怪谈-创意阶段-市场定位.md",
+      "172-规则怪谈-创意阶段-核心梗设计.md",
+      "173-规则怪谈-创意阶段-金手指设计.md",
+      "174-规则怪谈-设定阶段-规则设定.md",
+      "175-规则怪谈-设定阶段-人物设定.md"
+    ],
+    "match_count": 40,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "30.md",
+    "prompt_title": "30. 百万字分卷日更表",
+    "task": "generate_writing_schedule",
+    "keywords": [
+      "百万字",
+      "日更"
+    ],
+    "base_matches": [
+      "011-创意阶段-市场定位分析.md",
+      "012-创意阶段-项目立项评估.md",
+      "方法论/创意/投稿指南.md",
+      "方法论/市场/2026网文市场趋势.md"
+    ],
+    "match_count": 4,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "77.md",
+    "prompt_title": "77. 刑侦/法医尸检报告生成",
+    "task": "generate_autopsy_report",
+    "keywords": [
+      "刑侦",
+      "法医",
+      "尸检"
+    ],
+    "base_matches": [
+      "方法论/平台/题材跨平台适配矩阵.md",
+      "题材/网文/zhihu-duanpian.md"
+    ],
+    "match_count": 2,
+    "verdict": "review for merge (few matches)"
+  },
+  {
+    "prompt_file": "78.md",
+    "prompt_title": "78. 随机金手指/系统抽奖池",
+    "task": "generate_lottery_pool",
+    "keywords": [
+      "金手指",
+      "抽奖"
+    ],
+    "base_matches": [
+      "010-创意阶段-灵感收集整理.md",
+      "014-创意阶段-市场扫榜分析.md",
+      "017-创意阶段-题材卖点确定.md",
+      "018-创意阶段-核心卖点定位.md",
+      "022-设定阶段-人物角色设定.md",
+      "026-设定阶段-主角设计.md",
+      "027-设定阶段-金手指设计.md",
+      "031-框架阶段-章级大纲.md"
+    ],
+    "match_count": 68,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "152.md",
+    "prompt_title": "152. 历史文官制与爵位生成",
+    "task": "generate_feudal_ranks",
+    "keywords": [
+      "官制",
+      "爵位"
+    ],
+    "base_matches": [
+      "方法论/写作/古代官职体系.md",
+      "模板/大纲/主大纲.md",
+      "模板/项目/创意简报.md",
+      "模板/项目/古代/古代官职真相表.md",
+      "模板/项目/古代/古代权力梯度.md",
+      "题材/网文/gongdou-zhaidou.md",
+      "题材/网文/lishi-gudai.md",
+      "题材/网文/xihuan.md"
+    ],
+    "match_count": 8,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "70.md",
+    "prompt_title": "70. 幕后黑手流剧本编排",
+    "task": "script_mastermind_plot",
+    "keywords": [
+      "幕后黑手"
+    ],
+    "base_matches": [
+      "260-多子多福-设定阶段-人物设定.md",
+      "题材/网文/guize-guaitan.md"
+    ],
+    "match_count": 2,
+    "verdict": "review for merge (few matches)"
+  },
+  {
+    "prompt_file": "163.md",
+    "prompt_title": "163. 微短剧特效与转场脚本",
+    "task": "script_vfx_transition",
+    "keywords": [
+      "微短剧",
+      "转场"
+    ],
+    "base_matches": [
+      "031-1-创作阶段-场景纲制作.md",
+      "031-2-框架阶段-场景纲制作.md",
+      "032-1-框架阶段-场景纲制作.md",
+      "140-狗血女文-进阶技巧-反转设计.md",
+      "210-替身文-中观-白月光塑造.md"
+    ],
+    "match_count": 5,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "135.md",
+    "prompt_title": "135. 社交媒体热搜榜单模拟",
+    "task": "simulate_trending_topics",
+    "keywords": [
+      "热搜",
+      "社交媒体"
+    ],
+    "base_matches": [
+      "066-数据分析-宣传语生成.md",
+      "075-1-数据分析-读者反馈分析.md",
+      "092-额外功能-营销文案.md",
+      "109-世情文-辅助工具-素材收集.md",
+      "119-玄幻小说-辅助工具-素材收集.md",
+      "150-知乎短篇-创意阶段-灵感收集.md",
+      "393-黑暗多子多福-宏观-市场定位.md",
+      "455-黑暗多子多福-中观-信息控制.md"
+    ],
+    "match_count": 10,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "16.md",
+    "prompt_title": "16. 读者评论模拟",
+    "task": "simulate_reader_comments",
+    "keywords": [
+      "读者评论"
+    ],
+    "base_matches": [
+      "070-数据分析-读者留存.md",
+      "071-商业化-读者画像.md",
+      "072-商业化-热度预测.md",
+      "147-狗血女文-商业化-算法优化.md",
+      "151-知乎短篇-创意阶段-市场定位.md",
+      "167-知乎短篇-商业化-算法优化.md",
+      "171-规则怪谈-创意阶段-市场定位.md",
+      "201-替身文-宏观-市场定位.md"
+    ],
+    "match_count": 8,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "81.md",
+    "prompt_title": "81. 大规模战争战术推演",
+    "task": "simulate_war_strategy",
+    "keywords": [
+      "战争",
+      "推演",
+      "战术"
+    ],
+    "base_matches": [
+      "014-创意阶段-市场扫榜分析.md",
+      "018-创意阶段-核心卖点定位.md",
+      "020-设定阶段-故事框架构建.md",
+      "021-设定阶段-世界观构建.md",
+      "022-设定阶段-人物角色设定.md",
+      "055-进阶技巧-战斗场景.md",
+      "117-玄幻小说-进阶技巧-战斗场景.md",
+      "119-玄幻小说-辅助工具-素材收集.md"
+    ],
+    "match_count": 69,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "102.md",
+    "prompt_title": "102. 异世界经济与通货膨胀模拟",
+    "task": "simulate_fantasy_economy",
+    "keywords": [
+      "经济",
+      "通货膨胀"
+    ],
+    "base_matches": [
+      "021-设定阶段-世界观构建.md",
+      "071-商业化-读者画像.md",
+      "129-情满四合院-辅助工具-素材收集.md",
+      "258-1-多子多福-宏观-系统设计.md",
+      "259-多子多福-设定阶段-世界观设定.md",
+      "415-黑暗多子多福-设定-敌意管理.md",
+      "425-黑暗多子多福-势力-后启示录.md",
+      "428-黑暗多子多福-势力-社会结构.md"
+    ],
+    "match_count": 30,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "67.md",
+    "prompt_title": "67. 直播间弹幕刷屏模拟",
+    "task": "simulate_livestream_chat",
+    "keywords": [
+      "直播",
+      "弹幕"
+    ],
+    "base_matches": [
+      "054-进阶技巧-节奏校准.md",
+      "108-世情文-数据分析-读者反馈.md",
+      "118-玄幻小说-数据分析-读者反馈.md",
+      "128-情满四合院-数据分析-读者反馈.md",
+      "173-规则怪谈-创意阶段-金手指设计.md",
+      "方法论/写作/世界观母题目录.md",
+      "题材/网文/lishi-naodong.md",
+      "题材/网文/zhibo.md"
+    ],
+    "match_count": 8,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "5.md",
+    "prompt_title": "5. 简介优化 (黄金三行法则)",
+    "task": "optimize_blurb",
+    "keywords": [
+      "简介",
+      "黄金三行"
+    ],
+    "base_matches": [
+      "014-创意阶段-市场扫榜分析.md",
+      "017-创意阶段-题材卖点确定.md",
+      "030-1-创作阶段-大纲制作.md",
+      "031-框架阶段-章级大纲.md",
+      "032-2-框架阶段-黄金三章设计.md",
+      "032-创作阶段-黄金三章设计.md",
+      "033-创作阶段-书名简介设计.md",
+      "034-框架阶段-书名简介设计.md"
+    ],
+    "match_count": 29,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "44.md",
+    "prompt_title": "44. 对话优化 (避免水词)",
+    "task": "optimize_dialogue",
+    "keywords": [
+      "对话",
+      "水词"
+    ],
+    "base_matches": [
+      "031-1-创作阶段-场景纲制作.md",
+      "031-2-框架阶段-场景纲制作.md",
+      "032-1-框架阶段-场景纲制作.md",
+      "036-框架阶段-细纲制作.md",
+      "037-框架阶段-章节纲制作.md",
+      "038-框架阶段-创作输入包.md",
+      "039-框架阶段-素材收集.md",
+      "040-创作阶段-章节创作.md"
+    ],
+    "match_count": 160,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "33.md",
+    "prompt_title": "33. 首秀数据分析与剧情微调",
+    "task": "analyze_performance_data",
+    "keywords": [
+      "数据分析",
+      "剧情微调"
+    ],
+    "base_matches": [
+      "033-创作阶段-书名简介设计.md",
+      "036-框架阶段-细纲制作.md",
+      "037-框架阶段-章节纲制作.md",
+      "052-进阶技巧-修订润色.md",
+      "061-数据分析-阅读体验审校.md",
+      "062-数据分析-章节质量评分.md",
+      "063-1-商业化-AI-Beta读者反馈.md",
+      "063-数据分析-文风视角规范.md"
+    ],
+    "match_count": 36,
+    "verdict": "drop or basetypeize (many matches in base)"
+  },
+  {
+    "prompt_file": "3.md",
+    "prompt_title": "3. 赛道热度分析 (2024-2026)",
+    "task": "analyze_market_trends",
+    "keywords": [
+      "赛道热度",
+      "热度分析"
+    ],
+    "base_matches": [
+      "072-商业化-热度预测.md"
+    ],
+    "match_count": 1,
+    "verdict": "merge candidate (single match in base)"
+  }
+]

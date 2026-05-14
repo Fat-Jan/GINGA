@@ -1,0 +1,1114 @@
+{
+  "generated_at": "2026-05-14T13:30:08+00:00",
+  "environment": {
+    "python": "3.13.12",
+    "sqlite_version": "3.39.5",
+    "sqlite_vec_module_available": true,
+    "prompts_dir": "foundation/assets/prompts",
+    "sources": [
+      "foundation/assets/prompts",
+      "foundation/assets/methodology"
+    ],
+    "index_path": ".ops/validation/rag_recall_eval.sqlite",
+    "json_path": ".ops/validation/rag_recall_quality.json",
+    "report_path": ".ops/reports/rag_recall_quality_report.md",
+    "model_id": "rag-recall-eval-deterministic-v1",
+    "top_k": 5
+  },
+  "index_build": {
+    "sources_scanned": 2,
+    "files_seen": 473,
+    "cards_indexed": 473,
+    "skipped_no_frontmatter": 0,
+    "skipped_invalid_yaml": 0,
+    "skipped_missing_id": 0
+  },
+  "vector_build": {
+    "cards_seen": 473,
+    "vectors_indexed": 473,
+    "skipped_empty_body": 0,
+    "errors": 0,
+    "sqlite_vec_available": true,
+    "storage": "sqlite-vec"
+  },
+  "summary": {
+    "query_count": 12,
+    "cards_indexed": 473,
+    "documents_indexed": 473,
+    "vectors_indexed": 473,
+    "vector_storage": "sqlite-vec",
+    "fallback_status": "none",
+    "native_sqlite_vec_available": true,
+    "native_sqlite_vec_used": true,
+    "native_sqlite_vec_status": "可用并用于全部有结果查询",
+    "native_search_errors": [],
+    "vector_ready": true,
+    "vector_ready_reason": "ready",
+    "avg_layer1_hits": 2.9166666666666665,
+    "avg_layer2_hits": 2.9166666666666665,
+    "avg_overlap_ratio": 1.0,
+    "empty_layer1_queries": [],
+    "empty_layer2_queries": [],
+    "quality_grade_distribution": {
+      "A": 48,
+      "A-": 53,
+      "B": 124,
+      "B+": 248
+    },
+    "intent_distribution_top10": [
+      [
+        "structural_design",
+        5
+      ],
+      [
+        "outline_planning",
+        2
+      ],
+      [
+        "generator",
+        2
+      ],
+      [
+        "prose_generation",
+        1
+      ],
+      [
+        "editing_transformation",
+        1
+      ],
+      [
+        null,
+        1
+      ]
+    ]
+  },
+  "queries": [
+    {
+      "query": "失忆刺客 第一章 开场",
+      "filters": {
+        "stage": "drafting",
+        "topics": [
+          "悬疑",
+          "武侠",
+          "玄幻"
+        ],
+        "asset_type": "prompt_card",
+        "card_intent": "prose_generation",
+        "quality_floor": "B",
+        "top_k": 5
+      },
+      "layer1": {
+        "ids": [
+          "prompts-card-write_villain_last_words-272",
+          "prompts-card-write_auction_finale-331",
+          "prompts-card-write_revenge_scene-418",
+          "prompts-card-write_ascension_scene-239",
+          "prompts-card-write_mirror_horror-275"
+        ],
+        "titles": [
+          "反派：最终BOSS的临终遗言",
+          "仙侠拍卖会压轴场景生成",
+          "弃徒/退婚流复仇场景写作提示",
+          "仙侠渡劫飞升大场面描写",
+          "恐怖：镜子里的诡异细节"
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-write_villain_last_words-272",
+            "title": "反派：最终BOSS的临终遗言"
+          },
+          {
+            "id": "prompts-card-write_auction_finale-331",
+            "title": "仙侠拍卖会压轴场景生成"
+          },
+          {
+            "id": "prompts-card-write_revenge_scene-418",
+            "title": "弃徒/退婚流复仇场景写作提示"
+          },
+          {
+            "id": "prompts-card-write_ascension_scene-239",
+            "title": "仙侠渡劫飞升大场面描写"
+          },
+          {
+            "id": "prompts-card-write_mirror_horror-275",
+            "title": "恐怖：镜子里的诡异细节"
+          }
+        ]
+      },
+      "layer2": {
+        "ids": [
+          "prompts-card-write_ascension_scene-239",
+          "prompts-card-write_mirror_horror-275",
+          "prompts-card-write_villain_last_words-272",
+          "prompts-card-write_auction_finale-331",
+          "prompts-card-write_revenge_scene-418"
+        ],
+        "titles": [
+          "仙侠渡劫飞升大场面描写",
+          "恐怖：镜子里的诡异细节",
+          "反派：最终BOSS的临终遗言",
+          "仙侠拍卖会压轴场景生成",
+          "弃徒/退婚流复仇场景写作提示"
+        ],
+        "scores": [
+          0.438563,
+          0.431191,
+          0.414214,
+          0.407784,
+          0.392281
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-write_ascension_scene-239",
+            "title": "仙侠渡劫飞升大场面描写",
+            "score": 0.438563
+          },
+          {
+            "id": "prompts-card-write_mirror_horror-275",
+            "title": "恐怖：镜子里的诡异细节",
+            "score": 0.431191
+          },
+          {
+            "id": "prompts-card-write_villain_last_words-272",
+            "title": "反派：最终BOSS的临终遗言",
+            "score": 0.414214
+          },
+          {
+            "id": "prompts-card-write_auction_finale-331",
+            "title": "仙侠拍卖会压轴场景生成",
+            "score": 0.407784
+          },
+          {
+            "id": "prompts-card-write_revenge_scene-418",
+            "title": "弃徒/退婚流复仇场景写作提示",
+            "score": 0.392281
+          }
+        ]
+      },
+      "overlap": {
+        "ids": [
+          "prompts-card-write_ascension_scene-239",
+          "prompts-card-write_mirror_horror-275",
+          "prompts-card-write_villain_last_words-272",
+          "prompts-card-write_auction_finale-331",
+          "prompts-card-write_revenge_scene-418"
+        ],
+        "count": 5,
+        "ratio": 1.0
+      },
+      "native_sqlite_vec": true,
+      "native_search_error": "",
+      "notes": "章节开场创作，优先看 drafting prose_generation 对刺客/失忆/悬疑的语义命中。"
+    },
+    {
+      "query": "黑暗玄幻 微粒经济",
+      "filters": {
+        "stage": "setting",
+        "topics": [
+          "玄幻",
+          "黑暗"
+        ],
+        "asset_type": "prompt_card",
+        "card_intent": "structural_design",
+        "quality_floor": "B",
+        "top_k": 5
+      },
+      "layer1": {
+        "ids": [
+          "prompts-card-design_power_system-6",
+          "prompts-card-design_academy_curriculum-73",
+          "prompts-card-design_cyber_cultivation-105",
+          "prompts-card-design-pet_evolution-74",
+          "prompts-card-design_magitech_product-230"
+        ],
+        "titles": [
+          "力量体系设计",
+          "设计学院流课程表与考核体系",
+          "赛博修仙体系融合",
+          "宠物/御兽进化路线设计",
+          "设计结合灵气与科技的现代修真产品"
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-design_power_system-6",
+            "title": "力量体系设计"
+          },
+          {
+            "id": "prompts-card-design_academy_curriculum-73",
+            "title": "设计学院流课程表与考核体系"
+          },
+          {
+            "id": "prompts-card-design_cyber_cultivation-105",
+            "title": "赛博修仙体系融合"
+          },
+          {
+            "id": "prompts-card-design-pet_evolution-74",
+            "title": "宠物/御兽进化路线设计"
+          },
+          {
+            "id": "prompts-card-design_magitech_product-230",
+            "title": "设计结合灵气与科技的现代修真产品"
+          }
+        ]
+      },
+      "layer2": {
+        "ids": [
+          "prompts-card-design_power_system-6",
+          "prompts-card-design_cyber_cultivation-105",
+          "prompts-card-design_academy_curriculum-73",
+          "prompts-card-design_magitech_product-230",
+          "prompts-card-design-pet_evolution-74"
+        ],
+        "titles": [
+          "力量体系设计",
+          "赛博修仙体系融合",
+          "设计学院流课程表与考核体系",
+          "设计结合灵气与科技的现代修真产品",
+          "宠物/御兽进化路线设计"
+        ],
+        "scores": [
+          0.406906,
+          0.405377,
+          0.405328,
+          0.403485,
+          0.388651
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-design_power_system-6",
+            "title": "力量体系设计",
+            "score": 0.406906
+          },
+          {
+            "id": "prompts-card-design_cyber_cultivation-105",
+            "title": "赛博修仙体系融合",
+            "score": 0.405377
+          },
+          {
+            "id": "prompts-card-design_academy_curriculum-73",
+            "title": "设计学院流课程表与考核体系",
+            "score": 0.405328
+          },
+          {
+            "id": "prompts-card-design_magitech_product-230",
+            "title": "设计结合灵气与科技的现代修真产品",
+            "score": 0.403485
+          },
+          {
+            "id": "prompts-card-design-pet_evolution-74",
+            "title": "宠物/御兽进化路线设计",
+            "score": 0.388651
+          }
+        ]
+      },
+      "overlap": {
+        "ids": [
+          "prompts-card-design_power_system-6",
+          "prompts-card-design_cyber_cultivation-105",
+          "prompts-card-design_academy_curriculum-73",
+          "prompts-card-design_magitech_product-230",
+          "prompts-card-design-pet_evolution-74"
+        ],
+        "count": 5,
+        "ratio": 1.0
+      },
+      "native_sqlite_vec": true,
+      "native_search_error": "",
+      "notes": "世界观经济规则查询，Layer 1 用 setting+玄幻/黑暗+结构设计收窄。"
+    },
+    {
+      "query": "章节悬念 回收伏笔",
+      "filters": {
+        "stage": "framework",
+        "topics": [
+          "通用",
+          "悬疑"
+        ],
+        "asset_type": "prompt_card",
+        "card_intent": "outline_planning",
+        "quality_floor": "B",
+        "top_k": 5
+      },
+      "layer1": {
+        "ids": [
+          "prompts-card-outline_golden_three_chapters-41"
+        ],
+        "titles": [
+          "黄金三章细纲生成 (番茄版)"
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-outline_golden_three_chapters-41",
+            "title": "黄金三章细纲生成 (番茄版)"
+          }
+        ]
+      },
+      "layer2": {
+        "ids": [
+          "prompts-card-outline_golden_three_chapters-41"
+        ],
+        "titles": [
+          "黄金三章细纲生成 (番茄版)"
+        ],
+        "scores": [
+          0.090536
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-outline_golden_three_chapters-41",
+            "title": "黄金三章细纲生成 (番茄版)",
+            "score": 0.090536
+          }
+        ]
+      },
+      "overlap": {
+        "ids": [
+          "prompts-card-outline_golden_three_chapters-41"
+        ],
+        "count": 1,
+        "ratio": 1.0
+      },
+      "native_sqlite_vec": false,
+      "native_search_error": "",
+      "notes": "结构层查询，检查伏笔、悬念、章节节奏相关资产是否被召回。"
+    },
+    {
+      "query": "角色状态更新",
+      "filters": {
+        "stage": "setting",
+        "topics": [
+          "通用"
+        ],
+        "asset_type": "prompt_card",
+        "card_intent": "generator",
+        "quality_floor": "B",
+        "top_k": 5
+      },
+      "layer1": {
+        "ids": [
+          "prompts-card-generate_spinoff_plot-116"
+        ],
+        "titles": [
+          "为高人气配角生成独立支线故事"
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-generate_spinoff_plot-116",
+            "title": "为高人气配角生成独立支线故事"
+          }
+        ]
+      },
+      "layer2": {
+        "ids": [
+          "prompts-card-generate_spinoff_plot-116"
+        ],
+        "titles": [
+          "为高人气配角生成独立支线故事"
+        ],
+        "scores": [
+          0.101535
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-generate_spinoff_plot-116",
+            "title": "为高人气配角生成独立支线故事",
+            "score": 0.101535
+          }
+        ]
+      },
+      "overlap": {
+        "ids": [
+          "prompts-card-generate_spinoff_plot-116"
+        ],
+        "count": 1,
+        "ratio": 1.0
+      },
+      "native_sqlite_vec": false,
+      "native_search_error": "",
+      "notes": "偏状态表/角色档案维护，验证通用 setting 生成器类卡片。"
+    },
+    {
+      "query": "世界观设定 天堑 内宇宙",
+      "filters": {
+        "stage": "setting",
+        "topics": [
+          "玄幻",
+          "科幻",
+          "通用"
+        ],
+        "asset_type": "prompt_card",
+        "card_intent": "structural_design",
+        "quality_floor": "B",
+        "top_k": 5
+      },
+      "layer1": {
+        "ids": [
+          "prompts-card-design_villain-10",
+          "prompts-card-design_power_system-6",
+          "prompts-card-design_academy_curriculum-73",
+          "prompts-card-design_cyber_cultivation-105",
+          "prompts-card-design_fermi_paradox_solution-141"
+        ],
+        "titles": [
+          "反派仇恨值拉升",
+          "力量体系设计",
+          "设计学院流课程表与考核体系",
+          "赛博修仙体系融合",
+          "费米悖论/黑暗森林法则变体设计"
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-design_villain-10",
+            "title": "反派仇恨值拉升"
+          },
+          {
+            "id": "prompts-card-design_power_system-6",
+            "title": "力量体系设计"
+          },
+          {
+            "id": "prompts-card-design_academy_curriculum-73",
+            "title": "设计学院流课程表与考核体系"
+          },
+          {
+            "id": "prompts-card-design_cyber_cultivation-105",
+            "title": "赛博修仙体系融合"
+          },
+          {
+            "id": "prompts-card-design_fermi_paradox_solution-141",
+            "title": "费米悖论/黑暗森林法则变体设计"
+          }
+        ]
+      },
+      "layer2": {
+        "ids": [
+          "prompts-card-design_power_system-6",
+          "prompts-card-design_fermi_paradox_solution-141",
+          "prompts-card-design_cyber_cultivation-105",
+          "prompts-card-design_academy_curriculum-73",
+          "prompts-card-design_villain-10"
+        ],
+        "titles": [
+          "力量体系设计",
+          "费米悖论/黑暗森林法则变体设计",
+          "赛博修仙体系融合",
+          "设计学院流课程表与考核体系",
+          "反派仇恨值拉升"
+        ],
+        "scores": [
+          0.427278,
+          0.422439,
+          0.421986,
+          0.414214,
+          0.414214
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-design_power_system-6",
+            "title": "力量体系设计",
+            "score": 0.427278
+          },
+          {
+            "id": "prompts-card-design_fermi_paradox_solution-141",
+            "title": "费米悖论/黑暗森林法则变体设计",
+            "score": 0.422439
+          },
+          {
+            "id": "prompts-card-design_cyber_cultivation-105",
+            "title": "赛博修仙体系融合",
+            "score": 0.421986
+          },
+          {
+            "id": "prompts-card-design_academy_curriculum-73",
+            "title": "设计学院流课程表与考核体系",
+            "score": 0.414214
+          },
+          {
+            "id": "prompts-card-design_villain-10",
+            "title": "反派仇恨值拉升",
+            "score": 0.414214
+          }
+        ]
+      },
+      "overlap": {
+        "ids": [
+          "prompts-card-design_power_system-6",
+          "prompts-card-design_fermi_paradox_solution-141",
+          "prompts-card-design_cyber_cultivation-105",
+          "prompts-card-design_academy_curriculum-73",
+          "prompts-card-design_villain-10"
+        ],
+        "count": 5,
+        "ratio": 1.0
+      },
+      "native_sqlite_vec": true,
+      "native_search_error": "",
+      "notes": "专名较强的世界观设定查询，观察没有精确词时的近邻质量。"
+    },
+    {
+      "query": "反转设计 狗血女文",
+      "filters": {
+        "stage": "framework",
+        "topics": [
+          "言情",
+          "女频",
+          "豪门"
+        ],
+        "asset_type": "prompt_card",
+        "card_intent": "structural_design",
+        "quality_floor": "B",
+        "top_k": 5
+      },
+      "layer1": {
+        "ids": [
+          "prompts-card-design-short_drama_twists"
+        ],
+        "titles": [
+          "短剧高能反转节点设计"
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-design-short_drama_twists",
+            "title": "短剧高能反转节点设计"
+          }
+        ]
+      },
+      "layer2": {
+        "ids": [
+          "prompts-card-design-short_drama_twists"
+        ],
+        "titles": [
+          "短剧高能反转节点设计"
+        ],
+        "scores": [
+          0.146647
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-design-short_drama_twists",
+            "title": "短剧高能反转节点设计",
+            "score": 0.146647
+          }
+        ]
+      },
+      "overlap": {
+        "ids": [
+          "prompts-card-design-short_drama_twists"
+        ],
+        "count": 1,
+        "ratio": 1.0
+      },
+      "native_sqlite_vec": false,
+      "native_search_error": "",
+      "notes": "女频反转/狗血桥段设计，检查 genre/topic 与语义共同作用。"
+    },
+    {
+      "query": "规则怪谈 副本设计",
+      "filters": {
+        "stage": "setting",
+        "topics": [
+          "怪谈",
+          "悬疑",
+          "恐怖"
+        ],
+        "asset_type": "prompt_card",
+        "card_intent": "generator",
+        "quality_floor": "B",
+        "top_k": 5
+      },
+      "layer1": {
+        "ids": [
+          "prompts-card-generate_rules_dungeon-8",
+          "prompts-card-generate-weird_rules"
+        ],
+        "titles": [
+          "生成规则怪谈/副本",
+          "怪谈守则生成器 (红蓝字)"
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-generate_rules_dungeon-8",
+            "title": "生成规则怪谈/副本"
+          },
+          {
+            "id": "prompts-card-generate-weird_rules",
+            "title": "怪谈守则生成器 (红蓝字)"
+          }
+        ]
+      },
+      "layer2": {
+        "ids": [
+          "prompts-card-generate-weird_rules",
+          "prompts-card-generate_rules_dungeon-8"
+        ],
+        "titles": [
+          "怪谈守则生成器 (红蓝字)",
+          "生成规则怪谈/副本"
+        ],
+        "scores": [
+          0.414214,
+          0.407803
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-generate-weird_rules",
+            "title": "怪谈守则生成器 (红蓝字)",
+            "score": 0.414214
+          },
+          {
+            "id": "prompts-card-generate_rules_dungeon-8",
+            "title": "生成规则怪谈/副本",
+            "score": 0.407803
+          }
+        ]
+      },
+      "overlap": {
+        "ids": [
+          "prompts-card-generate-weird_rules",
+          "prompts-card-generate_rules_dungeon-8"
+        ],
+        "count": 2,
+        "ratio": 1.0
+      },
+      "native_sqlite_vec": true,
+      "native_search_error": "",
+      "notes": "规则怪谈强标签查询，预期 Layer 1 与 Layer 2 overlap 较高。"
+    },
+    {
+      "query": "多子多福 奖励机制",
+      "filters": {
+        "stage": "setting",
+        "topics": [
+          "系统",
+          "玄幻"
+        ],
+        "asset_type": "prompt_card",
+        "card_intent": "structural_design",
+        "quality_floor": "B",
+        "top_k": 5
+      },
+      "layer1": {
+        "ids": [
+          "prompts-card-design_power_system-6",
+          "prompts-card-design_academy_curriculum-73",
+          "prompts-card-design_cyber_cultivation-105",
+          "prompts-card-design-pet_evolution-74",
+          "prompts-card-design_magitech_product-230"
+        ],
+        "titles": [
+          "力量体系设计",
+          "设计学院流课程表与考核体系",
+          "赛博修仙体系融合",
+          "宠物/御兽进化路线设计",
+          "设计结合灵气与科技的现代修真产品"
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-design_power_system-6",
+            "title": "力量体系设计"
+          },
+          {
+            "id": "prompts-card-design_academy_curriculum-73",
+            "title": "设计学院流课程表与考核体系"
+          },
+          {
+            "id": "prompts-card-design_cyber_cultivation-105",
+            "title": "赛博修仙体系融合"
+          },
+          {
+            "id": "prompts-card-design-pet_evolution-74",
+            "title": "宠物/御兽进化路线设计"
+          },
+          {
+            "id": "prompts-card-design_magitech_product-230",
+            "title": "设计结合灵气与科技的现代修真产品"
+          }
+        ]
+      },
+      "layer2": {
+        "ids": [
+          "prompts-card-design_magitech_product-230",
+          "prompts-card-design_cyber_cultivation-105",
+          "prompts-card-design-pet_evolution-74",
+          "prompts-card-design_academy_curriculum-73",
+          "prompts-card-design_power_system-6"
+        ],
+        "titles": [
+          "设计结合灵气与科技的现代修真产品",
+          "赛博修仙体系融合",
+          "宠物/御兽进化路线设计",
+          "设计学院流课程表与考核体系",
+          "力量体系设计"
+        ],
+        "scores": [
+          0.471418,
+          0.458616,
+          0.424239,
+          0.423867,
+          0.414214
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-design_magitech_product-230",
+            "title": "设计结合灵气与科技的现代修真产品",
+            "score": 0.471418
+          },
+          {
+            "id": "prompts-card-design_cyber_cultivation-105",
+            "title": "赛博修仙体系融合",
+            "score": 0.458616
+          },
+          {
+            "id": "prompts-card-design-pet_evolution-74",
+            "title": "宠物/御兽进化路线设计",
+            "score": 0.424239
+          },
+          {
+            "id": "prompts-card-design_academy_curriculum-73",
+            "title": "设计学院流课程表与考核体系",
+            "score": 0.423867
+          },
+          {
+            "id": "prompts-card-design_power_system-6",
+            "title": "力量体系设计",
+            "score": 0.414214
+          }
+        ]
+      },
+      "overlap": {
+        "ids": [
+          "prompts-card-design_magitech_product-230",
+          "prompts-card-design_cyber_cultivation-105",
+          "prompts-card-design-pet_evolution-74",
+          "prompts-card-design_academy_curriculum-73",
+          "prompts-card-design_power_system-6"
+        ],
+        "count": 5,
+        "ratio": 1.0
+      },
+      "native_sqlite_vec": true,
+      "native_search_error": "",
+      "notes": "系统奖励机制查询，检验具体流派名与系统设定资产的距离。"
+    },
+    {
+      "query": "终稿润色 文风统一",
+      "filters": {
+        "stage": "refinement",
+        "topics": [
+          "文风"
+        ],
+        "asset_type": "prompt_card",
+        "card_intent": "editing_transformation",
+        "quality_floor": "B",
+        "top_k": 5
+      },
+      "layer1": {
+        "ids": [
+          "prompts-card-polish_text_style-363"
+        ],
+        "titles": [
+          "流程：风格化润色 (Style Polishing)"
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-polish_text_style-363",
+            "title": "流程：风格化润色 (Style Polishing)"
+          }
+        ]
+      },
+      "layer2": {
+        "ids": [
+          "prompts-card-polish_text_style-363"
+        ],
+        "titles": [
+          "流程：风格化润色 (Style Polishing)"
+        ],
+        "scores": [
+          -0.072932
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-polish_text_style-363",
+            "title": "流程：风格化润色 (Style Polishing)",
+            "score": -0.072932
+          }
+        ]
+      },
+      "overlap": {
+        "ids": [
+          "prompts-card-polish_text_style-363"
+        ],
+        "count": 1,
+        "ratio": 1.0
+      },
+      "native_sqlite_vec": false,
+      "native_search_error": "",
+      "notes": "终稿润色查询，使用 schema 内 polish/rewrite 类 editing_transformation，重点看标题是否直接相关。"
+    },
+    {
+      "query": "市场定位 读者画像",
+      "filters": {
+        "stage": "business",
+        "topics": [
+          "business",
+          "通用"
+        ],
+        "asset_type": "methodology",
+        "card_intent": null,
+        "quality_floor": "B",
+        "top_k": 5
+      },
+      "layer1": {
+        "ids": [
+          "base-methodology-creative-platform-analysis",
+          "base-methodology-creative-submission-guide",
+          "base-methodology-market-2026-webnovel-trends",
+          "base-methodology-platform-genre-adaptation-matrix"
+        ],
+        "titles": [
+          "平台分析指南",
+          "网文平台投稿规范指南",
+          "2026 网文市场趋势扫描",
+          "题材跨平台适配矩阵"
+        ],
+        "hits": [
+          {
+            "id": "base-methodology-creative-platform-analysis",
+            "title": "平台分析指南"
+          },
+          {
+            "id": "base-methodology-creative-submission-guide",
+            "title": "网文平台投稿规范指南"
+          },
+          {
+            "id": "base-methodology-market-2026-webnovel-trends",
+            "title": "2026 网文市场趋势扫描"
+          },
+          {
+            "id": "base-methodology-platform-genre-adaptation-matrix",
+            "title": "题材跨平台适配矩阵"
+          }
+        ]
+      },
+      "layer2": {
+        "ids": [
+          "base-methodology-creative-submission-guide",
+          "base-methodology-creative-platform-analysis",
+          "base-methodology-platform-genre-adaptation-matrix",
+          "base-methodology-market-2026-webnovel-trends"
+        ],
+        "titles": [
+          "网文平台投稿规范指南",
+          "平台分析指南",
+          "题材跨平台适配矩阵",
+          "2026 网文市场趋势扫描"
+        ],
+        "scores": [
+          0.414214,
+          0.414214,
+          0.414214,
+          0.396524
+        ],
+        "hits": [
+          {
+            "id": "base-methodology-creative-submission-guide",
+            "title": "网文平台投稿规范指南",
+            "score": 0.414214
+          },
+          {
+            "id": "base-methodology-creative-platform-analysis",
+            "title": "平台分析指南",
+            "score": 0.414214
+          },
+          {
+            "id": "base-methodology-platform-genre-adaptation-matrix",
+            "title": "题材跨平台适配矩阵",
+            "score": 0.414214
+          },
+          {
+            "id": "base-methodology-market-2026-webnovel-trends",
+            "title": "2026 网文市场趋势扫描",
+            "score": 0.396524
+          }
+        ]
+      },
+      "overlap": {
+        "ids": [
+          "base-methodology-creative-submission-guide",
+          "base-methodology-creative-platform-analysis",
+          "base-methodology-platform-genre-adaptation-matrix",
+          "base-methodology-market-2026-webnovel-trends"
+        ],
+        "count": 4,
+        "ratio": 1.0
+      },
+      "native_sqlite_vec": true,
+      "native_search_error": "",
+      "notes": "商业分析查询，验证 business 阶段是否能召回读者画像/卖点定位 methodology 资产。"
+    },
+    {
+      "query": "第一章 黄金三章 爽点钩子",
+      "filters": {
+        "stage": "framework",
+        "topics": [
+          "通用"
+        ],
+        "asset_type": "prompt_card",
+        "card_intent": "outline_planning",
+        "quality_floor": "B",
+        "top_k": 5
+      },
+      "layer1": {
+        "ids": [
+          "prompts-card-outline_golden_three_chapters-41"
+        ],
+        "titles": [
+          "黄金三章细纲生成 (番茄版)"
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-outline_golden_three_chapters-41",
+            "title": "黄金三章细纲生成 (番茄版)"
+          }
+        ]
+      },
+      "layer2": {
+        "ids": [
+          "prompts-card-outline_golden_three_chapters-41"
+        ],
+        "titles": [
+          "黄金三章细纲生成 (番茄版)"
+        ],
+        "scores": [
+          0.0
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-outline_golden_three_chapters-41",
+            "title": "黄金三章细纲生成 (番茄版)",
+            "score": 0.0
+          }
+        ]
+      },
+      "overlap": {
+        "ids": [
+          "prompts-card-outline_golden_three_chapters-41"
+        ],
+        "count": 1,
+        "ratio": 1.0
+      },
+      "native_sqlite_vec": false,
+      "native_search_error": "",
+      "notes": "黄金三章/开篇节奏查询，补充常见章节设计场景。"
+    },
+    {
+      "query": "战斗场景 节奏 动作描写",
+      "filters": {
+        "stage": "drafting",
+        "topics": [
+          "玄幻",
+          "动作"
+        ],
+        "asset_type": "prompt_card",
+        "card_intent": "structural_design",
+        "quality_floor": "B",
+        "top_k": 5
+      },
+      "layer1": {
+        "ids": [
+          "prompts-card-construct_misunderstanding_chain-69",
+          "prompts-card-design_exam_questions-134",
+          "prompts-card-action-beat_sheet-219",
+          "prompts-card-choreograph_fight_scene-355"
+        ],
+        "titles": [
+          "迪化流误解链构建",
+          "设计用于学院流/学霸文的硬核考试题目",
+          "动作戏节奏表",
+          "流程：打斗动作细化 (Combat Choreography)"
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-construct_misunderstanding_chain-69",
+            "title": "迪化流误解链构建"
+          },
+          {
+            "id": "prompts-card-design_exam_questions-134",
+            "title": "设计用于学院流/学霸文的硬核考试题目"
+          },
+          {
+            "id": "prompts-card-action-beat_sheet-219",
+            "title": "动作戏节奏表"
+          },
+          {
+            "id": "prompts-card-choreograph_fight_scene-355",
+            "title": "流程：打斗动作细化 (Combat Choreography)"
+          }
+        ]
+      },
+      "layer2": {
+        "ids": [
+          "prompts-card-choreograph_fight_scene-355",
+          "prompts-card-construct_misunderstanding_chain-69",
+          "prompts-card-action-beat_sheet-219",
+          "prompts-card-design_exam_questions-134"
+        ],
+        "titles": [
+          "流程：打斗动作细化 (Combat Choreography)",
+          "迪化流误解链构建",
+          "动作戏节奏表",
+          "设计用于学院流/学霸文的硬核考试题目"
+        ],
+        "scores": [
+          0.432626,
+          0.430854,
+          0.421561,
+          0.407728
+        ],
+        "hits": [
+          {
+            "id": "prompts-card-choreograph_fight_scene-355",
+            "title": "流程：打斗动作细化 (Combat Choreography)",
+            "score": 0.432626
+          },
+          {
+            "id": "prompts-card-construct_misunderstanding_chain-69",
+            "title": "迪化流误解链构建",
+            "score": 0.430854
+          },
+          {
+            "id": "prompts-card-action-beat_sheet-219",
+            "title": "动作戏节奏表",
+            "score": 0.421561
+          },
+          {
+            "id": "prompts-card-design_exam_questions-134",
+            "title": "设计用于学院流/学霸文的硬核考试题目",
+            "score": 0.407728
+          }
+        ]
+      },
+      "overlap": {
+        "ids": [
+          "prompts-card-choreograph_fight_scene-355",
+          "prompts-card-construct_misunderstanding_chain-69",
+          "prompts-card-action-beat_sheet-219",
+          "prompts-card-design_exam_questions-134"
+        ],
+        "count": 4,
+        "ratio": 1.0
+      },
+      "native_sqlite_vec": true,
+      "native_search_error": "",
+      "notes": "动作戏场景查询，检验 drafting 与 structural_design 的交叉召回。"
+    }
+  ],
+  "observations": [
+    "DeterministicTextEmbedder 是 token hashing，适合复现 smoke/趋势评估，但不等价于生产级语义 embedding。"
+  ],
+  "recommendations": [
+    "把本脚本纳入后续资产变更后的固定评估入口，用 JSON diff 跟踪召回质量漂移。",
+    "为高频业务查询维护 expected/relevant id 集合，后续可计算 recall@k、MRR、nDCG 等更硬的指标。",
+    "针对 Layer 1 空召回或明显窄召回的 query，优先补 metadata topic/card_intent，而不是先改检索代码。",
+    "对专名强、资产未覆盖的题材词建立同义词/领域词表，降低 Layer 1 过滤漏召回。"
+  ]
+}

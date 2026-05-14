@@ -1,0 +1,45 @@
+---
+id: prompts-card-write_hurt_comfort-460
+asset_type: prompt_card
+title: 润色：虐心与受伤逻辑 (Hurt/Comfort Details)
+topic: [同人, 感情]
+stage: drafting
+quality_grade: B
+source_path: _原料/提示词库参考/prompts/460.md
+last_updated: 2026-05-13
+card_intent: prose_generation
+card_kind: scene_card
+task_verb: write
+task_full: write_hurt_comfort
+granularity: scene
+output_kind: dialogue
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 460. 润色：虐心与受伤逻辑 (Hurt/Comfort Details)
+
+## 提示词内容
+
+```json
+{
+  "task": "write_hurt_comfort",
+  "type": "Physical Injury / Emotional Trauma / Sacrifice",
+  "scene": "Battle aftermath / Nightmare / Hospital bed",
+  "sensory_pain": "Burning / Numbness / Ringing ears / Blurry vision",
+  "comfort_provider": "Love Interest / Best Friend / Mentor",
+  "action": "Bandaging / Hugging / Silent companionship",
+  "dialogue": "'I thought I lost you' / 'It's over now'",
+  "emotion": "Vulnerability / Relief / Intimacy"
+}
+```
+
+## 使用场景
+同人/感情。通过受伤和照顾来快速拉近角色关系。
+
+## 最佳实践要点
+1.  **感官描写**：详细描写痛觉和虚弱感，让读者感同身受。
+2.  **脆弱一面**：让平时强大的主角展现出脆弱，激发照顾者的保护欲。
+
+## 示例输入
+主角在战斗中重伤昏迷，醒来发现自己在医院，旁边是守了一夜、眼圈发黑的女主。描写主角试图起身但无力，被女主按回床上的温馨一幕。

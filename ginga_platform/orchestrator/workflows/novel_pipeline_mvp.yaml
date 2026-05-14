@@ -1,0 +1,176 @@
+# Ginga MVP Workflow — novel_pipeline_mvp v1.0
+#
+# 来源：ARCHITECTURE.md §4.4 + ROADMAP §1.2.3 P-2 + jury-1/3/4 共识（砍至 12 step）
+# 12 step：A-H（创作主干）+ R1-R3（终稿三件套）+ V1（版本验证）
+# Phase 2 deferred：N0/N1 / P1-P3 / D1-D3 / V2（不在 MVP）
+#
+# 关键约束（jury-2 字段补丁 5）：
+#   uses_capability 必须用资产 id（如 base-template-protagonist），不许文件路径
+#   资产 id 由 registry 解析为路径
+#
+# guard / checker（Meta 层）：
+#   preconditions: [guard:X]  前置硬阻断
+#   postconditions: [checker:Y]  后置软审计（默认 warn-only）
+
+name: novel_pipeline_mvp
+version: "1.0"
+description: |
+  MVP 12 step workflow：输入创意 → 第一章正文 + 完整 runtime_state。
+  支持 dark-fantasy immersive_mode（连续多章不打断 state 更新）。
+  N/P/D/V 阶段 Phase 2 deferred。
+
+flags:
+  immersive_mode:
+    default: false
+    description: 启用沉浸写作专线（dark-fantasy 长篇连续作业气质保护）
+  rag_mode:
+    default: on
+    description: 召回开关（jury-3 P1：作家可全局关闭）
+
+steps:
+  # ---------- 立项与设定（A-D）----------
+
+  - id: A_brainstorm
+    description: 立项与创意发散，把用户输入压缩成可执行核心创意
+    uses_capability: base-methodology-creative-brainstorm
+    preconditions:
+      - guard:no-fake-read
+    state_reads: []
+    state_writes:
+      - retrieved.brainstorm
+
+  - id: B_premise_lock
+    description: 把核心创意锁定为 STORY_DNA（100 字内冲突公式）
+    uses_capability: base-template-story-dna
+    state_reads:
+      - retrieved.brainstorm
+    state_writes:
+      - locked.STORY_DNA
+
+  - id: C_world_build
+    description: 构建三维世界（物理 / 社会 / 隐喻），锁定 GENRE_LOCKED 与 WORLD
+    uses_capability: base-template-worldview
+    state_reads:
+      - locked.STORY_DNA
+    state_writes:
+      - locked.GENRE_LOCKED
+      - locked.WORLD
+
+  - id: D_character_seed
+    description: 角色种子建档（3-6 主要角色 + 关系网 + 三级驱动力）
+    uses_capability: base-template-protagonist
+    state_reads:
+      - locked.STORY_DNA
+      - locked.WORLD
+    state_writes:
+      - entity_runtime.CHARACTER_STATE
+
+  # ---------- 大纲与初始化（E-F）----------
+
+  - id: E_outline
+    description: 三幕式情节架构（含转折 / 伏笔 / 余波），锁定 PLOT_ARCHITECTURE
+    uses_capability: base-template-outline
+    state_reads:
+      - locked.STORY_DNA
+      - locked.WORLD
+      - entity_runtime.CHARACTER_STATE
+    state_writes:
+      - locked.PLOT_ARCHITECTURE
+
+  - id: F_state_init
+    description: 初始化 entity_runtime 全量字段 + workspace 三件套（task_plan/findings/progress）
+    uses_capability: base-template-state-init
+    state_reads:
+      - locked.*
+      - entity_runtime.CHARACTER_STATE
+    state_writes:
+      - entity_runtime.RESOURCE_LEDGER
+      - entity_runtime.FORESHADOW_STATE
+      - entity_runtime.GLOBAL_SUMMARY
+      - workspace.task_plan
+      - workspace.findings
+      - workspace.progress
+
+  # ---------- 章节循环（G-H，可走 immersive_mode）----------
+
+  - id: G_chapter_draft
+    description: 章节正文生成（由 skill-router 按 contract.priority 路由到 dark-fantasy 或 default writer）
+    uses_capability: base-card-chapter-draft
+    uses_skill: skill-router
+    preconditions:
+      - guard:latest-text-priority
+    state_reads:
+      - locked.*
+      - entity_runtime.*
+      - retrieved.*
+    state_writes:
+      - workspace.chapter_text
+
+  - id: H_chapter_settle
+    description: 章节结算（更新 CHARACTER_STATE / RESOURCE_LEDGER / FORESHADOW_STATE / progress）
+    uses_capability: base-template-chapter-settle
+    state_reads:
+      - workspace.chapter_text
+      - entity_runtime.*
+    state_writes:
+      - entity_runtime.CHARACTER_STATE
+      - entity_runtime.RESOURCE_LEDGER
+      - entity_runtime.FORESHADOW_STATE
+      - workspace.progress
+    postconditions:
+      - checker:character-iq
+      - checker:cool-point-payoff
+
+  # ---------- 终稿三件套（R1-R3）----------
+
+  - id: R1_style_polish
+    description: 风格润色（按 style_lock 锁定的题材气质执行去 AI 味润色）
+    uses_capability: base-methodology-style-polish
+    state_reads:
+      - workspace.chapter_text
+      - locked.GENRE_LOCKED
+    state_writes:
+      - workspace.chapter_text
+
+  - id: R2_consistency_check
+    description: 一致性后置审计（AI 味 / 设定一致 / 状态合规），默认 warn-only
+    uses_capability: base-methodology-consistency-check
+    state_reads:
+      - workspace.chapter_text
+      - locked.*
+      - entity_runtime.*
+    state_writes:
+      - audit_log
+    postconditions:
+      - checker:aigc-style
+      - checker:consistency
+
+  - id: R3_final_pack
+    description: 终稿打包（推入 GLOBAL_SUMMARY arc summary，章节归档）
+    uses_capability: base-methodology-final-pack
+    state_reads:
+      - workspace.chapter_text
+      - entity_runtime.GLOBAL_SUMMARY
+    state_writes:
+      - entity_runtime.GLOBAL_SUMMARY
+
+  # ---------- 版本验证（V1）----------
+
+  - id: V1_release_check
+    description: DoD 最终验收（字数 / 状态完整性 / 伏笔可追溯 / 审计无 block 级条目）
+    uses_capability: base-checker-dod-final
+    state_reads:
+      - workspace.chapter_text
+      - locked.*
+      - entity_runtime.*
+      - audit_log
+    state_writes:
+      - audit_log
+    postconditions:
+      - checker:dod-final
+
+# Phase 2 deferred 阶段（明示，不在 MVP）：
+#   N0 / N1 立项市场调研（决策 6 DEFER）
+#   P1-P3 后处理 / 排版 / 发布
+#   D1-D3 数据分析 / 复盘
+#   V2 版本管理

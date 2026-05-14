@@ -1,0 +1,198 @@
+{
+  "generated_at": "2026-05-14T13:30:07.598560+00:00",
+  "task_id": "ST-S3-P-PRESSURE-TEST",
+  "policy": {
+    "local_only": true,
+    "llm_calls": false,
+    "mutates_runtime_state": false,
+    "target_pass_rate": 0.8
+  },
+  "overall": {
+    "passed": true,
+    "pass_count": 7,
+    "dimension_count": 7,
+    "pass_rate": 1.0,
+    "mean_score": 1.0
+  },
+  "dimensions": [
+    {
+      "name": "multi-chapter continuity",
+      "status": "pass",
+      "score": 1.0,
+      "passed": true,
+      "evidence": {
+        "dir": "foundation/runtime_state/s2-demo",
+        "chapter_files": [
+          "foundation/runtime_state/s2-demo/chapter_01.md",
+          "foundation/runtime_state/s2-demo/chapter_02.md",
+          "foundation/runtime_state/s2-demo/chapter_03.md",
+          "foundation/runtime_state/s2-demo/chapter_04.md",
+          "foundation/runtime_state/s2-demo/chapter_05.md"
+        ],
+        "chapter_heading_numbers": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "chapter_headings": [
+          "第一章 · 雾骸",
+          "第2章 · 病灶",
+          "第3章 · 烙印",
+          "第4章 · 骨鸣",
+          "第5章 · 血色低语"
+        ],
+        "min_compact_length": 3210,
+        "entity_events": 5,
+        "foreshadow_count": 5,
+        "total_words": 15245,
+        "anchor_hits": {
+          "微粒": 100,
+          "天堑": 7,
+          "内宇宙": 13,
+          "短刃": 43
+        }
+      },
+      "notes": []
+    },
+    {
+      "name": "immersive continuity",
+      "status": "pass",
+      "score": 1.0,
+      "passed": true,
+      "evidence": {
+        "dir": "foundation/runtime_state/immersive-demo",
+        "chapter_files": [
+          "foundation/runtime_state/immersive-demo/chapter_01.md",
+          "foundation/runtime_state/immersive-demo/chapter_02.md",
+          "foundation/runtime_state/immersive-demo/chapter_03.md",
+          "foundation/runtime_state/immersive-demo/chapter_04.md",
+          "foundation/runtime_state/immersive-demo/chapter_05.md"
+        ],
+        "chapter_heading_numbers": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "chapter_headings": [
+          "第一章 · 黑雾初醒",
+          "第2章 · 黑雾中的刻痕",
+          "第3章 · 黑雾初醒",
+          "第4章 · 黑雾初醒",
+          "第5章 · 黑雾初醒"
+        ],
+        "min_compact_length": 4597,
+        "entity_events": 0,
+        "foreshadow_count": 1,
+        "total_words": 25630,
+        "anchor_hits": {
+          "微粒": 102,
+          "天堑": 14,
+          "内宇宙": 8,
+          "短刃": 65
+        }
+      },
+      "notes": []
+    },
+    {
+      "name": "prompt schema readiness",
+      "status": "pass",
+      "score": 1.0,
+      "passed": true,
+      "evidence": {
+        "source": ".ops/validation/prompt_frontmatter_report.json",
+        "total_files": 461,
+        "min_required_field_coverage": 1.0,
+        "violation_count": 0,
+        "parse_error_count": 0
+      },
+      "notes": []
+    },
+    {
+      "name": "weak-example debt",
+      "status": "pass",
+      "score": 1.0,
+      "passed": true,
+      "evidence": {
+        "source": ".ops/validation/prompt_quality_report.json",
+        "total_files": 461,
+        "weak_example_candidate_count": 0,
+        "debt_ratio": 0.0,
+        "reason_counts": {}
+      },
+      "notes": [
+        "Failing until weak_example_candidate_count reaches 0."
+      ]
+    },
+    {
+      "name": "methodology asset readiness",
+      "status": "pass",
+      "score": 1.0,
+      "passed": true,
+      "evidence": {
+        "report": ".ops/reports/methodology_assets_report.md",
+        "validator": "scripts/validate_methodology_assets.py",
+        "methodology_asset_count": 12,
+        "checker_asset_count": 1,
+        "report_claims": {
+          "methodology_assets_created": true,
+          "checker_assets_created": true
+        }
+      },
+      "notes": []
+    },
+    {
+      "name": "dedup evidence readiness",
+      "status": "pass",
+      "score": 1.0,
+      "passed": true,
+      "evidence": {
+        "source": ".ops/validation/dedup_evidence.json",
+        "status": "ok",
+        "prompt_card_count": 461,
+        "base_doc_count": 541,
+        "sample_count": 25,
+        "decision_counts": {
+          "retain": 461,
+          "merge": 0,
+          "drop": 0,
+          "unknown": 0,
+          "raw": {
+            "retain": 461
+          }
+        }
+      },
+      "notes": []
+    },
+    {
+      "name": "RAG test status",
+      "status": "pass",
+      "score": 1.0,
+      "passed": true,
+      "evidence": {
+        "handoff": ".ops/p7-handoff/ST-S3-R-LAYER23.md",
+        "test_files": [
+          "ginga_platform/orchestrator/runner/tests/test_rag_layer1.py",
+          "ginga_platform/orchestrator/runner/tests/test_rag_layer2.py",
+          "ginga_platform/orchestrator/runner/tests/test_rag_layer3.py"
+        ],
+        "module_files": [
+          "rag/layer1_filter.py",
+          "rag/layer2_vector.py",
+          "rag/reranker.py",
+          "rag/retriever.py"
+        ],
+        "focused_test_evidence": "Ran 13 tests OK",
+        "full_regression_evidence": "Ran 112 tests OK",
+        "runtime_policy": "not rerun by pressure script; local handoff/test-file evidence only"
+      },
+      "notes": [
+        "Handoff also records full ginga_platform discovery: Ran 112 tests OK."
+      ]
+    }
+  ],
+  "failing_dimensions": []
+}

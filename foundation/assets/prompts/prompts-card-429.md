@@ -1,0 +1,45 @@
+---
+id: prompts-card-write_superhero_scene-429
+asset_type: prompt_card
+title: "同人：漫威/DC (Fanfic: Marvel/DC)"
+topic: [同人, 美漫]
+stage: drafting
+quality_grade: B
+source_path: _原料/提示词库参考/prompts/429.md
+last_updated: 2026-05-13
+card_intent: prose_generation
+card_kind: scene_card
+task_verb: write
+task_full: write_superhero_scene
+granularity: scene
+output_kind: schema_json
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 429. 同人：漫威/DC (Fanfic: Marvel/DC)
+
+## 提示词内容
+
+```json
+{
+  "task": "write_superhero_scene",
+  "universe": "MCU / X-Men / Gotham / Justice League",
+  "identity": "Mutant / Alien / Tech Genius / Magician",
+  "villain": "Thanos / Joker / Magneto / Darkseid",
+  "event": "Snap / Battle of NY / Joker's Game",
+  "action": "Punch Villain / Hack Shield / Magic Ritual",
+  "teamup": "Avengers / Bat-Family / Defenders",
+  "outcome": "City saved / Timeline fixed / Villain redeemed"
+}
+```
+
+## 使用场景
+同人/美漫。在超级英雄世界中展示力量，或改变悲剧结局（如钢铁侠之死）。
+
+## 最佳实践要点
+1.  **科技/魔法结合**：用修仙对抗灭霸，或者用黑科技强化蝙蝠侠。
+2.  **哥谭民风**：描写哥谭市的混乱与主角的“以暴制暴”。
+
+## 示例输入
+灭霸打响指的瞬间，主角使用“无限剑制”斩断无限手套，并反手一个响指让灭霸大军变成了灰。

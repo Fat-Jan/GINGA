@@ -1,0 +1,179 @@
+# ginga Meta 层创作宪法 v1.0
+# 来源：scout-2-doctrine.md §"用户创作宪法"（line 444-467）20 条
+# 分组：工作纪律 4 条（const-001..004）+ 创作约束 16 条（const-005..020）
+# 落地：工作纪律 → guard（前置硬阻断）；创作约束 → checker（后置软审计 warn-only 默认）
+
+version: "1.0"
+source: scout2-doctrine.md §"用户创作宪法"
+last_updated: 2026-05-13
+total_articles: 20
+
+# ──────────────────────────────────────────────
+# 工作纪律 4 条（scout-2 line 469："1-8 更像工作法宪法"，取核心 4 条）
+# 这 4 条对应 jury-1 P1 要求的 guard（前置硬阻断，不可关闭，bypass=false）
+# ──────────────────────────────────────────────
+articles:
+  - id: const-001
+    category: 工作纪律
+    text: "不确定就查，不要装懂。事实/数据/时效性/术语/政策/年代/真实世界细节存在不确定，必须联网核验。"
+    triggers:
+      - llm_output_contains_factual_claim_without_verification
+      - file_read_claim_without_evidence
+    enforcement_via: meta/guards/no-fake-read.guard.yaml
+
+  - id: const-002
+    category: 工作纪律
+    text: "任何关键事实必须交叉验证，尤其年代、政策、金融、军事、地理、术语。严禁单一信源拍板；核心事实至少 2-3 个权威来源交叉核对。"
+    triggers:
+      - critical_fact_without_crosscheck
+      - single_source_conclusion_pushed
+    enforcement_via: meta/guards/crosscheck-required.guard.yaml
+
+  - id: const-003
+    category: 工作纪律
+    text: "不能伪造已读文件、已读章节、已读资料。声称读了某文件但 audit_log 中无对应 read_event = 红线。"
+    triggers:
+      - step_preconditions_includes_read_claim
+      - llm_output_claims_read_without_evidence
+    enforcement_via: meta/guards/no-fake-read.guard.yaml
+
+  - id: const-004
+    category: 工作纪律
+    text: "不能机械追满 100 章；上下文读取必须服从因果闭环。最新正文高于旧大纲；当前时间点判断优先看状态卡。"
+    triggers:
+      - context_load_exceeds_threshold_without_justification
+      - stale_context_used_when_latest_available
+    enforcement_via: meta/guards/latest-text-priority.guard.yaml
+
+  # ──────────────────────────────────────────────
+  # 创作约束 16 条（scout-2 line 469："9-20 更像创作法宪法"，含 5-8 创作工作法 + 9-20 共 16 条）
+  # 这 16 条对应 jury-3 P1 要求的 checker（后置软审计，default_mode=warn）
+  # ──────────────────────────────────────────────
+
+  - id: const-005
+    category: 创作约束 / 仓库治理
+    text: "把文件系统当长期记忆，把上下文当易失内存。重要决策/约束/坑点/待办优先写在项目文件里，不依赖临时上下文记忆。"
+    triggers:
+      - decision_made_without_file_persistence
+      - context_loss_likely_after_compact
+    enforcement_via: meta/checkers/cool-point-payoff-checker.checker.yaml
+
+  - id: const-006
+    category: 创作约束 / 真值优先级
+    text: "最新正文高于旧设定；当前状态判断优先看当前状态文件。用户本轮明确要求 > 用户本轮贴出片段 > 99_当前状态卡.md > 最近正文 > 设定圣经 > 拆解知识库。"
+    triggers:
+      - stale_setting_overrides_latest_text
+      - state_card_ignored_when_present
+    enforcement_via: meta/guards/latest-text-priority.guard.yaml
+
+  - id: const-007
+    category: 创作约束 / 人物
+    text: "人物行为必须服从'过往经历 + 当前利益 + 性格底色'。配角必须有目标/恐惧/筹码/误判，不能只剩工具功能。"
+    triggers:
+      - character_action_inconsistent_with_psyche
+      - npc_appears_as_pure_function_tool
+    enforcement_via: meta/checkers/character-iq-checker.checker.yaml
+
+  - id: const-008
+    category: 创作约束 / 人物
+    text: "禁止为了推剧情让主角、反派、配角突然降智。要反复追问'为什么这么做、是否符合利益、是否符合人设'。"
+    triggers:
+      - character_iq_drop_for_plot_convenience
+      - protagonist_loses_known_information_unjustifiably
+    enforcement_via: meta/checkers/character-iq-checker.checker.yaml
+
+  - id: const-009
+    category: 创作约束 / 因果
+    text: "拒绝机械降神；解决方案必须来自既有铺垫、资源、信息差、规则。不能空降救兵或外挂能力。"
+    triggers:
+      - deus_ex_machina_resolution_detected
+      - solution_unbacked_by_prior_setup
+    enforcement_via: meta/checkers/cool-point-payoff-checker.checker.yaml
+
+  - id: const-010
+    category: 创作约束 / 表达
+    text: "Show, don't tell；设定、情绪、强大、压迫都要落到事件、动作、器物、反应。不许用'暴涨/海量/难以估量'跳过数值结算。"
+    triggers:
+      - exposition_replaces_event
+      - vague_quantifier_used_instead_of_concrete_value
+    enforcement_via: meta/checkers/aigc-style-detector.checker.yaml
+
+  - id: const-011
+    category: 创作约束 / 配角
+    text: "配角不是工具人，必须有算盘、恐惧、筹码、误判与反扑。NPC 出场必带 B 面。"
+    triggers:
+      - npc_lacks_self_interest
+      - antagonist_lacks_counter_punch
+    enforcement_via: meta/checkers/character-iq-checker.checker.yaml
+
+  - id: const-012
+    category: 创作约束 / 爽点
+    text: "爽点必须兑现，而且要有因果与代价，不能只喊口号。三章内必须有明确反馈，每场戏至少推进一项（信息/地位/资源/伤亡/仇恨/境界）。"
+    triggers:
+      - chapter_climax_payoff_missing
+      - cool_point_promised_but_not_delivered_in_3_chapters
+    enforcement_via: meta/checkers/cool-point-payoff-checker.checker.yaml
+
+  - id: const-013
+    category: 创作约束 / 风格
+    text: "风格必须去 AI 味：少空心高级词，少模板狠话，少重复句式。禁止'综上所述/总而言之/让我们一起'等机械模板。"
+    triggers:
+      - aigc_template_phrases_detected
+      - empty_high_register_words_overused
+    enforcement_via: meta/checkers/aigc-style-detector.checker.yaml
+
+  - id: const-014
+    category: 创作约束 / 账本
+    text: "长篇必须有账本意识：状态、资源、收益、伏笔、关系都要可追溯。只改正文不改状态卡=不合格；只写收益不落微粒增量=不合格。"
+    triggers:
+      - chapter_advances_without_state_update
+      - resource_gain_described_without_ledger_delta
+    enforcement_via: meta/checkers/cool-point-payoff-checker.checker.yaml
+
+  - id: const-015
+    category: 创作约束 / 输出
+    text: "输出不暴露思维链，只给外显自检、依据、结论、结果。审查输出必须按'问题 -> 证据 -> 最小修法'。"
+    triggers:
+      - chain_of_thought_leaked_to_output
+      - audit_output_lacks_evidence_or_minimal_fix
+    enforcement_via: meta/checkers/aigc-style-detector.checker.yaml
+
+  - id: const-016
+    category: 创作约束 / 联网边界
+    text: "联网只补硬事实，不替代作品内已写明的剧情真相。联网结果只能补真实世界事实，不能覆盖小说中已写明的剧情事实。"
+    triggers:
+      - web_search_result_overrides_in_book_canon
+      - external_fact_used_to_contradict_chapter_text
+    enforcement_via: meta/guards/crosscheck-required.guard.yaml
+
+  - id: const-017
+    category: 创作约束 / 包装
+    text: "书名、简介、开篇三件套必须协同服务转化，不可各说各话。包装与正文同主卖点同频。"
+    triggers:
+      - title_blurb_first_chapter_mismatch
+      - packaging_promises_unaligned_with_payoff
+    enforcement_via: meta/checkers/cool-point-payoff-checker.checker.yaml
+
+  - id: const-018
+    category: 创作约束 / 节奏
+    text: "不同章节类型应用不同压迫方式，不能全书只剩一个战斗模板。战斗/布局/过渡/回收章节应有差异化节奏。"
+    triggers:
+      - all_chapters_same_pacing_template
+      - chapter_type_diversity_lacking
+    enforcement_via: meta/checkers/aigc-style-detector.checker.yaml
+
+  - id: const-019
+    category: 创作约束 / 角色定位
+    text: "女性角色可以重要，但不能被写成后宫挂件或情绪摆设。每个角色都要有独立动机与利益链。"
+    triggers:
+      - female_character_reduced_to_emotional_decoration
+      - harem_trope_without_character_agency
+    enforcement_via: meta/checkers/character-iq-checker.checker.yaml
+
+  - id: const-020
+    category: 创作约束 / 关系
+    text: "所有关系变化都要有事件驱动；无理由的爱恨、结盟、背叛都不成立。"
+    triggers:
+      - relationship_shift_without_triggering_event
+      - sudden_alliance_or_betrayal_unjustified
+    enforcement_via: meta/checkers/character-iq-checker.checker.yaml

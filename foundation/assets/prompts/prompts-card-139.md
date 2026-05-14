@@ -1,0 +1,49 @@
+---
+id: prompts-card-simulate-plague_spread-139
+asset_type: prompt_card
+title: 模拟病毒/瘟疫传播模型
+topic: [末世, 医疗]
+stage: setting
+quality_grade: B+
+source_path: _原料/提示词库参考/prompts/139.md
+last_updated: 2026-05-13
+card_intent: simulation
+card_kind: scene_card
+task_verb: simulate
+task_full: simulate_plague_spread
+granularity: world
+output_kind: schema_json
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 139. 病毒/瘟疫传播模型
+
+## 提示词内容
+
+```json
+{
+  "task": "simulate_plague_spread",
+  "pathogen": "Zombie Virus / Magic Plague",
+  "transmission": "Airborne / Bite / Water",
+  "symptoms": [
+    "Stage 1: Fever, cough",
+    "Stage 2: Hallucinations, aggression",
+    "Stage 3: Transformation / Death"
+  ],
+  "incubation_period": "24 hours",
+  "containment_fail": "Mutated to cross-species transmission"
+}
+```
+
+## 使用场景
+末世/医疗文。推演灾难爆发的过程。
+
+## 最佳实践要点
+1.  **阶段性**：症状分阶段恶化，增加恐惧的渐进感。
+2.  **失控点**：设计一个导致防疫失败的关键变异或人为失误。
+
+## 示例输入
+- 疫病：银纹热
+- 传播方式：血液与污染水源
+- 场景：封闭矿城，三天后商队抵达

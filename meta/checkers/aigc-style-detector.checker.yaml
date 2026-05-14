@@ -1,0 +1,76 @@
+# Checker: aigc-style-detector
+# 类别：创作风格 / 去 AI 味
+# 上位法：constitution const-010 / const-013 / const-015 / const-018
+# 落地：jury-3 P1 红线（default_mode=warn）；ARCHITECTURE §2.2 / §2.4
+# 调用：Orchestrator 在 step postconditions 阶段触发（章节 G/H/R1/R2 之后）
+
+id: aigc-style-detector
+category: 风格审计
+description: |
+  检测章节正文是否带 AI 套话（"综上所述"、"总而言之"、"让我们一起"等机械模板），
+  以及"暴涨/海量/难以估量"等空心高级词、模板狠话、重复句式。
+  jury-3 P1 明确要求：default 必须 warn-only，不能硬 block 作家文风。
+
+constitution_refs:
+  - const-010  # Show, don't tell
+  - const-013  # 风格必须去 AI 味
+  - const-015  # 输出不暴露思维链
+  - const-018  # 章节类型差异化
+
+# 目标 state 字段
+target_state_field: runtime_state.entity_runtime.chapter_text
+
+# 检查逻辑：规则 + LLM 双轨
+check_logic:
+  type: hybrid
+  rule_based:
+    - name: aigc_template_phrases
+      pattern: "综上所述|总而言之|让我们一起|首先,|其次,|再次,|最后,|不仅...而且|众所周知|毫无疑问"
+      severity: warn
+      message: "检测到 AI 套话模板"
+    - name: hollow_high_register_words
+      pattern: "暴涨|海量|难以估量|无与伦比|前所未有|举世瞩目"
+      severity: warn
+      message: "检测到空心高级词（违反 Show don't tell）"
+    - name: repeated_sentence_pattern
+      max_repeat_count: 3
+      window_chars: 1000
+      severity: info
+      message: "1000 字内同句式重复 ≥3 次"
+  llm_prompt_based:
+    enabled_when: stage in [refinement]
+    prompt_template: |
+      下面是章节正文片段。判断它是否有以下问题：
+      1. 模板化套话（"综上所述"类）
+      2. 空心高级词替代具体描写
+      3. 思维链外泄（"让我想想"/"我认为"等内心独白进入正文）
+      4. 句式机械重复
+      输出 JSON: {has_issue: bool, issues: [{type, snippet, suggestion}]}
+    severity_on_detection: warn
+
+# 严重级别梯度
+severity_levels: [info, warn, block]
+
+# 【关键】默认 warn-only（jury-3 P1 红线）
+default_mode: warn
+
+# 覆盖入口
+override_via: meta/user_overrides/checker_mode.yaml
+
+# 输出契约
+output_contract:
+  write_to: runtime_state.audit_log
+  entry_format:
+    ts: datetime
+    source: checker:aigc-style-detector
+    severity: enum<info,warn,block>
+    msg: string
+    snippet: string
+    suggestion: string
+    action: enum<warn_only,block_workflow,user_review_required>
+
+# 调用方式（非阻塞）
+invocation:
+  phase: postconditions
+  blocks_workflow: false  # warn 默认不阻塞
+  blocks_workflow_when_user_sets: block

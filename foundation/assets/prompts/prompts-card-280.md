@@ -1,0 +1,47 @@
+---
+id: prompts-card-generate_random_plot_event-280
+asset_type: prompt_card
+title: 写作工具：随机事件生成器 (卡文救星)
+topic: [Fantasy, Urban, Sci-Fi]
+stage: auxiliary
+quality_grade: B+
+source_path: _原料/提示词库参考/prompts/280.md
+last_updated: 2026-05-13
+card_intent: generator
+card_kind: scene_card
+task_verb: generate
+task_full: generate_random_plot_event
+granularity: utility
+output_kind: schema_json
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 280. 写作工具：随机事件生成器 (卡文救星)
+
+## 提示词内容
+
+```json
+{
+  "task": "generate_random_plot_event",
+  "genre": "Fantasy / Urban / Sci-Fi",
+  "current_situation": "Traveling / Resting / Shopping",
+  "event_type": "Combat / Social / Discovery / Mystery",
+  "intensity": "Low (Daily life) / Medium (Conflict) / High (Life threatening)",
+  "output_format": [
+    "Event: [Brief Description]",
+    "Hook: [Why it matters]",
+    "Twist: [Something unexpected]"
+  ]
+}
+```
+
+## 使用场景
+通用/写作辅助。当剧情平淡或卡文时，随机生成一个事件来打破僵局。
+
+## 最佳实践要点
+1.  **随机性**：意想不到的展开往往能带来新的灵感。
+2.  **适配性**：生成的事件要能融入当前的世界观。
+
+## 示例输入
+类型：修仙。当前：主角在坊市闲逛。强度：中等。

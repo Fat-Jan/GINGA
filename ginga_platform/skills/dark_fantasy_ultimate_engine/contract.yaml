@@ -1,0 +1,180 @@
+# Dark Fantasy Ultimate Engine — Skill Contract (v1.0)
+#
+# 来源：ARCHITECTURE.md §4.3 + jury-1 P0（双 skill 必须有 contract.yaml）+ scout-2 实地画像
+# 配套：skill.md（思路 2 原文）+ adapter.py（双向 IO 转换）
+#
+# 关键设计：
+#   - 优先级硬绑定：topic=玄幻黑暗 → score 100；其他玄幻 → score 30；默认 0
+#   - forbidden_mutation：locked 域全锁 + meta 层全锁 + entity_runtime.workspace 不归本 skill
+#   - immersive_mode：dark-fantasy 独有的"连续多章不打断"沉浸专线（jury-3 改进 4）
+
+skill_id: dark-fantasy-ultimate-engine
+version: "1.0"
+status: active
+
+# ---------- 输入契约 ----------
+inputs:
+  topic:
+    type: string[]
+    required: true
+    constraint: "must include one of [玄幻黑暗, 暗黑奇幻, 黑暗玄幻]"
+    description: 题材标签，用于路由决策
+  chapter_metadata:
+    type: object
+    required: true
+    fields:
+      chapter_no: int
+      chapter_type: "enum: [战斗, 布局, 过渡, 回收]"
+      word_target: int
+    description: 当前章节元信息
+  runtime_state.locked.STORY_DNA:
+    type: ref<STORY_DNA>
+    required: true
+    description: 核心冲突公式（A_brainstorm 锁定后只读）
+  runtime_state.locked.WORLD:
+    type: ref<WORLD_BUILDING>
+    required: true
+    description: 世界观（四重天堑 / 内宇宙四阶等）
+  runtime_state.locked.PLOT_ARCHITECTURE:
+    type: ref<PLOT_ARCHITECTURE>
+    required: true
+    description: 三幕结构 + 转折 + 伏笔
+  runtime_state.locked.GENRE_LOCKED.style_lock:
+    type: ref<style_lock>
+    required: true
+    description: 风格锁（玄幻 / 暴力美学 / 黑暗宇宙）
+  runtime_state.entity_runtime.CHARACTER_STATE:
+    type: ref<CHARACTER_STATE>
+    required: true
+    description: 角色状态卡（思路 2 99_当前状态卡.md 等价物）
+  runtime_state.entity_runtime.RESOURCE_LEDGER:
+    type: ref<RESOURCE_LEDGER>
+    required: true
+    description: 微粒账本（思路 2 particle_ledger.md 等价物，含硬锚点 840000000）
+  runtime_state.entity_runtime.FORESHADOW_STATE:
+    type: ref<FORESHADOW_STATE>
+    required: true
+    description: 待回收伏笔池（思路 2 pending_hooks.md 等价物）
+  runtime_state.retrieved.cards:
+    type: array<ref<prompt_card>>
+    required: false
+    description: RAG 召回的辅助卡片（可选）
+  user_guidance:
+    type: string
+    required: false
+    description: 用户本轮明确要求与硬约束（信息源优先级最高）
+
+# ---------- 输出契约 ----------
+outputs:
+  chapter_text:
+    type: string
+    format: markdown
+    constraint: "纯玄幻小说风格；禁止都市/科幻/游戏/轻小说等口吻"
+    description: 章节正文（含开头【写作自检】表 + 主体正文 + 可选【章节结算】表）
+  writing_self_check:
+    type: object
+    format: markdown_table
+    fields:
+      context_range: string
+      current_anchor: string
+      current_particles: "string (X / 840000000)"
+      expected_delta: int
+      pending_hooks: string[]
+      main_conflict: string
+      risk_scan: string[]
+    description: 表格版外显摘要（不暴露思维链，按思路 2 输出规范）
+  chapter_settlement:
+    type: object
+    format: markdown_table
+    required: false
+    fields:
+      particle_balance: object
+      resource_changes: array
+      foreshadow_changes: array
+    description: 涉及吞噬/突破/卷末时附加的【章节结算】表
+
+# state_updates：skill 通过 adapter 提交的更新指令（state_io 解释并 apply）
+state_updates:
+  runtime_state.entity_runtime.RESOURCE_LEDGER.particles: delta<int>
+  runtime_state.entity_runtime.RESOURCE_LEDGER.items: append<resource_event>
+  runtime_state.entity_runtime.FORESHADOW_STATE.pool: append_or_update<foreshadow>
+  runtime_state.entity_runtime.CHARACTER_STATE: delta<character_diff>
+  runtime_state.entity_runtime.GLOBAL_SUMMARY.total_words: delta<int>
+  chapter_text: write
+
+# ---------- 优先级（路由仲裁）----------
+priority:
+  - when: "topic in [玄幻黑暗, 暗黑奇幻, 黑暗玄幻]"
+    score: 100
+    description: 强绑定（决策 7：默认硬绑 + 显式 override）
+  - when: "topic in [玄幻, 仙侠, 修真, 异界]"
+    score: 30
+    description: 弱匹配
+  - default: 0
+    description: 不路由到本 skill
+
+# ---------- forbidden mutation：本 skill 不允许直接动的字段 ----------
+# 这些字段必须通过 platform 层 patch 流程或其他 skill 的 adapter 才能修改
+forbidden_mutation:
+  - runtime_state.locked.*
+  - runtime_state.locked.STORY_DNA
+  - runtime_state.locked.WORLD
+  - runtime_state.locked.PLOT_ARCHITECTURE
+  - runtime_state.locked.GENRE_LOCKED
+  - runtime_state.workspace.task_plan
+  - runtime_state.workspace.findings
+  - meta/constitution.yaml
+  - meta/guards/*
+  - meta/checkers/*
+
+# ---------- 双向 adapter 约定 ----------
+adapter:
+  module: ginga_platform.skills.dark_fantasy_ultimate_engine.adapter
+  class: DarkFantasyAdapter
+  input_transform: input_transform
+  output_transform: output_transform
+  state_sync_mode: explicit
+  description: |
+    skill 不直接操作 runtime_state。
+    所有读写经 adapter → state_io.py（platform 唯一 state 入口）。
+    explicit 模式：state 同步必须由 step DSL 显式调用，不自动同步。
+
+# ---------- immersive_mode（dark-fantasy 独有，jury-3 改进 4）----------
+immersive_mode:
+  available: true
+  trigger: workflow_flag.immersive_mode=true
+  behavior: |
+    连续多章不打断 state 更新：
+    1. 进入：adapter.enter_immersive_mode() 把 self._immersive_active = True
+    2. 期间：所有 state_updates 累积到 self._pending_updates 列表，不立即 apply
+    3. 章节内 checker 全静默（不 warn 不 block）
+    4. 退出：adapter.exit_immersive_mode() 触发：
+       - 批量 apply 所有 pending_updates 到 state_io
+       - 触发一次 R2 一致性 checker（全章节块）
+       - 清空 pending_updates
+    用途：dark-fantasy 长篇连续作业的"窄通道"气质保护，
+          避免每章被 state 校验和 checker 打断节奏。
+  exit_signal: chapter_block_end
+  fallback: |
+    若 exit 时 batch apply 失败，回退到 last_safe_state 并报错；
+    pending_updates 持久化到 .ops/immersive_fallback/<ts>.json 以便复盘。
+
+# ---------- 元数据 ----------
+metadata:
+  source_doctrine: _原料/思路/待整理思路 2
+  scout_report: .ops/scout-reports/scout2-doctrine.md
+  task_categories:
+    - 正文创作
+    - 设定工作
+    - 质量审查
+    - 账本维护
+  hard_anchors:
+    - 内宇宙总微粒上限 = 840000000
+  forbidden_styles:
+    - 都市腔
+    - 科幻腔
+    - 游戏系统播报腔
+    - 轻小说吐槽腔
+    - 影视剧本腔
+    - 历史演义腔
+    - 散文抒情腔

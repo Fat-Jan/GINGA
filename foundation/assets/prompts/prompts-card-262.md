@@ -1,0 +1,49 @@
+---
+id: prompts-card-write_cyberspace_battle-262
+asset_type: prompt_card
+title: 赛博朋克：虚拟形象对决 (Avatar Battle)
+topic: [赛博朋克, 科幻]
+stage: drafting
+quality_grade: B+
+source_path: _原料/提示词库参考/prompts/262.md
+last_updated: 2026-05-13
+card_intent: prose_generation
+card_kind: scene_card
+task_verb: write
+task_full: write_cyberspace_battle
+granularity: scene
+output_kind: schema_json
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 262. 赛博朋克：虚拟形象对决 (Avatar Battle)
+
+## 提示词内容
+
+```json
+{
+  "task": "write_cyberspace_battle",
+  "attacker": {
+    "avatar": "Multi-armed Asura / Glitching Demon",
+    "weapon": "Data Scythe / Virus Injection"
+  },
+  "defender": {
+    "avatar": "Golden Firewall / Digital Knight",
+    "defense": "Encryption Shield / IP Hopping"
+  },
+  "environment": "Neon-lit datastream / Collapsing server room",
+  "damage_effect": "Avatar pixelating / Frame rate drop / Code bleeding",
+  "outcome": "System crash / Backdoor access / Mind fry"
+}
+```
+
+## 使用场景
+赛博朋克/科幻/黑客文。将枯燥的代码攻防转化为具象化的战斗。
+
+## 最佳实践要点
+1.  **视觉化**：把“防火墙被攻破”描写成“金色盾牌碎裂成无数光点”。
+2.  **现实反馈**：虚拟世界的受伤会反馈到现实肉体（如鼻血、痉挛）。
+
+## 示例输入
+攻方：主角（使用“齐天大圣”形象）。守方：公司AI（使用“千眼巨神”形象）。

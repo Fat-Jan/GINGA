@@ -1,0 +1,42 @@
+---
+id: prompts-card-break-writers_block-380
+asset_type: prompt_card
+title: 卡文强制突破 (Writer's Block Breaker)
+topic: [通用]
+stage: auxiliary
+quality_grade: B+
+source_path: _原料/提示词库参考/prompts/380.md
+last_updated: 2026-05-13
+card_intent: structural_design
+card_kind: scene_card
+task_verb: break
+task_full: break_writers_block
+granularity: utility
+output_kind: prose
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 380. 流程：卡文强制突破 (Writer's Block Breaker)
+
+## 提示词内容
+
+```json
+{
+  "task": "break_writers_block",
+  "current_situation": "MC is stuck in a room.",
+  "random_event": "The ceiling collapses / A portal opens / A bomb ticks",
+  "method": "Raymond Chandler's rule: 'When in doubt, have a man come through a door with a gun in his hand.'",
+  "instruction": "Write the next 200 words immediately, don't edit."
+}
+```
+
+## 使用场景
+写作/急救。当剧情卡住时，用暴力手段推动剧情。
+
+## 最佳实践要点
+1.  **外部介入**：引入一个新的外部变量（敌人、灾难、消息）。
+2.  **不讲理**：先不管逻辑，写下去再说，逻辑后面再补。
+
+## 示例输入
+主角在密室里发呆，剧情卡住了，给我一个突发事件。

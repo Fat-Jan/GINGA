@@ -1,0 +1,43 @@
+---
+id: prompts-card-write_cat_perspective-306
+asset_type: prompt_card
+title: 宠物猫咪视角描写
+topic: [日常, 治愈]
+stage: drafting
+quality_grade: B+
+source_path: _原料/提示词库参考/prompts/306.md
+last_updated: 2026-05-13
+card_intent: prose_generation
+card_kind: scene_card
+task_verb: write
+task_full: write_cat_perspective
+granularity: scene
+output_kind: prose
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 306. 宠物视角：猫咪眼中的人类 (Cat POV)
+
+## 提示词内容
+
+```json
+{
+  "task": "write_cat_perspective",
+  "human_action": "Working on computer / Crying / Sleeping",
+  "interpretation": "Staring at the glowing box / Leaking water / Playing dead",
+  "cat_action": "Sitting on the keyboard / Licking tears / Zoomies at 3 AM",
+  "thought": "This two-legged servant is useless but warm",
+  "tone": "Arrogant / Confused / Affectionate"
+}
+```
+
+## 使用场景
+萌宠/治愈/日常。独特的叙事视角，增加趣味性。
+
+## 最佳实践要点
+1.  **傲娇**：猫的主子心态，视人类为铲屎官。
+2.  **误解**：对人类行为的误读往往是笑点所在。
+
+## 示例输入
+猫咪看着主人对着电脑加班（其实是在看剧）。

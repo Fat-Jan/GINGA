@@ -1,0 +1,118 @@
+# Ginga Skill Runtime — Registry (v1.0)
+#
+# 来源：ARCHITECTURE.md §4.3 / §4.1 + ROADMAP §1.2.3 P-12 任务定义
+#
+# 用途：
+#   - 列出所有已注册 skill + enabled 状态 + 路由优先级
+#   - skill-router（P-13，归 P7-platform-runtime）按本文件 + 各 contract.yaml priority 决定路由
+#   - workflow YAML step.uses_skill=skill-router 时，router 读本注册表 + runtime topic / task_category
+#
+# 关键设计（jury-1 P0 / §6.3 双 skill 关系）：
+#   - dark-fantasy-ultimate-engine 与 planning-with-files 平行，不揉合
+#   - dark-fantasy 默认硬绑定玄幻黑暗题材（priority score 100）
+#   - planning-with-files 是 cross-cutting 工具型，不与 dark-fantasy 抢正文路由
+
+version: "1.0"
+description: |
+  Ginga MVP skill registry。
+  S1 双 skill 一级公民；新增 skill 时只需补 contract.yaml + 在本文件注册条目。
+
+skills:
+  dark-fantasy-ultimate-engine:
+    contract: ginga_platform/skills/dark_fantasy_ultimate_engine/contract.yaml
+    skill_doc: ginga_platform/skills/dark_fantasy_ultimate_engine/skill.md
+    adapter: ginga_platform/skills/dark_fantasy_ultimate_engine/adapter.py
+    adapter_class: DarkFantasyAdapter
+    enabled: true
+    tier: primary_writer
+    priority_routing:
+      hard_bind_topics:
+        - 玄幻黑暗
+        - 暗黑奇幻
+        - 黑暗玄幻
+      score:
+        玄幻黑暗: 100
+        暗黑奇幻: 100
+        黑暗玄幻: 100
+        玄幻: 30
+        仙侠: 30
+        修真: 30
+        异界: 30
+        default: 0
+      override: workflow.skill_override
+    features:
+      immersive_mode: true
+      state_account_book: true
+      foreshadow_pool: true
+      writing_self_check: true
+      chapter_settlement: true
+    description: |
+      窄通道生产引擎：保黑暗哲学气质 + 凶性、掠夺感、暴力美学。
+      自带状态卡 / 微粒账本（硬锚点 840000000）/ 待回收伏笔池。
+      支持 immersive_mode 连续多章不打断 state 更新。
+
+  planning-with-files:
+    contract: ginga_platform/skills/planning_with_files/contract.yaml
+    skill_doc: ginga_platform/skills/planning_with_files/skill.md
+    adapter: ginga_platform/skills/planning_with_files/adapter.py
+    adapter_class: PlanningWithFilesAdapter
+    enabled: true
+    tier: cross_cutting_tool
+    priority_routing:
+      hard_bind_topics: []
+      score_by_task_category:
+        规划维护: 50
+        历史考据: 50
+        质量审查: 30
+        正文创作: 0
+        设定工作: 0
+      conditions:
+        - when: "workspace_managed=true"
+          score_boost: 50
+      default: 0
+    features:
+      immersive_mode: false
+      workspace_management: true
+      task_plan_md: true
+      findings_md: true
+      progress_md: true
+      character_relationships_md: true
+      cold_start_mode: true
+      incremental_warm_update: true
+    description: |
+      仓库协作引擎：保任务规划与跨会话续接。
+      管 workspace 三件套（task_plan/findings/progress）+ character_relationships。
+      cross-cutting 工具型，不与 dark-fantasy 抢正文路由。
+
+# ---------- 路由仲裁规则（skill-router 实现参考）----------
+routing_rules:
+  algorithm: weighted_priority
+  description: |
+    skill-router 决策算法（伪代码）：
+      1. 收集所有 enabled=true 的 skill 及其 priority score（基于 topic / task_category / runtime flags）
+      2. 取最高 score 的 skill；同分时按 tier 排序（primary_writer > cross_cutting_tool）
+      3. 若最高 score = 0，回退到 default_writer（不归本 registry，由 platform 默认调度）
+  default_writer: base-card-chapter-draft
+  override_path: workflow.skill_override
+  audit: true
+  audit_path: audit_log.entries
+
+# ---------- skill 兼容性声明 ----------
+compatibility:
+  - skill_a: dark-fantasy-ultimate-engine
+    skill_b: planning-with-files
+    relation: parallel
+    description: |
+      两 skill 平行存在，互不揉合：
+        - dark-fantasy 管作品内运行时（正文 / 状态 / 收益 / 伏笔 / 风格）
+        - planning-with-files 管仓库外工作流（规划 / 发现 / 进度 / 考据 / 跨会话）
+      共享 state 通过 platform.state_io 一致性维护（runtime_state 是 true source）。
+
+# ---------- 新 skill 接入指引 ----------
+registration_guide: |
+  接入新 skill 步骤：
+    1. 在 ginga_platform/skills/<skill-id>/ 下放置 skill.md（原 skill 文档）
+    2. 写 contract.yaml（schema 见 ARCHITECTURE §4.3）
+    3. 写 adapter.py（实现 4 方法接口：input_transform / output_transform / enter_immersive_mode / exit_immersive_mode）
+    4. 在本 registry.yaml 追加条目（contract / skill_doc / adapter / adapter_class / priority_routing）
+    5. 跑 platform.skill_runtime 的 contract validator（S2/S3 Phase 引入）

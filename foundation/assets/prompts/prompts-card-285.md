@@ -1,0 +1,44 @@
+---
+id: prompts-card-write_class_reunion_slap
+asset_type: prompt_card
+title: 都市同学聚会装逼打脸桥段
+topic: [都市]
+stage: drafting
+quality_grade: B
+source_path: _原料/提示词库参考/prompts/285.md
+last_updated: 2026-05-13
+card_intent: prose_generation
+card_kind: scene_card
+task_verb: write
+task_full: write_class_reunion_slap
+granularity: scene
+output_kind: schema_json
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 285. 都市：同学聚会装逼 (Class Reunion)
+
+## 提示词内容
+
+```json
+{
+  "task": "write_class_reunion_slap",
+  "antagonist": "Rich second gen / Former bully / Snobbish class monitor",
+  "mc_status": "Low profile billionaire / Secret agent / Cultivator",
+  "conflict": "Comparing cars / Jobs / Partners",
+  "escalation": "Antagonist mocks MC's cheap clothes",
+  "climax": "A VIP enters and bows to MC / MC pays the bill casually",
+  "reaction": "Silence / Regret / Fawning"
+}
+```
+
+## 使用场景
+都市/爽文/战神。经久不衰的打脸桥段。
+
+## 最佳实践要点
+1.  **欲扬先抑**：前期反派跳得越欢，后面打脸越响。
+2.  **侧面烘托**：通过第三人（如酒店经理、大佬）来揭示主角身份。
+
+## 示例输入
+主角骑共享单车参加聚会，被开宝马的班长嘲讽。

@@ -1,0 +1,57 @@
+# Guard: latest-text-priority
+# 类别：工作纪律 / 防过时
+# 上位法：constitution const-004 / const-006
+# 落地：scout-2 §"信息源优先级"真值层级；ARCHITECTURE §2.2
+# 调用：Orchestrator 在 step preconditions 阶段触发（尤其 G_chapter_draft 之前）
+
+id: latest-text-priority
+category: 工作纪律
+description: |
+  防过时：写章节 / 做判断时，必须以最新正文 / 当前状态卡为真值，
+  禁止用陈旧大纲或旧设定覆盖最新已写明的剧情事实。
+  当 runtime_state.locked + entity_runtime 与 LLM 上下文中的旧片段
+  存在冲突时，必须以 runtime_state 为准。
+
+constitution_refs:
+  - const-004  # 不能机械追满 100 章；上下文读取必须服从因果闭环
+  - const-006  # 最新正文高于旧设定；状态卡优先
+
+# 真值优先级（来自 scout-2 §思路 2/3 共识）
+truth_source_priority:
+  - user_current_turn_explicit_request  # 优先级 1
+  - user_current_turn_pasted_content     # 优先级 2
+  - runtime_state.entity_runtime         # 优先级 3（含 99_当前状态卡）
+  - latest_chapter_text                  # 优先级 4
+  - runtime_state.locked                 # 优先级 5（含设定圣经）
+  - retrieved.cards                      # 优先级 6（拆解知识库只能借节奏）
+
+# 触发条件
+trigger_when:
+  any_of:
+    - step.preconditions.includes: guard:latest-text-priority
+    - step.id in [G_chapter_draft, H_chapter_settle, R1_style_polish, R2_consistency_check]
+    - llm_context.contains_stale_setting_overriding_latest_text: true
+
+# 校验逻辑
+verification:
+  required_checks:
+    - runtime_state.entity_runtime.GLOBAL_SUMMARY.total_words is current
+    - runtime_state.entity_runtime.CHARACTER_STATE.<protagonist>.body.hp matches latest_chapter
+    - no_stale_setting_in_prompt_overrides_in_book_canon
+  failure_mode: stale_context_used_when_latest_available
+
+# 强制级别：硬阻断
+enforcement: block
+bypass_allowed: false
+error_message: |
+  [GUARD:latest-text-priority BLOCK]
+  Step <step_id> 检测到 LLM 上下文使用了陈旧设定 <stale_field>，
+  与 runtime_state.entity_runtime / latest_chapter 冲突。
+  违反 constitution const-004/const-006（最新正文高于旧设定）。
+  请：(1) 重新加载最新状态卡；(2) 用 runtime_state 真值覆盖陈旧上下文；(3) 再继续。
+
+# 审计
+audit:
+  on_block: append_to runtime_state.audit_log
+  severity: error
+  source: guard:latest-text-priority

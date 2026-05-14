@@ -1,0 +1,1024 @@
+{
+  "version": "1.0",
+  "project": "ginga-novel-distillation",
+  "schema_note": "推荐状态机: queued -> assigned -> running -> validating -> done; 异常: stale/zombie/retry_wait/failed/blocked. done 只能由主 agent 复核后写入。底层派活规范见 .ops/subagents/dispatch-protocol.md。",
+  "created_at": "2026-05-12T22:50:00+08:00",
+  "updated_at": "2026-05-14T18:35:00+08:00",
+  "tasks": [
+    {
+      "task_id": "scout-1-base",
+      "title": "基座目录深扫（544 md，题材+模板+方法论三分支）",
+      "status": "done",
+      "owner": "Codex CLI runtime (true independent sandbox)",
+      "owned_files": [
+        "_原料/基座/**"
+      ],
+      "input_refs": [
+        "_原料/基座/题材/网文/",
+        "_原料/基座/模板/{伏笔,大纲,悬念,角色,项目,世界观}/",
+        "_原料/基座/方法论/{写作,创意,市场,平台}/"
+      ],
+      "expected_output": ".ops/scout-reports/scout1-base.md",
+      "verification": "test -f .ops/scout-reports/scout1-base.md && grep -q '## Schema 草案' .ops/scout-reports/scout1-base.md && grep -q '## 三维标签矩阵' .ops/scout-reports/scout1-base.md",
+      "created_at": "2026-05-12T22:50:00+08:00",
+      "updated_at": "2026-05-13T02:00:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 2,
+      "max_attempts": 2,
+      "evidence": [
+        "file: /Users/arm/Desktop/ginga/.ops/scout-reports/scout1-base.md (30420 bytes, 8 H2 sections)",
+        "verification command: PASS (file exists + '## Schema 草案' + '## 三维标签矩阵')",
+        "Codex job: task-mp2wvbp0-rpsuqw, duration 12m51s, 50 files actually read (题材25 + 模板12 + 方法论13)",
+        "content sample inspected by main agent: thoughtful 3-layer asset taxonomy (genre_profile/template/methodology), per-asset extension fields, not boilerplate"
+      ],
+      "blockers": [],
+      "handoff_note": "原 attempt 1 stale；attempt 2 Claude Agent 平台 502；切换 Codex CLI direct (--write) 12m51s 完成；等主 agent 最终 done。"
+    },
+    {
+      "task_id": "scout-2-doctrine",
+      "title": "思路目录心智解码（3 文件 = 10 条 SOP + 2 完整 skill）",
+      "status": "done",
+      "owner": "Codex CLI runtime (true independent sandbox)",
+      "owned_files": [
+        "_原料/思路/**"
+      ],
+      "input_refs": [
+        "_原料/思路/待整理思路1",
+        "_原料/思路/待整理思路 2",
+        "_原料/思路/待整理思路 3"
+      ],
+      "expected_output": ".ops/scout-reports/scout2-doctrine.md",
+      "verification": "test -f .ops/scout-reports/scout2-doctrine.md && grep -q '## 用户创作宪法' .ops/scout-reports/scout2-doctrine.md && grep -q '## 已有 skill 画像' .ops/scout-reports/scout2-doctrine.md",
+      "created_at": "2026-05-12T22:50:00+08:00",
+      "updated_at": "2026-05-13T02:00:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 2,
+      "max_attempts": 2,
+      "evidence": [
+        "file: /Users/arm/Desktop/ginga/.ops/scout-reports/scout2-doctrine.md (25139 bytes, 7 H2 sections)",
+        "verification command: PASS (file exists + '## 用户创作宪法' + '## 已有 skill 画像')",
+        "Codex job: task-mp2wvmun-7qe50o, duration 10m50s, 3 files fully read (1578+427+320 lines)",
+        "content sample inspected by main agent: 'creation operating system constitution' framing matches project intent, well-structured 必须做/必须不做 split, recognizes layered system"
+      ],
+      "blockers": [],
+      "handoff_note": "原 attempt 1 stale；attempt 2 Claude Agent 平台 502；切换 Codex CLI direct (--write) 10m50s 完成；等主 agent 最终 done。"
+    },
+    {
+      "task_id": "scout-3-cards",
+      "title": "提示词库参考/prompts 横扫（461 JSON-style md，全量实读）",
+      "status": "done",
+      "owner": "main-agent (Claude Opus 4.7 /loop dynamic mode, autonomous)",
+      "owned_files": [
+        "_原料/提示词库参考/prompts/**"
+      ],
+      "input_refs": [
+        "_原料/提示词库参考/prompts/"
+      ],
+      "expected_output": ".ops/scout-reports/scout3-cards.md",
+      "verification": "test -f .ops/scout-reports/scout3-cards.md && grep -q '## 与基座去重分析' .ops/scout-reports/scout3-cards.md && grep -q '## 场景卡片 schema' .ops/scout-reports/scout3-cards.md",
+      "created_at": "2026-05-12T22:50:00+08:00",
+      "updated_at": "2026-05-13T03:28:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 3,
+      "max_attempts": 3,
+      "evidence": [
+        "file: /Users/arm/Desktop/ginga/.ops/scout-reports/scout3-cards.md (27942 bytes, 7 required H2 sections)",
+        "verification command: PASS (file exists + '## 与基座去重分析' + '## 场景卡片 schema')",
+        "loop iterations: 9 (6 reading batches + dedup + quality + synthesis), ~34 min wall time 02:54-03:28",
+        "配套产出: scout3-findings.jsonl (461 lines, 全量实读 100% 文件) + scout3-dedup.json (15KB, 28 样本 vs 基座) + scout3-quality.json (6.4KB, 42 样本 A/B/C) + scout3-state.json + scout3-progress.md",
+        "DoD 全部满足: 461/461 文件读完 + 7 H2 全在 + verification PASS + state.phase=done"
+      ],
+      "blockers": [],
+      "handoff_note": "全量 461 实读完成（破例 attempt 3）。报告核心结论：prompts/ 是 Foundation 层「场景卡片库」（与基座垂直分工，不重叠）；458 个 task 用 12 大 card_intent 聚类；质量 A+A- 占 50%；建议双库并存。等主 agent 复核证据后推 done。"
+    },
+    {
+      "task_id": "scout-4-pipeline",
+      "title": "阶段 A~M 工作流解码（13 txt = 完整创作 pipeline）",
+      "status": "done",
+      "owner": "Explore subagent (first-round success, never re-dispatched)",
+      "owned_files": [
+        "_原料/提示词库参考/小说提示词 2/**"
+      ],
+      "input_refs": [
+        "_原料/提示词库参考/小说提示词 2/"
+      ],
+      "expected_output": ".ops/scout-reports/scout4-pipeline.md",
+      "verification": "test -f .ops/scout-reports/scout4-pipeline.md && grep -q '## Workflow DSL 草案' .ops/scout-reports/scout4-pipeline.md && grep -q '## 状态机' .ops/scout-reports/scout4-pipeline.md",
+      "created_at": "2026-05-12T22:50:00+08:00",
+      "updated_at": "2026-05-13T03:30:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 2,
+      "evidence": [
+        "file: /Users/arm/Desktop/ginga/.ops/scout-reports/scout4-pipeline.md (14822 bytes, 13 阶段 + DAG + 状态机 + Workflow DSL + 缺口分析)",
+        "verification command: PASS",
+        "首轮 23:52 完成，但看板状态遗漏未更新；现补 done。主 agent 完整复核：13 阶段 schema 详尽、与基座垂直映射成立、缺口分析直接指向阶段 2 蒸馏方案的扩展点"
+      ],
+      "blockers": [],
+      "handoff_note": "重点：重建完整 pipeline DAG、状态机（角色档案 F + 全局摘要 I + 章节摘要 J）、与基座的垂直映射。首轮一次过完成。"
+    },
+    {
+      "task_id": "jury-1-architect",
+      "title": "Ark Jury Court 法官 1: 架构师（ioll-grok / grok-4.20-auto, 2nd run）",
+      "status": "done",
+      "owner": "ask-llm ioll-grok (xAI-family grok-4.20-auto, fallback from xiaomi-tp/codex)",
+      "owned_files": [
+        ".ops/jury/jury-1-architect.md"
+      ],
+      "input_refs": [
+        "_distillation-plan.md",
+        ".ops/jury-prompts/jury-1-architect.md",
+        ".ops/scout-reports/scout2-doctrine.md"
+      ],
+      "expected_output": ".ops/jury/jury-1-architect.md",
+      "verification": "test -f .ops/jury/jury-1-architect.md && grep -qE '投票.*(approve|revise|reject)' .ops/jury/jury-1-architect.md && grep -q '## 关键问题回答' .ops/jury/jury-1-architect.md && grep -q '## 改进建议清单' .ops/jury/jury-1-architect.md",
+      "depends_on": [
+        "scout-1-base",
+        "scout-2-doctrine",
+        "scout-3-cards",
+        "scout-4-pipeline"
+      ],
+      "created_at": "2026-05-12T22:50:00+08:00",
+      "updated_at": "2026-05-13T17:43:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 3,
+      "max_attempts": 3,
+      "evidence": [
+        "file: .ops/jury/jury-1-architect.md (6309 bytes)",
+        "vote: revise",
+        "verification PASS: 投票 + 核心结论 + 详细评审(P0/P1/P2/亮点) + 关键问题回答(Q1/Q2/Q3) + 改进建议清单 全在",
+        "attempt 1 (useful-codex HTTP 520) failed, attempt 2 (codex 401 invalid key) failed, attempt 3 (xiaomi-tp EAGAIN) failed, fallback success on ioll-grok 2nd run",
+        "content sample: P0 抓住 Platform 层职责聚合 + 双 skill 缺正式 contract; 引用方案 §2.2/§3.2/§3.5/§4.2/§4.3.1/§4.3.2"
+      ],
+      "blockers": [],
+      "handoff_note": "评审 vote=revise。核心建议：拆 Platform 为 Orchestrator + Skill Runtime；补 contract.yaml；workflow 砍到 12 step MVP。"
+    },
+    {
+      "task_id": "jury-2-data-engineer",
+      "title": "Ark Jury Court 法官 2: 数据工程师（windhub / deepseek-v3-2-251201）",
+      "status": "done",
+      "owner": "ask-llm windhub (DeepSeek-family deepseek-v3-2-251201)",
+      "owned_files": [
+        ".ops/jury/jury-2-data-engineer.md"
+      ],
+      "input_refs": [
+        "_distillation-plan.md",
+        ".ops/jury-prompts/jury-2-data-engineer.md",
+        ".ops/scout-reports/scout1-base.md"
+      ],
+      "expected_output": ".ops/jury/jury-2-data-engineer.md",
+      "verification": "test -f .ops/jury/jury-2-data-engineer.md && grep -qE '投票.*(approve|revise|reject)' .ops/jury/jury-2-data-engineer.md && grep -q '## 字段补丁清单' .ops/jury/jury-2-data-engineer.md",
+      "depends_on": [
+        "scout-1-base",
+        "scout-2-doctrine",
+        "scout-3-cards",
+        "scout-4-pipeline"
+      ],
+      "created_at": "2026-05-12T22:50:00+08:00",
+      "updated_at": "2026-05-13T17:43:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 2,
+      "max_attempts": 2,
+      "evidence": [
+        "file: .ops/jury/jury-2-data-engineer.md (9420 bytes)",
+        "vote: revise",
+        "verification PASS: 投票 + 字段补丁清单 6 条 + Q1/Q2/Q3 完整回答",
+        "attempt 1 (ioll-mix HTTP 500) failed, attempt 2 (windhub deepseek-v3.2) success",
+        "content sample: P0 抓住 stage 字段覆盖度缺口 + 双库去重无可执行规则 + 冷暖启动缺失; 字段补丁路径 foundation.schema.unified_frontmatter.stage / methodology / prompt_card 等"
+      ],
+      "blockers": [],
+      "handoff_note": "评审 vote=revise。核心建议：扩 stage 枚举(增 cross_cutting/profile)；制定去重三态可执行规则；RAG 冷热启动参数化。"
+    },
+    {
+      "task_id": "jury-3-novel-editor",
+      "title": "Ark Jury Court 法官 3: 小说编辑（ioll-grok / grok-4.20-auto）",
+      "status": "done",
+      "owner": "ask-llm ioll-grok (xAI-family grok-4.20-auto)",
+      "owned_files": [
+        ".ops/jury/jury-3-novel-editor.md"
+      ],
+      "input_refs": [
+        "_distillation-plan.md",
+        ".ops/jury-prompts/jury-3-novel-editor.md",
+        ".ops/scout-reports/scout3-cards.md"
+      ],
+      "expected_output": ".ops/jury/jury-3-novel-editor.md",
+      "verification": "test -f .ops/jury/jury-3-novel-editor.md && grep -qE '投票.*(approve|revise|reject)' .ops/jury/jury-3-novel-editor.md && grep -q '## 创作场景压力测试' .ops/jury/jury-3-novel-editor.md",
+      "depends_on": [
+        "scout-1-base",
+        "scout-2-doctrine",
+        "scout-3-cards",
+        "scout-4-pipeline"
+      ],
+      "created_at": "2026-05-12T22:50:00+08:00",
+      "updated_at": "2026-05-13T17:43:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 2,
+      "max_attempts": 2,
+      "evidence": [
+        "file: .ops/jury/jury-3-novel-editor.md (7691 bytes)",
+        "vote: revise",
+        "verification PASS: 投票 + 创作场景压力测试 2 个用例 + Q1/Q2/Q3 完整回答",
+        "attempt 1 (ioll-grok 大 prompt 0 字节) 失败, attempt 2 (ioll-grok 第 2 次, 同 endpoint) 成功 (可能是临时 stream chunk 问题)",
+        "content sample: P0 抓住 workflow 20+ step 把创作变填表 + 凌晨 3 点灵感无逃逸通道; 引用方案 §3.5/§4.2/§4.3.1/§5.3/§6.3"
+      ],
+      "blockers": [],
+      "handoff_note": "评审 vote=revise。核心建议：foundation 加 raw_ideas/ 灵感暂存区；G/H 章节生成改为可选轻模式；checker 默认温和警告不硬 block；dark-fantasy 加沉浸写作专线。"
+    },
+    {
+      "task_id": "jury-4-product",
+      "title": "Ark Jury Court 法官 4: 产品工程师（windhub / deepseek-v3-2-251201, 2nd run）",
+      "status": "done",
+      "owner": "ask-llm windhub (DeepSeek-family deepseek-v3-2-251201, 2nd usage)",
+      "owned_files": [
+        ".ops/jury/jury-4-product.md"
+      ],
+      "input_refs": [
+        "_distillation-plan.md",
+        ".ops/jury-prompts/jury-4-product.md",
+        ".ops/scout-reports/scout4-pipeline.md"
+      ],
+      "expected_output": ".ops/jury/jury-4-product.md",
+      "verification": "test -f .ops/jury/jury-4-product.md && grep -qE '投票.*(approve|revise|reject)' .ops/jury/jury-4-product.md && grep -q '## 待审决策分类' .ops/jury/jury-4-product.md",
+      "depends_on": [
+        "scout-1-base",
+        "scout-2-doctrine",
+        "scout-3-cards",
+        "scout-4-pipeline"
+      ],
+      "created_at": "2026-05-12T22:50:00+08:00",
+      "updated_at": "2026-05-13T17:43:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 2,
+      "max_attempts": 2,
+      "evidence": [
+        "file: .ops/jury/jury-4-product.md (8149 bytes)",
+        "vote: revise",
+        "verification PASS: 投票 + Sprint 优先级补丁 + 待审决策分类 (BLOCKER 3 / IMPORTANT 2 / DEFER 3 共 8 条)",
+        "attempt 1 (wzw silent timeout) 失败, attempt 2 (windhub 第 2 次, 跟 jury-2 同 endpoint 但不同 persona) 成功",
+        "content sample: P0 抓住 S1/S2 无独立用户价值 + workflow 29 step MVP 超载 + 杀手级用例差异化未鲜明; 8 决策 BLOCKER=1/3/5"
+      ],
+      "blockers": [],
+      "handoff_note": "评审 vote=revise。核心建议：Sprint 重排 (S2 提前) → 24h 内端到端跑通第一章；workflow 砍到 12 step；BLOCKER 决策 1/3/5 必须先定。"
+    },
+    {
+      "task_id": "main-synthesize-plan",
+      "title": "主 agent 综合 4 Scout 报告 → distillation-plan",
+      "status": "done",
+      "owner": "main-agent",
+      "expected_output": "_distillation-plan.md",
+      "depends_on": [
+        "scout-1-base",
+        "scout-2-doctrine",
+        "scout-3-cards",
+        "scout-4-pipeline"
+      ],
+      "started_at": "2026-05-13T03:30:00+08:00",
+      "completed_at": "2026-05-13T10:07:00+08:00",
+      "evidence": [
+        "file: /Users/arm/Desktop/ginga/_distillation-plan.md (47646 bytes, 12 章节 + 2 附录)",
+        "结构验证: 含四层架构（Meta/Foundation/Platform/RAG）/ schema 设计 / 双 skill 集成边界 / scout-4 5大缺口补强 / 4-sprint 实施路线图 / Jury 评审输入清单 / 8 个待审决策",
+        "信息源映射: 附录 B 14 行表格显式映射 4 scout 结论到方案章节"
+      ]
+    },
+    {
+      "task_id": "main-final-verdict",
+      "title": "主 agent 综合 4 陪审 → ARCHITECTURE + ROADMAP",
+      "status": "done",
+      "owner": "main-agent",
+      "expected_output": "ARCHITECTURE.md / ROADMAP.md",
+      "depends_on": [
+        "jury-1-architect",
+        "jury-2-data-engineer",
+        "jury-3-novel-editor",
+        "jury-4-product"
+      ],
+      "started_at": "2026-05-13T17:43:30+08:00",
+      "completed_at": "2026-05-13T17:55:00+08:00",
+      "evidence": [
+        "file: /Users/arm/Desktop/ginga/ARCHITECTURE.md (v1, Killer Use Case + 四层 v1 final + Platform 拆 Orchestrator+Skill Runtime + 8 决策最终判决 + Jury 判决归属表 23 条)",
+        "file: /Users/arm/Desktop/ginga/ROADMAP.md (v1, 4 sprint 重排 + S1 critical path + 风险登记册 10 条 + Jury 修订追踪表)",
+        "4 jury 23 条建议 100% 归属到具体落地章节/任务编号",
+        "8 决策全部落定: BLOCKER 3 (1/3/5) APPROVE / DEFER 3 (2/4/6) Phase 2 / IMPORTANT 2 (7/8) APPROVE",
+        "MVP 边界明示 + Phase 2 deferred 清单明示"
+      ]
+    },
+    {
+      "task_id": "ST-S1-FOUNDATION",
+      "title": "Sprint 1 P7-A：Foundation 层 schema 实施（F-1..F-10）",
+      "status": "done",
+      "owner": "Agent(pua:senior-engineer-p7) af1e47866ed79cb48",
+      "owned_files": [
+        "foundation/schema/*.yaml",
+        "foundation/raw_ideas/README.md",
+        "foundation/rag/recall_config.yaml",
+        ".ops/p7-handoff/ST-S1-FOUNDATION.md"
+      ],
+      "input_refs": [
+        "ARCHITECTURE.md",
+        "ROADMAP.md",
+        ".ops/scout-reports/scout1-base.md",
+        ".ops/scout-reports/scout3-cards.md",
+        ".ops/p7-prompts/ST-S1-FOUNDATION.md"
+      ],
+      "expected_output": ".ops/p7-handoff/ST-S1-FOUNDATION.md (DONE marker) + 8 files in foundation/",
+      "verification": "test -f foundation/schema/genre_profile.yaml && test -f foundation/schema/template.yaml && test -f foundation/schema/methodology.yaml && test -f foundation/schema/checker_or_schema_ref.yaml && test -f foundation/schema/prompt_card.yaml && test -f foundation/schema/runtime_state.yaml && test -f foundation/raw_ideas/README.md && test -f foundation/rag/recall_config.yaml && grep -q cross_cutting foundation/schema/genre_profile.yaml && grep -q rule_type foundation/schema/methodology.yaml && grep -q dedup_against foundation/schema/prompt_card.yaml && grep -q audit_log foundation/schema/runtime_state.yaml && grep -q cold_start foundation/rag/recall_config.yaml",
+      "depends_on": [
+        "main-final-verdict"
+      ],
+      "created_at": "2026-05-13T18:17:00+08:00",
+      "updated_at": "2026-05-13T18:17:00+08:00",
+      "checkpoint_due_at": "2026-05-13T19:17:00+08:00",
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [],
+      "blockers": [],
+      "handoff_note": "Sprint 1 P7-A：10 个 schema yaml + raw_ideas/README + recall_config。critical 输入：scout-1 (基座 schema 草案)、scout-3 (prompt_card schema)。写范围 lock map = foundation/** only。心跳路径 .ops/p7-handoff/ST-S1-FOUNDATION.md。"
+    },
+    {
+      "task_id": "ST-S1-META",
+      "title": "Sprint 1 P7-B：Meta 层 constitution + guards + checkers（M-1..M-4）",
+      "status": "done",
+      "owner": "Agent(pua:senior-engineer-p7) a63e6670f192ff586",
+      "owned_files": [
+        "meta/constitution.yaml",
+        "meta/guards/*.guard.yaml",
+        "meta/checkers/*.checker.yaml",
+        "meta/user_overrides/checker_mode.yaml",
+        ".ops/p7-handoff/ST-S1-META.md"
+      ],
+      "input_refs": [
+        "ARCHITECTURE.md",
+        "ROADMAP.md",
+        ".ops/scout-reports/scout2-doctrine.md",
+        ".ops/jury/jury-3-novel-editor.md",
+        ".ops/p7-prompts/ST-S1-META.md"
+      ],
+      "expected_output": ".ops/p7-handoff/ST-S1-META.md (DONE marker) + 8 files in meta/",
+      "verification": "test -f meta/constitution.yaml && test -f meta/guards/no-fake-read.guard.yaml && test -f meta/guards/latest-text-priority.guard.yaml && test -f meta/guards/crosscheck-required.guard.yaml && test -f meta/checkers/aigc-style-detector.checker.yaml && test -f meta/checkers/character-iq-checker.checker.yaml && test -f meta/checkers/cool-point-payoff-checker.checker.yaml && test -f meta/user_overrides/checker_mode.yaml && [ $(grep -c 'id: const-' meta/constitution.yaml) -ge 20 ]",
+      "depends_on": [
+        "main-final-verdict"
+      ],
+      "created_at": "2026-05-13T18:17:00+08:00",
+      "updated_at": "2026-05-13T18:17:00+08:00",
+      "checkpoint_due_at": "2026-05-13T19:17:00+08:00",
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [],
+      "blockers": [],
+      "handoff_note": "Sprint 1 P7-B：20 条宪法 + 3 guard + 3 checker (warn-only 默认) + user_overrides。critical 输入：scout-2 §2 创作宪法段。心跳路径 .ops/p7-handoff/ST-S1-META.md。"
+    },
+    {
+      "task_id": "ST-S1-PLATFORM-CRITICAL",
+      "title": "Sprint 1 P7-C：workflow DSL + 双 skill contract + adapter（critical path P-2/8/9/10/11/12）",
+      "status": "done",
+      "owner": "Agent(pua:senior-engineer-p7) a8fd14be627e51ab2",
+      "owned_files": [
+        "ginga_platform/orchestrator/workflows/novel_pipeline_mvp.yaml",
+        "ginga_platform/skills/dark_fantasy_ultimate_engine/{skill.md,contract.yaml,adapter.py}",
+        "ginga_platform/skills/planning_with_files/{skill.md,contract.yaml,adapter.py}",
+        "ginga_platform/skills/registry.yaml",
+        ".ops/p7-handoff/ST-S1-PLATFORM-CRITICAL.md"
+      ],
+      "input_refs": [
+        "ARCHITECTURE.md",
+        "ROADMAP.md",
+        ".ops/scout-reports/scout2-doctrine.md",
+        ".ops/scout-reports/scout4-pipeline.md",
+        ".ops/jury/jury-1-architect.md",
+        ".ops/p7-prompts/ST-S1-PLATFORM-CRITICAL.md",
+        "_原料/思路/待整理思路 2",
+        "_原料/思路/待整理思路 3"
+      ],
+      "expected_output": ".ops/p7-handoff/ST-S1-PLATFORM-CRITICAL.md (DONE marker) + 8 files",
+      "verification": "test -f ginga_platform/orchestrator/workflows/novel_pipeline_mvp.yaml && [ $(grep -c '^  - id: ' ginga_platform/orchestrator/workflows/novel_pipeline_mvp.yaml) -eq 12 ] && grep -q V1_release_check ginga_platform/orchestrator/workflows/novel_pipeline_mvp.yaml && ! grep -E 'uses_capability:.*\\.md$' ginga_platform/orchestrator/workflows/novel_pipeline_mvp.yaml && test -f ginga_platform/skills/dark_fantasy_ultimate_engine/contract.yaml && test -f ginga_platform/skills/dark_fantasy_ultimate_engine/adapter.py && test -f ginga_platform/skills/planning_with_files/contract.yaml && test -f ginga_platform/skills/planning_with_files/adapter.py && test -f ginga_platform/skills/registry.yaml && grep -q immersive_mode ginga_platform/skills/dark_fantasy_ultimate_engine/contract.yaml && grep -q forbidden_mutation ginga_platform/skills/dark_fantasy_ultimate_engine/contract.yaml && python3 -c \"import ast; ast.parse(open('ginga_platform/skills/dark_fantasy_ultimate_engine/adapter.py').read()); ast.parse(open('ginga_platform/skills/planning_with_files/adapter.py').read())\"",
+      "depends_on": [
+        "main-final-verdict"
+      ],
+      "created_at": "2026-05-13T18:17:00+08:00",
+      "updated_at": "2026-05-13T18:17:00+08:00",
+      "checkpoint_due_at": "2026-05-13T19:17:00+08:00",
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [],
+      "blockers": [],
+      "handoff_note": "Sprint 1 P7-C critical path：workflow 12 step DSL + 双 skill contract.yaml + adapter.py（含 dark-fantasy immersive_mode）。jury-1 标 P-9/10/11 是最高风险段。心跳路径 .ops/p7-handoff/ST-S1-PLATFORM-CRITICAL.md。"
+    },
+    {
+      "task_id": "ST-S1-PLATFORM-RUNTIME",
+      "title": "Sprint 1 P7-D：Orchestrator Python runner + meta hooks + skill router（P-1/3/4/5/6/7/13）",
+      "status": "done",
+      "owner": "Agent(pua:senior-engineer-p7) af33c26cfcb2d797c",
+      "owned_files": [
+        "ginga_platform/orchestrator/runner/{__init__.py,dsl_parser.py,step_dispatch.py,state_io.py}",
+        "ginga_platform/orchestrator/meta_integration/{__init__.py,guard_invoker.py,checker_invoker.py}",
+        "ginga_platform/orchestrator/router/{__init__.py,skill_router.py}",
+        "ginga_platform/orchestrator/__init__.py",
+        "ginga_platform/orchestrator/runner/tests/test_*.py",
+        ".ops/p7-handoff/ST-S1-PLATFORM-RUNTIME.md"
+      ],
+      "input_refs": [
+        "ARCHITECTURE.md",
+        "ROADMAP.md",
+        ".ops/scout-reports/scout4-pipeline.md",
+        ".ops/jury/jury-1-architect.md",
+        ".ops/p7-prompts/ST-S1-PLATFORM-RUNTIME.md"
+      ],
+      "expected_output": ".ops/p7-handoff/ST-S1-PLATFORM-RUNTIME.md (DONE marker) + ~11 Python files",
+      "verification": "test -f ginga_platform/orchestrator/runner/state_io.py && test -f ginga_platform/orchestrator/runner/dsl_parser.py && test -f ginga_platform/orchestrator/runner/step_dispatch.py && test -f ginga_platform/orchestrator/meta_integration/guard_invoker.py && test -f ginga_platform/orchestrator/meta_integration/checker_invoker.py && test -f ginga_platform/orchestrator/router/skill_router.py && grep -q 'class StateIO' ginga_platform/orchestrator/runner/state_io.py && grep -q 'transaction' ginga_platform/orchestrator/runner/state_io.py && grep -q 'class GuardBlocked' ginga_platform/orchestrator/meta_integration/guard_invoker.py && grep -q 'class CheckerBlocked' ginga_platform/orchestrator/meta_integration/checker_invoker.py && python3 -c \"import ast; [ast.parse(open(f).read()) for f in ['ginga_platform/orchestrator/runner/dsl_parser.py','ginga_platform/orchestrator/runner/step_dispatch.py','ginga_platform/orchestrator/runner/state_io.py','ginga_platform/orchestrator/meta_integration/guard_invoker.py','ginga_platform/orchestrator/meta_integration/checker_invoker.py','ginga_platform/orchestrator/router/skill_router.py']]\" && ls ginga_platform/orchestrator/runner/tests/test_*.py 2>/dev/null",
+      "depends_on": [
+        "main-final-verdict"
+      ],
+      "created_at": "2026-05-13T18:17:00+08:00",
+      "updated_at": "2026-05-13T18:17:00+08:00",
+      "checkpoint_due_at": "2026-05-13T19:17:00+08:00",
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [],
+      "blockers": [],
+      "handoff_note": "Sprint 1 P7-D：Python runner / meta hooks / skill router 全部模块。jury-1 P0 强约束：state_io.py 是唯一 state 入口。通过 YAML schema 与 P7-C 解耦。心跳路径 .ops/p7-handoff/ST-S1-PLATFORM-RUNTIME.md。"
+    },
+    {
+      "task_id": "ST-S1-DEMO",
+      "title": "Sprint 1 主 agent：端到端 demo CLI（D-1..D-5）",
+      "status": "done",
+      "owner": "main-agent",
+      "owned_files": [
+        "ginga (CLI entrypoint)",
+        "ginga_platform/orchestrator/cli/*.py",
+        ".ops/demo/run-1.log"
+      ],
+      "input_refs": [
+        "ARCHITECTURE.md",
+        "ROADMAP.md §1.2.4",
+        "ST-S1-FOUNDATION, ST-S1-META, ST-S1-PLATFORM-CRITICAL, ST-S1-PLATFORM-RUNTIME outputs"
+      ],
+      "expected_output": "ginga CLI 跑通 init + run → 输出第一章 ≥3000 字正文 + 8+ runtime_state 文件",
+      "verification": "test -x ginga && ginga init demo-book --topic 玄幻黑暗 && ginga run demo-book && test -f foundation/runtime_state/demo-book/chapter_01.md && [ $(wc -c < foundation/runtime_state/demo-book/chapter_01.md) -ge 3000 ]",
+      "depends_on": [
+        "ST-S1-FOUNDATION",
+        "ST-S1-META",
+        "ST-S1-PLATFORM-CRITICAL",
+        "ST-S1-PLATFORM-RUNTIME"
+      ],
+      "created_at": "2026-05-13T18:17:00+08:00",
+      "updated_at": "2026-05-13T19:05:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 2,
+      "evidence": [
+        "file: ginga (shell wrapper, executable, +x)",
+        "file: ginga_platform/orchestrator/cli/__main__.py (argparse + init/run/status)",
+        "file: ginga_platform/orchestrator/cli/demo_pipeline.py (init_book + run_workflow + show_status)",
+        "demo run: ginga init demo-book --topic 玄幻黑暗 ✅ (5 state files: locked/entity_runtime/workspace/retrieved/audit_log)",
+        "demo run: ginga run demo-book ✅ (windhub deepseek-v3.2, 5242 中文字)",
+        "file: foundation/runtime_state/demo-book/chapter_01.md (18486 bytes, 18486 ≥ 3000 PASS)",
+        "content quality spot check: 暗黑压抑气质 + 失忆刺客苏醒 + 短刃符文伏笔 + 微粒残留 + 新伏笔（幽蚀之种 + 丙-七四令牌 + 掠夺集团等级）+ 风格锁守住（无都市/科幻/游戏腔）",
+        "Killer Use Case 雏形验证: dark-fantasy adapter chain → ask-llm → state_io 端到端跑通"
+      ],
+      "blockers": [],
+      "handoff_note": "Sprint 1 D 完成。MVP demo 用简化 pipeline（skip A-F 用 init seed，G 真调 LLM，H/R/V mock audit）。S2 任务：跑完整 12 step + workflow runner + adapter wire-up + Layer 1 RAG。"
+    },
+    {
+      "task_id": "ST-S2-PHASE0",
+      "title": "Sprint 2 Phase 0：capability_registry + op-translator + 集成 spike（主 agent owner / P7 执行）",
+      "status": "done",
+      "owner": "Agent(pua:senior-engineer-p7) aa8ad58542ca8d464 (watchdog timeout but work done)",
+      "owned_files": [
+        "ginga_platform/orchestrator/registry/__init__.py",
+        "ginga_platform/orchestrator/registry/capability_registry.py",
+        "ginga_platform/orchestrator/runner/op_translator.py",
+        "ginga_platform/orchestrator/runner/tests/test_capability_registry.py",
+        "ginga_platform/orchestrator/runner/tests/test_op_translator.py",
+        "ginga_platform/orchestrator/runner/tests/test_integration_12step.py",
+        ".ops/p7-handoff/ST-S2-PHASE0.md"
+      ],
+      "input_refs": [
+        "ARCHITECTURE.md",
+        "ROADMAP.md §二",
+        "ginga_platform/skills/dark_fantasy_ultimate_engine/adapter.py (output_transform 返回格式)",
+        "ginga_platform/orchestrator/runner/state_io.py (apply 接口)",
+        "ginga_platform/skills/registry.yaml",
+        "ginga_platform/orchestrator/workflows/novel_pipeline_mvp.yaml",
+        ".ops/p7-prompts/ST-S2-PHASE0.md"
+      ],
+      "expected_output": "capability_registry 模块 + op_translator 模块 + 完整 12 step integration test PASS",
+      "verification": "python3 -c \"from ginga_platform.orchestrator.registry.capability_registry import CapabilityRegistry; reg = CapabilityRegistry.from_defaults(); assert reg.list_capabilities()\" && python3 -m unittest ginga_platform.orchestrator.runner.tests.test_capability_registry ginga_platform.orchestrator.runner.tests.test_op_translator ginga_platform.orchestrator.runner.tests.test_integration_12step",
+      "depends_on": [
+        "ST-S1-DEMO"
+      ],
+      "created_at": "2026-05-13T19:10:00+08:00",
+      "updated_at": "2026-05-13T19:10:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 0,
+      "max_attempts": 3,
+      "evidence": [],
+      "blockers": [],
+      "handoff_note": "Sprint 2 Phase 0：清 Sprint 1 三个技术债（capability_registry 中心化 / op-translator adapter↔state_io 桥 / 端到端 12 step）。S/R/I 三路 P7 部分依赖此（集成测试段）。"
+    },
+    {
+      "task_id": "ST-S2-S-MULTI-CHAPTER",
+      "title": "Sprint 2 P7-S：完整 runtime_state + 多章循环 + locked patch（S-1..S-5）",
+      "status": "done",
+      "owner": "Claude Opus 4.7 + Codex CLI runtime closeout",
+      "owned_files": [
+        "ginga_platform/orchestrator/cli/demo_pipeline.py (扩展)",
+        "ginga_platform/orchestrator/cli/multi_chapter.py",
+        "meta/patches/* (locked 域 patch 流程)",
+        "ginga_platform/orchestrator/runner/tests/test_multi_chapter.py",
+        ".ops/p7-handoff/ST-S2-S-MULTI-CHAPTER.md"
+      ],
+      "input_refs": [
+        "ARCHITECTURE.md §3.5 / §4.4 / §4.5",
+        "ROADMAP.md §2.2.1",
+        "foundation/schema/runtime_state.yaml"
+      ],
+      "expected_output": "ginga run s2-demo --chapters 5 跑通连续 5 章不崩；locked patch 流程示例",
+      "verification": "[ $(find foundation/runtime_state/s2-demo -maxdepth 1 -name 'chapter_*.md' | wc -l) -eq 5 ] && grep -q 'DoD PASS' .ops/sprint-2/s2-demo-xiaomi.stdout && grep -q 'V1 DoD PASS' foundation/runtime_state/s2-demo/audit_log.yaml",
+      "depends_on": [
+        "ST-S2-PHASE0"
+      ],
+      "created_at": "2026-05-13T19:10:00+08:00",
+      "updated_at": "2026-05-14T02:35:38+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [
+        "file: foundation/runtime_state/s2-demo/chapter_{01..05}.md (5 files, all >=3000 bytes, total 52372 bytes)",
+        "stdout: .ops/sprint-2/s2-demo-xiaomi.stdout contains 'multi_chapter done: 5/5 chapters, DoD PASS, total_words=15245, foreshadow_pool=5'",
+        "audit_log: foundation/runtime_state/s2-demo/audit_log.yaml contains 'V1 DoD PASS: 0 issues'",
+        "regression: python3 -m unittest discover -s ginga_platform -p 'test_*.py' = Ran 105 tests OK"
+      ],
+      "blockers": [],
+      "handoff_note": "Sprint 2 S Track 已完成；windhub 故障后改走 xiaomi-tp 真实 LLM 重跑，5 章 demo 与 V1 DoD 均通过。"
+    },
+    {
+      "task_id": "ST-S2-R-RAG-LAYER1",
+      "title": "Sprint 2 P7-R：RAG Layer 1 frontmatter 召回 + 冷启动 + 全局关闭（R-1..R-5）",
+      "status": "done",
+      "owner": "Agent(pua:senior-engineer-p7) a1bd3b3e9b7547320",
+      "owned_files": [
+        "rag/index_builder.py",
+        "rag/layer1_filter.py",
+        "rag/cold_start.py",
+        "rag/__init__.py",
+        "ginga_platform/orchestrator/runner/tests/test_rag_layer1.py",
+        ".ops/p7-handoff/ST-S2-R-RAG-LAYER1.md"
+      ],
+      "input_refs": [
+        "ARCHITECTURE.md §5",
+        "ROADMAP.md §2.2.2",
+        "foundation/rag/recall_config.yaml",
+        "foundation/schema/prompt_card.yaml"
+      ],
+      "expected_output": "Layer 1 frontmatter 过滤 + 冷启动降级 + stage-specific top_k + workflow.rag_mode=off 可用",
+      "verification": "python3 -c \"from rag.layer1_filter import recall; r = recall(stage='drafting', topic='玄幻黑暗', top_k=5); print(len(r))\" && grep -q rag_mode ginga_platform/orchestrator/runner/step_dispatch.py",
+      "depends_on": [],
+      "created_at": "2026-05-13T19:10:00+08:00",
+      "updated_at": "2026-05-13T19:10:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 0,
+      "max_attempts": 3,
+      "evidence": [],
+      "blockers": [],
+      "handoff_note": "Sprint 2 R Track：jury-2 P0 RAG 冷暖启动 + jury-3 P1 rag_mode=off。独立于 Phase 0（不依赖 capability_registry）。"
+    },
+    {
+      "task_id": "ST-S2-I-IMMERSIVE",
+      "title": "Sprint 2 P7-I：dark-fantasy immersive_mode 实施 + 5 章 demo（I-1..I-5）",
+      "status": "done",
+      "owner": "Agent(pua:senior-engineer-p7) tbd",
+      "owned_files": [
+        "ginga_platform/skills/dark_fantasy_ultimate_engine/adapter.py (扩展 immersive 实施)",
+        "ginga_platform/orchestrator/cli/immersive_runner.py",
+        "ginga_platform/orchestrator/runner/tests/test_immersive_mode.py",
+        ".ops/p7-handoff/ST-S2-I-IMMERSIVE.md"
+      ],
+      "input_refs": [
+        "ARCHITECTURE.md §4.5",
+        "ROADMAP.md §2.2.4",
+        ".ops/jury/jury-3-novel-editor.md (改进 4)"
+      ],
+      "expected_output": "immersive_mode=true 时连续 5 章不打断 + 退出时批量结算 + checker 期内静默",
+      "verification": "ginga run demo-book --chapters 5 --immersive && grep -q 'pending_updates' foundation/runtime_state/demo-book/audit_log.yaml",
+      "depends_on": [
+        "ST-S2-PHASE0"
+      ],
+      "created_at": "2026-05-13T19:10:00+08:00",
+      "updated_at": "2026-05-13T23:43:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 0,
+      "max_attempts": 3,
+      "evidence": [
+        "file: foundation/runtime_state/immersive-demo/chapter_{01..05}.md (5 files, 13K-19K bytes, total 78289 bytes)",
+        "unit test: test_immersive_mode 16/16 PASS (含 ImmersiveRunner.run_block 5 章 mock e2e)",
+        "real LLM demo: ginga run immersive-demo --immersive --chapters 5 --llm-endpoint windhub → 5 chapters applied=2",
+        "audit_log: immersive entered + 5×chapter drafted + 5 chapters batch applied + R2_consistency_check triggered"
+      ],
+      "blockers": [],
+      "handoff_note": "P7-I 完成全部 I-1..I-5 + real demo 验收 PASS by 主 agent 续接（断网恢复后 reconciliation）"
+    },
+    {
+      "task_id": "ST-S2-L-ANNOTATION",
+      "title": "Sprint 2 L Track（主 agent /loop dynamic）：461 prompts 标注 + 双库去重 + 入 RAG 索引",
+      "status": "done",
+      "owner": "main-agent /loop dynamic + Codex CLI runtime closeout",
+      "owned_files": [
+        "foundation/assets/prompts/*.md (461 cards w/ frontmatter)",
+        ".ops/sprint-2/annotation-progress.jsonl",
+        ".ops/sprint-2/dedup-verdicts.json",
+        "rag/prompt_card_index.json"
+      ],
+      "input_refs": [
+        "_原料/提示词库参考/prompts/ (461 cards)",
+        "_原料/基座/ (544 templates, 用于去重 cross-check)",
+        "foundation/schema/prompt_card.yaml",
+        ".ops/scout-reports/scout3-cards.md (quality.json + dedup.json 起点)"
+      ],
+      "expected_output": "461 prompt 卡 frontmatter 标注完成（A/A- 优先 ~230 + B+/B ~200 + C/D ~30）",
+      "verification": "[ $(grep -c '\\\"status\\\": \\\"ok\\\"' .ops/sprint-2/annotation-progress.jsonl) -eq 461 ] && [ $(find foundation/assets/prompts -maxdepth 1 -name 'prompts-card-*.md' | wc -l) -eq 461 ]",
+      "depends_on": [],
+      "created_at": "2026-05-13T19:10:00+08:00",
+      "updated_at": "2026-05-14T02:35:38+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 5,
+      "evidence": [
+        "jsonl: .ops/sprint-2/annotation-progress.jsonl has 461 entries with status=ok",
+        "files: foundation/assets/prompts/prompts-card-*.md count = 461",
+        "handoff closeout: .ops/handoff-to-codex-sprint2-remaining.md records Task 2 done at 2026-05-14T02:35:38+08:00",
+        "regression: python3 -m unittest discover -s ginga_platform -p 'test_*.py' = Ran 105 tests OK"
+      ],
+      "blockers": [],
+      "handoff_note": "Sprint 2 L Track 已完成 461/461；期间出现 Keychain/API key 与 endpoint 波动，恢复凭据后批处理收口，目录页按 index_card 手工补齐。"
+    },
+    {
+      "task_id": "ST-S3-R-LAYER23",
+      "title": "Sprint 3 R Track：RAG Layer 2 向量召回 + Layer 3 rerank 骨架",
+      "status": "done",
+      "owner": "worker Dalton (spawn_agent 019e25df-9d40-7de3-8e06-69b84016c747)",
+      "owned_files": [
+        "rag/index_builder.py",
+        "rag/cold_start.py",
+        "rag/layer2_vector.py",
+        "rag/reranker.py",
+        "rag/retriever.py",
+        "ginga_platform/orchestrator/runner/step_dispatch.py",
+        "ginga_platform/orchestrator/runner/tests/test_rag_layer2.py",
+        "ginga_platform/orchestrator/runner/tests/test_rag_layer3.py",
+        ".ops/p7-handoff/ST-S3-R-LAYER23.md"
+      ],
+      "input_refs": [
+        ".ops/subagents/dispatch-protocol.md",
+        "ROADMAP.md §3.2 V-1..V-3",
+        "ARCHITECTURE.md §5",
+        "foundation/rag/recall_config.yaml",
+        "rag/index_builder.py",
+        "rag/layer1_filter.py",
+        "rag/cold_start.py",
+        "ginga_platform/orchestrator/runner/step_dispatch.py"
+      ],
+      "expected_output": "sqlite-compatible Layer 2/3 interfaces with fake-embedder tests; missing sqlite-vec or LLM endpoint must fail open to Layer 1",
+      "verification": "python3 -m unittest ginga_platform.orchestrator.runner.tests.test_rag_layer2 ginga_platform.orchestrator.runner.tests.test_rag_layer3 ginga_platform.orchestrator.runner.tests.test_rag_layer1",
+      "depends_on": [
+        "ST-S2-R-RAG-LAYER1",
+        "ST-S2-L-ANNOTATION"
+      ],
+      "created_at": "2026-05-14T14:20:00+08:00",
+      "updated_at": "2026-05-14T18:06:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [
+        "code: rag/layer2_vector.py, rag/reranker.py, rag/retriever.py added",
+        "code: rag/index_builder.py now stores card_documents body/hash side table while preserving cards",
+        "integration: ginga_platform/orchestrator/runner/step_dispatch.py calls rag.retriever.recall_cards and preserves rag_mode=off",
+        "verification: python3 -m unittest ginga_platform.orchestrator.runner.tests.test_rag_layer2 ginga_platform.orchestrator.runner.tests.test_rag_layer3 ginga_platform.orchestrator.runner.tests.test_rag_layer1 = Ran 13 tests OK",
+        "verification: python3 -m unittest discover -s ginga_platform -p 'test_*.py' = Ran 112 tests OK"
+      ],
+      "blockers": [],
+      "handoff_note": "Completed by Dalton. Layer 2 uses sqlite JSON vector fallback without sqlite-vec dependency; Layer 3 rerank is config-driven and fail-open."
+    },
+    {
+      "task_id": "ST-S3-Q-PROMPT-AUDIT",
+      "title": "Sprint 3 Q Track：prompt card frontmatter 质量审计脚本与报告",
+      "status": "done",
+      "owner": "worker Socrates (spawn_agent 019e25df-9d66-7392-8df0-b422e13a95f8)",
+      "owned_files": [
+        "scripts/validate_prompt_frontmatter.py",
+        "scripts/report_prompt_quality.py",
+        ".ops/validation/prompt_frontmatter_report.json",
+        ".ops/validation/prompt_quality_report.json",
+        ".ops/p7-handoff/ST-S3-Q-PROMPT-AUDIT.md"
+      ],
+      "input_refs": [
+        ".ops/subagents/dispatch-protocol.md",
+        "ROADMAP.md §3.2 V-4",
+        "foundation/schema/prompt_card.yaml",
+        "foundation/assets/prompts/*.md",
+        ".ops/scout-reports/scout3-cards.md"
+      ],
+      "expected_output": "validators that report required-field coverage, illegal enum values, empty topic, missing task_full, weak-example candidates, and quality distribution",
+      "verification": "python3 scripts/validate_prompt_frontmatter.py && python3 scripts/report_prompt_quality.py foundation/assets/prompts",
+      "depends_on": [
+        "ST-S2-L-ANNOTATION"
+      ],
+      "created_at": "2026-05-14T14:20:00+08:00",
+      "updated_at": "2026-05-14T17:55:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [
+        "script: scripts/validate_prompt_frontmatter.py created; report-only default, --strict available",
+        "script: scripts/report_prompt_quality.py created",
+        "report: .ops/validation/prompt_frontmatter_report.json total_files=461 violation_count=1904 parse_errors=4",
+        "report: .ops/validation/prompt_quality_report.json total_files=461 weak_example_candidate_count=202 quality_distribution A=44 A-=45 B+=245 B=123 UNKNOWN=4",
+        "verification: python3 scripts/validate_prompt_frontmatter.py && python3 scripts/report_prompt_quality.py foundation/assets/prompts PASS"
+      ],
+      "blockers": [],
+      "handoff_note": "Audit/report task completed by Socrates. No prompt card assets edited; reports expose schema drift and 202 weak-example candidates for next cleanup batch."
+    },
+    {
+      "task_id": "ST-S3-Q-PROMPT-SCHEMA-FIX",
+      "title": "Sprint 3 Q Track：prompt card frontmatter schema 收敛修复",
+      "status": "done",
+      "owner": "worker Bohr (spawn_agent 019e25e9-fa81-72f1-bb9f-6a21f3520120)",
+      "owned_files": [
+        "foundation/assets/prompts/*.md",
+        ".ops/reports/prompt_schema_fix_report.md",
+        ".ops/p7-handoff/ST-S3-Q-PROMPT-SCHEMA-FIX.md"
+      ],
+      "input_refs": [
+        ".ops/subagents/dispatch-protocol.md",
+        ".ops/validation/prompt_frontmatter_report.json",
+        "foundation/schema/prompt_card.yaml",
+        "scripts/validate_prompt_frontmatter.py"
+      ],
+      "expected_output": "Fix prompt card frontmatter parse errors and schema drift for stage/card_kind/output_kind/card_intent/task_full where mechanically safe",
+      "verification": "python3 scripts/validate_prompt_frontmatter.py --strict",
+      "depends_on": [
+        "ST-S3-Q-PROMPT-AUDIT"
+      ],
+      "created_at": "2026-05-14T18:00:00+08:00",
+      "updated_at": "2026-05-14T18:15:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [
+        "changed: 461 prompt frontmatter files touched under foundation/assets/prompts/*.md",
+        "fixed: 4 YAML parse errors, 461 task_full values, 20 illegal stage values, normalized card_intent/card_kind/output_kind, 11 empty-topic audit cases",
+        "report: .ops/reports/prompt_schema_fix_report.md created",
+        "verification: python3 scripts/validate_prompt_frontmatter.py --strict = total=461 violations=0",
+        "verification: python3 scripts/report_prompt_quality.py foundation/assets/prompts PASS"
+      ],
+      "blockers": [],
+      "handoff_note": "Completed by Bohr. Prompt frontmatter schema drift cleared; quality weak-example work remains separate."
+    },
+    {
+      "task_id": "ST-S3-M-METHODOLOGY-ASSETS",
+      "title": "Sprint 3 M Track：基座方法论资产迁移与 sub_sections 初拆",
+      "status": "done",
+      "owner": "worker Carver (spawn_agent 019e25e9-fac5-7b13-a975-f544745b79b3)",
+      "owned_files": [
+        "foundation/assets/methodology/*.md",
+        "foundation/assets/checkers_or_schema_refs/*.md",
+        "scripts/validate_methodology_assets.py",
+        ".ops/reports/methodology_assets_report.md",
+        ".ops/p7-handoff/ST-S3-M-METHODOLOGY-ASSETS.md"
+      ],
+      "input_refs": [
+        ".ops/subagents/dispatch-protocol.md",
+        "foundation/schema/methodology.yaml",
+        "foundation/schema/checker_or_schema_ref.yaml",
+        "_原料/基座/方法论/**",
+        ".ops/scout-reports/scout1-base.md"
+      ],
+      "expected_output": "Create methodology/checker asset frontmatter for 13 source methodology docs; split high-value docs into sub_sections where safe",
+      "verification": "python3 scripts/validate_methodology_assets.py foundation/assets/methodology foundation/schema/methodology.yaml",
+      "depends_on": [],
+      "created_at": "2026-05-14T18:00:00+08:00",
+      "updated_at": "2026-05-14T18:20:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [
+        "assets: 12 methodology assets created under foundation/assets/methodology",
+        "assets: 1 checker_or_schema_ref asset created at foundation/assets/checkers_or_schema_refs/base-schema-ref-runtime-state.md",
+        "script: scripts/validate_methodology_assets.py created",
+        "report: .ops/reports/methodology_assets_report.md created; platform审核.md deferred ambiguity documented",
+        "verification: python3 scripts/validate_methodology_assets.py foundation/assets/methodology foundation/schema/methodology.yaml PASS",
+        "verification: python3 scripts/validate_methodology_assets.py foundation/assets/checkers_or_schema_refs foundation/schema/checker_or_schema_ref.yaml PASS"
+      ],
+      "blockers": [],
+      "handoff_note": "Completed by Carver. Migrated scout-confirmed 13 methodology/schema assets; live extra 写作/平台审核.md deliberately deferred."
+    },
+    {
+      "task_id": "ST-S3-D-DEDUP-EVIDENCE",
+      "title": "Sprint 3 D Track：双库 dedup 抽样证据报告",
+      "status": "done",
+      "owner": "worker Hilbert (spawn_agent 019e25e9-fae6-79f0-9afb-84c6d1b31b16)",
+      "owned_files": [
+        "scripts/check_dedup_evidence.py",
+        ".ops/reports/dedup_evidence.md",
+        ".ops/validation/dedup_evidence.json",
+        ".ops/p7-handoff/ST-S3-D-DEDUP-EVIDENCE.md"
+      ],
+      "input_refs": [
+        ".ops/subagents/dispatch-protocol.md",
+        ".ops/scout-reports/scout3-dedup.json",
+        "foundation/assets/prompts/*.md",
+        "_原料/基座/**"
+      ],
+      "expected_output": "Report proving retain decisions are sampled evidence, not default labels; include possible dedup_against candidates",
+      "verification": "python3 scripts/check_dedup_evidence.py foundation/assets/prompts _原料/基座",
+      "depends_on": [
+        "ST-S2-L-ANNOTATION"
+      ],
+      "created_at": "2026-05-14T18:00:00+08:00",
+      "updated_at": "2026-05-14T18:10:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [
+        "script: scripts/check_dedup_evidence.py created",
+        "report: .ops/validation/dedup_evidence.json prompt_card_count=461 base_doc_count=541 sample_count=25",
+        "report: .ops/reports/dedup_evidence.md created with sample evidence",
+        "verification: python3 scripts/check_dedup_evidence.py foundation/assets/prompts _原料/基座 --strict PASS",
+        "verification: python3 -m py_compile scripts/check_dedup_evidence.py PASS"
+      ],
+      "blockers": [],
+      "handoff_note": "Completed by Hilbert. Report-only dedup evidence sample validates retain labels with deterministic lexical candidates; no prompt/base files edited."
+    },
+    {
+      "task_id": "ST-S3-Q-WEAK-EXAMPLES-A",
+      "title": "Sprint 3 Q Track：弱示例补强批次 A（51 cards）",
+      "status": "done",
+      "owner": "worker Kuhn (spawn_agent 019e25fc-793b-7123-af5f-dd504cf1d7ce)",
+      "owned_files": [
+        "foundation/assets/prompts/<batch-A-files>",
+        ".ops/reports/weak_examples_batch_A.md",
+        ".ops/p7-handoff/ST-S3-Q-WEAK-EXAMPLES-A.md"
+      ],
+      "input_refs": [
+        ".ops/validation/weak_examples_batch_A.json",
+        "foundation/schema/prompt_card.yaml",
+        ".ops/subagents/dispatch-protocol.md"
+      ],
+      "expected_output": "Replace empty/none/direct-copy 示例输入 sections for batch A with concrete examples; no body-wide rewrites",
+      "verification": "python3 scripts/report_prompt_quality.py foundation/assets/prompts",
+      "depends_on": [
+        "ST-S3-Q-PROMPT-SCHEMA-FIX"
+      ],
+      "created_at": "2026-05-14T18:30:00+08:00",
+      "updated_at": "2026-05-14T18:35:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [
+        "changed: 51 batch A prompt cards plus .ops/reports/weak_examples_batch_A.md",
+        "batch audit: 51 listed files, 0 missing 示例输入, 0 remaining weak sections",
+        "global verification: python3 scripts/report_prompt_quality.py foundation/assets/prompts = weak_examples=0"
+      ],
+      "blockers": [],
+      "handoff_note": "Completed by Kuhn. Batch A weak examples enriched; no known residuals."
+    },
+    {
+      "task_id": "ST-S3-Q-WEAK-EXAMPLES-B",
+      "title": "Sprint 3 Q Track：弱示例补强批次 B（51 cards）",
+      "status": "done",
+      "owner": "worker Anscombe (spawn_agent 019e25fc-7999-7091-b6b6-8322ef849d36)",
+      "owned_files": [
+        "foundation/assets/prompts/<batch-B-files>",
+        ".ops/reports/weak_examples_batch_B.md",
+        ".ops/p7-handoff/ST-S3-Q-WEAK-EXAMPLES-B.md"
+      ],
+      "input_refs": [
+        ".ops/validation/weak_examples_batch_B.json",
+        "foundation/schema/prompt_card.yaml",
+        ".ops/subagents/dispatch-protocol.md"
+      ],
+      "expected_output": "Replace empty/none/direct-copy 示例输入 sections for batch B with concrete examples; no body-wide rewrites",
+      "verification": "python3 scripts/report_prompt_quality.py foundation/assets/prompts",
+      "depends_on": [
+        "ST-S3-Q-PROMPT-SCHEMA-FIX"
+      ],
+      "created_at": "2026-05-14T18:30:00+08:00",
+      "updated_at": "2026-05-14T18:35:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [
+        "changed: 51 batch B prompt cards plus .ops/reports/weak_examples_batch_B.md",
+        "batch audit: 51/51 listed cards now have concrete 示例输入 bullets; 0 batch weak cases",
+        "global verification after all batches: python3 scripts/report_prompt_quality.py foundation/assets/prompts = weak_examples=0"
+      ],
+      "blockers": [],
+      "handoff_note": "Completed by Anscombe. Batch B weak examples enriched; global count in its local report was stale due to parallel batch timing."
+    },
+    {
+      "task_id": "ST-S3-Q-WEAK-EXAMPLES-C",
+      "title": "Sprint 3 Q Track：弱示例补强批次 C（50 cards）",
+      "status": "done",
+      "owner": "worker Banach (spawn_agent 019e25fc-79d3-7012-9864-bd4128091a8d)",
+      "owned_files": [
+        "foundation/assets/prompts/<batch-C-files>",
+        ".ops/reports/weak_examples_batch_C.md",
+        ".ops/p7-handoff/ST-S3-Q-WEAK-EXAMPLES-C.md"
+      ],
+      "input_refs": [
+        ".ops/validation/weak_examples_batch_C.json",
+        "foundation/schema/prompt_card.yaml",
+        ".ops/subagents/dispatch-protocol.md"
+      ],
+      "expected_output": "Replace empty/none/direct-copy 示例输入 sections for batch C with concrete examples; no body-wide rewrites",
+      "verification": "python3 scripts/report_prompt_quality.py foundation/assets/prompts",
+      "depends_on": [
+        "ST-S3-Q-PROMPT-SCHEMA-FIX"
+      ],
+      "created_at": "2026-05-14T18:30:00+08:00",
+      "updated_at": "2026-05-14T18:35:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [
+        "changed: 50 batch C prompt cards plus .ops/reports/weak_examples_batch_C.md",
+        "batch audit: 50 files checked, missing=0, weak=0",
+        "global verification: python3 scripts/report_prompt_quality.py foundation/assets/prompts = weak_examples=0"
+      ],
+      "blockers": [],
+      "handoff_note": "Completed by Banach. Batch C weak examples enriched; no known residuals."
+    },
+    {
+      "task_id": "ST-S3-Q-WEAK-EXAMPLES-D",
+      "title": "Sprint 3 Q Track：弱示例补强批次 D（50 cards）",
+      "status": "done",
+      "owner": "worker Russell (spawn_agent 019e25fc-7a40-7843-8d49-197ae6bac45a)",
+      "owned_files": [
+        "foundation/assets/prompts/<batch-D-files>",
+        ".ops/reports/weak_examples_batch_D.md",
+        ".ops/p7-handoff/ST-S3-Q-WEAK-EXAMPLES-D.md"
+      ],
+      "input_refs": [
+        ".ops/validation/weak_examples_batch_D.json",
+        "foundation/schema/prompt_card.yaml",
+        ".ops/subagents/dispatch-protocol.md"
+      ],
+      "expected_output": "Replace empty/none/direct-copy 示例输入 sections for batch D with concrete examples; no body-wide rewrites",
+      "verification": "python3 scripts/report_prompt_quality.py foundation/assets/prompts",
+      "depends_on": [
+        "ST-S3-Q-PROMPT-SCHEMA-FIX"
+      ],
+      "created_at": "2026-05-14T18:30:00+08:00",
+      "updated_at": "2026-05-14T18:35:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [
+        "changed: 50 batch D prompt cards plus .ops/reports/weak_examples_batch_D.md",
+        "batch audit: missing=[], multi=[], weak=[]",
+        "global verification after all batches: python3 scripts/report_prompt_quality.py foundation/assets/prompts = weak_examples=0"
+      ],
+      "blockers": [],
+      "handoff_note": "Completed by Russell. Batch D weak examples enriched; global count in its local report was stale due to parallel batch timing."
+    },
+    {
+      "task_id": "ST-S3-P-PRESSURE-TEST",
+      "title": "Sprint 3 P Track：创作压力测试量化报告",
+      "status": "done",
+      "owner": "worker Huygens (spawn_agent 019e25fc-7a84-7321-b80b-8eddcac6a205)",
+      "owned_files": [
+        "scripts/run_s3_pressure_tests.py",
+        ".ops/reports/s3_pressure_test_report.md",
+        ".ops/validation/s3_pressure_test.json",
+        ".ops/p7-handoff/ST-S3-P-PRESSURE-TEST.md"
+      ],
+      "input_refs": [
+        "ROADMAP.md §3.2 V-7",
+        "foundation/runtime_state/s2-demo/**",
+        "foundation/runtime_state/immersive-demo/**",
+        ".ops/subagents/dispatch-protocol.md"
+      ],
+      "expected_output": "Quantify S3 readiness against S2 demos using local artifacts; no real LLM required by default",
+      "verification": "python3 scripts/run_s3_pressure_tests.py",
+      "depends_on": [
+        "ST-S3-R-LAYER23",
+        "ST-S3-Q-PROMPT-SCHEMA-FIX",
+        "ST-S3-M-METHODOLOGY-ASSETS"
+      ],
+      "created_at": "2026-05-14T18:30:00+08:00",
+      "updated_at": "2026-05-14T18:35:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 3,
+      "evidence": [
+        "script: scripts/run_s3_pressure_tests.py created",
+        "report: .ops/validation/s3_pressure_test.json and .ops/reports/s3_pressure_test_report.md created",
+        "verification: python3 scripts/run_s3_pressure_tests.py PASS, pass_rate=85.7% (6/7 dimensions)",
+        "verification: python3 -m py_compile scripts/run_s3_pressure_tests.py PASS",
+        "known residual: immersive continuity dimension failed because immersive-demo chapter headings are [1,1,1,1,1] instead of 1..5"
+      ],
+      "blockers": [],
+      "handoff_note": "Completed by Huygens. Local pressure test passes target at 85.7%; remaining issue is immersive chapter heading progression."
+    }
+  ]
+}

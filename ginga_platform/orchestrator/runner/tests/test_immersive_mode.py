@@ -1,0 +1,333 @@
+"""Unit tests for dark-fantasy immersive_mode end-to-end (ST-S2-I IMMERSIVE).
+
+覆盖：
+    - I-1: enter_immersive_mode 写 workflow_flags + audit "immersive entered"
+    - I-3: checker_invoker silenced hook (workspace.workflow_flags.checker_silenced)
+    - I-4: exit_immersive_mode 批量 apply（op_translator）+ R2_consistency_check trigger
+    - I-2/I-5: ImmersiveRunner.run_block N 章 block（注入 mock LLM）
+    - 异常路径：persist fallback / idempotent enter / pending 累积语义
+"""
+
+from __future__ import annotations
+
+import json
+import re
+import tempfile
+import unittest
+from pathlib import Path
+
+from ginga_platform.orchestrator.runner.state_io import StateIO
+from ginga_platform.orchestrator.meta_integration.checker_invoker import invoke_checkers
+from ginga_platform.skills.dark_fantasy_ultimate_engine.adapter import DarkFantasyAdapter
+from ginga_platform.orchestrator.cli.immersive_runner import ImmersiveRunner
+
+
+class _BaseImmersiveTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.state_root = Path(self._tmp.name)
+        self.sio = StateIO("immer-book", state_root=self.state_root)
+        # seed locked + entity_runtime（避免 read 空）
+        self.sio.apply(
+            {
+                "locked.GENRE_LOCKED.topic": ["玄幻黑暗"],
+                "locked.STORY_DNA.premise": "test premise",
+                "entity_runtime.RESOURCE_LEDGER": {"particles": 0, "items": []},
+                "entity_runtime.FORESHADOW_STATE": {"pool": []},
+                "entity_runtime.GLOBAL_SUMMARY": {"total_words": 0},
+                "workspace.task_plan": "seed",
+            },
+            source="seed",
+        )
+        self.adapter = DarkFantasyAdapter(self.sio)
+
+
+class EnterImmersiveTest(_BaseImmersiveTest):
+    def test_enter_sets_workflow_flags(self) -> None:
+        self.adapter.enter_immersive_mode()
+        self.assertTrue(self.sio.read("workspace.workflow_flags.immersive_mode"))
+        self.assertTrue(self.sio.read("workspace.workflow_flags.checker_silenced"))
+
+    def test_enter_audit_immersive_entered(self) -> None:
+        self.adapter.enter_immersive_mode()
+        msgs = [e["msg"] for e in self.sio.audit_log]
+        self.assertTrue(any("immersive entered" in m for m in msgs), msgs)
+
+    def test_enter_snapshot_taken(self) -> None:
+        self.adapter.enter_immersive_mode()
+        self.assertIsNotNone(self.adapter._last_safe_state)
+        self.assertEqual(self.adapter._last_safe_state.get("book_id"), "immer-book")
+
+    def test_enter_idempotent(self) -> None:
+        self.adapter.enter_immersive_mode()
+        before = len(self.sio.audit_log)
+        self.adapter.enter_immersive_mode()
+        after = len(self.sio.audit_log)
+        self.assertEqual(before, after, "second enter should be no-op (no extra audit)")
+
+
+class CheckerSilencedHookTest(_BaseImmersiveTest):
+    def test_silenced_true_returns_all_off(self) -> None:
+        self.sio.apply({"workspace.workflow_flags.checker_silenced": True}, source="test")
+        ctx = {"state_io": self.sio, "step_id": "G_chapter_draft"}
+        results = invoke_checkers(
+            ["aigc-style-detector", "character-iq-checker"],
+            {"chapter_text": "随便文本"},
+            ctx,
+        )
+        self.assertEqual(len(results), 2)
+        self.assertTrue(all(r["mode"] == "off" for r in results))
+        self.assertTrue(all(r.get("silenced") is True for r in results))
+        # audit 写一条 silenced（一条不是两条，避免噪音）
+        silenced_audits = [
+            e for e in self.sio.audit_log
+            if "checker silenced (immersive)" in e.get("msg", "")
+        ]
+        self.assertEqual(len(silenced_audits), 1, "silenced audit should be written exactly once")
+
+    def test_silenced_unset_returns_normal(self) -> None:
+        # 没设过 silenced，不走 silenced 分支
+        ctx = {"state_io": self.sio, "step_id": "G_chapter_draft"}
+        # 用一个不存在的 checker id 触发 S1 fallback noop 路径（不命中规则）
+        results = invoke_checkers(["__nonexistent_checker__"], {"chapter_text": "x"}, ctx)
+        self.assertEqual(len(results), 1)
+        self.assertNotIn("silenced", results[0])
+        # 不应该出现 silenced 类 audit
+        silenced_audits = [
+            e for e in self.sio.audit_log
+            if "checker silenced" in e.get("msg", "")
+        ]
+        self.assertEqual(len(silenced_audits), 0)
+
+
+class ExitBatchApplyTest(_BaseImmersiveTest):
+    def test_exit_translates_and_applies_pending(self) -> None:
+        self.adapter.enter_immersive_mode()
+        # 模拟 2 章 output_transform：每章 chapter_text + particle delta
+        for i, text in enumerate(["第一章内容", "第二章内容"], start=1):
+            self.adapter.output_transform({
+                "chapter_text": text,
+                "chapter_settlement": {"particle_balance": {"delta": 100 * i}},
+            })
+        self.assertGreater(len(self.adapter._pending_updates), 0)
+
+        summary = self.adapter.exit_immersive_mode()
+        self.assertIsNone(summary["last_error"], f"exit failed: {summary}")
+        self.assertEqual(summary["chapter_count"], 2)
+        self.assertGreater(summary["applied_count"], 0)
+
+        # particle delta 累计：100 + 200 = 300
+        particles = self.sio.read("entity_runtime.RESOURCE_LEDGER.particles")
+        self.assertEqual(particles, 300)
+        # chapter_text 被翻译到 workspace.chapter_text（op_translator 兜底 _BARE_PATH_MAPPING）
+        ws_chapter = self.sio.read("workspace.chapter_text")
+        self.assertIn("第二章内容", ws_chapter)
+
+    def test_exit_resets_flags(self) -> None:
+        self.adapter.enter_immersive_mode()
+        self.adapter.output_transform({"chapter_text": "x"})
+        self.adapter.exit_immersive_mode()
+        self.assertFalse(self.sio.read("workspace.workflow_flags.immersive_mode"))
+        self.assertFalse(self.sio.read("workspace.workflow_flags.checker_silenced"))
+
+    def test_exit_audit_batch_applied(self) -> None:
+        self.adapter.enter_immersive_mode()
+        for _ in range(3):
+            self.adapter.output_transform({"chapter_text": "ch"})
+        self.adapter.exit_immersive_mode()
+        msgs = [e["msg"] for e in self.sio.audit_log]
+        batch_audits = [m for m in msgs if "batch applied" in m]
+        self.assertEqual(len(batch_audits), 1, msgs)
+        self.assertIn("3 chapters batch applied", batch_audits[0])
+
+    def test_exit_triggers_r2(self) -> None:
+        self.adapter.enter_immersive_mode()
+        self.adapter.output_transform({"chapter_text": "ch"})
+        self.adapter.exit_immersive_mode()
+        msgs = [e["msg"] for e in self.sio.audit_log]
+        r2_audits = [m for m in msgs if "R2_consistency_check triggered" in m]
+        self.assertEqual(len(r2_audits), 1, msgs)
+
+    def test_exit_without_enter_returns_zero(self) -> None:
+        summary = self.adapter.exit_immersive_mode()
+        self.assertEqual(summary["applied_count"], 0)
+        self.assertEqual(summary["chapter_count"], 0)
+
+
+class PendingAggregationTest(_BaseImmersiveTest):
+    def test_immersive_output_transform_returns_empty(self) -> None:
+        self.adapter.enter_immersive_mode()
+        result = self.adapter.output_transform({"chapter_text": "x"})
+        self.assertEqual(result, [], "immersive period output_transform should return []")
+        self.assertGreater(len(self.adapter._pending_updates), 0)
+
+    def test_non_immersive_output_transform_returns_updates(self) -> None:
+        # 不进 immersive → output_transform 返回正常 list
+        result = self.adapter.output_transform({"chapter_text": "x"})
+        self.assertGreater(len(result), 0, "non-immersive should return ops")
+
+
+class ExitFallbackTest(_BaseImmersiveTest):
+    def test_persist_pending_on_failure(self) -> None:
+        # 用一个 monkey-patched adapter 强制翻译失败
+        self.adapter.enter_immersive_mode()
+        # 注入一个 path 无法被 op_translator 识别的 op 触发异常
+        self.adapter._pending_updates.append({
+            "op": "write",
+            "path": "totally_unknown_top.x",  # op_translator 抛 OpTranslationError
+            "value": 1,
+        })
+        # chdir 到 tmp 让 .ops/immersive_fallback 落到 tmp 内
+        import os
+        cwd = os.getcwd()
+        os.chdir(self._tmp.name)
+        try:
+            summary = self.adapter.exit_immersive_mode()
+        finally:
+            os.chdir(cwd)
+        self.assertIsNotNone(summary["last_error"])
+        # fallback json 存在
+        fallback_dir = Path(self._tmp.name) / ".ops" / "immersive_fallback"
+        self.assertTrue(fallback_dir.exists())
+        files = list(fallback_dir.glob("immer-book_*.json"))
+        self.assertGreater(len(files), 0)
+        payload = json.loads(files[0].read_text(encoding="utf-8"))
+        self.assertIn("pending_updates", payload)
+
+
+class ImmersiveRunnerRunBlockTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.state_root = Path(self._tmp.name)
+        sio = StateIO("runner-book", state_root=self.state_root)
+        sio.apply(
+            {
+                "locked.GENRE_LOCKED.topic": ["玄幻黑暗"],
+                "locked.GENRE_LOCKED.style_lock": {"tone": ["暗黑"], "forbidden_styles": [], "anchor_phrases": ["微粒"]},
+                "locked.STORY_DNA.premise": "p",
+                "locked.STORY_DNA.conflict_engine": "ce",
+                "locked.STORY_DNA.payoff_promise": "pp",
+                "locked.WORLD.cosmology": "c",
+                "locked.WORLD.economy": "e",
+                "locked.PLOT_ARCHITECTURE.acts": [],
+                "locked.PLOT_ARCHITECTURE.pivot_points": [{"beat": "b"}],
+                "entity_runtime.CHARACTER_STATE": {"protagonist": {"name": "x", "inventory": [], "abilities": [], "body": {}, "psyche": {}}},
+                "entity_runtime.RESOURCE_LEDGER": {"particles": 0, "items": []},
+                "entity_runtime.FORESHADOW_STATE": {"pool": []},
+                "entity_runtime.GLOBAL_SUMMARY": {"total_words": 0},
+            },
+            source="seed",
+        )
+
+    def test_run_block_5_chapters_mock_llm(self) -> None:
+        captured_prompts: list[str] = []
+        def mock_llm(prompt: str, endpoint: str, **kw) -> str:
+            captured_prompts.append(prompt)
+            ch_no = len(captured_prompts)
+            return f"# 第{ch_no}章\n\n" + ("墨" * 200)  # 200 个中文字符
+
+        runner = ImmersiveRunner(
+            "runner-book",
+            state_root=self.state_root,
+            llm_caller=mock_llm,
+        )
+        result = runner.run_block(chapters=5, word_target=200)
+
+        self.assertEqual(result["chapter_count"], 5)
+        self.assertEqual(len(captured_prompts), 5)
+        self.assertEqual(result["batch_chapter_count"], 5)
+        self.assertIsNone(result["last_error"])
+
+        # 5 个 chapter_NN.md 落盘
+        state_dir = self.state_root / "runner-book"
+        chapter_files = sorted(state_dir.glob("chapter_*.md"))
+        self.assertEqual(len(chapter_files), 5)
+
+        # audit_log 含 "5 chapters batch applied" 和 R2 trigger
+        sio2 = StateIO("runner-book", state_root=self.state_root)
+        msgs = [e["msg"] for e in sio2.audit_log]
+        self.assertTrue(any("5 chapters batch applied" in m for m in msgs), msgs)
+        self.assertTrue(any("R2_consistency_check triggered" in m for m in msgs), msgs)
+        # 期内 chapter drafted audit 也有 5 条
+        drafted = [m for m in msgs if "chapter" in m and "drafted (immersive" in m]
+        self.assertEqual(len(drafted), 5)
+        # 期内不应有 checker warn entry（checker_silenced 拦截）
+        warn_entries = [
+            e for e in sio2.audit_log
+            if e.get("severity") == "warn" and "checker" in e.get("source", "")
+        ]
+        self.assertEqual(len(warn_entries), 0, f"unexpected checker warn entries: {warn_entries}")
+
+    def test_run_block_invalid_chapters_raises(self) -> None:
+        runner = ImmersiveRunner(
+            "runner-book",
+            state_root=self.state_root,
+            llm_caller=lambda *_a, **_k: "x",
+        )
+        with self.assertRaises(ValueError):
+            runner.run_block(chapters=0)
+
+    def test_run_block_default_prompt_keeps_chapter_headings_continuous(self) -> None:
+        captured_prompt_labels: list[str] = []
+
+        def mock_llm(prompt: str, endpoint: str, **kw) -> str:
+            match = re.search(r"章节标题用「(.+?)」", prompt)
+            self.assertIsNotNone(match, prompt)
+            label = match.group(1)
+            captured_prompt_labels.append(label)
+            return f"# {label.replace('<小标题>', '黑雾初醒')}\n\n" + ("墨" * 200)
+
+        runner = ImmersiveRunner(
+            "runner-book",
+            state_root=self.state_root,
+            llm_caller=mock_llm,
+        )
+        runner.run_block(chapters=5, word_target=200)
+
+        expected_labels = ["第一章 · <小标题>"] + [
+            f"第{n}章 · <小标题>" for n in range(2, 6)
+        ]
+        self.assertEqual(captured_prompt_labels, expected_labels)
+
+        state_dir = self.state_root / "runner-book"
+        heading_numbers: list[int] = []
+        for path in sorted(state_dir.glob("chapter_*.md")):
+            text = path.read_text(encoding="utf-8")
+            match = re.search(r"第([一二三四五六七八九十0-9]+)章", text)
+            self.assertIsNotNone(match, text[:120])
+            raw = match.group(1)
+            heading_numbers.append({"一": 1, "二": 2, "三": 3, "四": 4, "五": 5}.get(raw, int(raw) if raw.isdigit() else -1))
+        self.assertEqual(heading_numbers, [1, 2, 3, 4, 5])
+
+    def test_run_block_normalizes_repeated_llm_heading_numbers(self) -> None:
+        def mock_llm(prompt: str, endpoint: str, **kw) -> str:
+            return "# 第一章 · 黑雾初醒\n\n" + ("墨" * 200)
+
+        runner = ImmersiveRunner(
+            "runner-book",
+            state_root=self.state_root,
+            llm_caller=mock_llm,
+        )
+        runner.run_block(chapters=5, word_target=200)
+
+        state_dir = self.state_root / "runner-book"
+        headings: list[str] = []
+        for path in sorted(state_dir.glob("chapter_*.md")):
+            first_line = path.read_text(encoding="utf-8").splitlines()[0]
+            headings.append(first_line)
+        self.assertEqual(
+            headings,
+            [
+                "# 第一章 · 黑雾初醒",
+                "# 第2章 · 黑雾初醒",
+                "# 第3章 · 黑雾初醒",
+                "# 第4章 · 黑雾初醒",
+                "# 第5章 · 黑雾初醒",
+            ],
+        )
+
+
+if __name__ == "__main__":  # pragma: no cover
+    unittest.main()

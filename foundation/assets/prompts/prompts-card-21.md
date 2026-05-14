@@ -1,0 +1,48 @@
+---
+id: prompts-card-design_infinite_dungeon-21
+asset_type: prompt_card
+title: 原创副本世界观设计
+topic: [无限流]
+stage: setting
+quality_grade: B+
+source_path: _原料/提示词库参考/prompts/21.md
+last_updated: 2026-05-13
+card_intent: structural_design
+card_kind: setup_card
+task_verb: design
+task_full: design_infinite_dungeon
+granularity: world
+output_kind: schema_json
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 21. 原创副本世界观设计
+
+## 提示词内容
+
+```json
+{
+  "task": "design_infinite_dungeon",
+  "genre": "{{genre}}",
+  "mission_type": "Survival / Puzzle / Assassination",
+  "output_structure": {
+    "world_name": "Unique Name",
+    "core_conflict": "Class struggle / AI uprising / God's game",
+    "factions": ["Faction A (Friendly)", "Faction B (Hostile)"],
+    "unique_mechanic": "Specific law of physics or magic in this world",
+    "main_quest": "Clear objective",
+    "side_quest": "Hidden objective for extra rewards"
+  }
+}
+```
+
+## 使用场景
+无限流创作。快速生成风格各异的副本世界。
+
+## 最佳实践要点
+1.  **核心机制**：重点设计 `unique_mechanic`，这是副本区别于常规世界的关键。
+2.  **任务驱动**：明确主线和支线任务，为主角行动提供指引。
+
+## 示例输入
+将 `{{genre}}` 替换为“蒸汽朋克”或“废土”。

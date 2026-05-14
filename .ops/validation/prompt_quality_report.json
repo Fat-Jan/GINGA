@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-05-14T13:48:22+00:00",
+  "prompts_dir": "foundation/assets/prompts",
+  "total_files": 461,
+  "quality_distribution": {
+    "A": 44,
+    "A-": 45,
+    "B": 124,
+    "B+": 248
+  },
+  "b_and_b_plus_counts": {
+    "B": 124,
+    "B+": 248,
+    "total": 372
+  },
+  "weak_example_candidate_count": 0,
+  "weak_example_reason_counts": {},
+  "parse_errors": {},
+  "top_files_to_fix": []
+}

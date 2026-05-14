@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# ginga — Sprint 1 MVP CLI entry point
+#
+# Usage:
+#   ginga init <book_id> --topic <topic>     # 初始化新书
+#   ginga run <book_id>                       # 跑 workflow MVP（生成第一章）
+#   ginga status <book_id>                    # 查看 state 状态
+#   ginga idea add "<标题>" [--body "..."]    # 写 raw_ideas 暂存，不进 state/RAG
+#
+# 实现：python3 -m ginga_platform.orchestrator.cli
+# 依赖：仅 stdlib + pyyaml + ask-llm（外部 CLI，用于 LLM 生成）
+
+set -eo pipefail
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$REPO_ROOT"
+exec python3 -m ginga_platform.orchestrator.cli "$@"

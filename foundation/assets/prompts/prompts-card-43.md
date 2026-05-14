@@ -1,0 +1,47 @@
+---
+id: prompts-card-polish-scene_emotion_impact
+asset_type: prompt_card
+title: 情绪调动与爽点描写
+topic: [通用]
+stage: refinement
+quality_grade: B
+source_path: _原料/提示词库参考/prompts/43.md
+last_updated: 2026-05-13
+card_intent: editing_transformation
+card_kind: scene_card
+task_verb: polish
+task_full: polish_scene_for_impact
+granularity: scene
+output_kind: prose
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 43. 情绪调动与爽点描写
+
+## 提示词内容
+
+```json
+{
+  "task": "polish_scene_for_impact",
+  "scene_text": "{{text}}",
+  "focus": "爽感增强",
+  "techniques": [
+    "侧面描写 (路人震惊反应)",
+    "欲扬先抑 (压抑情绪的铺垫)",
+    "感官放大 (视觉/听觉冲击)",
+    "短句快打 (加快节奏)"
+  ],
+  "instruction": "重写上述段落，使其更符合网文阅读体验，更具感染力。"
+}
+```
+
+## 使用场景
+正文润色。增强段落的感染力和爽感。
+
+## 最佳实践要点
+1.  **技巧组合**：同时应用“侧面描写”、“欲扬先抑”等多种网文常用技巧。
+2.  **短句快打**：强调使用短句，提升阅读速度和冲击力。
+
+## 示例输入
+填入需要润色的段落。

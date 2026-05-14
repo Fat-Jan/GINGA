@@ -1,0 +1,150 @@
+entries:
+- ts: '2026-05-13T15:26:59+00:00'
+  source: cli.init.A-E_setup
+  severity: info
+  msg: applied 10 update(s)
+  action: log
+  payload:
+    paths:
+    - locked.STORY_DNA.premise
+    - locked.STORY_DNA.conflict_engine
+    - locked.STORY_DNA.payoff_promise
+    - locked.STORY_DNA.word_target
+    - locked.GENRE_LOCKED.topic
+    - locked.GENRE_LOCKED.style_lock
+    - locked.WORLD.cosmology
+    - locked.WORLD.economy
+    - locked.PLOT_ARCHITECTURE.acts
+    - locked.PLOT_ARCHITECTURE.pivot_points
+- ts: '2026-05-13T15:26:59+00:00'
+  source: cli.init.F_state_init
+  severity: info
+  msg: applied 6 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.CHARACTER_STATE
+    - entity_runtime.RESOURCE_LEDGER.particles
+    - entity_runtime.RESOURCE_LEDGER.items
+    - entity_runtime.FORESHADOW_STATE.pool
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - entity_runtime.GLOBAL_SUMMARY.arc_summaries
+- ts: '2026-05-13T15:26:59+00:00'
+  source: cli.init.workspace_seed
+  severity: info
+  msg: applied 3 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.task_plan
+    - workspace.findings
+    - workspace.progress
+- ts: '2026-05-13T15:26:59+00:00'
+  source: cli.init
+  severity: info
+  msg: 'book initialized: id=immersive-demo topic=玄幻黑暗 target=17500'
+  action: log
+  payload:
+    locked_premise: 宗门弃徒踏入黑雾遗迹寻回血脉真相，每章一个镜头
+- ts: '2026-05-13T15:27:29+00:00'
+  source: dark_fantasy_adapter.enter_immersive_mode
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-13T15:27:29+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: immersive entered
+  action: log
+  payload:
+    checker_silenced: true
+- ts: '2026-05-13T15:30:17+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 1 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 1
+    word_count: 4426
+    file: foundation/runtime_state/immersive-demo/chapter_01.md
+- ts: '2026-05-13T15:33:38+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 2 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 2
+    word_count: 4340
+    file: foundation/runtime_state/immersive-demo/chapter_02.md
+- ts: '2026-05-13T15:36:46+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 3 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 3
+    word_count: 5420
+    file: foundation/runtime_state/immersive-demo/chapter_03.md
+- ts: '2026-05-13T15:39:06+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 4 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 4
+    word_count: 4331
+    file: foundation/runtime_state/immersive-demo/chapter_04.md
+- ts: '2026-05-13T15:41:03+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 5 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 5
+    word_count: 3875
+    file: foundation/runtime_state/immersive-demo/chapter_05.md
+- ts: '2026-05-13T15:41:03+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-13T15:41:03+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode.batch
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.chapter_text
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+- ts: '2026-05-13T15:41:03+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+- ts: '2026-05-13T15:41:03+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: 5 chapters batch applied
+  action: log
+  payload:
+    applied_paths: 2
+    chapter_count: 5
+- ts: '2026-05-13T15:41:03+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: R2_consistency_check triggered (immersive_block)
+  action: log
+  payload:
+    scope: immersive_block
+    chapter_count: 5

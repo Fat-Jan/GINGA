@@ -1,0 +1,298 @@
+# foundation/schema/checker_or_schema_ref.yaml
+# 检查器 / schema 引用资产类 schema
+#
+# 资产来源：_原料/基座/方法论/aigc/... + 派生 checker（aigc-style / character-iq / cool-point-payoff）
+# 用途：被 Meta 层 guard / checker 引用，被 Platform 层 step postconditions 调用
+# 形态：定义 target_asset_type + output_schema，由 orchestrator/meta_integration/checker_invoker 消费
+# 关键：本类 stage 默认 = cross_cutting（横切规则，按需路由）
+
+$schema: ginga/foundation/v1
+asset_type: checker_or_schema_ref
+description: 检查器与 schema 引用资产，被 Meta 层 checker/guard 引用，输出审计结果
+
+# ---------------------------------------------------------------------------
+# S1 必填 8 字段
+# ---------------------------------------------------------------------------
+
+required_fields:
+  - id
+  - asset_type
+  - title
+  - topic
+  - stage
+  - quality_grade
+  - source_path
+  - last_updated
+
+# ---------------------------------------------------------------------------
+# 选填字段
+# ---------------------------------------------------------------------------
+
+optional_fields:
+  - target_asset_type              # 检查器面向哪种资产类型
+  - output_schema                  # 检查器输出的结构
+  - check_mode                     # off / warn / block（默认 warn-only）
+  - severity_levels                # info / warn / error / fatal
+  - rule_count                     # 内置规则数量
+  - integrates_with                # 上下游集成点
+  - input_contract
+  - output_contract
+  - dedup_verdict
+  - dedup_against
+  - reuse_scope
+  - safety_level
+  - status
+  - notes
+
+# ---------------------------------------------------------------------------
+# 字段类型与说明
+# ---------------------------------------------------------------------------
+
+fields:
+  id:
+    type: string
+    description: 全局唯一 id；checker 命名 base-checker-<slug>，schema_ref 命名 base-schema-ref-<slug>
+    example: base-checker-aigc-style-detector
+  asset_type:
+    type: enum
+    enum: [checker_or_schema_ref]
+    description: 资产类型固定为 checker_or_schema_ref
+    example: checker_or_schema_ref
+  title:
+    type: string
+    description: 检查器 / schema 引用的标题
+    example: AI 味检测器
+  topic:
+    type: string[]
+    description: 适用题材；多数 checker 跨题材通用，可为 [通用]
+    example: [通用]
+  stage:
+    type: enum
+    enum:
+      - ideation
+      - setting
+      - framework
+      - outline
+      - drafting
+      - refinement
+      - analysis
+      - advanced
+      - business
+      - auxiliary
+      - cross_cutting              # 本类默认值（横切规则）
+      - profile
+    description: 12 枚举值；checker_or_schema_ref 默认 stage=cross_cutting
+    default: cross_cutting
+    example: cross_cutting
+  quality_grade:
+    type: enum
+    enum: [A, A-, B+, B, C, D]
+    description: 质量分级
+    example: A-
+  source_path:
+    type: string
+    description: 原始或派生文件路径
+    example: _原料/基座/方法论/写作/反AI味.md
+  last_updated:
+    type: date
+    description: ISO 日期
+    example: '2026-05-13'
+
+  # 专属字段
+
+  target_asset_type:
+    type: enum
+    enum:
+      - chapter_text
+      - character_state
+      - foreshadow_state
+      - resource_ledger
+      - runtime_state
+      - prompt_card
+      - template
+      - methodology
+      - genre_profile
+      - global_summary
+    description: 检查器面向的资产 / 状态类型
+    example: chapter_text
+
+  output_schema:
+    type: object
+    description: 检查器输出的结构（用于 audit_log 解析）
+    example:
+      pass: boolean
+      severity: enum
+      score: number
+      issues: array
+      suggestions: array
+
+  check_mode:
+    type: enum
+    enum:
+      - off                        # 不跑
+      - warn                       # 默认；输出 audit_log，不阻塞 workflow
+      - block                      # 作家主动开启；不通过则中断
+    description: 检查器运行模式（jury-3 P1 默认 warn-only）
+    default: warn
+    example: warn
+
+  severity_levels:
+    type: string[]
+    description: 输出严重等级枚举
+    example: [info, warn, error, fatal]
+
+  rule_count:
+    type: integer
+    description: 检查器内置的规则数量
+    example: 14
+
+  integrates_with:
+    type: string[]
+    description: 上下游集成点
+    example:
+      - meta/checkers/aigc-style-detector.checker.yaml
+      - base-methodology-writing-anti-ai-style
+
+  input_contract:
+    type: string[]
+    description: 输入需要哪些状态字段
+    example: [chapter_text, style_lock]
+
+  output_contract:
+    type: string[]
+    description: 输出哪些结构
+    example: [audit_log.entries + score 0-100]
+
+  dedup_verdict:
+    type: enum
+    enum: [retain, merge, drop]
+    description: 双库去重判定
+    example: retain
+
+  dedup_against:
+    type: string[]
+    description: 可能重复的资产 id 列表
+    example: []
+
+  reuse_scope:
+    type: enum
+    enum: [single_genre, cross_genre, universal]
+    description: 复用范围；checker 多为 universal
+    example: universal
+
+  safety_level:
+    type: enum
+    enum: [normal, sensitive, redline-heavy]
+    description: 内容敏感性
+    example: normal
+
+  status:
+    type: enum
+    enum: [draft, active, deprecated]
+    description: 资产生命周期
+    example: active
+
+  notes:
+    type: string[]
+    description: 迁移备注
+    example: []
+
+# ---------------------------------------------------------------------------
+# 示例资产
+# ---------------------------------------------------------------------------
+
+examples:
+  - id: base-checker-aigc-style-detector
+    asset_type: checker_or_schema_ref
+    title: AI 味检测器
+    topic: [通用]
+    stage: cross_cutting
+    quality_grade: A-
+    source_path: _原料/基座/方法论/写作/反AI味.md
+    last_updated: '2026-05-13'
+    target_asset_type: chapter_text
+    output_schema:
+      pass: boolean
+      severity: enum
+      score: number
+      issues: array
+      suggestions: array
+    check_mode: warn               # jury-3 P1 默认 warn-only
+    severity_levels: [info, warn, error]
+    rule_count: 14
+    integrates_with:
+      - meta/checkers/aigc-style-detector.checker.yaml
+      - base-methodology-writing-anti-ai-style
+    input_contract: [chapter_text, style_lock]
+    output_contract: [audit_log.entries + score 0-100]
+    reuse_scope: universal
+    safety_level: normal
+    status: active
+
+  - id: base-checker-character-iq
+    asset_type: checker_or_schema_ref
+    title: 角色降智检测器
+    topic: [通用]
+    stage: cross_cutting
+    quality_grade: A-
+    source_path: _原料/基座/方法论/写作/角色IQ.md
+    last_updated: '2026-05-13'
+    target_asset_type: chapter_text
+    output_schema:
+      pass: boolean
+      severity: enum
+      offending_characters: array
+      reason: string
+    check_mode: warn
+    severity_levels: [warn, error]
+    rule_count: 8
+    integrates_with:
+      - meta/checkers/character-iq-checker.checker.yaml
+    reuse_scope: universal
+    safety_level: normal
+    status: active
+
+  - id: base-checker-cool-point-payoff
+    asset_type: checker_or_schema_ref
+    title: 爽点兑现检测器
+    topic: [通用]
+    stage: cross_cutting
+    quality_grade: A-
+    source_path: _原料/基座/方法论/市场/读者吸引力分类法.md
+    last_updated: '2026-05-13'
+    target_asset_type: chapter_text
+    output_schema:
+      pass: boolean
+      cool_points_planted: integer
+      cool_points_redeemed: integer
+      backlog: array
+    check_mode: warn
+    severity_levels: [info, warn]
+    rule_count: 5
+    integrates_with:
+      - meta/checkers/cool-point-payoff-checker.checker.yaml
+      - foundation/schema/runtime_state.yaml
+    reuse_scope: universal
+    safety_level: normal
+    status: active
+
+  - id: base-schema-ref-state-schema
+    asset_type: checker_or_schema_ref
+    title: state-schema 引用（runtime_state 外部参考）
+    topic: [通用]
+    stage: cross_cutting
+    quality_grade: A
+    source_path: _原料/基座/方法论/市场/state-schema.md
+    last_updated: '2026-05-13'
+    target_asset_type: runtime_state
+    output_schema:
+      entities: object
+      platform_config: object
+      quality_stats: object
+    check_mode: off                # schema_ref 不直接跑检查，被引用
+    integrates_with:
+      - foundation/schema/runtime_state.yaml
+    reuse_scope: universal
+    safety_level: normal
+    status: active
+    notes: [scout-1 §依赖示例 6 提到的 state-schema 桥梁]

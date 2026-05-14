@@ -1,0 +1,46 @@
+---
+id: prompts-card-design_dream_maze-130
+asset_type: prompt_card
+title: "梦境/潜意识迷宫设计"
+topic: [奇幻, 心理]
+stage: setting
+quality_grade: A-
+source_path: _原料/提示词库参考/prompts/130.md
+last_updated: 2026-05-13
+card_intent: structural_design
+card_kind: setup_card
+task_verb: design
+task_full: design_dream_maze
+granularity: character
+output_kind: schema_json
+dedup_verdict: retain
+dedup_against: []
+---
+
+# 130. 梦境/潜意识迷宫设计
+
+## 提示词内容
+
+```json
+{
+  "task": "design_dream_maze",
+  "dreamer": "{{character_name}}",
+  "trauma": "Drowning / Abandonment",
+  "layers": [
+    {"layer": "Surface", "setting": "Childhood home (distorted)", "logic": "Doors lead to wrong rooms"},
+    {"layer": "Deep", "setting": "Endless ocean", "logic": "Breathing water"},
+    {"layer": "Core", "setting": "A locked box", "guardian": "Shadow self"}
+  ],
+  "exit_key": "Facing the trauma directly"
+}
+```
+
+## 使用场景
+心理/奇幻文。具象化角色的内心世界。
+
+## 最佳实践要点
+1.  **逻辑崩坏**：梦境的物理法则必须是混乱的（如空间错乱），体现潜意识的非理性。
+2.  **象征物**：核心层的守护者或物品必须象征角色的核心创伤。
+
+## 示例输入
+将 `{{character_name}}` 替换为“主角”。

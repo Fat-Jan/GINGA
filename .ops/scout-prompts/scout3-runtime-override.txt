@@ -1,0 +1,61 @@
+你是 ginga 小说蒸馏项目的 Scout 3。工作目录 /Users/arm/Desktop/ginga。
+
+先读：
+1. /Users/arm/Desktop/ginga/notepad.md 的 `## Priority Context`
+2. /Users/arm/Desktop/ginga/.ops/handoff-to-codex.md 的 `## 进度流式回写协议`
+3. /Users/arm/Desktop/ginga/.ops/scout-prompts/scout3.md（完整 brief）
+
+本次执行以 handoff override 为准，并补充 live reality：
+- handoff 写的是 475 个 md，但主 agent 在 2026-05-13 当前环境里执行 `find '_原料/提示词库参考/prompts' -type f -name '*.md' | wc -l` 得到 461。
+- 你的责任不是猜缺失文件，而是全量实读当前 prompts/ 目录下实际存在的全部 md 文件，并在 progress 与最终报告里明确写出“启动时 live count = 461，与 handoff 的 475 存在差异”。
+- 除非你自己在目录里重新核对出不同总数，否则不要伪报 475。
+
+硬要求：
+- 全量横扫 `_原料/提示词库参考/prompts/` 当前实际存在的全部 md；每一个都打开读全文，不是只看文件名。
+- 过程中必须持续 append `/Users/arm/Desktop/ginga/.ops/scout-reports/scout3-progress.md`，严格遵守 handoff 里的触发条件与 entry 格式。
+- 报告写到 `/Users/arm/Desktop/ginga/.ops/scout-reports/scout3-cards.md`。
+- 不允许扩范围到 `基座 / 思路 / 小说提示词 2` 之外；只可在“与基座去重分析”处抽 30-50 个 prompts 与 `/Users/arm/Desktop/ginga/_原料/基座/` 做 grep 对照。
+- 不允许修改 `.ops/subagents/board.json`。
+- 不允许偷懒抽样；是全量读取当前目录全部 md。
+- 如果遇到工具失败、上下文压力、长时间统计任务，立刻 append 一条 progress。
+
+核心产出必须覆盖并写出以下 H2：
+## 任务类型聚类
+## JSON-style schema 抽取
+## 场景卡片 schema
+## 与基座去重分析
+## 质量分级与 retain/merge/drop 建议
+## RAG 召回元数据设计
+## 关键发现与建议
+
+内容要求：
+- 任务类型聚类：覆盖全部已读文件的 task 字段值（频次表 + 长尾低频 type 单列）
+- JSON-style schema 抽取：必填/可选/类型/取值范围，基于全量统计
+- 场景卡片 schema：YAML frontmatter + JSON content 草案
+- 与基座去重分析：抽 30-50 个 prompts/ 题材/场景，grep `/Users/arm/Desktop/ginga/_原料/基座/` 看是否对应，给 retain/merge/drop 标记
+- 质量分级：至少 40 个文件做 A/B/C 评分 + 理由
+- RAG 召回元数据设计：按 task 类型 / 题材 / 使用场景的过滤建议
+
+建议节奏：
+- 先做一次全量文件清点并写 START progress，明确 live count
+- 批量排序文件，分段（如每 50 个）顺序读完
+- 边读边抽 task/title/header 台账
+- 再做 schema、去重、质量分级、RAG 与报告写作
+
+完成后只输出一段摘要，包含：
+- 报告路径
+- 实际读取的文件总数
+- 启动时 live count
+- Top 10 task 类型频次
+- 总字数
+- 长尾低频 task 类型清单
+
+返回格式必须包含：
+- task_id: scout-3-cards
+- status: running / validating / blocked / failed（不要写 done）
+- summary
+- files_changed
+- verification
+- evidence
+- blockers
+- handoff_note

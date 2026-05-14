@@ -1,0 +1,63 @@
+{
+  "generated_at": "2026-05-14T13:48:22+00:00",
+  "prompts_dir": "foundation/assets/prompts",
+  "schema_path": "foundation/schema/prompt_card.yaml",
+  "total_files": 461,
+  "required_8_field_coverage": {
+    "id": {
+      "present": 461,
+      "missing": 0,
+      "coverage_ratio": 1.0
+    },
+    "asset_type": {
+      "present": 461,
+      "missing": 0,
+      "coverage_ratio": 1.0
+    },
+    "title": {
+      "present": 461,
+      "missing": 0,
+      "coverage_ratio": 1.0
+    },
+    "topic": {
+      "present": 461,
+      "missing": 0,
+      "coverage_ratio": 1.0
+    },
+    "stage": {
+      "present": 461,
+      "missing": 0,
+      "coverage_ratio": 1.0
+    },
+    "quality_grade": {
+      "present": 461,
+      "missing": 0,
+      "coverage_ratio": 1.0
+    },
+    "source_path": {
+      "present": 461,
+      "missing": 0,
+      "coverage_ratio": 1.0
+    },
+    "last_updated": {
+      "present": 461,
+      "missing": 0,
+      "coverage_ratio": 1.0
+    }
+  },
+  "missing_required_files": {
+    "id": [],
+    "asset_type": [],
+    "title": [],
+    "topic": [],
+    "stage": [],
+    "quality_grade": [],
+    "source_path": [],
+    "last_updated": []
+  },
+  "empty_topic_files": [],
+  "missing_task_full_files": [],
+  "illegal_enum_values": {},
+  "parse_errors": {},
+  "violation_count": 0
+}

@@ -1,0 +1,40 @@
+STORY_DNA:
+  premise: 宗门弃徒踏入黑雾遗迹寻回血脉真相，每章一个镜头
+  conflict_engine: 失忆刺客 vs 微粒掠夺集团；个体存续 vs 跨天堑生态
+  payoff_promise: 主角逐步觉醒、回收伏笔、改写微粒规则
+  word_target: 17500
+GENRE_LOCKED:
+  topic:
+  - 玄幻黑暗
+  style_lock:
+    tone:
+    - 暗黑
+    - 压抑
+    - 凶性显化
+    forbidden_styles:
+    - 都市腔
+    - 科幻腔
+    - 游戏系统播报腔
+    - 轻小说吐槽腔
+    anchor_phrases:
+    - 微粒
+    - 天堑
+    - 内宇宙
+WORLD:
+  cosmology: 四重天堑 / 内宇宙四阶
+  economy: 微粒为通货，总量硬上限 840000000
+PLOT_ARCHITECTURE:
+  acts:
+  - name: 第一幕：觉醒
+    chapters: 1-30
+  - name: 第二幕：争夺
+    chapters: 31-150
+  - name: 第三幕：改写
+    chapters: 151-300
+  pivot_points:
+  - ch: 1
+    type: 起
+    beat: 失忆刺客醒来，发现被植入未知微粒
+  - ch: 30
+    type: 转
+    beat: 首次跨越天堑边界

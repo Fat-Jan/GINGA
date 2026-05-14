@@ -1,0 +1,353 @@
+# foundation/schema/prompt_card.yaml
+# prompt_card 资产类 schema
+#
+# 资产来源：_原料/提示词库参考/prompts/ 461 卡（scout-3 全量横扫报告）
+# 用途：场景级 atomic 调用单元，作为 RAG 召回库注入 LLM 上下文
+# 结构定义：scout-3 §场景卡片 schema（12 大 card_intent 聚类 + 5 大 card_kind）
+# 关键修订：jury-2 字段补丁 4（dedup_against 列出可能重复的基座资产 id）
+
+$schema: ginga/foundation/v1
+asset_type: prompt_card
+description: 提示词卡片资产，原 prompts/ 461 卡的治理形态，作为 RAG 召回的原子调用单元
+
+# ---------------------------------------------------------------------------
+# S1 必填 8 字段
+# ---------------------------------------------------------------------------
+
+required_fields:
+  - id
+  - asset_type
+  - title
+  - topic
+  - stage
+  - quality_grade
+  - source_path
+  - last_updated
+
+# ---------------------------------------------------------------------------
+# 选填字段（scout-3 §yaml frontmatter 摘要 + jury-2 字段补丁 4）
+# ---------------------------------------------------------------------------
+
+optional_fields:
+  - card_intent                    # 12 大聚类二级类目（必标）
+  - card_kind                      # scene_card / setup_card / style_lock_card / checker_card / index_card
+  - task_verb                      # task 字段的 verb 前缀
+  - task_full                      # 完整 task 字段值（含 object）
+  - granularity                    # paragraph / scene / chapter / arc / meta
+  - output_kind                    # prose / dialogue / schema_json / table / list / setup_persona / style_lock
+  - requires_placeholders          # 是否含 {{xxx}} 占位符
+  - placeholders                   # 占位符 key 列表
+  - genre_match                    # 匹配的题材槽位
+  - byte_size                      # 原始字节
+  - dedup_verdict                  # retain / merge / drop
+  - dedup_against                  # 可能重复的基座资产 id 列表（jury-2 字段补丁 4）
+  - depends_on                     # 依赖的其它卡 / 资产
+  - complements                    # 互补卡 id
+  - related                        # 同主题卡 id
+  - reuse_scope
+  - safety_level
+  - status
+  - notes
+
+# ---------------------------------------------------------------------------
+# 字段类型与说明
+# ---------------------------------------------------------------------------
+
+fields:
+  id:
+    type: string
+    description: 全局唯一 id，建议命名 prompts-card-<intent>-<slug>-<原编号>
+    example: prompts-card-prose-write-auction-scene-25
+  asset_type:
+    type: enum
+    enum: [prompt_card]
+    description: 资产类型固定为 prompt_card
+    example: prompt_card
+  title:
+    type: string
+    description: 卡片标题（去掉 # N. 前缀）
+    example: 拍卖会捡漏与打脸
+  topic:
+    type: string[]
+    description: 题材标签数组
+    example: [玄幻, 都市, 爽文]
+  stage:
+    type: enum
+    enum:
+      - ideation
+      - setting
+      - framework
+      - outline
+      - drafting
+      - refinement
+      - analysis
+      - advanced
+      - business
+      - auxiliary
+      - cross_cutting
+      - profile
+    description: 12 枚举值；prompt_card 按内容显式标注，多数落在 drafting / refinement
+    example: drafting
+  quality_grade:
+    type: enum
+    enum: [A, A-, B+, B, C, D]
+    description: 质量分级（scout-3 §质量分级，A/A- 优先入 RAG）
+    example: A-
+  source_path:
+    type: string
+    description: 原始文件路径
+    example: _原料/提示词库参考/prompts/25.md
+  last_updated:
+    type: date
+    description: ISO 日期
+    example: '2026-05-13'
+
+  # 专属字段（scout-3 §YAML frontmatter）
+
+  card_intent:
+    type: enum
+    enum:
+      - prose_generation           # write_*（正文生成）
+      - structural_design          # design_/build_/construct_
+      - generator                  # generate_*
+      - prototype_creation         # create_*
+      - scene_description          # describe_/visualize_
+      - simulation                 # simulate_/analyze_
+      - outline_planning           # outline_/plan_/structure_/macro_/long_
+      - checker_diagnostic         # check_/diagnose_/evaluate_/compliance_/balance_
+      - editing_transformation     # polish_/rewrite_/expand_/adapt_/convert_/optimize_/inject_/sharpen_
+      - management_tracking        # manage_/track_/control_
+      - adaptation_specific        # tech_/script_/plot_/fanfic_
+      - persona_setup              # 非 task 卡（system_instruction / style_lock）
+    description: 12 大二级类目，scout-3 §场景卡片 schema 定义
+    example: prose_generation
+
+  card_kind:
+    type: enum
+    enum:
+      - scene_card                 # 主体卡（~445 张）
+      - setup_card                 # persona / style 上下文锁（1.md, 2.md）
+      - style_lock_card            # 风格约束（细化 setup_card）
+      - checker_card               # check_* / balance_* 类
+      - index_card                 # 目录页（1 张）
+    description: 基于 JSON 形态的卡片大类
+    example: scene_card
+
+  task_verb:
+    type: string
+    description: task 字段的 verb 前缀（write/design/generate/create/describe/...）
+    example: write
+
+  task_full:
+    type: string
+    description: 完整 task 字段值（含 object），verb_object 蛇形
+    example: write_auction_scene
+
+  granularity:
+    type: enum
+    enum: [paragraph, scene, chapter, arc, meta]
+    description: 颗粒度（用于 RAG 阶段匹配）
+    example: scene
+
+  output_kind:
+    type: enum
+    enum:
+      - prose
+      - dialogue
+      - schema_json
+      - table
+      - list
+      - setup_persona
+      - style_lock
+    description: 卡片输出形态
+    example: prose
+
+  requires_placeholders:
+    type: enum
+    enum: [true, false]
+    description: 是否包含 {{xxx}} 占位符
+    example: false
+
+  placeholders:
+    type: string[]
+    description: 占位符 key 清单
+    example: []
+
+  genre_match:
+    type: string[]
+    description: 匹配基座题材 profile 的题材槽位
+    example: [base-profile-xuanhuan]
+
+  byte_size:
+    type: integer
+    description: 原始 md 字节大小
+    example: 1820
+
+  dedup_verdict:
+    type: enum
+    enum: [retain, merge, drop]
+    description: 双库去重判定；scout-3 结论 95%+ retain
+    example: retain
+
+  dedup_against:
+    type: string[]
+    description: 可能重复的基座资产 id 列表（jury-2 字段补丁 4）
+    example: []
+
+  depends_on:
+    type: string[]
+    description: 依赖的其它卡 / 资产 id
+    example: []
+
+  complements:
+    type: string[]
+    description: 互补使用的卡 id 列表
+    example: []
+
+  related:
+    type: string[]
+    description: 同主题卡 id 列表
+    example: []
+
+  reuse_scope:
+    type: enum
+    enum: [single_genre, cross_genre, universal]
+    description: 复用范围
+    example: cross_genre
+
+  safety_level:
+    type: enum
+    enum: [normal, sensitive, redline-heavy]
+    description: 内容敏感性
+    example: normal
+
+  status:
+    type: enum
+    enum: [draft, active, deprecated]
+    description: 资产生命周期
+    example: active
+
+  notes:
+    type: string[]
+    description: 迁移备注
+    example: []
+
+# ---------------------------------------------------------------------------
+# 示例资产（scout-3 §Top A 样本）
+# ---------------------------------------------------------------------------
+
+examples:
+  - id: prompts-card-prose-write-auction-scene-25
+    asset_type: prompt_card
+    title: 拍卖会捡漏与打脸
+    topic: [玄幻, 都市, 爽文]
+    stage: drafting
+    quality_grade: A-
+    source_path: _原料/提示词库参考/prompts/25.md
+    last_updated: '2026-05-13'
+    card_intent: prose_generation
+    card_kind: scene_card
+    task_verb: write
+    task_full: write_auction_scene
+    granularity: scene
+    output_kind: prose
+    requires_placeholders: false
+    byte_size: 1820
+    dedup_verdict: retain
+    dedup_against: []
+    reuse_scope: cross_genre
+    safety_level: normal
+    status: active
+
+  - id: prompts-card-structural-design-power-system-6
+    asset_type: prompt_card
+    title: 力量体系设计
+    topic: [玄幻, 修仙, 高武]
+    stage: setting
+    quality_grade: A
+    source_path: _原料/提示词库参考/prompts/6.md
+    last_updated: '2026-05-13'
+    card_intent: structural_design
+    card_kind: scene_card
+    task_verb: design
+    task_full: design_power_system
+    granularity: meta
+    output_kind: schema_json
+    requires_placeholders: false
+    byte_size: 2150
+    dedup_verdict: retain
+    dedup_against: [base-template-worldview]
+    related: [prompts-card-generator-generate-rules-dungeon-8]
+    reuse_scope: cross_genre
+    safety_level: normal
+    status: active
+
+  - id: prompts-card-persona-setup-editor-1
+    asset_type: prompt_card
+    title: 全能网文主编角色加载
+    topic: [通用]
+    stage: cross_cutting
+    quality_grade: A
+    source_path: _原料/提示词库参考/prompts/1.md
+    last_updated: '2026-05-13'
+    card_intent: persona_setup
+    card_kind: setup_card
+    task_verb: ''
+    task_full: ''
+    granularity: meta
+    output_kind: setup_persona
+    requires_placeholders: false
+    byte_size: 920
+    dedup_verdict: retain
+    dedup_against: []
+    reuse_scope: universal
+    safety_level: normal
+    status: active
+    notes: [非 task 卡，独立 system_instruction 字段]
+
+  - id: prompts-card-persona-setup-style-lock-2
+    asset_type: prompt_card
+    title: 文风与禁区锁
+    topic: [通用]
+    stage: cross_cutting
+    quality_grade: A
+    source_path: _原料/提示词库参考/prompts/2.md
+    last_updated: '2026-05-13'
+    card_intent: persona_setup
+    card_kind: style_lock_card
+    task_verb: ''
+    task_full: ''
+    granularity: meta
+    output_kind: style_lock
+    requires_placeholders: false
+    byte_size: 750
+    dedup_verdict: retain
+    dedup_against: []
+    reuse_scope: universal
+    safety_level: normal
+    status: active
+    notes: [scout-3 §三类 JSON 结构变体 D，单独建模]
+
+  - id: prompts-card-business-track-heat-3
+    asset_type: prompt_card
+    title: 赛道热度分析
+    topic: [市场, 通用]
+    stage: business
+    quality_grade: A
+    source_path: _原料/提示词库参考/prompts/3.md
+    last_updated: '2026-05-13'
+    card_intent: simulation
+    card_kind: scene_card
+    task_verb: analyze
+    task_full: analyze_track_heat
+    granularity: meta
+    output_kind: schema_json
+    requires_placeholders: false
+    byte_size: 1450
+    dedup_verdict: merge       # scout-3 §dedup 唯一强命中样本
+    dedup_against:
+      - base-methodology-market-trend-heat-prediction
+    reuse_scope: universal
+    safety_level: normal
+    status: active
+    notes: [scout-3 §dedup 28 样本中唯一 merge 候选]

@@ -1,0 +1,85 @@
+# User Overrides: checker_mode
+# 作家个性化的 checker 开关模板
+# 落地：jury-3 P1 红线 - "Meta checker 改为作家可开关的'温和模式'"
+#       ARCHITECTURE §2.3 / §2.4
+#
+# 使用说明：
+# - 此文件是模板，作家可在自己的项目工作区下覆盖（如 foundation/runtime_state/<book_id>/checker_mode.yaml）
+# - 每个 checker 可设置三档模式：
+#     off    → 完全关闭（连 warn 都不发，audit_log 不记）
+#     warn   → 仅警告，不阻塞 workflow（系统默认）
+#     block  → 升级为硬阻断，等同 guard 级别（作家主动选择更严格）
+# - 作家完全保留对个人风格的最终决定权（jury-3 P1）
+
+version: "1.0"
+applies_to: meta/checkers/*.checker.yaml
+default_mode_source: each_checker.default_mode  # 缺省值来自 checker 文件本身
+
+# ──────────────────────────────────────────────
+# 全部 checker 默认配置（与 checker 文件 default_mode 保持一致）
+# ──────────────────────────────────────────────
+checker_overrides:
+
+  # 风格审计 - 默认 warn
+  # 关闭场景：作家有自己强烈的风格（如反讽体、戏仿体），不想被检 AI 味
+  # 升 block 场景：投稿主流商业网文平台前的终稿审查
+  aigc-style-detector:
+    mode: warn
+    # 可选：off / warn / block
+    notes: |
+      检测 AI 套话 / 空心高级词 / 模板狠话 / 思维链外泄。
+      老作家如有强烈个人风格（如：使用大量复古句式），
+      可设为 off；准备投稿主流平台时可临时升 block。
+
+  # 人物审计 - 默认 warn
+  # 关闭场景：作家对人物有强烈把控、不想被系统质疑节奏
+  # 升 block 场景：长篇连载已现降智读者吐槽时
+  character-iq-checker:
+    mode: warn
+    # 可选：off / warn / block
+    notes: |
+      检测降智 / 工具人 / 关系突变 / 女性摆设。
+      老作家有自己的人物节奏可设为 off；
+      长篇若已出现读者降智吐槽，可主动升 block。
+
+  # 爽点审计 - 默认 warn
+  # 关闭场景：写文艺向 / 非爽文（如严肃文学、反爽文实验作）
+  # 升 block 场景：写主流爽文要求章章兑现的市场作品
+  cool-point-payoff-checker:
+    mode: warn
+    # 可选：off / warn / block
+    notes: |
+      检测爽点未兑现 / 机械降神 / 账本失管 / 包装脱节。
+      写文艺向 / 反爽文 / 严肃文学时可设为 off；
+      写主流爽文要求 3 章必兑现时可升 block。
+
+# ──────────────────────────────────────────────
+# 全局开关（覆盖单个 checker 的 mode）
+# ──────────────────────────────────────────────
+global:
+  # 沉浸写作模式：dark-fantasy immersive_mode 期间，全部 checker 自动静默
+  # 退出沉浸模式时由 Orchestrator 一次性跑 R2 一致性 + 累积的 audit
+  # ARCHITECTURE §4.5
+  silence_during_immersive_mode: true
+
+  # 章节块结算模式：作家显式触发"结算"时再跑 checker
+  # 与 dark-fantasy immersive_mode 配合
+  defer_to_chapter_block_end: false
+
+  # 输出包屏蔽 checker 自身的 prompt 干扰
+  # 防止 checker 反馈污染下一轮 LLM 上下文（ARCHITECTURE §2.4）
+  checker_output_not_injected_to_llm: true
+
+# ──────────────────────────────────────────────
+# 自定义新增 checker 时的占位说明
+# ──────────────────────────────────────────────
+# 若后续 Sprint 新增 checker（如 consistency-checker / dod-final-checker），
+# 在此文件追加同结构的 checker_overrides.<checker_id> 即可。
+# 不在此处声明的 checker，将沿用其 .checker.yaml 中的 default_mode。
+
+# ──────────────────────────────────────────────
+# 与 Guard 的边界（不要混淆）
+# ──────────────────────────────────────────────
+# - Guard（meta/guards/*）属于工作纪律，bypass_allowed=false，作家不可关闭
+# - Checker（meta/checkers/*）属于风格审计，default_mode=warn，作家可调
+# 本文件只影响 checker，对 guard 完全无效

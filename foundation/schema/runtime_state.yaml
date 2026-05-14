@@ -1,0 +1,477 @@
+# foundation/schema/runtime_state.yaml
+# 运行时状态真值 schema
+#
+# 来源：ARCHITECTURE §3.5 完整字段定义（jury-2 P1 强化 + jury-3 P1 locked 域 patch 流程）
+# 用途：单部作品的 state 真值；platform/orchestrator/runner/state_io.py 唯一读写入口
+# 形态：合一 schema（决策 3 APPROVE 合一），物理上按 book_id 分目录
+#
+# 关键修订：
+#   - jury-2 P1：完整字段子定义 + 类型约束
+#   - jury-3 P1：locked 域 patch 流程（避免长篇 30 万字后修改世界观成本爆炸）
+#   - jury-1 P1：新增 audit_log 字段（配套 guard/checker 显式划分）
+
+$schema: ginga/foundation/v1
+asset_type: runtime_state
+description: 运行时状态真值，所有 workflow step 读写 state 必须经 state_io.py 入口
+
+# ---------------------------------------------------------------------------
+# S1 必填 8 字段（用于 runtime_state 实例本身的元数据治理）
+# 说明：runtime_state 实例不是普通资产，它的"必填 8"映射到作品级元数据
+# ---------------------------------------------------------------------------
+
+required_fields:
+  - id                             # book_id（作品 id）
+  - asset_type                     # 固定 runtime_state
+  - title                          # 作品标题
+  - topic                          # 题材标签
+  - stage                          # 当前作品所处阶段
+  - quality_grade                  # 作品质量评级（持续更新）
+  - source_path                    # state 文件在仓内的位置（按 book_id 分目录）
+  - last_updated                   # 最近一次写回时间戳
+
+# ---------------------------------------------------------------------------
+# 选填 / 结构性子定义字段（完整 state 树）
+# ---------------------------------------------------------------------------
+
+optional_fields:
+  - locked                         # 长篇定稿后锁定域（patch 才能改）
+  - entity_runtime                 # 滚动更新的实体状态
+  - workspace                      # planning-with-files 三件套
+  - retrieved                      # RAG 召回结果
+  - audit_log                      # checker / guard 输出（新增）
+  - immersive_mode                 # dark-fantasy 沉浸模式状态
+  - pending_updates                # 沉浸模式期间暂存的状态变更
+  - chapter_cursor                 # 当前正在写的章节号
+  - last_safe_state                # 用于 immersive 退出失败回退
+
+# ---------------------------------------------------------------------------
+# 字段类型与说明
+# ---------------------------------------------------------------------------
+
+fields:
+
+  # --- 元数据（必填 8 字段对应） ---
+
+  id:
+    type: string
+    description: book_id，作品全局唯一标识，建议 book-<slug>-<日期>
+    example: book-amnesia-killer-20260513
+  asset_type:
+    type: enum
+    enum: [runtime_state]
+    description: 资产类型固定为 runtime_state
+    example: runtime_state
+  title:
+    type: string
+    description: 作品标题
+    example: 失忆刺客
+  topic:
+    type: string[]
+    description: 题材标签
+    example: [玄幻黑暗, 替身, 失忆]
+  stage:
+    type: enum
+    enum:
+      - ideation
+      - setting
+      - framework
+      - outline
+      - drafting
+      - refinement
+      - analysis
+      - advanced
+      - business
+      - auxiliary
+      - cross_cutting
+      - profile
+    description: 当前作品所处阶段，随 workflow 推进更新
+    example: drafting
+  quality_grade:
+    type: enum
+    enum: [A, A-, B+, B, C, D]
+    description: 作品当前质量评级（每次 V1_release_check 更新）
+    example: B+
+  source_path:
+    type: string
+    description: state 文件根目录，按 book_id 分
+    example: foundation/runtime_state/book-amnesia-killer-20260513/
+  last_updated:
+    type: date
+    description: ISO 日期；写回时同步刷新
+    example: '2026-05-13'
+
+  # --- locked 域：长篇定稿后锁定，修改需走 patch 流程（jury-3 P1） ---
+
+  locked:
+    type: object
+    description: 长篇定稿后锁定的核心设定；改动必须走 meta/patches/<patch_id>.yaml
+    sub_fields:
+      STORY_DNA:
+        type: object
+        description: 故事 DNA，premise / 冲突引擎 / 兑现承诺
+        fields:
+          premise:
+            type: string
+            description: 一句话故事核心
+          conflict_engine:
+            type: string
+            description: 推动故事前进的根本冲突
+          payoff_promise:
+            type: string
+            description: 对读者的核心兑现承诺
+      PLOT_ARCHITECTURE:
+        type: object
+        description: 三幕结构 + pivot points
+        fields:
+          acts:
+            type: array
+            item:
+              name: string
+              chapters: range
+            description: 各幕名称 + 覆盖章节范围
+          pivot_points:
+            type: array
+            item:
+              ch: integer
+              type: enum
+              beat: string
+            description: 关键转折点列表
+      GENRE_LOCKED:
+        type: object
+        description: 题材锁定 + 风格锁定
+        fields:
+          topic:
+            type: string[]
+          style_lock:
+            type: ref
+            ref_target: dark-fantasy-skill.style_lock
+      WORLD:
+        type: object
+        description: 世界观锁定字段（设定真值）
+        fields:
+          power_system: string
+          factions: array
+          geography: string
+          history: string
+          taboos: array
+
+  # --- entity_runtime：按章节滚动更新（jury-2 P1 完整字段示例） ---
+
+  entity_runtime:
+    type: object
+    description: 滚动更新的实体状态；G_chapter_draft 读、H_chapter_settle 写
+    sub_fields:
+      CHARACTER_STATE:
+        type: object
+        description: 角色状态字典；key=character_id，value=角色完整状态
+        item:
+          inventory:
+            type: array
+            item:
+              item: string
+              count: integer
+            description: 背包物品列表
+          abilities:
+            type: array
+            item:
+              skill: string
+              level: integer
+              cooldown: integer
+            description: 技能列表
+          body:
+            type: object
+            fields:
+              hp: integer
+              mp: integer
+              status: string[]
+            description: 身体状态（血量 / 蓝量 / 状态效果）
+          psyche:
+            type: object
+            fields:
+              mood: string
+              beliefs: string[]
+              traumas: string[]
+            description: 心理状态（情绪 / 信念 / 创伤）
+          relations:
+            type: array
+            item:
+              target: string
+              type: enum
+              score: integer
+            description: 关系网（对象 / 关系类型 / 好感度）
+          events:
+            type: array
+            item:
+              ch: integer
+              type: string
+              impact: string
+            description: 角色相关大事件历史
+      RESOURCE_LEDGER:
+        type: object
+        description: 资源账本（dark-fantasy 核心：微粒经济）
+        fields:
+          particles:
+            type: integer
+            description: 微粒数量（dark-fantasy ultimate engine 核心货币）
+          currency:
+            type: integer
+            description: 通用货币
+          items:
+            type: array
+            description: 全局物品池
+      FORESHADOW_STATE:
+        type: object
+        description: 伏笔池状态
+        fields:
+          pool:
+            type: array
+            item:
+              id: string
+              planted_ch: integer
+              expected_payoff: integer
+              status: enum
+            description: 伏笔列表（埋设章 / 预期回收章 / 当前状态）
+      GLOBAL_SUMMARY:
+        type: object
+        description: 全局摘要（不读全文也能续写）
+        fields:
+          arc_summaries:
+            type: array
+            item:
+              arc: string
+              summary: string
+              words: integer
+            description: 各 arc 摘要
+          total_words:
+            type: integer
+            description: 全文累计字数
+
+  # --- workspace：planning-with-files 三件套（保持思路 3 原样） ---
+
+  workspace:
+    type: object
+    description: planning-with-files skill 的工作区三件套
+    sub_fields:
+      task_plan:
+        type: ref
+        ref_target: task_plan.md
+        description: 任务计划文档引用
+      findings:
+        type: ref
+        ref_target: findings.md
+        description: 调研发现文档引用
+      progress:
+        type: ref
+        ref_target: progress.md
+        description: 进度日志文档引用
+
+  # --- retrieved：RAG 召回结果（每章生成时填充） ---
+
+  retrieved:
+    type: object
+    description: RAG 召回结果缓存，章节生成完即清空
+    sub_fields:
+      cards:
+        type: array
+        item:
+          ref: prompt_card_id
+        description: 召回的 prompt_card 列表
+      methodology_refs:
+        type: array
+        item:
+          ref: methodology_id
+        description: 召回的方法论列表
+      timestamp:
+        type: datetime
+        description: 召回时刻
+      stage_at_recall:
+        type: string
+        description: 召回时所处 stage
+
+  # --- audit_log：checker / guard 输出（新增，jury-1 P1 配套） ---
+
+  audit_log:
+    type: object
+    description: 检查器与守卫的审计输出，不阻塞 workflow（除非 check_mode=block）
+    sub_fields:
+      entries:
+        type: array
+        item:
+          ts:
+            type: datetime
+            description: 时间戳
+          source:
+            type: string
+            description: 来源（guard:no-fake-read / checker:aigc-style 等）
+          severity:
+            type: enum
+            enum: [info, warn, error, fatal]
+            description: 严重等级
+          msg:
+            type: string
+            description: 审计消息
+          action:
+            type: enum
+            enum: [logged, warned, blocked, escalated]
+            description: 处理动作
+
+  # --- immersive_mode：dark-fantasy 沉浸模式状态（jury-3 #4） ---
+
+  immersive_mode:
+    type: object
+    description: dark-fantasy immersive 模式开关与状态
+    fields:
+      active:
+        type: enum
+        enum: [true, false]
+        description: 是否处于沉浸模式
+      started_at_ch:
+        type: integer
+        description: 沉浸开始章节号
+      pending_chapter_count:
+        type: integer
+        description: 当前沉浸期内已写但未结算章节数
+
+  # --- pending_updates：沉浸模式期间暂存的状态变更 ---
+
+  pending_updates:
+    type: array
+    description: 沉浸模式期间累积、退出时批量结算的 state 变更列表
+    item:
+      ch: integer
+      target_path: string
+      delta: object
+      timestamp: datetime
+
+  # --- chapter_cursor：当前正在写的章节号 ---
+
+  chapter_cursor:
+    type: object
+    description: 章节进度游标
+    fields:
+      current_ch:
+        type: integer
+        description: 当前章节号
+      planned_total:
+        type: integer
+        description: 计划总章数
+      mode:
+        type: enum
+        enum: [normal, immersive, paused]
+        description: 当前写作模式
+
+  # --- last_safe_state：用于 immersive 退出失败回退（jury-3 #4 配套） ---
+
+  last_safe_state:
+    type: object
+    description: 上一次安全 state 快照，用于 immersive_mode 退出失败时回滚
+    fields:
+      snapshot_at_ch: integer
+      snapshot_ts: datetime
+      state_hash: string
+
+# ---------------------------------------------------------------------------
+# locked 域 patch 流程（jury-3 P1）
+# ---------------------------------------------------------------------------
+
+locked_patch_flow:
+  description: locked 域不允许直接覆盖；修改必须走 meta/patches/<patch_id>.yaml
+  required_fields_in_patch:
+    - patch_id
+    - reason                       # 改的原因（如：第 25 章需要扩出新势力）
+    - scope                        # 影响范围 = locked 域路径列表
+    - affected_chapters            # 影响章节范围
+    - approval_required            # 是否需要作家显式 approve
+  post_apply:
+    - 自动跑 R3 一致性 checker
+    - 失败回退到 patch 应用前
+
+# ---------------------------------------------------------------------------
+# 示例：单部作品的 runtime_state 实例
+# ---------------------------------------------------------------------------
+
+examples:
+  - id: book-amnesia-killer-20260513
+    asset_type: runtime_state
+    title: 失忆刺客
+    topic: [玄幻黑暗, 替身, 失忆]
+    stage: drafting
+    quality_grade: B+
+    source_path: foundation/runtime_state/book-amnesia-killer-20260513/
+    last_updated: '2026-05-13'
+    locked:
+      STORY_DNA:
+        premise: 失忆刺客在替身身份与真相之间挣扎，揭开杀手组织的微粒能量阴谋
+        conflict_engine: 失忆身份 vs 杀手记忆碎片的逐章对撞
+        payoff_promise: 真相揭露后主角主动选择守护现身份
+      PLOT_ARCHITECTURE:
+        acts:
+          - {name: 替身觉醒, chapters: '1-20'}
+          - {name: 记忆觉醒, chapters: '21-45'}
+          - {name: 反杀真凶, chapters: '46-60'}
+        pivot_points:
+          - {ch: 5, type: hook, beat: 第一段杀手记忆闪回}
+          - {ch: 20, type: reveal, beat: 替身身份被识破}
+      GENRE_LOCKED:
+        topic: [玄幻黑暗]
+        style_lock: ref:dark-fantasy-skill.style_lock
+    entity_runtime:
+      CHARACTER_STATE:
+        protagonist:
+          inventory: [{item: 短匕, count: 1}, {item: 微粒囊, count: 3}]
+          abilities: [{skill: 微粒聚合, level: 2, cooldown: 3}]
+          body: {hp: 80, mp: 40, status: [清醒, 心悸]}
+          psyche:
+            mood: 警觉
+            beliefs: [我必须保护这个家]
+            traumas: [组织灭口未遂]
+          relations: [{target: 替身的姐姐, type: family, score: 60}]
+          events: [{ch: 5, type: flashback, impact: 触发第一段记忆}]
+      RESOURCE_LEDGER:
+        particles: 240
+        currency: 1500
+        items: []
+      FORESHADOW_STATE:
+        pool:
+          - {id: f-01, planted_ch: 2, expected_payoff: 18, status: pending}
+          - {id: f-02, planted_ch: 7, expected_payoff: 25, status: planted}
+      GLOBAL_SUMMARY:
+        arc_summaries:
+          - {arc: 替身觉醒, summary: 主角以替身身份回到陌生家庭并发现微粒线索, words: 25000}
+        total_words: 25000
+    workspace:
+      task_plan: ref:foundation/runtime_state/book-amnesia-killer-20260513/task_plan.md
+      findings: ref:foundation/runtime_state/book-amnesia-killer-20260513/findings.md
+      progress: ref:foundation/runtime_state/book-amnesia-killer-20260513/progress.md
+    retrieved:
+      cards:
+        - prompts-card-prose-write-flashback-scene-67
+      methodology_refs:
+        - base-methodology-creative-golden-three
+      timestamp: '2026-05-13T10:00:00+08:00'
+      stage_at_recall: drafting
+    audit_log:
+      entries:
+        - ts: '2026-05-13T09:55:00+08:00'
+          source: guard:no-fake-read
+          severity: info
+          msg: 章 5 前置 guard 通过
+          action: logged
+        - ts: '2026-05-13T10:02:00+08:00'
+          source: checker:aigc-style-detector
+          severity: warn
+          msg: 第 3 段第 2 句句式过整齐
+          action: warned
+    immersive_mode:
+      active: false
+      started_at_ch: 0
+      pending_chapter_count: 0
+    pending_updates: []
+    chapter_cursor:
+      current_ch: 5
+      planned_total: 60
+      mode: normal
+    last_safe_state:
+      snapshot_at_ch: 4
+      snapshot_ts: '2026-05-13T09:30:00+08:00'
+      state_hash: sha256:placeholder

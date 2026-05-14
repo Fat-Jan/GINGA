@@ -1,0 +1,174 @@
+# foundation/rag/recall_config.yaml
+# RAG 召回参数配置（ARCHITECTURE §5.2 / jury-2 P0 字段补丁 6）
+#
+# 三层召回策略（参考 ARCHITECTURE §5.1）：
+#   Layer 1 — frontmatter 标签过滤（MVP 必做）
+#   Layer 2 — 向量召回（Phase 2）
+#   Layer 3 — LLM rerank（Phase 2，可选）
+#
+# 本配置由 platform/orchestrator 在 G_chapter_draft 等 step 启动召回时读取。
+
+$schema: ginga/foundation/v1
+asset_type: rag_recall_config
+description: RAG 召回的冷暖启动策略、stage 专属 top_k、rerank 开关配置
+
+# ---------------------------------------------------------------------------
+# 冷启动 / 暖启动状态区分
+# ---------------------------------------------------------------------------
+# 冷启动：向量库未建好或为空时，自动降级到 Layer 1 frontmatter 过滤
+# 暖启动：向量库就绪，可启用 Layer 2，rerank 视 stage 决定
+
+cold_start:
+  enabled_layers:
+    - 1                            # 只跑 frontmatter 过滤
+  fallback_sort_by:
+    - quality_grade                # A > A- > B+ > B > C > D
+    - last_updated                 # 新资产优先
+  log_degradation: true            # 写到 runtime_state.audit_log，便于事后排查
+
+warm_start:
+  enabled_layers:
+    - 1
+    - 2                            # 启用向量召回
+  layer3_optional: true            # rerank 由 enable_rerank_by_stage 决定
+
+# ---------------------------------------------------------------------------
+# embedding 默认策略
+# ---------------------------------------------------------------------------
+# deterministic-local 是离线、可复现的本地 token-hashing embedder。
+# 外部 embedding provider 接入前，默认索引和默认查询都使用 model_id=default；
+# 显式传入 embedder 时不强行限定 model_id，避免误伤自定义向量空间测试。
+
+embedding:
+  default_provider: deterministic-local
+  default_model_id: default
+  allow_default_embedder: true
+
+# ---------------------------------------------------------------------------
+# stage 专属 top_k（不同阶段需要的召回密度不同）
+# ---------------------------------------------------------------------------
+# 高召回（广撒网）：ideation / setting
+# 中召回：framework / outline
+# 高精度（避免素材打断节奏）：drafting / refinement
+
+stage_specific_top_k:
+  ideation: 20                     # 立项阶段广撒网，候选多
+  setting: 15                      # 世界观需要广采素材
+  framework: 10                    # 三幕结构相对收敛
+  outline: 10                      # 大纲层收敛
+  drafting: 5                      # 章节起稿要保节奏，少而精
+  refinement: 3                    # 终稿强制重排只取头部
+  analysis: 8
+  advanced: 5
+  business: 5
+  auxiliary: 5
+  cross_cutting: 3                 # 横切规则数量少，按需调
+  profile: 2                       # 题材配置一篇即可
+  default: 5
+
+# ---------------------------------------------------------------------------
+# rerank 按阶段启用
+# ---------------------------------------------------------------------------
+# refinement 阶段强制 rerank（终稿要重排到最精）
+# drafting / 多数阶段默认关闭（性能 vs 收益不划算）
+
+enable_rerank_by_stage:
+  refinement: true
+  drafting: false
+  ideation: false
+  setting: false
+  framework: false
+  outline: false
+  analysis: false
+  advanced: false
+  business: false
+  auxiliary: false
+  cross_cutting: false
+  profile: false
+  default: false
+
+# ---------------------------------------------------------------------------
+# 召回禁忌（来源 ARCHITECTURE §5.3）
+# ---------------------------------------------------------------------------
+# 这些资产即便命中过滤条件也不进 LLM context
+
+recall_forbidden_paths:
+  - meta/guards/**                 # guard 不进 prompt（防污染下一轮 LLM）
+  - meta/checkers/**               # checker 同上
+  - meta/constitution.yaml         # 创作宪法不进上下文
+  - foundation/raw_ideas/**        # 灵感暂存区保持原始形态
+  - foundation/runtime_state/**    # runtime_state.locked 域防重写
+
+recall_forbidden_asset_types:
+  - guard
+  - checker
+
+# ---------------------------------------------------------------------------
+# 全局关停开关（jury-3 P1）
+# ---------------------------------------------------------------------------
+# 作家可在 workflow run 时传 rag_mode=off 全局禁召回，系统不主动注入卡片
+
+global_disable:
+  trigger: workflow.rag_mode=off
+  behavior: 不召回任何卡片；step prompt 仅含本 step 必需 state 字段；audit_log 记一条 INFO
+
+# ---------------------------------------------------------------------------
+# 排序权重（warm_start 模式 + Layer 2 启用后用）
+# ---------------------------------------------------------------------------
+
+ranking_weights:
+  semantic_similarity: 0.6         # 向量余弦相似度
+  quality_grade: 0.2               # 高质量加权
+  stage_match: 0.1                 # 当前 stage 命中加权
+  topic_match: 0.1                 # 当前 topic 命中加权
+
+# ---------------------------------------------------------------------------
+# 召回源（保留 ARCHITECTURE §5.4）
+# ---------------------------------------------------------------------------
+
+recall_sources:
+  - path: foundation/assets/prompts/
+    asset_type: prompt_card
+    note: 461 卡，quality_grade A/A- 优先标注（S2 完成）
+  - path: foundation/assets/base/methodology/
+    asset_type: methodology
+    note: 写作 / 创意 / 市场 / 平台 四类方法论
+  - path: foundation/assets/base/profile/
+    asset_type: genre_profile
+    note: 题材 profile，按 profile_type 区分 full_spectrum / parameter_only
+  - path: foundation/assets/base/template/
+    asset_type: template
+    note: 角色 / 伏笔 / 悬念 / 大纲 / 世界观 等结构骨架
+
+# ---------------------------------------------------------------------------
+# 示例：在不同 stage 触发召回的预期行为
+# ---------------------------------------------------------------------------
+
+examples:
+  - scenario: 冷启动 + ideation 阶段
+    inputs:
+      stage: ideation
+      vector_store_ready: false
+    expected:
+      enabled_layers: [1]
+      top_k: 20
+      rerank: false
+      sort_by: [quality_grade, last_updated]
+      audit: cold_start degradation logged
+
+  - scenario: 暖启动 + refinement 阶段
+    inputs:
+      stage: refinement
+      vector_store_ready: true
+    expected:
+      enabled_layers: [1, 2, 3]
+      top_k: 3
+      rerank: true                # refinement 强制开
+      ranking: ranking_weights
+
+  - scenario: 作家关停召回
+    inputs:
+      workflow.rag_mode: off
+    expected:
+      injected_cards: 0
+      audit: rag globally disabled

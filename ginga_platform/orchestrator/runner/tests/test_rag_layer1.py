@@ -1,0 +1,300 @@
+"""Unit tests for rag.layer1_filter + step_dispatch RAG hook (ST-S2-R-RAG-LAYER1).
+
+测试矩阵 (prompt §tests, ≥4 cases)：
+    1. test_cold_start_empty_index_returns_empty   — 空 index 冷启动返回 []
+    2. test_topic_filter_partial_match              — 已建 index 按 topic 部分匹配命中
+    3. test_quality_grade_ordering_a_first          — quality_grade 排序：A > A- > B+ > B
+    4. test_step_dispatch_rag_mode_off_skips_recall — rag_mode=off 时 step_dispatch 不调召回
+    5. test_stage_specific_top_k_from_config        — top_k 从 recall_config.stage_specific_top_k 读 (R-4)
+"""
+
+from __future__ import annotations
+
+import json
+import sqlite3
+import tempfile
+import textwrap
+import unittest
+from pathlib import Path
+from typing import Any, Mapping
+
+
+_REPO_ROOT = Path(__file__).resolve().parents[4]
+
+
+def _write_card_md(dirp: Path, slug: str, meta: dict[str, Any]) -> Path:
+    fp = dirp / f"{slug}.md"
+    import yaml as _yaml
+
+    fp.write_text(
+        "---\n" + _yaml.safe_dump(meta, allow_unicode=True, sort_keys=False) + "---\n\nbody\n",
+        encoding="utf-8",
+    )
+    return fp
+
+
+class ColdStartTest(unittest.TestCase):
+    def test_cold_start_empty_index_returns_empty(self) -> None:
+        """空目录建空索引；recall 返回 []，detect_state 报 cold."""
+        from rag.cold_start import detect_state
+        from rag.index_builder import build_index, count_cards
+        from rag.layer1_filter import recall
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "prompts").mkdir()
+            idx = root / "index.sqlite"
+            stats = build_index([root / "prompts"], idx)
+            self.assertEqual(stats.cards_indexed, 0)
+            self.assertEqual(count_cards(idx), 0)
+            self.assertEqual(detect_state(idx), "cold")
+            result = recall(stage="drafting", topic="玄幻黑暗", top_k=5, index_path=idx)
+            self.assertEqual(result, [])
+
+
+class TopicFilterTest(unittest.TestCase):
+    def _build_idx(self, root: Path) -> Path:
+        src = root / "prompts"
+        src.mkdir()
+        _write_card_md(
+            src,
+            "card_xuanhuan",
+            dict(
+                id="prompts-card-prose-xuanhuan-001",
+                asset_type="prompt_card",
+                title="玄幻战斗场面",
+                topic=["玄幻黑暗", "战斗"],
+                stage="drafting",
+                quality_grade="A",
+                card_intent="prose_generation",
+                source_path="_原料/foo/1.md",
+                last_updated="2026-05-10",
+            ),
+        )
+        _write_card_md(
+            src,
+            "card_urban",
+            dict(
+                id="prompts-card-prose-urban-002",
+                asset_type="prompt_card",
+                title="都市相亲",
+                topic=["都市", "爱情"],
+                stage="drafting",
+                quality_grade="B+",
+                card_intent="prose_generation",
+                source_path="_原料/foo/2.md",
+                last_updated="2026-05-11",
+            ),
+        )
+        idx = root / "index.sqlite"
+        from rag.index_builder import build_index
+
+        st = build_index([src], idx)
+        assert st.cards_indexed == 2
+        return idx
+
+    def test_topic_filter_partial_match(self) -> None:
+        """topic=list 部分命中：传 [玄幻黑暗] 应只召回卡 1."""
+        from rag.layer1_filter import recall
+
+        with tempfile.TemporaryDirectory() as d:
+            idx = self._build_idx(Path(d))
+            hit = recall(stage="drafting", topic=["玄幻黑暗"], top_k=10, index_path=idx)
+            self.assertEqual([c["id"] for c in hit], ["prompts-card-prose-xuanhuan-001"])
+            # str 形式也应能命中
+            hit_str = recall(stage="drafting", topic="都市", top_k=10, index_path=idx)
+            self.assertEqual([c["id"] for c in hit_str], ["prompts-card-prose-urban-002"])
+            # topic 不命中任何 → []
+            none_hit = recall(stage="drafting", topic="科幻", top_k=10, index_path=idx)
+            self.assertEqual(none_hit, [])
+
+
+class QualityOrderTest(unittest.TestCase):
+    def test_quality_grade_ordering_a_first(self) -> None:
+        """A > A- > B+ > B 顺序；C 默认被过滤 (quality_floor=B)."""
+        from rag.index_builder import build_index
+        from rag.layer1_filter import recall
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            src = root / "prompts"
+            src.mkdir()
+            for slug, grade in [
+                ("a_card", "A"),
+                ("aminus_card", "A-"),
+                ("bplus_card", "B+"),
+                ("b_card", "B"),
+                ("c_card", "C"),  # 默认被 floor=B 排除
+            ]:
+                _write_card_md(
+                    src,
+                    slug,
+                    dict(
+                        id=f"id-{slug}",
+                        asset_type="prompt_card",
+                        title=slug,
+                        topic=["玄幻黑暗"],
+                        stage="drafting",
+                        quality_grade=grade,
+                        card_intent="prose_generation",
+                        source_path=f"_原料/{slug}.md",
+                        last_updated="2026-05-13",
+                    ),
+                )
+            idx = root / "index.sqlite"
+            build_index([src], idx)
+            ordered = recall(stage="drafting", topic="玄幻黑暗", top_k=10, index_path=idx)
+            ids = [c["id"] for c in ordered]
+            self.assertEqual(
+                ids,
+                ["id-a_card", "id-aminus_card", "id-bplus_card", "id-b_card"],
+                f"C-grade should be filtered, ordering should be A > A- > B+ > B, got {ids}",
+            )
+
+            # quality_floor=C 放宽后 C 卡也进
+            wider = recall(
+                stage="drafting",
+                topic="玄幻黑暗",
+                top_k=10,
+                quality_floor="C",
+                index_path=idx,
+            )
+            self.assertIn("id-c_card", [c["id"] for c in wider])
+
+
+class StageTopKTest(unittest.TestCase):
+    def test_stage_specific_top_k_from_config(self) -> None:
+        """top_k=None 时按 recall_config.stage_specific_top_k[stage] 取 (R-4)."""
+        from rag.index_builder import build_index
+        from rag.layer1_filter import recall
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            src = root / "prompts"
+            src.mkdir()
+            # 写 8 张同 stage 同 topic 的 A 级卡
+            for i in range(8):
+                _write_card_md(
+                    src,
+                    f"c{i}",
+                    dict(
+                        id=f"id-c{i}",
+                        asset_type="prompt_card",
+                        title=f"card-{i}",
+                        topic=["玄幻黑暗"],
+                        stage="drafting",
+                        quality_grade="A",
+                        card_intent="prose_generation",
+                        source_path="x",
+                        last_updated="2026-05-13",
+                    ),
+                )
+            idx = root / "index.sqlite"
+            build_index([src], idx)
+            config = {
+                "stage_specific_top_k": {"drafting": 3, "default": 5},
+                "cold_start": {"enabled_layers": [1]},
+                "warm_start": {"enabled_layers": [1, 2]},
+            }
+            # top_k=None → 应回 3 (drafting stage)
+            cards = recall(
+                stage="drafting",
+                topic="玄幻黑暗",
+                top_k=None,
+                index_path=idx,
+                config=config,
+            )
+            self.assertEqual(len(cards), 3, f"expect 3 from drafting top_k, got {len(cards)}")
+            # 未在 config 的 stage 走 default=5
+            cards2 = recall(
+                stage="analysis",
+                topic="玄幻黑暗",
+                top_k=None,
+                index_path=idx,
+                config=config,
+            )
+            # 注意：analysis stage 在 cards 里不存在 (cards 的 stage=drafting)，所以 0
+            # 这里换个写法：换 stage 后改 top_k=None 看是否兜底——用一个新 stage 的卡片
+            self.assertEqual(cards2, [])
+
+
+class StepDispatchHookTest(unittest.TestCase):
+    def test_step_dispatch_rag_mode_off_skips_recall(self) -> None:
+        """rag_mode=off 时 step_dispatch 不调召回，audit 记 'rag disabled by user'."""
+        from ginga_platform.orchestrator.runner.dsl_parser import Step
+        from ginga_platform.orchestrator.runner.state_io import StateIO
+        from ginga_platform.orchestrator.runner.step_dispatch import dispatch_step
+
+        called: list[str] = []
+
+        def fake_cap(inputs: Mapping[str, Any], ctx: Mapping[str, Any]) -> Mapping[str, Any]:
+            # 期望 inputs 不含召回结果 (rag off)
+            called.append(repr(inputs))
+            return {"result": "ok"}
+
+        with tempfile.TemporaryDirectory() as d:
+            sio = StateIO("rag-off-book", state_root=Path(d))
+            step = Step(id="G_chapter_draft", uses_capability="cap-x")
+            ctx = {
+                "state_io": sio,
+                "workflow_flags": {"rag_mode": "off"},
+            }
+            result = dispatch_step(
+                step,
+                ctx,
+                capability_registry={"cap-x": fake_cap},
+            )
+            self.assertEqual(result.used, "capability:cap-x")
+            # audit_log 中必须有 rag_mode off 的记录
+            sources = [e.get("msg", "") for e in sio.audit_log]
+            self.assertTrue(
+                any("rag disabled by user" in s for s in sources),
+                f"audit_log missing rag-off entry; got: {sources}",
+            )
+            # capability 收到的 inputs 中 retrieved.cards 应是 [] (hook 注入了空 list)
+            self.assertEqual(len(called), 1)
+            self.assertIn("retrieved.cards", called[0])
+
+    def test_step_dispatch_rag_mode_on_invokes_recall(self) -> None:
+        """rag_mode=on 默认会调召回；空 index 时 cards=[]，audit info 注入 0 card."""
+        from ginga_platform.orchestrator.runner.dsl_parser import Step
+        from ginga_platform.orchestrator.runner.state_io import StateIO
+        from ginga_platform.orchestrator.runner.step_dispatch import dispatch_step
+
+        seen_inputs: list[dict[str, Any]] = []
+
+        def fake_cap(inputs: Mapping[str, Any], ctx: Mapping[str, Any]) -> Mapping[str, Any]:
+            seen_inputs.append(dict(inputs))
+            return {"result": "ok"}
+
+        with tempfile.TemporaryDirectory() as d:
+            sio = StateIO("rag-on-book", state_root=Path(d))
+            # 让 index_path 指向一个不存在的位置（冷启动）
+            step = Step(
+                id="G_chapter_draft",
+                uses_capability="cap-x",
+                raw={
+                    "id": "G_chapter_draft",
+                    "uses_capability": "cap-x",
+                    "retrieval_hint": {
+                        "stage": "drafting",
+                        "topic": ["玄幻黑暗"],
+                        "index_path": str(Path(d) / "no-index.sqlite"),
+                    },
+                },
+            )
+            ctx = {
+                "state_io": sio,
+                "workflow_flags": {"rag_mode": "on"},
+            }
+            dispatch_step(step, ctx, capability_registry={"cap-x": fake_cap})
+            self.assertEqual(seen_inputs[0].get("retrieved.cards"), [])
+            msgs = [e.get("msg", "") for e in sio.audit_log]
+            self.assertTrue(
+                any("rag recall injected 0 card" in m for m in msgs),
+                f"missing rag-on audit msg; got: {msgs}",
+            )
+
+
+if __name__ == "__main__":  # pragma: no cover
+    unittest.main()

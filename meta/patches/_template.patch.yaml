@@ -1,0 +1,48 @@
+# meta/patches/_template.patch.yaml
+# locked 域 patch 模板（ginga Sprint 2 ST-S2-S-MULTI-CHAPTER S-2）
+#
+# 用途：长篇 30 万字之后修改 locked 域（STORY_DNA / GENRE_LOCKED / WORLD / PLOT_ARCHITECTURE）
+# 必须走本 patch 流程；直接 state_io.apply 改 locked.* 会被 state_io 接受但留下 audit warn,
+# CLI 层（ginga_platform/orchestrator/cli/locked_patch.py）会拒绝绕过 patch 流程的请求.
+#
+# 来源：foundation/schema/runtime_state.yaml locked_patch_flow 段定义（jury-3 P1）+
+#       ARCHITECTURE.md §3.5 locked 域约束.
+#
+# 文件名约定：meta/patches/<patch_id>.patch.yaml，patch_id 形如 P-<seq>-<short-tag>
+# （例：P-001-add-faction-shadow / P-002-rewrite-act3-payoff）
+#
+# 字段说明见每行注释；填写后由 locked_patch CLI 校验 + 应用 + 跑 R3 一致性 checker.
+
+patch_id: P-XXX-short-tag             # 必填，全局唯一；建议 P-<3 位序号>-<英文简标签>
+ts: 2026-05-13T00:00:00Z              # 必填，patch 创建时间（ISO 8601 UTC）
+author: <作家名 / agent id>           # 必填，记账与回溯用
+book_id: <book_id 占位>               # 必填，影响的 runtime_state book_id
+
+reason: |                              # 必填，多行说明改的原因 / 触发事件
+  示例：第 25 章需要扩出新势力「血雾教廷」，原 locked.WORLD.factions 缺该势力
+  导致后续章节冲突无落点；走 patch 而非直接改 state，避免事后无法回溯.
+
+scope:                                # 必填，受影响的 locked 域路径列表（dotted path）
+  - locked.WORLD.factions             # 列出所有要改 / 新增 / 删除的 path
+  # - locked.STORY_DNA.payoff_promise
+
+affected_chapters: '25-40'            # 必填，受影响的章节区间字符串（用于回滚 / 复盘）
+
+approval_required: true                # 必填 bool，true = 需要作家显式 ACK 才能 apply；
+                                       # false = 走 dry-run 即可（仅打印 diff 不写盘）
+
+new_value:                             # 必填，每个 scope path 对应的新值（按 path 嵌套或扁平 dict）
+  locked.WORLD.factions:
+    - {id: F-001, name: 血雾教廷, alignment: hostile, anchor_phrase: 血雾律法}
+    - {id: F-002, name: 觉醒者地下网络, alignment: neutral, anchor_phrase: 灯下黑}
+
+# 应用后会触发的 post-actions（locked_patch CLI 自动跑）：
+post_apply:
+  - run_r3_consistency_checker       # 跑 R3 一致性 checker stub（character-iq + cool-point-payoff）
+  - audit_log_record                  # 写一条 audit_log severity=info source=cli.locked_patch
+  - persist_patch_yaml               # 把本 patch yaml 复制到 meta/patches/<patch_id>.applied.yaml
+
+# 应用失败时回滚策略：
+on_failure:
+  rollback_strategy: snapshot_revert  # state_io.transaction 包裹整次 apply，异常自动 rollback
+  alert_severity: error
