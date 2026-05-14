@@ -25,6 +25,7 @@ def recall_cards(
     card_intent: Optional[str] = None,
     query_text: str = "",
     top_k: Optional[int] = None,
+    candidate_k: Optional[int] = None,
     quality_floor: str = "B",
     index_path: Path | str | None = None,
     config: Optional[dict[str, Any]] = None,
@@ -49,17 +50,21 @@ def recall_cards(
     }
 
     resolved_top_k = _resolve_top_k(stage, top_k, config)
+    resolved_candidate_k = _resolve_candidate_k(stage, candidate_k, resolved_top_k, config)
+    diagnostics["top_k"] = resolved_top_k
+    diagnostics["candidate_k"] = resolved_candidate_k
     layer1_cards = layer1_recall(
         stage=stage,
         topic=topic,
         asset_type=asset_type,
         card_intent=card_intent,
-        top_k=resolved_top_k,
+        top_k=resolved_candidate_k,
         quality_floor=quality_floor,
         index_path=fp,
         config=config,
     )
     diagnostics["used_layers"] = [1]
+    diagnostics["layer1_candidate_count"] = len(layer1_cards)
     cards = list(layer1_cards)
 
     if 2 in diagnostics["requested_layers"]:
@@ -154,6 +159,28 @@ def _resolve_top_k(stage: Optional[str], top_k: Optional[int], config: Mapping[s
         except (TypeError, ValueError):
             return 5
     return 5
+
+
+def _resolve_candidate_k(
+    stage: Optional[str],
+    candidate_k: Optional[int],
+    top_k: int,
+    config: Mapping[str, Any],
+) -> int:
+    if candidate_k is not None:
+        try:
+            return max(top_k, int(candidate_k))
+        except (TypeError, ValueError):
+            pass
+    cfg = config.get("candidate_pool", {}) if isinstance(config, Mapping) else {}
+    if isinstance(cfg, Mapping):
+        value = cfg.get(stage) if stage in cfg else cfg.get("default")
+        if value is not None:
+            try:
+                return max(top_k, int(value))
+            except (TypeError, ValueError):
+                pass
+    return top_k
 
 
 __all__ = ["recall_cards"]

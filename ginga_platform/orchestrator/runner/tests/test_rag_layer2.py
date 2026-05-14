@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+from contextlib import closing
 from pathlib import Path
 from typing import Any
 
@@ -206,6 +207,20 @@ class RagLayer2Test(unittest.TestCase):
         self.assertGreater(sum(abs(x) for x in first), 0.0)
         self.assertNotEqual(first, different)
 
+    def test_deterministic_text_embedder_matches_chinese_subphrases(self) -> None:
+        from rag.layer2_vector import DeterministicTextEmbedder
+
+        embedder = DeterministicTextEmbedder(dimension=64)
+
+        query = embedder.embed("规则怪谈 副本设计")
+        relevant = embedder.embed("生成规则怪谈副本")
+        unrelated = embedder.embed("学院课程考核体系")
+
+        def cosine(left: list[float], right: list[float]) -> float:
+            return sum(a * b for a, b in zip(left, right))
+
+        self.assertGreater(cosine(query, relevant), cosine(query, unrelated))
+
     def test_default_embedding_recalls_similar_temp_index_entry(self) -> None:
         from rag.layer2_vector import build_vector_index, search_vector
 
@@ -218,6 +233,60 @@ class RagLayer2Test(unittest.TestCase):
             hits = search_vector(idx, "dragon sword cultivation", top_k=2)
             self.assertEqual([h["id"] for h in hits], ["card-dragon", "card-romance"])
             self.assertGreater(hits[0]["_vector_score"], hits[1]["_vector_score"])
+
+    def test_search_vector_uses_chinese_lexical_overlap_bonus(self) -> None:
+        from rag.index_builder import build_index
+        from rag.layer2_vector import build_vector_index, search_vector
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            src = root / "prompts"
+            src.mkdir()
+            _write_card_md(
+                src,
+                "many-children",
+                {
+                    "id": "card-many-children",
+                    "asset_type": "prompt_card",
+                    "title": "设计多子多福系统",
+                    "topic": ["玄幻", "系统"],
+                    "stage": "setting",
+                    "quality_grade": "B",
+                    "card_intent": "structural_design",
+                    "source_path": "many-children.md",
+                    "last_updated": "2026-05-10",
+                },
+                "生孩子获得奖励机制，家族修仙，系统反馈。",
+            )
+            _write_card_md(
+                src,
+                "generic-system",
+                {
+                    "id": "card-generic-system",
+                    "asset_type": "prompt_card",
+                    "title": "设计分支技能树",
+                    "topic": ["玄幻", "系统"],
+                    "stage": "setting",
+                    "quality_grade": "A",
+                    "card_intent": "structural_design",
+                    "source_path": "generic-system.md",
+                    "last_updated": "2026-05-11",
+                },
+                "技能路线、职业分支、升级消耗。",
+            )
+            idx = root / "index.sqlite"
+            build_index([src], idx)
+            build_vector_index(idx)
+
+            hits = search_vector(
+                idx,
+                "多子多福 奖励机制",
+                top_k=2,
+                candidate_ids=["card-generic-system", "card-many-children"],
+            )
+
+            self.assertEqual(hits[0]["id"], "card-many-children")
+            self.assertGreater(hits[0]["_lexical_score"], hits[1]["_lexical_score"])
 
     def test_retriever_uses_default_embedding_when_vector_index_ready(self) -> None:
         from rag.layer2_vector import build_vector_index
@@ -391,7 +460,7 @@ class RagLayer2Test(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             idx = self._build_index(Path(d))
             build_vector_index(idx, KeywordEmbedder())
-            with sqlite3.connect(str(idx)) as conn:
+            with closing(sqlite3.connect(str(idx))) as conn:
                 conn.execute(
                     "UPDATE card_documents SET body_hash = ? WHERE card_id = ?",
                     ("stale-hash", "card-dragon"),
@@ -418,6 +487,74 @@ class RagLayer2Test(unittest.TestCase):
             )
             self.assertEqual(result["diagnostics"]["used_layers"], [1])
             self.assertEqual([c["id"] for c in result["cards"]], ["card-romance", "card-dragon"])
+
+    def test_retriever_uses_wider_candidate_k_for_layer2(self) -> None:
+        from rag.index_builder import build_index
+        from rag.layer2_vector import build_vector_index
+        from rag.retriever import recall_cards
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            src = root / "prompts"
+            src.mkdir()
+            for i in range(5):
+                _write_card_md(
+                    src,
+                    f"generic-{i}",
+                    {
+                        "id": f"card-generic-{i}",
+                        "asset_type": "prompt_card",
+                        "title": f"Generic high quality {i}",
+                        "topic": ["玄幻"],
+                        "stage": "drafting",
+                        "quality_grade": "A",
+                        "card_intent": "prose_generation",
+                        "source_path": f"generic-{i}.md",
+                        "last_updated": f"2026-05-1{i}",
+                    },
+                    "romance tenderness",
+                )
+            _write_card_md(
+                src,
+                "dragon-low-quality",
+                {
+                    "id": "card-dragon-low-quality",
+                    "asset_type": "prompt_card",
+                    "title": "Dragon lower quality but semantically exact",
+                    "topic": ["玄幻"],
+                    "stage": "drafting",
+                    "quality_grade": "B",
+                    "card_intent": "prose_generation",
+                    "source_path": "dragon-low-quality.md",
+                    "last_updated": "2026-05-01",
+                },
+                "dragon dragon sword cultivation",
+            )
+            idx = root / "index.sqlite"
+            build_index([src], idx)
+            build_vector_index(idx, KeywordEmbedder())
+
+            result = recall_cards(
+                stage="drafting",
+                topic=["玄幻"],
+                query_text="dragon cultivation",
+                top_k=2,
+                index_path=idx,
+                embedder=KeywordEmbedder(),
+                config={
+                    "warm_start": {"enabled_layers": [1, 2], "layer3_optional": True},
+                    "cold_start": {"enabled_layers": [1]},
+                    "stage_specific_top_k": {"drafting": 2, "default": 5},
+                    "candidate_pool": {"default": 6},
+                    "enable_rerank_by_stage": {"default": False},
+                },
+            )
+
+            self.assertEqual(result["diagnostics"]["candidate_k"], 6)
+            self.assertEqual(result["diagnostics"]["top_k"], 2)
+            self.assertEqual(result["diagnostics"]["layer1_candidate_count"], 6)
+            self.assertEqual(result["cards"][0]["id"], "card-dragon-low-quality")
+            self.assertEqual(len(result["cards"]), 2)
 
 
 if __name__ == "__main__":  # pragma: no cover

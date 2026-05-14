@@ -4,7 +4,7 @@
 
 - 项目目标：把 `_原料/` 蒸馏成一个**分层**的小说创作系统底座，不是堆成单一 RAG。
 - 四层目标：**Meta（用户宪法）→ Foundation（数据本体）→ Platform（agent + workflow）→ RAG（检索）**。
-- **当前阶段**：阶段 0..4 全部完成 ✅ + **Sprint 1 全部完成 ✅** + **Sprint 2 全部完成 ✅** + **Sprint 3 全部收口 ✅** + **S4/Phase 2 native sqlite-vec 接入 + RAG 真实召回质量评估完成 ✅**；下一步 P2：补 Layer 1 空召回 metadata + 为评估查询维护 expected/relevant ids。
+- **当前阶段**：阶段 0..4 全部完成 ✅ + **Sprint 1 全部完成 ✅** + **Sprint 2 全部完成 ✅** + **Sprint 3 全部收口 ✅** + **S4/Phase 2 native sqlite-vec 接入 + RAG 真实召回质量评估完成 ✅** + **P2 可回归评估收口 ✅**；下一步：按 RAG 报告 blocker summary 补 topic/card_intent/stage metadata 与少量领域同义词，把 Layer 2 `recall@5` 从 0.425 往 0.500+ 推（`expected_recall@5=0.875` 已达标）。
 - 最终架构：`ARCHITECTURE.md` v1（36.5KB / 8 章节 + Killer Use Case + 8 决策最终判决 + Jury 判决归属表 23 条）
 - 实施路线：`ROADMAP.md` v1（已补 2026-05-14 状态更新；历史规划 + 当前状态对照）
 - **Sprint 2 进度（2026-05-14 02:35 收口复核）**：
@@ -25,7 +25,7 @@
   - ✅ ST-S3-D-DEDUP-EVIDENCE：461 prompt cards / 541 base docs / 25 样本 dedup evidence；strict PASS
   - ✅ ST-S3-Q-WEAK-EXAMPLES-A..D：202 个弱示例 prompt card 已补具体 `## 示例输入`；`report_prompt_quality.py` 复核 `weak_examples=0`
   - ✅ ST-S3-P-PRESSURE-TEST：本地压力测试 `100% PASS (7/7)`；`immersive-demo` 章号标题序列已修复为 `[1,2,3,4,5]`
-- 主验证命令：`python -m unittest discover -s ginga_platform -p "test_*.py"`（2026-05-14 复核：132 tests OK；native env：`sqlite-vec 0.1.9` + `pysqlite3 0.6.0` + Homebrew `SQLite 3.51.3`）+ `python3 scripts/validate_prompt_frontmatter.py --strict`（461 / violations=0）+ `python3 scripts/report_prompt_quality.py foundation/assets/prompts`（461 / weak_examples=0）+ `python3 scripts/run_s3_pressure_tests.py`（100% PASS 7/7）+ `python scripts/evaluate_rag_recall.py`（461 cards / 461 vectors / sqlite-vec native / fallback=none）
+- 主验证命令：`python3 scripts/verify_all.py`（2026-05-15 复核：5 commands PASS；unit 154 tests OK；architecture PASS；prompt frontmatter 461 / violations=0；prompt quality 461 / weak_examples=0；methodology 12 OK）+ `python3 scripts/evaluate_rag_recall.py`（473 cards / 473 vectors / sqlite-vec native / fallback=none；Layer 1/2 空召回均为 0；Layer 2 expected_recall@5=0.875 / recall@5=0.425）
 - 灵感逃逸通道：`ginga idea add` 已实现；`foundation/raw_ideas/` 只落盘，仍禁止进入 state/RAG。
 - 历史档案：`_distillation-plan.md`（阶段 2 草稿，47.6KB，保留）
 - 4 jury 评审：`.ops/jury/jury-{1-4}-*.md`（4 票 revise / ~32KB）→ 100% 吸收到 ARCHITECTURE
@@ -120,7 +120,7 @@ _原料/
 | 3 | Ark Jury Court 4 角法庭 | ✅ 完成 | `.ops/jury/jury-{1-4}-*.md`（4 票 revise） |
 | 4 | 综合判决与交付 | ✅ 完成 | `ARCHITECTURE.md` + `ROADMAP.md` |
 
-**下一步**：P2：补 Layer 1 空召回 metadata，并为评估查询维护 `expected_ids` / `relevant_ids`；当前完成度以 `STATUS.md` 为准。
+**下一步**：按 `.ops/reports/rag_recall_quality_report.md` 的 blocker summary 继续提升 RAG 召回质量；当前完成度以 `STATUS.md` 为准。
 
 ## 验证
 

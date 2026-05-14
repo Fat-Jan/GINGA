@@ -10,11 +10,13 @@
 
 from __future__ import annotations
 
+import gc
 import json
 import sqlite3
 import tempfile
 import textwrap
 import unittest
+import warnings
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -108,6 +110,127 @@ class TopicFilterTest(unittest.TestCase):
             none_hit = recall(stage="drafting", topic="科幻", top_k=10, index_path=idx)
             self.assertEqual(none_hit, [])
 
+    def test_topic_aliases_match_both_query_and_card_topics(self) -> None:
+        """topic alias normalization: either side may use any known alias."""
+        from rag.index_builder import build_index
+        from rag.layer1_filter import recall
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            src = root / "prompts"
+            src.mkdir()
+            alias_cards = [
+                ("general_cn", "通用", "general-group"),
+                ("general_en", "general", "general-group"),
+                ("weird_cn", "怪谈", "weird-group"),
+                ("weird_rule", "规则怪谈", "weird-group"),
+                ("action_cn", "动作", "action-group"),
+                ("action_fight", "战斗", "action-group"),
+                ("system_cn", "系统", "system-group"),
+                ("system_flow", "系统流", "system-group"),
+            ]
+            for slug, topic, group in alias_cards:
+                _write_card_md(
+                    src,
+                    slug,
+                    dict(
+                        id=f"id-{slug}",
+                        asset_type="prompt_card",
+                        title=slug,
+                        topic=[topic],
+                        stage="drafting",
+                        quality_grade="A",
+                        card_intent="prose_generation",
+                        source_path=f"_原料/{slug}.md",
+                        last_updated="2026-05-13",
+                        test_group=group,
+                    ),
+                )
+            idx = root / "index.sqlite"
+            build_index([src], idx)
+
+            cases = [
+                ("通用", {"id-general_cn", "id-general_en"}),
+                ("general", {"id-general_cn", "id-general_en"}),
+                ("怪谈", {"id-weird_cn", "id-weird_rule"}),
+                ("规则怪谈", {"id-weird_cn", "id-weird_rule"}),
+                ("动作", {"id-action_cn", "id-action_fight"}),
+                ("战斗", {"id-action_cn", "id-action_fight"}),
+                ("系统", {"id-system_cn", "id-system_flow"}),
+                ("系统流", {"id-system_cn", "id-system_flow"}),
+            ]
+            for query_topic, expected_ids in cases:
+                with self.subTest(query_topic=query_topic):
+                    got = recall(stage="drafting", topic=query_topic, top_k=10, index_path=idx)
+                    self.assertEqual({c["id"] for c in got}, expected_ids)
+
+    def test_topic_aliases_cover_structural_gold_set_gaps(self) -> None:
+        from rag.index_builder import build_index
+        from rag.layer1_filter import recall
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            src = root / "prompts"
+            src.mkdir()
+            for slug, topic in [
+                ("xuanhuan", "玄幻"),
+                ("infinite", "无限流"),
+                ("romance", "言情"),
+                ("twist", "反转"),
+            ]:
+                _write_card_md(
+                    src,
+                    slug,
+                    dict(
+                        id=f"id-{slug}",
+                        asset_type="prompt_card",
+                        title=slug,
+                        topic=[topic],
+                        stage="setting",
+                        quality_grade="A",
+                        card_intent="structural_design",
+                        source_path=f"_原料/{slug}.md",
+                        last_updated="2026-05-13",
+                    ),
+                )
+            idx = root / "index.sqlite"
+            build_index([src], idx)
+
+            xuanhuan_hits = recall(
+                stage="setting",
+                topic=["玄幻", "通用"],
+                asset_type="prompt_card",
+                card_intent="structural_design",
+                top_k=10,
+                index_path=idx,
+            )
+            romance_hits = recall(
+                stage="setting",
+                topic=["言情", "女频", "豪门"],
+                asset_type="prompt_card",
+                card_intent="structural_design",
+                top_k=10,
+                index_path=idx,
+            )
+
+            self.assertEqual({card["id"] for card in xuanhuan_hits}, {"id-xuanhuan", "id-infinite"})
+            self.assertEqual({card["id"] for card in romance_hits}, {"id-romance", "id-twist"})
+
+    def test_recall_closes_sqlite_connection_without_resource_warning(self) -> None:
+        """Layer 1 recall should not leak sqlite connections under repeated calls."""
+        from rag.layer1_filter import recall
+
+        with tempfile.TemporaryDirectory() as d:
+            idx = self._build_idx(Path(d))
+            with warnings.catch_warnings(record=True) as caught:
+                warnings.simplefilter("always", ResourceWarning)
+                for _ in range(3):
+                    recall(stage="drafting", topic="玄幻黑暗", top_k=10, index_path=idx)
+                gc.collect()
+
+            resource_warnings = [warning for warning in caught if issubclass(warning.category, ResourceWarning)]
+            self.assertEqual(resource_warnings, [])
+
 
 class QualityOrderTest(unittest.TestCase):
     def test_quality_grade_ordering_a_first(self) -> None:
@@ -160,6 +283,60 @@ class QualityOrderTest(unittest.TestCase):
                 index_path=idx,
             )
             self.assertIn("id-c_card", [c["id"] for c in wider])
+
+    def test_topic_specificity_breaks_quality_ties_before_top_k(self) -> None:
+        from rag.index_builder import build_index
+        from rag.layer1_filter import recall
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            src = root / "prompts"
+            src.mkdir()
+            for i in range(4):
+                _write_card_md(
+                    src,
+                    f"generic-{i}",
+                    dict(
+                        id=f"id-generic-{i}",
+                        asset_type="prompt_card",
+                        title=f"generic-{i}",
+                        topic=["玄幻"],
+                        stage="setting",
+                        quality_grade="B",
+                        card_intent="structural_design",
+                        source_path=f"_原料/generic-{i}.md",
+                        last_updated=f"2026-05-1{i}",
+                    ),
+                )
+            _write_card_md(
+                src,
+                "specific",
+                dict(
+                    id="id-specific",
+                    asset_type="prompt_card",
+                    title="specific",
+                    topic=["玄幻", "系统"],
+                    stage="setting",
+                    quality_grade="B",
+                    card_intent="structural_design",
+                    source_path="_原料/specific.md",
+                    last_updated="2026-05-01",
+                ),
+            )
+            idx = root / "index.sqlite"
+            build_index([src], idx)
+
+            cards = recall(
+                stage="setting",
+                topic=["系统", "玄幻"],
+                asset_type="prompt_card",
+                card_intent="structural_design",
+                top_k=3,
+                index_path=idx,
+            )
+
+            self.assertEqual(cards[0]["id"], "id-specific")
+            self.assertIn("id-specific", [card["id"] for card in cards])
 
 
 class StageTopKTest(unittest.TestCase):
@@ -216,6 +393,97 @@ class StageTopKTest(unittest.TestCase):
             # 注意：analysis stage 在 cards 里不存在 (cards 的 stage=drafting)，所以 0
             # 这里换个写法：换 stage 后改 top_k=None 看是否兜底——用一个新 stage 的卡片
             self.assertEqual(cards2, [])
+
+    def test_filter_expansion_is_configured_not_default(self) -> None:
+        """stage/card_intent expansion is opt-in through recall config."""
+        from rag.index_builder import build_index
+        from rag.layer1_filter import recall
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            src = root / "prompts"
+            src.mkdir()
+            for slug, stage, intent in [
+                ("framework", "framework", "outline_planning"),
+                ("outline", "outline", "outline_planning"),
+                ("analysis", "analysis", "checker_diagnostic"),
+                ("simulation", "setting", "simulation"),
+                ("drafting", "drafting", "prose_generation"),
+                ("setting-prototype", "setting", "prototype_creation"),
+            ]:
+                _write_card_md(
+                    src,
+                    slug,
+                    dict(
+                        id=f"id-{slug}",
+                        asset_type="prompt_card",
+                        title=slug,
+                        topic=["通用"],
+                        stage=stage,
+                        quality_grade="A",
+                        card_intent=intent,
+                        source_path=f"_原料/{slug}.md",
+                        last_updated="2026-05-13",
+                    ),
+                )
+            idx = root / "index.sqlite"
+            build_index([src], idx)
+
+            exact = recall(
+                stage="framework",
+                topic="通用",
+                asset_type="prompt_card",
+                card_intent="outline_planning",
+                top_k=10,
+                index_path=idx,
+            )
+            self.assertEqual([card["id"] for card in exact], ["id-framework"])
+
+            expanded = recall(
+                stage="framework",
+                topic="通用",
+                asset_type="prompt_card",
+                card_intent="outline_planning",
+                top_k=10,
+                index_path=idx,
+                config={
+                    "layer1_filter_expansion": {
+                        "stage": {"framework": ["framework", "outline", "analysis"]},
+                        "card_intent": {
+                            "outline_planning": ["outline_planning", "checker_diagnostic"],
+                        },
+                    }
+                },
+            )
+            self.assertEqual(
+                [card["id"] for card in expanded],
+                ["id-analysis", "id-framework", "id-outline"],
+            )
+
+            drafting_expanded = recall(
+                stage="drafting",
+                topic="通用",
+                asset_type="prompt_card",
+                card_intent="prose_generation",
+                top_k=10,
+                index_path=idx,
+                config={
+                    "layer1_filter_expansion": {
+                        "stage": {"drafting": ["drafting", "outline", "setting"]},
+                        "card_intent": {
+                            "prose_generation": [
+                                "prose_generation",
+                                "outline_planning",
+                                "prototype_creation",
+                            ],
+                        },
+                    }
+                },
+            )
+            self.assertEqual(
+                [card["id"] for card in drafting_expanded],
+                ["id-drafting", "id-outline", "id-setting-prototype"],
+            )
 
 
 class StepDispatchHookTest(unittest.TestCase):

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-14T13:30:08+00:00",
+  "generated_from": "scripts/evaluate_rag_recall.py",
   "environment": {
     "python": "3.13.12",
     "sqlite_version": "3.39.5",
@@ -13,6 +13,7 @@
     "json_path": ".ops/validation/rag_recall_quality.json",
     "report_path": ".ops/reports/rag_recall_quality_report.md",
     "model_id": "rag-recall-eval-deterministic-v1",
+    "candidate_k": 20,
     "top_k": 5
   },
   "index_build": {
@@ -44,11 +45,29 @@
     "native_search_errors": [],
     "vector_ready": true,
     "vector_ready_reason": "ready",
-    "avg_layer1_hits": 2.9166666666666665,
-    "avg_layer2_hits": 2.9166666666666665,
+    "avg_layer1_hits": 11.583333333333334,
+    "avg_layer2_hits": 4.416666666666667,
     "avg_overlap_ratio": 1.0,
     "empty_layer1_queries": [],
     "empty_layer2_queries": [],
+    "layer1_diagnostics_by_status": {
+      "gold_miss": [
+        "失忆刺客 第一章 开场",
+        "黑暗玄幻 微粒经济",
+        "章节悬念 回收伏笔",
+        "角色状态更新",
+        "世界观设定 天堑 内宇宙",
+        "反转设计 狗血女文",
+        "规则怪谈 副本设计",
+        "多子多福 奖励机制",
+        "市场定位 读者画像",
+        "第一章 黄金三章 爽点钩子",
+        "战斗场景 节奏 动作描写"
+      ],
+      "narrow": [
+        "终稿润色 文风统一"
+      ]
+    },
     "quality_grade_distribution": {
       "A": 48,
       "A-": 53,
@@ -80,11 +99,48 @@
         null,
         1
       ]
-    ]
+    ],
+    "layer1_blocker_summary": {
+      "stage": 10,
+      "topic": 7,
+      "asset_type": 3,
+      "card_intent": 20,
+      "candidate_k": 2,
+      "top_k": 0,
+      "quality_floor": 0,
+      "missing_from_index": 0
+    },
+    "metrics": {
+      "layer1": {
+        "recall_at_k": 0.302778,
+        "expected_recall_at_k": 0.541667,
+        "precision_at_k": 0.25,
+        "mrr": 0.590278,
+        "ndcg_at_k": 0.339887
+      },
+      "layer2": {
+        "recall_at_k": 0.425,
+        "expected_recall_at_k": 0.875,
+        "precision_at_k": 0.366667,
+        "mrr": 0.708333,
+        "ndcg_at_k": 0.460861
+      }
+    }
   },
   "queries": [
     {
       "query": "失忆刺客 第一章 开场",
+      "gold": {
+        "expected_ids": [
+          "prompts-card-outline_amnesia_arc-109",
+          "prompts-card-create-assassin_creed"
+        ],
+        "relevant_ids": [
+          "prompts-card-outline_amnesia_arc-109",
+          "prompts-card-create-assassin_creed",
+          "prompts-card-write-combat_scene-13"
+        ]
+      },
       "filters": {
         "stage": "drafting",
         "topics": [
@@ -95,22 +151,53 @@
         "asset_type": "prompt_card",
         "card_intent": "prose_generation",
         "quality_floor": "B",
+        "candidate_k": 20,
         "top_k": 5
       },
       "layer1": {
         "ids": [
           "prompts-card-write_villain_last_words-272",
           "prompts-card-write_auction_finale-331",
+          "prompts-card-create_protagonist-protagonist-bgm-style",
           "prompts-card-write_revenge_scene-418",
           "prompts-card-write_ascension_scene-239",
-          "prompts-card-write_mirror_horror-275"
+          "prompts-card-write_inner_personality_meeting-265",
+          "prompts-card-write_mirror_horror-275",
+          "prompts-card-write_closed_circle_setup-283",
+          "prompts-card-write_npc_survival-268",
+          "prompts-card-write_power_transfer-282",
+          "prompts-card-outline_amnesia_arc-109",
+          "prompts-card-create_mythology-117",
+          "prompts-card-write-unreliable_narrator",
+          "prompts-card-write-combat_scene-13",
+          "prompts-card-outline-underdog_rise-194",
+          "prompts-card-create-steampunk_detective_agency-202",
+          "prompts-card-create_red_herring-206",
+          "prompts-card-write-mortician_routine-222",
+          "prompts-card-write_stalking_horror-231",
+          "prompts-card-write_auction_scene-25"
         ],
         "titles": [
           "反派：最终BOSS的临终遗言",
           "仙侠拍卖会压轴场景生成",
+          "番茄风主角人设卡",
           "弃徒/退婚流复仇场景写作提示",
           "仙侠渡劫飞升大场面描写",
-          "恐怖：镜子里的诡异细节"
+          "悬疑：多重人格会议 (Inner Meeting)",
+          "恐怖：镜子里的诡异细节",
+          "悬疑：暴风雪山庄模式 (Closed Circle)",
+          "无限流：扮演路人甲求生",
+          "仙侠师徒传功/灌顶场景生成",
+          "失忆/身份重构剧情线",
+          "远古神话/传说生成器",
+          "不可靠叙述者",
+          "战斗场景生成",
+          "废柴流逆袭节奏表 (退婚流)",
+          "维多利亚/蒸汽朋克侦探事务所",
+          "红鲱鱼 (Red Herring) 误导线索",
+          "入殓师/遗体整容师日常",
+          "心理惊悚：被监视的恐惧",
+          "拍卖会捡漏与打脸场景生成"
         ],
         "hits": [
           {
@@ -122,6 +209,10 @@
             "title": "仙侠拍卖会压轴场景生成"
           },
           {
+            "id": "prompts-card-create_protagonist-protagonist-bgm-style",
+            "title": "番茄风主角人设卡"
+          },
+          {
             "id": "prompts-card-write_revenge_scene-418",
             "title": "弃徒/退婚流复仇场景写作提示"
           },
@@ -130,68 +221,240 @@
             "title": "仙侠渡劫飞升大场面描写"
           },
           {
+            "id": "prompts-card-write_inner_personality_meeting-265",
+            "title": "悬疑：多重人格会议 (Inner Meeting)"
+          },
+          {
             "id": "prompts-card-write_mirror_horror-275",
             "title": "恐怖：镜子里的诡异细节"
+          },
+          {
+            "id": "prompts-card-write_closed_circle_setup-283",
+            "title": "悬疑：暴风雪山庄模式 (Closed Circle)"
+          },
+          {
+            "id": "prompts-card-write_npc_survival-268",
+            "title": "无限流：扮演路人甲求生"
+          },
+          {
+            "id": "prompts-card-write_power_transfer-282",
+            "title": "仙侠师徒传功/灌顶场景生成"
+          },
+          {
+            "id": "prompts-card-outline_amnesia_arc-109",
+            "title": "失忆/身份重构剧情线"
+          },
+          {
+            "id": "prompts-card-create_mythology-117",
+            "title": "远古神话/传说生成器"
+          },
+          {
+            "id": "prompts-card-write-unreliable_narrator",
+            "title": "不可靠叙述者"
+          },
+          {
+            "id": "prompts-card-write-combat_scene-13",
+            "title": "战斗场景生成"
+          },
+          {
+            "id": "prompts-card-outline-underdog_rise-194",
+            "title": "废柴流逆袭节奏表 (退婚流)"
+          },
+          {
+            "id": "prompts-card-create-steampunk_detective_agency-202",
+            "title": "维多利亚/蒸汽朋克侦探事务所"
+          },
+          {
+            "id": "prompts-card-create_red_herring-206",
+            "title": "红鲱鱼 (Red Herring) 误导线索"
+          },
+          {
+            "id": "prompts-card-write-mortician_routine-222",
+            "title": "入殓师/遗体整容师日常"
+          },
+          {
+            "id": "prompts-card-write_stalking_horror-231",
+            "title": "心理惊悚：被监视的恐惧"
+          },
+          {
+            "id": "prompts-card-write_auction_scene-25",
+            "title": "拍卖会捡漏与打脸场景生成"
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 3,
+          "expected_total": 2,
+          "hits": 0,
+          "expected_hits": 0,
+          "recall_at_k": 0.0,
+          "expected_recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_k": 0.0,
+          "hit_ids": [],
+          "expected_hit_ids": [],
+          "missing_expected_ids": [
+            "prompts-card-create-assassin_creed",
+            "prompts-card-outline_amnesia_arc-109"
+          ],
+          "missing_relevant_ids": [
+            "prompts-card-create-assassin_creed",
+            "prompts-card-outline_amnesia_arc-109",
+            "prompts-card-write-combat_scene-13"
+          ]
+        },
+        "diagnostics": {
+          "status": "gold_miss",
+          "candidate_k": 20,
+          "top_k": 5,
+          "candidate_count_before_top_k": 46,
+          "returned_count": 20,
+          "filter_steps": [
+            {
+              "filter": "all_indexed_cards",
+              "value": "*",
+              "remaining": 473,
+              "removed": 0
+            },
+            {
+              "filter": "stage",
+              "value": "drafting",
+              "remaining": 361,
+              "removed": 112
+            },
+            {
+              "filter": "asset_type",
+              "value": "prompt_card",
+              "remaining": 358,
+              "removed": 3
+            },
+            {
+              "filter": "card_intent",
+              "value": "prose_generation",
+              "remaining": 212,
+              "removed": 146
+            },
+            {
+              "filter": "quality_floor",
+              "value": "B",
+              "remaining": 212,
+              "removed": 0
+            },
+            {
+              "filter": "topic",
+              "value": [
+                "悬疑",
+                "武侠",
+                "玄幻"
+              ],
+              "remaining": 46,
+              "removed": 166
+            }
+          ],
+          "gold_blockers": [
+            {
+              "id": "prompts-card-create-assassin_creed",
+              "title": "杀手/刺客组织的信条与戒律",
+              "blocked_by": [
+                {
+                  "filter": "topic",
+                  "wanted": [
+                    "悬疑",
+                    "武侠",
+                    "玄幻"
+                  ],
+                  "actual": [
+                    "都市"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
       },
       "layer2": {
         "ids": [
-          "prompts-card-write_ascension_scene-239",
+          "prompts-card-create_red_herring-206",
           "prompts-card-write_mirror_horror-275",
-          "prompts-card-write_villain_last_words-272",
-          "prompts-card-write_auction_finale-331",
-          "prompts-card-write_revenge_scene-418"
+          "prompts-card-outline_amnesia_arc-109",
+          "prompts-card-write_power_transfer-282",
+          "prompts-card-write_auction_scene-25"
         ],
         "titles": [
-          "仙侠渡劫飞升大场面描写",
+          "红鲱鱼 (Red Herring) 误导线索",
           "恐怖：镜子里的诡异细节",
-          "反派：最终BOSS的临终遗言",
-          "仙侠拍卖会压轴场景生成",
-          "弃徒/退婚流复仇场景写作提示"
+          "失忆/身份重构剧情线",
+          "仙侠师徒传功/灌顶场景生成",
+          "拍卖会捡漏与打脸场景生成"
         ],
         "scores": [
-          0.438563,
-          0.431191,
-          0.414214,
-          0.407784,
-          0.392281
+          0.448875,
+          0.442203,
+          0.425577,
+          0.430087,
+          0.427216
         ],
         "hits": [
           {
-            "id": "prompts-card-write_ascension_scene-239",
-            "title": "仙侠渡劫飞升大场面描写",
-            "score": 0.438563
+            "id": "prompts-card-create_red_herring-206",
+            "title": "红鲱鱼 (Red Herring) 误导线索",
+            "score": 0.448875
           },
           {
             "id": "prompts-card-write_mirror_horror-275",
             "title": "恐怖：镜子里的诡异细节",
-            "score": 0.431191
+            "score": 0.442203
           },
           {
-            "id": "prompts-card-write_villain_last_words-272",
-            "title": "反派：最终BOSS的临终遗言",
-            "score": 0.414214
+            "id": "prompts-card-outline_amnesia_arc-109",
+            "title": "失忆/身份重构剧情线",
+            "score": 0.425577
           },
           {
-            "id": "prompts-card-write_auction_finale-331",
-            "title": "仙侠拍卖会压轴场景生成",
-            "score": 0.407784
+            "id": "prompts-card-write_power_transfer-282",
+            "title": "仙侠师徒传功/灌顶场景生成",
+            "score": 0.430087
           },
           {
-            "id": "prompts-card-write_revenge_scene-418",
-            "title": "弃徒/退婚流复仇场景写作提示",
-            "score": 0.392281
+            "id": "prompts-card-write_auction_scene-25",
+            "title": "拍卖会捡漏与打脸场景生成",
+            "score": 0.427216
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 3,
+          "expected_total": 2,
+          "hits": 1,
+          "expected_hits": 1,
+          "recall_at_k": 0.3333333333,
+          "expected_recall_at_k": 0.5,
+          "precision_at_k": 0.2,
+          "mrr": 0.3333333333,
+          "ndcg_at_k": 0.234639363,
+          "hit_ids": [
+            "prompts-card-outline_amnesia_arc-109"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-outline_amnesia_arc-109"
+          ],
+          "missing_expected_ids": [
+            "prompts-card-create-assassin_creed"
+          ],
+          "missing_relevant_ids": [
+            "prompts-card-create-assassin_creed",
+            "prompts-card-write-combat_scene-13"
+          ]
+        }
       },
       "overlap": {
         "ids": [
-          "prompts-card-write_ascension_scene-239",
+          "prompts-card-create_red_herring-206",
           "prompts-card-write_mirror_horror-275",
-          "prompts-card-write_villain_last_words-272",
-          "prompts-card-write_auction_finale-331",
-          "prompts-card-write_revenge_scene-418"
+          "prompts-card-outline_amnesia_arc-109",
+          "prompts-card-write_power_transfer-282",
+          "prompts-card-write_auction_scene-25"
         ],
         "count": 5,
         "ratio": 1.0
@@ -202,6 +465,19 @@
     },
     {
       "query": "黑暗玄幻 微粒经济",
+      "gold": {
+        "expected_ids": [
+          "prompts-card-simulate_fantasy_economy-102",
+          "prompts-card-design_power_system-6"
+        ],
+        "relevant_ids": [
+          "prompts-card-simulate_fantasy_economy-102",
+          "prompts-card-design_power_system-6",
+          "prompts-card-design_system_shop-83",
+          "prompts-card-write_currency_creation-274",
+          "prompts-card-manage_guild_resources-119"
+        ]
+      },
       "filters": {
         "stage": "setting",
         "topics": [
@@ -211,22 +487,53 @@
         "asset_type": "prompt_card",
         "card_intent": "structural_design",
         "quality_floor": "B",
+        "candidate_k": 20,
         "top_k": 5
       },
       "layer1": {
         "ids": [
           "prompts-card-design_power_system-6",
           "prompts-card-design_academy_curriculum-73",
+          "prompts-card-design-time_loop",
+          "prompts-card-design_faction_war_dungeon-221",
           "prompts-card-design_cyber_cultivation-105",
           "prompts-card-design-pet_evolution-74",
-          "prompts-card-design_magitech_product-230"
+          "prompts-card-design_horror_clue-237",
+          "prompts-card-design_magitech_product-230",
+          "prompts-card-tournament_structure-26",
+          "prompts-card-design_cheat_code-tomato_custom",
+          "prompts-card-design_bloodline_evolution-405",
+          "prompts-card-design_organization-59",
+          "prompts-card-design-multiverse_travel",
+          "prompts-card-design_battle_royale-110",
+          "prompts-card-design_infinite_dungeon-21",
+          "prompts-card-design_werewolf_game-253",
+          "prompts-card-simulate_fantasy_economy-102",
+          "prompts-card-write_seal_ritual-178",
+          "prompts-card-design-ring_spirit",
+          "prompts-card-design-many_children_system-401"
         ],
         "titles": [
           "力量体系设计",
           "设计学院流课程表与考核体系",
+          "时间循环机制设计",
+          "无限流：阵营对抗副本设计",
           "赛博修仙体系融合",
           "宠物/御兽进化路线设计",
-          "设计结合灵气与科技的现代修真产品"
+          "恐怖无限流：生路提示设计",
+          "设计结合灵气与科技的现代修真产品",
+          "大比黑马逆袭流",
+          "金手指设计 (番茄定制版)",
+          "设定：血脉进阶与返祖 (Bloodline Evolution)",
+          "势力/组织架构设计",
+          "诸天万界穿越机制设定",
+          "大逃杀/吃鸡模式逻辑设计",
+          "原创副本世界观设计",
+          "无限流狼人杀副本逻辑设计",
+          "异世界经济与通货膨胀模拟",
+          "封印/解封仪式咒语设计",
+          "老爷爷/随身系统性格设定",
+          "设计多子多福系统"
         ],
         "hits": [
           {
@@ -238,6 +545,14 @@
             "title": "设计学院流课程表与考核体系"
           },
           {
+            "id": "prompts-card-design-time_loop",
+            "title": "时间循环机制设计"
+          },
+          {
+            "id": "prompts-card-design_faction_war_dungeon-221",
+            "title": "无限流：阵营对抗副本设计"
+          },
+          {
             "id": "prompts-card-design_cyber_cultivation-105",
             "title": "赛博修仙体系融合"
           },
@@ -246,68 +561,278 @@
             "title": "宠物/御兽进化路线设计"
           },
           {
+            "id": "prompts-card-design_horror_clue-237",
+            "title": "恐怖无限流：生路提示设计"
+          },
+          {
             "id": "prompts-card-design_magitech_product-230",
             "title": "设计结合灵气与科技的现代修真产品"
+          },
+          {
+            "id": "prompts-card-tournament_structure-26",
+            "title": "大比黑马逆袭流"
+          },
+          {
+            "id": "prompts-card-design_cheat_code-tomato_custom",
+            "title": "金手指设计 (番茄定制版)"
+          },
+          {
+            "id": "prompts-card-design_bloodline_evolution-405",
+            "title": "设定：血脉进阶与返祖 (Bloodline Evolution)"
+          },
+          {
+            "id": "prompts-card-design_organization-59",
+            "title": "势力/组织架构设计"
+          },
+          {
+            "id": "prompts-card-design-multiverse_travel",
+            "title": "诸天万界穿越机制设定"
+          },
+          {
+            "id": "prompts-card-design_battle_royale-110",
+            "title": "大逃杀/吃鸡模式逻辑设计"
+          },
+          {
+            "id": "prompts-card-design_infinite_dungeon-21",
+            "title": "原创副本世界观设计"
+          },
+          {
+            "id": "prompts-card-design_werewolf_game-253",
+            "title": "无限流狼人杀副本逻辑设计"
+          },
+          {
+            "id": "prompts-card-simulate_fantasy_economy-102",
+            "title": "异世界经济与通货膨胀模拟"
+          },
+          {
+            "id": "prompts-card-write_seal_ritual-178",
+            "title": "封印/解封仪式咒语设计"
+          },
+          {
+            "id": "prompts-card-design-ring_spirit",
+            "title": "老爷爷/随身系统性格设定"
+          },
+          {
+            "id": "prompts-card-design-many_children_system-401",
+            "title": "设计多子多福系统"
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 5,
+          "expected_total": 2,
+          "hits": 1,
+          "expected_hits": 1,
+          "recall_at_k": 0.2,
+          "expected_recall_at_k": 0.5,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.3391602053,
+          "hit_ids": [
+            "prompts-card-design_power_system-6"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-design_power_system-6"
+          ],
+          "missing_expected_ids": [
+            "prompts-card-simulate_fantasy_economy-102"
+          ],
+          "missing_relevant_ids": [
+            "prompts-card-design_system_shop-83",
+            "prompts-card-manage_guild_resources-119",
+            "prompts-card-simulate_fantasy_economy-102",
+            "prompts-card-write_currency_creation-274"
+          ]
+        },
+        "diagnostics": {
+          "status": "gold_miss",
+          "candidate_k": 20,
+          "top_k": 5,
+          "candidate_count_before_top_k": 20,
+          "returned_count": 20,
+          "filter_steps": [
+            {
+              "filter": "all_indexed_cards",
+              "value": "*",
+              "remaining": 473,
+              "removed": 0
+            },
+            {
+              "filter": "stage",
+              "value": "setting",
+              "remaining": 167,
+              "removed": 306
+            },
+            {
+              "filter": "asset_type",
+              "value": "prompt_card",
+              "remaining": 164,
+              "removed": 3
+            },
+            {
+              "filter": "card_intent",
+              "value": "structural_design",
+              "remaining": 68,
+              "removed": 96
+            },
+            {
+              "filter": "quality_floor",
+              "value": "B",
+              "remaining": 68,
+              "removed": 0
+            },
+            {
+              "filter": "topic",
+              "value": [
+                "玄幻",
+                "黑暗"
+              ],
+              "remaining": 20,
+              "removed": 48
+            }
+          ],
+          "gold_blockers": [
+            {
+              "id": "prompts-card-design_system_shop-83",
+              "title": "系统商城定价策略",
+              "blocked_by": [
+                {
+                  "filter": "topic",
+                  "wanted": [
+                    "玄幻",
+                    "黑暗"
+                  ],
+                  "actual": [
+                    "系统"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prompts-card-manage_guild_resources-119",
+              "title": "宗门/公会资源管理系统",
+              "blocked_by": [
+                {
+                  "filter": "stage",
+                  "wanted": "setting",
+                  "actual": "auxiliary"
+                },
+                {
+                  "filter": "card_intent",
+                  "wanted": "structural_design",
+                  "actual": "management_tracking"
+                }
+              ]
+            },
+            {
+              "id": "prompts-card-write_currency_creation-274",
+              "title": "种田：从零建立货币体系",
+              "blocked_by": [
+                {
+                  "filter": "card_intent",
+                  "wanted": "structural_design",
+                  "actual": "prose_generation"
+                },
+                {
+                  "filter": "topic",
+                  "wanted": [
+                    "玄幻",
+                    "黑暗"
+                  ],
+                  "actual": [
+                    "种田",
+                    "基建",
+                    "穿越"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
       },
       "layer2": {
         "ids": [
+          "prompts-card-design-ring_spirit",
+          "prompts-card-design_organization-59",
           "prompts-card-design_power_system-6",
-          "prompts-card-design_cyber_cultivation-105",
-          "prompts-card-design_academy_curriculum-73",
-          "prompts-card-design_magitech_product-230",
-          "prompts-card-design-pet_evolution-74"
+          "prompts-card-simulate_fantasy_economy-102",
+          "prompts-card-design_academy_curriculum-73"
         ],
         "titles": [
+          "老爷爷/随身系统性格设定",
+          "势力/组织架构设计",
           "力量体系设计",
-          "赛博修仙体系融合",
-          "设计学院流课程表与考核体系",
-          "设计结合灵气与科技的现代修真产品",
-          "宠物/御兽进化路线设计"
+          "异世界经济与通货膨胀模拟",
+          "设计学院流课程表与考核体系"
         ],
         "scores": [
-          0.406906,
-          0.405377,
-          0.405328,
-          0.403485,
-          0.388651
+          0.43854,
+          0.435409,
+          0.434943,
+          0.419587,
+          0.426029
         ],
         "hits": [
           {
-            "id": "prompts-card-design_power_system-6",
-            "title": "力量体系设计",
-            "score": 0.406906
+            "id": "prompts-card-design-ring_spirit",
+            "title": "老爷爷/随身系统性格设定",
+            "score": 0.43854
           },
           {
-            "id": "prompts-card-design_cyber_cultivation-105",
-            "title": "赛博修仙体系融合",
-            "score": 0.405377
+            "id": "prompts-card-design_organization-59",
+            "title": "势力/组织架构设计",
+            "score": 0.435409
+          },
+          {
+            "id": "prompts-card-design_power_system-6",
+            "title": "力量体系设计",
+            "score": 0.434943
+          },
+          {
+            "id": "prompts-card-simulate_fantasy_economy-102",
+            "title": "异世界经济与通货膨胀模拟",
+            "score": 0.419587
           },
           {
             "id": "prompts-card-design_academy_curriculum-73",
             "title": "设计学院流课程表与考核体系",
-            "score": 0.405328
-          },
-          {
-            "id": "prompts-card-design_magitech_product-230",
-            "title": "设计结合灵气与科技的现代修真产品",
-            "score": 0.403485
-          },
-          {
-            "id": "prompts-card-design-pet_evolution-74",
-            "title": "宠物/御兽进化路线设计",
-            "score": 0.388651
+            "score": 0.426029
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 5,
+          "expected_total": 2,
+          "hits": 2,
+          "expected_hits": 2,
+          "recall_at_k": 0.4,
+          "expected_recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 0.3333333333,
+          "ndcg_at_k": 0.3156484525,
+          "hit_ids": [
+            "prompts-card-design_power_system-6",
+            "prompts-card-simulate_fantasy_economy-102"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-design_power_system-6",
+            "prompts-card-simulate_fantasy_economy-102"
+          ],
+          "missing_expected_ids": [],
+          "missing_relevant_ids": [
+            "prompts-card-design_system_shop-83",
+            "prompts-card-manage_guild_resources-119",
+            "prompts-card-write_currency_creation-274"
+          ]
+        }
       },
       "overlap": {
         "ids": [
+          "prompts-card-design-ring_spirit",
+          "prompts-card-design_organization-59",
           "prompts-card-design_power_system-6",
-          "prompts-card-design_cyber_cultivation-105",
-          "prompts-card-design_academy_curriculum-73",
-          "prompts-card-design_magitech_product-230",
-          "prompts-card-design-pet_evolution-74"
+          "prompts-card-simulate_fantasy_economy-102",
+          "prompts-card-design_academy_curriculum-73"
         ],
         "count": 5,
         "ratio": 1.0
@@ -318,6 +843,20 @@
     },
     {
       "query": "章节悬念 回收伏笔",
+      "gold": {
+        "expected_ids": [
+          "prompts-card-check_foreshadowing-146",
+          "prompts-card-check_foreshadowing_payoff-365"
+        ],
+        "relevant_ids": [
+          "prompts-card-check_foreshadowing-146",
+          "prompts-card-check_foreshadowing_payoff-365",
+          "prompts-card-generate_foreshadowing-292",
+          "prompts-card-generate-cliffhanger-147",
+          "prompts-card-inject-cliffhanger-362",
+          "prompts-card-outline_golden_three_chapters-41"
+        ]
+      },
       "filters": {
         "stage": "framework",
         "topics": [
@@ -327,53 +866,296 @@
         "asset_type": "prompt_card",
         "card_intent": "outline_planning",
         "quality_floor": "B",
+        "candidate_k": 20,
         "top_k": 5
       },
       "layer1": {
         "ids": [
-          "prompts-card-outline_golden_three_chapters-41"
+          "prompts-card-outline_golden_three-12",
+          "prompts-card-outline_golden_three_chapters-41",
+          "prompts-card-outline_amnesia_arc-109",
+          "prompts-card-plan_information_reveal-344",
+          "prompts-card-check-logic_plothole",
+          "prompts-card-polish-final_checklist",
+          "prompts-card-check_foreshadowing-146",
+          "prompts-card-check_foreshadowing_payoff-365"
         ],
         "titles": [
-          "黄金三章细纲生成 (番茄版)"
+          "黄金三章细纲",
+          "黄金三章细纲生成 (番茄版)",
+          "失忆/身份重构剧情线",
+          "细纲：信息释放节奏 (Information Drip)",
+          "检查逻辑漏洞",
+          "完稿最终检查清单",
+          "伏笔回收与反转设计检查表",
+          "流程：伏笔回收检查 (Foreshadowing Payoff)"
         ],
         "hits": [
+          {
+            "id": "prompts-card-outline_golden_three-12",
+            "title": "黄金三章细纲"
+          },
           {
             "id": "prompts-card-outline_golden_three_chapters-41",
             "title": "黄金三章细纲生成 (番茄版)"
+          },
+          {
+            "id": "prompts-card-outline_amnesia_arc-109",
+            "title": "失忆/身份重构剧情线"
+          },
+          {
+            "id": "prompts-card-plan_information_reveal-344",
+            "title": "细纲：信息释放节奏 (Information Drip)"
+          },
+          {
+            "id": "prompts-card-check-logic_plothole",
+            "title": "检查逻辑漏洞"
+          },
+          {
+            "id": "prompts-card-polish-final_checklist",
+            "title": "完稿最终检查清单"
+          },
+          {
+            "id": "prompts-card-check_foreshadowing-146",
+            "title": "伏笔回收与反转设计检查表"
+          },
+          {
+            "id": "prompts-card-check_foreshadowing_payoff-365",
+            "title": "流程：伏笔回收检查 (Foreshadowing Payoff)"
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 6,
+          "expected_total": 2,
+          "hits": 1,
+          "expected_hits": 0,
+          "recall_at_k": 0.1666666667,
+          "expected_recall_at_k": 0.0,
+          "precision_at_k": 0.2,
+          "mrr": 0.5,
+          "ndcg_at_k": 0.2139862647,
+          "hit_ids": [
+            "prompts-card-outline_golden_three_chapters-41"
+          ],
+          "expected_hit_ids": [],
+          "missing_expected_ids": [
+            "prompts-card-check_foreshadowing-146",
+            "prompts-card-check_foreshadowing_payoff-365"
+          ],
+          "missing_relevant_ids": [
+            "prompts-card-check_foreshadowing-146",
+            "prompts-card-check_foreshadowing_payoff-365",
+            "prompts-card-generate-cliffhanger-147",
+            "prompts-card-generate_foreshadowing-292",
+            "prompts-card-inject-cliffhanger-362"
+          ]
+        },
+        "diagnostics": {
+          "status": "gold_miss",
+          "candidate_k": 20,
+          "top_k": 5,
+          "candidate_count_before_top_k": 8,
+          "returned_count": 8,
+          "filter_steps": [
+            {
+              "filter": "all_indexed_cards",
+              "value": "*",
+              "remaining": 473,
+              "removed": 0
+            },
+            {
+              "filter": "stage",
+              "value": "framework",
+              "remaining": 55,
+              "removed": 418
+            },
+            {
+              "filter": "asset_type",
+              "value": "prompt_card",
+              "remaining": 52,
+              "removed": 3
+            },
+            {
+              "filter": "card_intent",
+              "value": "outline_planning",
+              "remaining": 13,
+              "removed": 39
+            },
+            {
+              "filter": "quality_floor",
+              "value": "B",
+              "remaining": 13,
+              "removed": 0
+            },
+            {
+              "filter": "topic",
+              "value": [
+                "通用",
+                "悬疑"
+              ],
+              "remaining": 8,
+              "removed": 5
+            }
+          ],
+          "gold_blockers": [
+            {
+              "id": "prompts-card-generate-cliffhanger-147",
+              "title": "悬念 (Cliffhanger) 设计生成器",
+              "blocked_by": [
+                {
+                  "filter": "stage",
+                  "wanted": "framework",
+                  "actual": "drafting"
+                },
+                {
+                  "filter": "card_intent",
+                  "wanted": "outline_planning",
+                  "actual": "generator"
+                }
+              ]
+            },
+            {
+              "id": "prompts-card-generate_foreshadowing-292",
+              "title": "伏笔埋设技巧 (Foreshadowing Tool)",
+              "blocked_by": [
+                {
+                  "filter": "stage",
+                  "wanted": "framework",
+                  "actual": "auxiliary"
+                },
+                {
+                  "filter": "card_intent",
+                  "wanted": "outline_planning",
+                  "actual": "generator"
+                }
+              ]
+            },
+            {
+              "id": "prompts-card-inject-cliffhanger-362",
+              "title": "流程：悬念钩子植入 (Cliffhanger Injector)",
+              "blocked_by": [
+                {
+                  "filter": "stage",
+                  "wanted": "framework",
+                  "actual": "drafting"
+                },
+                {
+                  "filter": "card_intent",
+                  "wanted": "outline_planning",
+                  "actual": "editing_transformation"
+                }
+              ]
+            }
+          ]
+        }
       },
       "layer2": {
         "ids": [
-          "prompts-card-outline_golden_three_chapters-41"
+          "prompts-card-check_foreshadowing-146",
+          "prompts-card-check_foreshadowing_payoff-365",
+          "prompts-card-check-logic_plothole",
+          "prompts-card-outline_golden_three_chapters-41",
+          "prompts-card-outline_golden_three-12"
         ],
         "titles": [
-          "黄金三章细纲生成 (番茄版)"
+          "伏笔回收与反转设计检查表",
+          "流程：伏笔回收检查 (Foreshadowing Payoff)",
+          "检查逻辑漏洞",
+          "黄金三章细纲生成 (番茄版)",
+          "黄金三章细纲"
         ],
         "scores": [
-          0.090536
+          0.436056,
+          0.426627,
+          0.430501,
+          0.419643,
+          0.415827
         ],
         "hits": [
           {
+            "id": "prompts-card-check_foreshadowing-146",
+            "title": "伏笔回收与反转设计检查表",
+            "score": 0.436056
+          },
+          {
+            "id": "prompts-card-check_foreshadowing_payoff-365",
+            "title": "流程：伏笔回收检查 (Foreshadowing Payoff)",
+            "score": 0.426627
+          },
+          {
+            "id": "prompts-card-check-logic_plothole",
+            "title": "检查逻辑漏洞",
+            "score": 0.430501
+          },
+          {
             "id": "prompts-card-outline_golden_three_chapters-41",
             "title": "黄金三章细纲生成 (番茄版)",
-            "score": 0.090536
+            "score": 0.419643
+          },
+          {
+            "id": "prompts-card-outline_golden_three-12",
+            "title": "黄金三章细纲",
+            "score": 0.415827
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 6,
+          "expected_total": 2,
+          "hits": 3,
+          "expected_hits": 2,
+          "recall_at_k": 0.5,
+          "expected_recall_at_k": 1.0,
+          "precision_at_k": 0.6,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.6992148199,
+          "hit_ids": [
+            "prompts-card-check_foreshadowing-146",
+            "prompts-card-check_foreshadowing_payoff-365",
+            "prompts-card-outline_golden_three_chapters-41"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-check_foreshadowing-146",
+            "prompts-card-check_foreshadowing_payoff-365"
+          ],
+          "missing_expected_ids": [],
+          "missing_relevant_ids": [
+            "prompts-card-generate-cliffhanger-147",
+            "prompts-card-generate_foreshadowing-292",
+            "prompts-card-inject-cliffhanger-362"
+          ]
+        }
       },
       "overlap": {
         "ids": [
-          "prompts-card-outline_golden_three_chapters-41"
+          "prompts-card-check_foreshadowing-146",
+          "prompts-card-check_foreshadowing_payoff-365",
+          "prompts-card-check-logic_plothole",
+          "prompts-card-outline_golden_three_chapters-41",
+          "prompts-card-outline_golden_three-12"
         ],
-        "count": 1,
+        "count": 5,
         "ratio": 1.0
       },
-      "native_sqlite_vec": false,
+      "native_sqlite_vec": true,
       "native_search_error": "",
       "notes": "结构层查询，检查伏笔、悬念、章节节奏相关资产是否被召回。"
     },
     {
       "query": "角色状态更新",
+      "gold": {
+        "expected_ids": [
+          "prompts-card-create_character_profile-9",
+          "prompts-card-design_character_arc-122"
+        ],
+        "relevant_ids": [
+          "prompts-card-create_character_profile-9",
+          "prompts-card-design_character_arc-122",
+          "prompts-card-generate_relationship_chart-80",
+          "prompts-card-generate_spinoff_plot-116"
+        ]
+      },
       "filters": {
         "stage": "setting",
         "topics": [
@@ -382,53 +1164,244 @@
         "asset_type": "prompt_card",
         "card_intent": "generator",
         "quality_floor": "B",
+        "candidate_k": 20,
         "top_k": 5
       },
       "layer1": {
         "ids": [
-          "prompts-card-generate_spinoff_plot-116"
+          "prompts-card-design_villain-10",
+          "prompts-card-create_gap_moe_character-294",
+          "prompts-card-create_character_profile-9",
+          "prompts-card-create_antagonist-40",
+          "prompts-card-generate_spinoff_plot-116",
+          "prompts-card-design_character_arc-122"
         ],
         "titles": [
-          "为高人气配角生成独立支线故事"
+          "反派仇恨值拉升",
+          "角色反差萌设定 (Gap Moe)",
+          "主角详细档案",
+          "极致反派/打脸对象设计",
+          "为高人气配角生成独立支线故事",
+          "角色弧光 (Character Arc) 设计"
         ],
         "hits": [
+          {
+            "id": "prompts-card-design_villain-10",
+            "title": "反派仇恨值拉升"
+          },
+          {
+            "id": "prompts-card-create_gap_moe_character-294",
+            "title": "角色反差萌设定 (Gap Moe)"
+          },
+          {
+            "id": "prompts-card-create_character_profile-9",
+            "title": "主角详细档案"
+          },
+          {
+            "id": "prompts-card-create_antagonist-40",
+            "title": "极致反派/打脸对象设计"
+          },
           {
             "id": "prompts-card-generate_spinoff_plot-116",
             "title": "为高人气配角生成独立支线故事"
+          },
+          {
+            "id": "prompts-card-design_character_arc-122",
+            "title": "角色弧光 (Character Arc) 设计"
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 4,
+          "expected_total": 2,
+          "hits": 2,
+          "expected_hits": 1,
+          "recall_at_k": 0.5,
+          "expected_recall_at_k": 0.5,
+          "precision_at_k": 0.4,
+          "mrr": 0.3333333333,
+          "ndcg_at_k": 0.3462096432,
+          "hit_ids": [
+            "prompts-card-create_character_profile-9",
+            "prompts-card-generate_spinoff_plot-116"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-create_character_profile-9"
+          ],
+          "missing_expected_ids": [
+            "prompts-card-design_character_arc-122"
+          ],
+          "missing_relevant_ids": [
+            "prompts-card-design_character_arc-122",
+            "prompts-card-generate_relationship_chart-80"
+          ]
+        },
+        "diagnostics": {
+          "status": "gold_miss",
+          "candidate_k": 20,
+          "top_k": 5,
+          "candidate_count_before_top_k": 6,
+          "returned_count": 6,
+          "filter_steps": [
+            {
+              "filter": "all_indexed_cards",
+              "value": "*",
+              "remaining": 473,
+              "removed": 0
+            },
+            {
+              "filter": "stage",
+              "value": "setting",
+              "remaining": 167,
+              "removed": 306
+            },
+            {
+              "filter": "asset_type",
+              "value": "prompt_card",
+              "remaining": 164,
+              "removed": 3
+            },
+            {
+              "filter": "card_intent",
+              "value": "generator",
+              "remaining": 101,
+              "removed": 63
+            },
+            {
+              "filter": "quality_floor",
+              "value": "B",
+              "remaining": 101,
+              "removed": 0
+            },
+            {
+              "filter": "topic",
+              "value": [
+                "通用"
+              ],
+              "remaining": 6,
+              "removed": 95
+            }
+          ],
+          "gold_blockers": [
+            {
+              "id": "prompts-card-generate_relationship_chart-80",
+              "title": "人物关系图谱 (Mermaid格式)",
+              "blocked_by": [
+                {
+                  "filter": "stage",
+                  "wanted": "setting",
+                  "actual": "outline"
+                }
+              ]
+            }
+          ]
+        }
       },
       "layer2": {
         "ids": [
-          "prompts-card-generate_spinoff_plot-116"
+          "prompts-card-create_gap_moe_character-294",
+          "prompts-card-design_character_arc-122",
+          "prompts-card-design_villain-10",
+          "prompts-card-create_character_profile-9",
+          "prompts-card-create_antagonist-40"
         ],
         "titles": [
-          "为高人气配角生成独立支线故事"
+          "角色反差萌设定 (Gap Moe)",
+          "角色弧光 (Character Arc) 设计",
+          "反派仇恨值拉升",
+          "主角详细档案",
+          "极致反派/打脸对象设计"
         ],
         "scores": [
-          0.101535
+          0.437654,
+          0.419908,
+          0.425873,
+          0.406825,
+          0.414214
         ],
         "hits": [
           {
-            "id": "prompts-card-generate_spinoff_plot-116",
-            "title": "为高人气配角生成独立支线故事",
-            "score": 0.101535
+            "id": "prompts-card-create_gap_moe_character-294",
+            "title": "角色反差萌设定 (Gap Moe)",
+            "score": 0.437654
+          },
+          {
+            "id": "prompts-card-design_character_arc-122",
+            "title": "角色弧光 (Character Arc) 设计",
+            "score": 0.419908
+          },
+          {
+            "id": "prompts-card-design_villain-10",
+            "title": "反派仇恨值拉升",
+            "score": 0.425873
+          },
+          {
+            "id": "prompts-card-create_character_profile-9",
+            "title": "主角详细档案",
+            "score": 0.406825
+          },
+          {
+            "id": "prompts-card-create_antagonist-40",
+            "title": "极致反派/打脸对象设计",
+            "score": 0.414214
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 4,
+          "expected_total": 2,
+          "hits": 2,
+          "expected_hits": 2,
+          "recall_at_k": 0.5,
+          "expected_recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 0.5,
+          "ndcg_at_k": 0.414429925,
+          "hit_ids": [
+            "prompts-card-design_character_arc-122",
+            "prompts-card-create_character_profile-9"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-design_character_arc-122",
+            "prompts-card-create_character_profile-9"
+          ],
+          "missing_expected_ids": [],
+          "missing_relevant_ids": [
+            "prompts-card-generate_relationship_chart-80",
+            "prompts-card-generate_spinoff_plot-116"
+          ]
+        }
       },
       "overlap": {
         "ids": [
-          "prompts-card-generate_spinoff_plot-116"
+          "prompts-card-create_gap_moe_character-294",
+          "prompts-card-design_character_arc-122",
+          "prompts-card-design_villain-10",
+          "prompts-card-create_character_profile-9",
+          "prompts-card-create_antagonist-40"
         ],
-        "count": 1,
+        "count": 5,
         "ratio": 1.0
       },
-      "native_sqlite_vec": false,
+      "native_sqlite_vec": true,
       "native_search_error": "",
       "notes": "偏状态表/角色档案维护，验证通用 setting 生成器类卡片。"
     },
     {
       "query": "世界观设定 天堑 内宇宙",
+      "gold": {
+        "expected_ids": [
+          "prompts-card-design_power_system-6",
+          "prompts-card-design_infinite_dungeon-21"
+        ],
+        "relevant_ids": [
+          "prompts-card-design_power_system-6",
+          "prompts-card-design_infinite_dungeon-21",
+          "prompts-card-design_cyber_cultivation-105",
+          "prompts-card-design_fermi_paradox_solution-141",
+          "base-methodology-writing-worldview-motif-catalog"
+        ]
+      },
       "filters": {
         "stage": "setting",
         "topics": [
@@ -439,35 +1412,74 @@
         "asset_type": "prompt_card",
         "card_intent": "structural_design",
         "quality_floor": "B",
+        "candidate_k": 20,
         "top_k": 5
       },
       "layer1": {
         "ids": [
-          "prompts-card-design_villain-10",
           "prompts-card-design_power_system-6",
+          "prompts-card-design_villain-10",
           "prompts-card-design_academy_curriculum-73",
+          "prompts-card-design-time_loop",
+          "prompts-card-design_faction_war_dungeon-221",
           "prompts-card-design_cyber_cultivation-105",
-          "prompts-card-design_fermi_paradox_solution-141"
+          "prompts-card-design_fermi_paradox_solution-141",
+          "prompts-card-design-underwater_civ-207",
+          "prompts-card-design-pet_evolution-74",
+          "prompts-card-design_horror_clue-237",
+          "prompts-card-design_magitech_product-230",
+          "prompts-card-design-multiverse_travel",
+          "prompts-card-design_character_arc-122",
+          "prompts-card-design_parallel_universe-160",
+          "prompts-card-xenolinguistics_scenario-171",
+          "prompts-card-design_space_fleet_tactics-241",
+          "prompts-card-tournament_structure-26",
+          "prompts-card-design_cheat_code-tomato_custom",
+          "prompts-card-design_bloodline_evolution-405",
+          "prompts-card-design_organization-59"
         ],
         "titles": [
-          "反派仇恨值拉升",
           "力量体系设计",
+          "反派仇恨值拉升",
           "设计学院流课程表与考核体系",
+          "时间循环机制设计",
+          "无限流：阵营对抗副本设计",
           "赛博修仙体系融合",
-          "费米悖论/黑暗森林法则变体设计"
+          "费米悖论/黑暗森林法则变体设计",
+          "深海/亚特兰蒂斯文明设定",
+          "宠物/御兽进化路线设计",
+          "恐怖无限流：生路提示设计",
+          "设计结合灵气与科技的现代修真产品",
+          "诸天万界穿越机制设定",
+          "角色弧光 (Character Arc) 设计",
+          "平行宇宙差异点设计",
+          "跨物种沟通语言学",
+          "星际战争：舰队阵型与指挥",
+          "大比黑马逆袭流",
+          "金手指设计 (番茄定制版)",
+          "设定：血脉进阶与返祖 (Bloodline Evolution)",
+          "势力/组织架构设计"
         ],
         "hits": [
-          {
-            "id": "prompts-card-design_villain-10",
-            "title": "反派仇恨值拉升"
-          },
           {
             "id": "prompts-card-design_power_system-6",
             "title": "力量体系设计"
           },
           {
+            "id": "prompts-card-design_villain-10",
+            "title": "反派仇恨值拉升"
+          },
+          {
             "id": "prompts-card-design_academy_curriculum-73",
             "title": "设计学院流课程表与考核体系"
+          },
+          {
+            "id": "prompts-card-design-time_loop",
+            "title": "时间循环机制设计"
+          },
+          {
+            "id": "prompts-card-design_faction_war_dungeon-221",
+            "title": "无限流：阵营对抗副本设计"
           },
           {
             "id": "prompts-card-design_cyber_cultivation-105",
@@ -476,66 +1488,255 @@
           {
             "id": "prompts-card-design_fermi_paradox_solution-141",
             "title": "费米悖论/黑暗森林法则变体设计"
+          },
+          {
+            "id": "prompts-card-design-underwater_civ-207",
+            "title": "深海/亚特兰蒂斯文明设定"
+          },
+          {
+            "id": "prompts-card-design-pet_evolution-74",
+            "title": "宠物/御兽进化路线设计"
+          },
+          {
+            "id": "prompts-card-design_horror_clue-237",
+            "title": "恐怖无限流：生路提示设计"
+          },
+          {
+            "id": "prompts-card-design_magitech_product-230",
+            "title": "设计结合灵气与科技的现代修真产品"
+          },
+          {
+            "id": "prompts-card-design-multiverse_travel",
+            "title": "诸天万界穿越机制设定"
+          },
+          {
+            "id": "prompts-card-design_character_arc-122",
+            "title": "角色弧光 (Character Arc) 设计"
+          },
+          {
+            "id": "prompts-card-design_parallel_universe-160",
+            "title": "平行宇宙差异点设计"
+          },
+          {
+            "id": "prompts-card-xenolinguistics_scenario-171",
+            "title": "跨物种沟通语言学"
+          },
+          {
+            "id": "prompts-card-design_space_fleet_tactics-241",
+            "title": "星际战争：舰队阵型与指挥"
+          },
+          {
+            "id": "prompts-card-tournament_structure-26",
+            "title": "大比黑马逆袭流"
+          },
+          {
+            "id": "prompts-card-design_cheat_code-tomato_custom",
+            "title": "金手指设计 (番茄定制版)"
+          },
+          {
+            "id": "prompts-card-design_bloodline_evolution-405",
+            "title": "设定：血脉进阶与返祖 (Bloodline Evolution)"
+          },
+          {
+            "id": "prompts-card-design_organization-59",
+            "title": "势力/组织架构设计"
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 5,
+          "expected_total": 2,
+          "hits": 1,
+          "expected_hits": 1,
+          "recall_at_k": 0.2,
+          "expected_recall_at_k": 0.5,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.3391602053,
+          "hit_ids": [
+            "prompts-card-design_power_system-6"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-design_power_system-6"
+          ],
+          "missing_expected_ids": [
+            "prompts-card-design_infinite_dungeon-21"
+          ],
+          "missing_relevant_ids": [
+            "base-methodology-writing-worldview-motif-catalog",
+            "prompts-card-design_cyber_cultivation-105",
+            "prompts-card-design_fermi_paradox_solution-141",
+            "prompts-card-design_infinite_dungeon-21"
+          ]
+        },
+        "diagnostics": {
+          "status": "gold_miss",
+          "candidate_k": 20,
+          "top_k": 5,
+          "candidate_count_before_top_k": 30,
+          "returned_count": 20,
+          "filter_steps": [
+            {
+              "filter": "all_indexed_cards",
+              "value": "*",
+              "remaining": 473,
+              "removed": 0
+            },
+            {
+              "filter": "stage",
+              "value": "setting",
+              "remaining": 167,
+              "removed": 306
+            },
+            {
+              "filter": "asset_type",
+              "value": "prompt_card",
+              "remaining": 164,
+              "removed": 3
+            },
+            {
+              "filter": "card_intent",
+              "value": "structural_design",
+              "remaining": 68,
+              "removed": 96
+            },
+            {
+              "filter": "quality_floor",
+              "value": "B",
+              "remaining": 68,
+              "removed": 0
+            },
+            {
+              "filter": "topic",
+              "value": [
+                "玄幻",
+                "科幻",
+                "通用"
+              ],
+              "remaining": 30,
+              "removed": 38
+            }
+          ],
+          "gold_blockers": [
+            {
+              "id": "base-methodology-writing-worldview-motif-catalog",
+              "title": "世界观母题目录",
+              "blocked_by": [
+                {
+                  "filter": "stage",
+                  "wanted": "setting",
+                  "actual": "ideation"
+                },
+                {
+                  "filter": "asset_type",
+                  "wanted": "prompt_card",
+                  "actual": "methodology"
+                },
+                {
+                  "filter": "card_intent",
+                  "wanted": "structural_design",
+                  "actual": ""
+                }
+              ]
+            },
+            {
+              "id": "prompts-card-design_infinite_dungeon-21",
+              "title": "原创副本世界观设计",
+              "blocked_by": [
+                {
+                  "filter": "candidate_k",
+                  "wanted": 20,
+                  "actual": "candidate_after_cutoff"
+                }
+              ]
+            }
+          ]
+        }
       },
       "layer2": {
         "ids": [
+          "prompts-card-design_parallel_universe-160",
+          "prompts-card-design_organization-59",
           "prompts-card-design_power_system-6",
-          "prompts-card-design_fermi_paradox_solution-141",
-          "prompts-card-design_cyber_cultivation-105",
-          "prompts-card-design_academy_curriculum-73",
-          "prompts-card-design_villain-10"
+          "prompts-card-design_bloodline_evolution-405",
+          "prompts-card-design-underwater_civ-207"
         ],
         "titles": [
+          "平行宇宙差异点设计",
+          "势力/组织架构设计",
           "力量体系设计",
-          "费米悖论/黑暗森林法则变体设计",
-          "赛博修仙体系融合",
-          "设计学院流课程表与考核体系",
-          "反派仇恨值拉升"
+          "设定：血脉进阶与返祖 (Bloodline Evolution)",
+          "深海/亚特兰蒂斯文明设定"
         ],
         "scores": [
-          0.427278,
-          0.422439,
-          0.421986,
-          0.414214,
-          0.414214
+          0.433984,
+          0.427209,
+          0.421306,
+          0.433011,
+          0.41096
         ],
         "hits": [
           {
+            "id": "prompts-card-design_parallel_universe-160",
+            "title": "平行宇宙差异点设计",
+            "score": 0.433984
+          },
+          {
+            "id": "prompts-card-design_organization-59",
+            "title": "势力/组织架构设计",
+            "score": 0.427209
+          },
+          {
             "id": "prompts-card-design_power_system-6",
             "title": "力量体系设计",
-            "score": 0.427278
+            "score": 0.421306
           },
           {
-            "id": "prompts-card-design_fermi_paradox_solution-141",
-            "title": "费米悖论/黑暗森林法则变体设计",
-            "score": 0.422439
+            "id": "prompts-card-design_bloodline_evolution-405",
+            "title": "设定：血脉进阶与返祖 (Bloodline Evolution)",
+            "score": 0.433011
           },
           {
-            "id": "prompts-card-design_cyber_cultivation-105",
-            "title": "赛博修仙体系融合",
-            "score": 0.421986
-          },
-          {
-            "id": "prompts-card-design_academy_curriculum-73",
-            "title": "设计学院流课程表与考核体系",
-            "score": 0.414214
-          },
-          {
-            "id": "prompts-card-design_villain-10",
-            "title": "反派仇恨值拉升",
-            "score": 0.414214
+            "id": "prompts-card-design-underwater_civ-207",
+            "title": "深海/亚特兰蒂斯文明设定",
+            "score": 0.41096
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 5,
+          "expected_total": 2,
+          "hits": 1,
+          "expected_hits": 1,
+          "recall_at_k": 0.2,
+          "expected_recall_at_k": 0.5,
+          "precision_at_k": 0.2,
+          "mrr": 0.3333333333,
+          "ndcg_at_k": 0.1695801026,
+          "hit_ids": [
+            "prompts-card-design_power_system-6"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-design_power_system-6"
+          ],
+          "missing_expected_ids": [
+            "prompts-card-design_infinite_dungeon-21"
+          ],
+          "missing_relevant_ids": [
+            "base-methodology-writing-worldview-motif-catalog",
+            "prompts-card-design_cyber_cultivation-105",
+            "prompts-card-design_fermi_paradox_solution-141",
+            "prompts-card-design_infinite_dungeon-21"
+          ]
+        }
       },
       "overlap": {
         "ids": [
+          "prompts-card-design_parallel_universe-160",
+          "prompts-card-design_organization-59",
           "prompts-card-design_power_system-6",
-          "prompts-card-design_fermi_paradox_solution-141",
-          "prompts-card-design_cyber_cultivation-105",
-          "prompts-card-design_academy_curriculum-73",
-          "prompts-card-design_villain-10"
+          "prompts-card-design_bloodline_evolution-405",
+          "prompts-card-design-underwater_civ-207"
         ],
         "count": 5,
         "ratio": 1.0
@@ -546,6 +1747,17 @@
     },
     {
       "query": "反转设计 狗血女文",
+      "gold": {
+        "expected_ids": [
+          "prompts-card-design-short_drama_twists",
+          "prompts-card-construct_plot_twist-367"
+        ],
+        "relevant_ids": [
+          "prompts-card-design-short_drama_twists",
+          "prompts-card-construct_plot_twist-367",
+          "prompts-card-outline_identity_switch-23"
+        ]
+      },
       "filters": {
         "stage": "framework",
         "topics": [
@@ -556,53 +1768,207 @@
         "asset_type": "prompt_card",
         "card_intent": "structural_design",
         "quality_floor": "B",
+        "candidate_k": 20,
         "top_k": 5
       },
       "layer1": {
         "ids": [
-          "prompts-card-design-short_drama_twists"
+          "prompts-card-design-short_drama_twists",
+          "prompts-card-use_setting_to_drive_plot-347",
+          "prompts-card-construct_plot_twist-367"
         ],
         "titles": [
-          "短剧高能反转节点设计"
+          "短剧高能反转节点设计",
+          "利用环境推动剧情 (Setting as Character)",
+          "反转逻辑链构建 (Plot Twist Logic)"
         ],
         "hits": [
           {
             "id": "prompts-card-design-short_drama_twists",
             "title": "短剧高能反转节点设计"
+          },
+          {
+            "id": "prompts-card-use_setting_to_drive_plot-347",
+            "title": "利用环境推动剧情 (Setting as Character)"
+          },
+          {
+            "id": "prompts-card-construct_plot_twist-367",
+            "title": "反转逻辑链构建 (Plot Twist Logic)"
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 3,
+          "expected_total": 2,
+          "hits": 2,
+          "expected_hits": 2,
+          "recall_at_k": 0.6666666667,
+          "expected_recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.703918089,
+          "hit_ids": [
+            "prompts-card-design-short_drama_twists",
+            "prompts-card-construct_plot_twist-367"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-design-short_drama_twists",
+            "prompts-card-construct_plot_twist-367"
+          ],
+          "missing_expected_ids": [],
+          "missing_relevant_ids": [
+            "prompts-card-outline_identity_switch-23"
+          ]
+        },
+        "diagnostics": {
+          "status": "gold_miss",
+          "candidate_k": 20,
+          "top_k": 5,
+          "candidate_count_before_top_k": 3,
+          "returned_count": 3,
+          "filter_steps": [
+            {
+              "filter": "all_indexed_cards",
+              "value": "*",
+              "remaining": 473,
+              "removed": 0
+            },
+            {
+              "filter": "stage",
+              "value": "framework",
+              "remaining": 55,
+              "removed": 418
+            },
+            {
+              "filter": "asset_type",
+              "value": "prompt_card",
+              "remaining": 52,
+              "removed": 3
+            },
+            {
+              "filter": "card_intent",
+              "value": "structural_design",
+              "remaining": 13,
+              "removed": 39
+            },
+            {
+              "filter": "quality_floor",
+              "value": "B",
+              "remaining": 13,
+              "removed": 0
+            },
+            {
+              "filter": "topic",
+              "value": [
+                "言情",
+                "女频",
+                "豪门"
+              ],
+              "remaining": 3,
+              "removed": 10
+            }
+          ],
+          "gold_blockers": [
+            {
+              "id": "prompts-card-outline_identity_switch-23",
+              "title": "真假千金反转剧本",
+              "blocked_by": [
+                {
+                  "filter": "card_intent",
+                  "wanted": "structural_design",
+                  "actual": "outline_planning"
+                }
+              ]
+            }
+          ]
+        }
       },
       "layer2": {
         "ids": [
-          "prompts-card-design-short_drama_twists"
+          "prompts-card-construct_plot_twist-367",
+          "prompts-card-design-short_drama_twists",
+          "prompts-card-use_setting_to_drive_plot-347"
         ],
         "titles": [
-          "短剧高能反转节点设计"
+          "反转逻辑链构建 (Plot Twist Logic)",
+          "短剧高能反转节点设计",
+          "利用环境推动剧情 (Setting as Character)"
         ],
         "scores": [
-          0.146647
+          0.42146,
+          0.417976,
+          0.38555
         ],
         "hits": [
           {
+            "id": "prompts-card-construct_plot_twist-367",
+            "title": "反转逻辑链构建 (Plot Twist Logic)",
+            "score": 0.42146
+          },
+          {
             "id": "prompts-card-design-short_drama_twists",
             "title": "短剧高能反转节点设计",
-            "score": 0.146647
+            "score": 0.417976
+          },
+          {
+            "id": "prompts-card-use_setting_to_drive_plot-347",
+            "title": "利用环境推动剧情 (Setting as Character)",
+            "score": 0.38555
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 3,
+          "expected_total": 2,
+          "hits": 2,
+          "expected_hits": 2,
+          "recall_at_k": 0.6666666667,
+          "expected_recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.765360637,
+          "hit_ids": [
+            "prompts-card-construct_plot_twist-367",
+            "prompts-card-design-short_drama_twists"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-construct_plot_twist-367",
+            "prompts-card-design-short_drama_twists"
+          ],
+          "missing_expected_ids": [],
+          "missing_relevant_ids": [
+            "prompts-card-outline_identity_switch-23"
+          ]
+        }
       },
       "overlap": {
         "ids": [
-          "prompts-card-design-short_drama_twists"
+          "prompts-card-construct_plot_twist-367",
+          "prompts-card-design-short_drama_twists",
+          "prompts-card-use_setting_to_drive_plot-347"
         ],
-        "count": 1,
+        "count": 3,
         "ratio": 1.0
       },
-      "native_sqlite_vec": false,
+      "native_sqlite_vec": true,
       "native_search_error": "",
       "notes": "女频反转/狗血桥段设计，检查 genre/topic 与语义共同作用。"
     },
     {
       "query": "规则怪谈 副本设计",
+      "gold": {
+        "expected_ids": [
+          "prompts-card-generate_rules_dungeon-8",
+          "prompts-card-generate-weird_rules"
+        ],
+        "relevant_ids": [
+          "prompts-card-generate_rules_dungeon-8",
+          "prompts-card-generate-weird_rules",
+          "prompts-card-design_safe_house_rules-250",
+          "prompts-card-write_scp_log-144",
+          "prompts-card-write_narrative_via_notes-261"
+        ]
+      },
       "filters": {
         "stage": "setting",
         "topics": [
@@ -613,18 +1979,51 @@
         "asset_type": "prompt_card",
         "card_intent": "generator",
         "quality_floor": "B",
+        "candidate_k": 20,
         "top_k": 5
       },
       "layer1": {
         "ids": [
+          "prompts-card-design-time_loop",
+          "prompts-card-build_folk_horror_scene-18",
+          "prompts-card-design_puzzle_room-387",
           "prompts-card-generate_rules_dungeon-8",
-          "prompts-card-generate-weird_rules"
+          "prompts-card-generate-weird_rules",
+          "prompts-card-design_folk_horror_ritual-215",
+          "prompts-card-design_horror_clue-237",
+          "prompts-card-design_spy_code-132",
+          "prompts-card-create-steampunk_detective_agency-202",
+          "prompts-card-create_red_herring-206",
+          "prompts-card-design_locked_room_trick-224",
+          "prompts-card-design-murder_mystery_script-375"
         ],
         "titles": [
+          "时间循环机制设计",
+          "中式民俗恐怖场景构建",
+          "设计密室逃脱/解谜场景",
           "生成规则怪谈/副本",
-          "怪谈守则生成器 (红蓝字)"
+          "怪谈守则生成器 (红蓝字)",
+          "民俗恐怖仪式与禁忌",
+          "恐怖无限流：生路提示设计",
+          "谍战/卧底接头暗号设计",
+          "维多利亚/蒸汽朋克侦探事务所",
+          "红鲱鱼 (Red Herring) 误导线索",
+          "密室杀人：机械诡计设计",
+          "剧本杀/谋杀之谜案件结构设计"
         ],
         "hits": [
+          {
+            "id": "prompts-card-design-time_loop",
+            "title": "时间循环机制设计"
+          },
+          {
+            "id": "prompts-card-build_folk_horror_scene-18",
+            "title": "中式民俗恐怖场景构建"
+          },
+          {
+            "id": "prompts-card-design_puzzle_room-387",
+            "title": "设计密室逃脱/解谜场景"
+          },
           {
             "id": "prompts-card-generate_rules_dungeon-8",
             "title": "生成规则怪谈/副本"
@@ -632,41 +2031,243 @@
           {
             "id": "prompts-card-generate-weird_rules",
             "title": "怪谈守则生成器 (红蓝字)"
+          },
+          {
+            "id": "prompts-card-design_folk_horror_ritual-215",
+            "title": "民俗恐怖仪式与禁忌"
+          },
+          {
+            "id": "prompts-card-design_horror_clue-237",
+            "title": "恐怖无限流：生路提示设计"
+          },
+          {
+            "id": "prompts-card-design_spy_code-132",
+            "title": "谍战/卧底接头暗号设计"
+          },
+          {
+            "id": "prompts-card-create-steampunk_detective_agency-202",
+            "title": "维多利亚/蒸汽朋克侦探事务所"
+          },
+          {
+            "id": "prompts-card-create_red_herring-206",
+            "title": "红鲱鱼 (Red Herring) 误导线索"
+          },
+          {
+            "id": "prompts-card-design_locked_room_trick-224",
+            "title": "密室杀人：机械诡计设计"
+          },
+          {
+            "id": "prompts-card-design-murder_mystery_script-375",
+            "title": "剧本杀/谋杀之谜案件结构设计"
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 5,
+          "expected_total": 2,
+          "hits": 2,
+          "expected_hits": 2,
+          "recall_at_k": 0.4,
+          "expected_recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 0.25,
+          "ndcg_at_k": 0.2772734274,
+          "hit_ids": [
+            "prompts-card-generate_rules_dungeon-8",
+            "prompts-card-generate-weird_rules"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-generate_rules_dungeon-8",
+            "prompts-card-generate-weird_rules"
+          ],
+          "missing_expected_ids": [],
+          "missing_relevant_ids": [
+            "prompts-card-design_safe_house_rules-250",
+            "prompts-card-write_narrative_via_notes-261",
+            "prompts-card-write_scp_log-144"
+          ]
+        },
+        "diagnostics": {
+          "status": "gold_miss",
+          "candidate_k": 20,
+          "top_k": 5,
+          "candidate_count_before_top_k": 12,
+          "returned_count": 12,
+          "filter_steps": [
+            {
+              "filter": "all_indexed_cards",
+              "value": "*",
+              "remaining": 473,
+              "removed": 0
+            },
+            {
+              "filter": "stage",
+              "value": "setting",
+              "remaining": 167,
+              "removed": 306
+            },
+            {
+              "filter": "asset_type",
+              "value": "prompt_card",
+              "remaining": 164,
+              "removed": 3
+            },
+            {
+              "filter": "card_intent",
+              "value": "generator",
+              "remaining": 101,
+              "removed": 63
+            },
+            {
+              "filter": "quality_floor",
+              "value": "B",
+              "remaining": 101,
+              "removed": 0
+            },
+            {
+              "filter": "topic",
+              "value": [
+                "怪谈",
+                "悬疑",
+                "恐怖"
+              ],
+              "remaining": 12,
+              "removed": 89
+            }
+          ],
+          "gold_blockers": [
+            {
+              "id": "prompts-card-design_safe_house_rules-250",
+              "title": "规则怪谈：安全屋规则设计",
+              "blocked_by": [
+                {
+                  "filter": "topic",
+                  "wanted": [
+                    "怪谈",
+                    "悬疑",
+                    "恐怖"
+                  ],
+                  "actual": [
+                    "惊悚"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prompts-card-write_narrative_via_notes-261",
+              "title": "通过碎片化纸条/日记构建隐晦的规则怪谈剧情",
+              "blocked_by": [
+                {
+                  "filter": "stage",
+                  "wanted": "setting",
+                  "actual": "drafting"
+                },
+                {
+                  "filter": "card_intent",
+                  "wanted": "generator",
+                  "actual": "prose_generation"
+                }
+              ]
+            },
+            {
+              "id": "prompts-card-write_scp_log-144",
+              "title": "规则怪谈：错误与异常档案 (SCP风)",
+              "blocked_by": [
+                {
+                  "filter": "card_intent",
+                  "wanted": "generator",
+                  "actual": "prose_generation"
+                }
+              ]
+            }
+          ]
+        }
       },
       "layer2": {
         "ids": [
+          "prompts-card-design_folk_horror_ritual-215",
+          "prompts-card-generate_rules_dungeon-8",
           "prompts-card-generate-weird_rules",
-          "prompts-card-generate_rules_dungeon-8"
+          "prompts-card-design_horror_clue-237",
+          "prompts-card-create_red_herring-206"
         ],
         "titles": [
+          "民俗恐怖仪式与禁忌",
+          "生成规则怪谈/副本",
           "怪谈守则生成器 (红蓝字)",
-          "生成规则怪谈/副本"
+          "恐怖无限流：生路提示设计",
+          "红鲱鱼 (Red Herring) 误导线索"
         ],
         "scores": [
-          0.414214,
-          0.407803
+          0.458766,
+          0.443139,
+          0.443891,
+          0.425994,
+          0.435453
         ],
         "hits": [
           {
-            "id": "prompts-card-generate-weird_rules",
-            "title": "怪谈守则生成器 (红蓝字)",
-            "score": 0.414214
+            "id": "prompts-card-design_folk_horror_ritual-215",
+            "title": "民俗恐怖仪式与禁忌",
+            "score": 0.458766
           },
           {
             "id": "prompts-card-generate_rules_dungeon-8",
             "title": "生成规则怪谈/副本",
-            "score": 0.407803
+            "score": 0.443139
+          },
+          {
+            "id": "prompts-card-generate-weird_rules",
+            "title": "怪谈守则生成器 (红蓝字)",
+            "score": 0.443891
+          },
+          {
+            "id": "prompts-card-design_horror_clue-237",
+            "title": "恐怖无限流：生路提示设计",
+            "score": 0.425994
+          },
+          {
+            "id": "prompts-card-create_red_herring-206",
+            "title": "红鲱鱼 (Red Herring) 误导线索",
+            "score": 0.435453
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 5,
+          "expected_total": 2,
+          "hits": 2,
+          "expected_hits": 2,
+          "recall_at_k": 0.4,
+          "expected_recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 0.5,
+          "ndcg_at_k": 0.3835663674,
+          "hit_ids": [
+            "prompts-card-generate_rules_dungeon-8",
+            "prompts-card-generate-weird_rules"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-generate_rules_dungeon-8",
+            "prompts-card-generate-weird_rules"
+          ],
+          "missing_expected_ids": [],
+          "missing_relevant_ids": [
+            "prompts-card-design_safe_house_rules-250",
+            "prompts-card-write_narrative_via_notes-261",
+            "prompts-card-write_scp_log-144"
+          ]
+        }
       },
       "overlap": {
         "ids": [
+          "prompts-card-design_folk_horror_ritual-215",
+          "prompts-card-generate_rules_dungeon-8",
           "prompts-card-generate-weird_rules",
-          "prompts-card-generate_rules_dungeon-8"
+          "prompts-card-design_horror_clue-237",
+          "prompts-card-create_red_herring-206"
         ],
-        "count": 2,
+        "count": 5,
         "ratio": 1.0
       },
       "native_sqlite_vec": true,
@@ -675,6 +2276,19 @@
     },
     {
       "query": "多子多福 奖励机制",
+      "gold": {
+        "expected_ids": [
+          "prompts-card-design-many_children_system-401",
+          "prompts-card-design_system_shop-83"
+        ],
+        "relevant_ids": [
+          "prompts-card-design-many_children_system-401",
+          "prompts-card-design_system_shop-83",
+          "prompts-card-generate_achievements-210",
+          "prompts-card-generate_exchange_list-22",
+          "prompts-card-generate_dungeon_rewards-27"
+        ]
+      },
       "filters": {
         "stage": "setting",
         "topics": [
@@ -684,22 +2298,53 @@
         "asset_type": "prompt_card",
         "card_intent": "structural_design",
         "quality_floor": "B",
+        "candidate_k": 20,
         "top_k": 5
       },
       "layer1": {
         "ids": [
           "prompts-card-design_power_system-6",
           "prompts-card-design_academy_curriculum-73",
-          "prompts-card-design_cyber_cultivation-105",
+          "prompts-card-design-time_loop",
+          "prompts-card-design_faction_war_dungeon-221",
           "prompts-card-design-pet_evolution-74",
-          "prompts-card-design_magitech_product-230"
+          "prompts-card-design_cyber_cultivation-105",
+          "prompts-card-design_horror_clue-237",
+          "prompts-card-design_cheat_code-tomato_custom",
+          "prompts-card-design_organization-59",
+          "prompts-card-design_magitech_product-230",
+          "prompts-card-tournament_structure-26",
+          "prompts-card-design_bloodline_evolution-405",
+          "prompts-card-design-multiverse_travel",
+          "prompts-card-design_battle_royale-110",
+          "prompts-card-design_infinite_dungeon-21",
+          "prompts-card-design_werewolf_game-253",
+          "prompts-card-design-many_children_system-401",
+          "prompts-card-simulate_fantasy_economy-102",
+          "prompts-card-design_branching_skill_tree-120",
+          "prompts-card-write_seal_ritual-178"
         ],
         "titles": [
           "力量体系设计",
           "设计学院流课程表与考核体系",
-          "赛博修仙体系融合",
+          "时间循环机制设计",
+          "无限流：阵营对抗副本设计",
           "宠物/御兽进化路线设计",
-          "设计结合灵气与科技的现代修真产品"
+          "赛博修仙体系融合",
+          "恐怖无限流：生路提示设计",
+          "金手指设计 (番茄定制版)",
+          "势力/组织架构设计",
+          "设计结合灵气与科技的现代修真产品",
+          "大比黑马逆袭流",
+          "设定：血脉进阶与返祖 (Bloodline Evolution)",
+          "诸天万界穿越机制设定",
+          "大逃杀/吃鸡模式逻辑设计",
+          "原创副本世界观设计",
+          "无限流狼人杀副本逻辑设计",
+          "设计多子多福系统",
+          "异世界经济与通货膨胀模拟",
+          "设计分支技能树",
+          "封印/解封仪式咒语设计"
         ],
         "hits": [
           {
@@ -711,76 +2356,287 @@
             "title": "设计学院流课程表与考核体系"
           },
           {
-            "id": "prompts-card-design_cyber_cultivation-105",
-            "title": "赛博修仙体系融合"
+            "id": "prompts-card-design-time_loop",
+            "title": "时间循环机制设计"
+          },
+          {
+            "id": "prompts-card-design_faction_war_dungeon-221",
+            "title": "无限流：阵营对抗副本设计"
           },
           {
             "id": "prompts-card-design-pet_evolution-74",
             "title": "宠物/御兽进化路线设计"
           },
           {
+            "id": "prompts-card-design_cyber_cultivation-105",
+            "title": "赛博修仙体系融合"
+          },
+          {
+            "id": "prompts-card-design_horror_clue-237",
+            "title": "恐怖无限流：生路提示设计"
+          },
+          {
+            "id": "prompts-card-design_cheat_code-tomato_custom",
+            "title": "金手指设计 (番茄定制版)"
+          },
+          {
+            "id": "prompts-card-design_organization-59",
+            "title": "势力/组织架构设计"
+          },
+          {
             "id": "prompts-card-design_magitech_product-230",
             "title": "设计结合灵气与科技的现代修真产品"
+          },
+          {
+            "id": "prompts-card-tournament_structure-26",
+            "title": "大比黑马逆袭流"
+          },
+          {
+            "id": "prompts-card-design_bloodline_evolution-405",
+            "title": "设定：血脉进阶与返祖 (Bloodline Evolution)"
+          },
+          {
+            "id": "prompts-card-design-multiverse_travel",
+            "title": "诸天万界穿越机制设定"
+          },
+          {
+            "id": "prompts-card-design_battle_royale-110",
+            "title": "大逃杀/吃鸡模式逻辑设计"
+          },
+          {
+            "id": "prompts-card-design_infinite_dungeon-21",
+            "title": "原创副本世界观设计"
+          },
+          {
+            "id": "prompts-card-design_werewolf_game-253",
+            "title": "无限流狼人杀副本逻辑设计"
+          },
+          {
+            "id": "prompts-card-design-many_children_system-401",
+            "title": "设计多子多福系统"
+          },
+          {
+            "id": "prompts-card-simulate_fantasy_economy-102",
+            "title": "异世界经济与通货膨胀模拟"
+          },
+          {
+            "id": "prompts-card-design_branching_skill_tree-120",
+            "title": "设计分支技能树"
+          },
+          {
+            "id": "prompts-card-write_seal_ritual-178",
+            "title": "封印/解封仪式咒语设计"
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 5,
+          "expected_total": 2,
+          "hits": 0,
+          "expected_hits": 0,
+          "recall_at_k": 0.0,
+          "expected_recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_k": 0.0,
+          "hit_ids": [],
+          "expected_hit_ids": [],
+          "missing_expected_ids": [
+            "prompts-card-design-many_children_system-401",
+            "prompts-card-design_system_shop-83"
+          ],
+          "missing_relevant_ids": [
+            "prompts-card-design-many_children_system-401",
+            "prompts-card-design_system_shop-83",
+            "prompts-card-generate_achievements-210",
+            "prompts-card-generate_dungeon_rewards-27",
+            "prompts-card-generate_exchange_list-22"
+          ]
+        },
+        "diagnostics": {
+          "status": "gold_miss",
+          "candidate_k": 20,
+          "top_k": 5,
+          "candidate_count_before_top_k": 24,
+          "returned_count": 20,
+          "filter_steps": [
+            {
+              "filter": "all_indexed_cards",
+              "value": "*",
+              "remaining": 473,
+              "removed": 0
+            },
+            {
+              "filter": "stage",
+              "value": "setting",
+              "remaining": 167,
+              "removed": 306
+            },
+            {
+              "filter": "asset_type",
+              "value": "prompt_card",
+              "remaining": 164,
+              "removed": 3
+            },
+            {
+              "filter": "card_intent",
+              "value": "structural_design",
+              "remaining": 68,
+              "removed": 96
+            },
+            {
+              "filter": "quality_floor",
+              "value": "B",
+              "remaining": 68,
+              "removed": 0
+            },
+            {
+              "filter": "topic",
+              "value": [
+                "系统",
+                "玄幻"
+              ],
+              "remaining": 24,
+              "removed": 44
+            }
+          ],
+          "gold_blockers": [
+            {
+              "id": "prompts-card-design_system_shop-83",
+              "title": "系统商城定价策略",
+              "blocked_by": [
+                {
+                  "filter": "candidate_k",
+                  "wanted": 20,
+                  "actual": "candidate_after_cutoff"
+                }
+              ]
+            },
+            {
+              "id": "prompts-card-generate_achievements-210",
+              "title": "成就系统与称号设计",
+              "blocked_by": [
+                {
+                  "filter": "card_intent",
+                  "wanted": "structural_design",
+                  "actual": "generator"
+                }
+              ]
+            },
+            {
+              "id": "prompts-card-generate_dungeon_rewards-27",
+              "title": "生成高评级地下城奖励结算画面",
+              "blocked_by": [
+                {
+                  "filter": "stage",
+                  "wanted": "setting",
+                  "actual": "auxiliary"
+                },
+                {
+                  "filter": "card_intent",
+                  "wanted": "structural_design",
+                  "actual": "generator"
+                }
+              ]
+            },
+            {
+              "id": "prompts-card-generate_exchange_list-22",
+              "title": "主神空间强化兑换列表",
+              "blocked_by": [
+                {
+                  "filter": "card_intent",
+                  "wanted": "structural_design",
+                  "actual": "generator"
+                }
+              ]
+            }
+          ]
+        }
       },
       "layer2": {
         "ids": [
-          "prompts-card-design_magitech_product-230",
-          "prompts-card-design_cyber_cultivation-105",
-          "prompts-card-design-pet_evolution-74",
-          "prompts-card-design_academy_curriculum-73",
-          "prompts-card-design_power_system-6"
+          "prompts-card-design_bloodline_evolution-405",
+          "prompts-card-design-many_children_system-401",
+          "prompts-card-design_branching_skill_tree-120",
+          "prompts-card-simulate_fantasy_economy-102",
+          "prompts-card-design_cyber_cultivation-105"
         ],
         "titles": [
-          "设计结合灵气与科技的现代修真产品",
-          "赛博修仙体系融合",
-          "宠物/御兽进化路线设计",
-          "设计学院流课程表与考核体系",
-          "力量体系设计"
+          "设定：血脉进阶与返祖 (Bloodline Evolution)",
+          "设计多子多福系统",
+          "设计分支技能树",
+          "异世界经济与通货膨胀模拟",
+          "赛博修仙体系融合"
         ],
         "scores": [
-          0.471418,
-          0.458616,
-          0.424239,
-          0.423867,
-          0.414214
+          0.42159,
+          0.416044,
+          0.450282,
+          0.433598,
+          0.433208
         ],
         "hits": [
           {
-            "id": "prompts-card-design_magitech_product-230",
-            "title": "设计结合灵气与科技的现代修真产品",
-            "score": 0.471418
+            "id": "prompts-card-design_bloodline_evolution-405",
+            "title": "设定：血脉进阶与返祖 (Bloodline Evolution)",
+            "score": 0.42159
+          },
+          {
+            "id": "prompts-card-design-many_children_system-401",
+            "title": "设计多子多福系统",
+            "score": 0.416044
+          },
+          {
+            "id": "prompts-card-design_branching_skill_tree-120",
+            "title": "设计分支技能树",
+            "score": 0.450282
+          },
+          {
+            "id": "prompts-card-simulate_fantasy_economy-102",
+            "title": "异世界经济与通货膨胀模拟",
+            "score": 0.433598
           },
           {
             "id": "prompts-card-design_cyber_cultivation-105",
             "title": "赛博修仙体系融合",
-            "score": 0.458616
-          },
-          {
-            "id": "prompts-card-design-pet_evolution-74",
-            "title": "宠物/御兽进化路线设计",
-            "score": 0.424239
-          },
-          {
-            "id": "prompts-card-design_academy_curriculum-73",
-            "title": "设计学院流课程表与考核体系",
-            "score": 0.423867
-          },
-          {
-            "id": "prompts-card-design_power_system-6",
-            "title": "力量体系设计",
-            "score": 0.414214
+            "score": 0.433208
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 5,
+          "expected_total": 2,
+          "hits": 1,
+          "expected_hits": 1,
+          "recall_at_k": 0.2,
+          "expected_recall_at_k": 0.5,
+          "precision_at_k": 0.2,
+          "mrr": 0.5,
+          "ndcg_at_k": 0.2139862647,
+          "hit_ids": [
+            "prompts-card-design-many_children_system-401"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-design-many_children_system-401"
+          ],
+          "missing_expected_ids": [
+            "prompts-card-design_system_shop-83"
+          ],
+          "missing_relevant_ids": [
+            "prompts-card-design_system_shop-83",
+            "prompts-card-generate_achievements-210",
+            "prompts-card-generate_dungeon_rewards-27",
+            "prompts-card-generate_exchange_list-22"
+          ]
+        }
       },
       "overlap": {
         "ids": [
-          "prompts-card-design_magitech_product-230",
-          "prompts-card-design_cyber_cultivation-105",
-          "prompts-card-design-pet_evolution-74",
-          "prompts-card-design_academy_curriculum-73",
-          "prompts-card-design_power_system-6"
+          "prompts-card-design_bloodline_evolution-405",
+          "prompts-card-design-many_children_system-401",
+          "prompts-card-design_branching_skill_tree-120",
+          "prompts-card-simulate_fantasy_economy-102",
+          "prompts-card-design_cyber_cultivation-105"
         ],
         "count": 5,
         "ratio": 1.0
@@ -791,6 +2647,17 @@
     },
     {
       "query": "终稿润色 文风统一",
+      "gold": {
+        "expected_ids": [
+          "prompts-card-polish_text_style-363"
+        ],
+        "relevant_ids": [
+          "prompts-card-polish_text_style-363",
+          "prompts-card-lock-style_and_restrictions",
+          "prompts-card-mimic_character_voice-451",
+          "prompts-card-differentiate-379"
+        ]
+      },
       "filters": {
         "stage": "refinement",
         "topics": [
@@ -799,6 +2666,7 @@
         "asset_type": "prompt_card",
         "card_intent": "editing_transformation",
         "quality_floor": "B",
+        "candidate_k": 20,
         "top_k": 5
       },
       "layer1": {
@@ -813,7 +2681,145 @@
             "id": "prompts-card-polish_text_style-363",
             "title": "流程：风格化润色 (Style Polishing)"
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 4,
+          "expected_total": 1,
+          "hits": 1,
+          "expected_hits": 1,
+          "recall_at_k": 0.25,
+          "expected_recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.39038005,
+          "hit_ids": [
+            "prompts-card-polish_text_style-363"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-polish_text_style-363"
+          ],
+          "missing_expected_ids": [],
+          "missing_relevant_ids": [
+            "prompts-card-differentiate-379",
+            "prompts-card-lock-style_and_restrictions",
+            "prompts-card-mimic_character_voice-451"
+          ]
+        },
+        "diagnostics": {
+          "status": "narrow",
+          "candidate_k": 20,
+          "top_k": 5,
+          "candidate_count_before_top_k": 1,
+          "returned_count": 1,
+          "filter_steps": [
+            {
+              "filter": "all_indexed_cards",
+              "value": "*",
+              "remaining": 473,
+              "removed": 0
+            },
+            {
+              "filter": "stage",
+              "value": "refinement",
+              "remaining": 21,
+              "removed": 452
+            },
+            {
+              "filter": "asset_type",
+              "value": "prompt_card",
+              "remaining": 20,
+              "removed": 1
+            },
+            {
+              "filter": "card_intent",
+              "value": "editing_transformation",
+              "remaining": 11,
+              "removed": 9
+            },
+            {
+              "filter": "quality_floor",
+              "value": "B",
+              "remaining": 11,
+              "removed": 0
+            },
+            {
+              "filter": "topic",
+              "value": [
+                "文风"
+              ],
+              "remaining": 1,
+              "removed": 10
+            }
+          ],
+          "gold_blockers": [
+            {
+              "id": "prompts-card-differentiate-379",
+              "title": "润色：群像文人物区分",
+              "blocked_by": [
+                {
+                  "filter": "card_intent",
+                  "wanted": "editing_transformation",
+                  "actual": "structural_design"
+                },
+                {
+                  "filter": "topic",
+                  "wanted": [
+                    "文风"
+                  ],
+                  "actual": [
+                    "通用"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prompts-card-lock-style_and_restrictions",
+              "title": "文风与禁区锁",
+              "blocked_by": [
+                {
+                  "filter": "stage",
+                  "wanted": "refinement",
+                  "actual": "auxiliary"
+                },
+                {
+                  "filter": "card_intent",
+                  "wanted": "editing_transformation",
+                  "actual": "persona_setup"
+                },
+                {
+                  "filter": "topic",
+                  "wanted": [
+                    "文风"
+                  ],
+                  "actual": [
+                    "通用"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prompts-card-mimic_character_voice-451",
+              "title": "润色：角色语气模仿 (Character Voice Mimicry)",
+              "blocked_by": [
+                {
+                  "filter": "card_intent",
+                  "wanted": "editing_transformation",
+                  "actual": "simulation"
+                },
+                {
+                  "filter": "topic",
+                  "wanted": [
+                    "文风"
+                  ],
+                  "actual": [
+                    "同人"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
       },
       "layer2": {
         "ids": [
@@ -823,15 +2829,39 @@
           "流程：风格化润色 (Style Polishing)"
         ],
         "scores": [
-          -0.072932
+          -0.029696
         ],
         "hits": [
           {
             "id": "prompts-card-polish_text_style-363",
             "title": "流程：风格化润色 (Style Polishing)",
-            "score": -0.072932
+            "score": -0.029696
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 4,
+          "expected_total": 1,
+          "hits": 1,
+          "expected_hits": 1,
+          "recall_at_k": 0.25,
+          "expected_recall_at_k": 1.0,
+          "precision_at_k": 0.2,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.39038005,
+          "hit_ids": [
+            "prompts-card-polish_text_style-363"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-polish_text_style-363"
+          ],
+          "missing_expected_ids": [],
+          "missing_relevant_ids": [
+            "prompts-card-differentiate-379",
+            "prompts-card-lock-style_and_restrictions",
+            "prompts-card-mimic_character_voice-451"
+          ]
+        }
       },
       "overlap": {
         "ids": [
@@ -846,6 +2876,18 @@
     },
     {
       "query": "市场定位 读者画像",
+      "gold": {
+        "expected_ids": [
+          "base-methodology-creative-platform-analysis",
+          "base-methodology-market-2026-webnovel-trends"
+        ],
+        "relevant_ids": [
+          "base-methodology-creative-platform-analysis",
+          "base-methodology-market-2026-webnovel-trends",
+          "base-methodology-market-reading-power-taxonomy",
+          "base-methodology-creative-submission-guide"
+        ]
+      },
       "filters": {
         "stage": "business",
         "topics": [
@@ -855,6 +2897,7 @@
         "asset_type": "methodology",
         "card_intent": null,
         "quality_floor": "B",
+        "candidate_k": 20,
         "top_k": 5
       },
       "layer1": {
@@ -887,56 +2930,167 @@
             "id": "base-methodology-platform-genre-adaptation-matrix",
             "title": "题材跨平台适配矩阵"
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 4,
+          "expected_total": 2,
+          "hits": 3,
+          "expected_hits": 2,
+          "recall_at_k": 0.75,
+          "expected_recall_at_k": 1.0,
+          "precision_at_k": 0.6,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.8318724637,
+          "hit_ids": [
+            "base-methodology-creative-platform-analysis",
+            "base-methodology-creative-submission-guide",
+            "base-methodology-market-2026-webnovel-trends"
+          ],
+          "expected_hit_ids": [
+            "base-methodology-creative-platform-analysis",
+            "base-methodology-market-2026-webnovel-trends"
+          ],
+          "missing_expected_ids": [],
+          "missing_relevant_ids": [
+            "base-methodology-market-reading-power-taxonomy"
+          ]
+        },
+        "diagnostics": {
+          "status": "gold_miss",
+          "candidate_k": 20,
+          "top_k": 5,
+          "candidate_count_before_top_k": 4,
+          "returned_count": 4,
+          "filter_steps": [
+            {
+              "filter": "all_indexed_cards",
+              "value": "*",
+              "remaining": 473,
+              "removed": 0
+            },
+            {
+              "filter": "stage",
+              "value": "business",
+              "remaining": 12,
+              "removed": 461
+            },
+            {
+              "filter": "asset_type",
+              "value": "methodology",
+              "remaining": 4,
+              "removed": 8
+            },
+            {
+              "filter": "card_intent",
+              "value": "",
+              "remaining": 4,
+              "removed": 0
+            },
+            {
+              "filter": "quality_floor",
+              "value": "B",
+              "remaining": 4,
+              "removed": 0
+            },
+            {
+              "filter": "topic",
+              "value": [
+                "business",
+                "通用"
+              ],
+              "remaining": 4,
+              "removed": 0
+            }
+          ],
+          "gold_blockers": [
+            {
+              "id": "base-methodology-market-reading-power-taxonomy",
+              "title": "读者吸引力分类法",
+              "blocked_by": [
+                {
+                  "filter": "stage",
+                  "wanted": "business",
+                  "actual": "analysis"
+                }
+              ]
+            }
+          ]
+        }
       },
       "layer2": {
         "ids": [
-          "base-methodology-creative-submission-guide",
-          "base-methodology-creative-platform-analysis",
+          "base-methodology-market-2026-webnovel-trends",
           "base-methodology-platform-genre-adaptation-matrix",
-          "base-methodology-market-2026-webnovel-trends"
+          "base-methodology-creative-platform-analysis",
+          "base-methodology-creative-submission-guide"
         ],
         "titles": [
-          "网文平台投稿规范指南",
-          "平台分析指南",
+          "2026 网文市场趋势扫描",
           "题材跨平台适配矩阵",
-          "2026 网文市场趋势扫描"
+          "平台分析指南",
+          "网文平台投稿规范指南"
         ],
         "scores": [
-          0.414214,
-          0.414214,
-          0.414214,
-          0.396524
+          0.435288,
+          0.42319,
+          0.408004,
+          0.409024
         ],
         "hits": [
           {
-            "id": "base-methodology-creative-submission-guide",
-            "title": "网文平台投稿规范指南",
-            "score": 0.414214
-          },
-          {
-            "id": "base-methodology-creative-platform-analysis",
-            "title": "平台分析指南",
-            "score": 0.414214
+            "id": "base-methodology-market-2026-webnovel-trends",
+            "title": "2026 网文市场趋势扫描",
+            "score": 0.435288
           },
           {
             "id": "base-methodology-platform-genre-adaptation-matrix",
             "title": "题材跨平台适配矩阵",
-            "score": 0.414214
+            "score": 0.42319
           },
           {
-            "id": "base-methodology-market-2026-webnovel-trends",
-            "title": "2026 网文市场趋势扫描",
-            "score": 0.396524
+            "id": "base-methodology-creative-platform-analysis",
+            "title": "平台分析指南",
+            "score": 0.408004
+          },
+          {
+            "id": "base-methodology-creative-submission-guide",
+            "title": "网文平台投稿规范指南",
+            "score": 0.409024
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 4,
+          "expected_total": 2,
+          "hits": 3,
+          "expected_hits": 2,
+          "recall_at_k": 0.75,
+          "expected_recall_at_k": 1.0,
+          "precision_at_k": 0.6,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.7536976113,
+          "hit_ids": [
+            "base-methodology-market-2026-webnovel-trends",
+            "base-methodology-creative-platform-analysis",
+            "base-methodology-creative-submission-guide"
+          ],
+          "expected_hit_ids": [
+            "base-methodology-market-2026-webnovel-trends",
+            "base-methodology-creative-platform-analysis"
+          ],
+          "missing_expected_ids": [],
+          "missing_relevant_ids": [
+            "base-methodology-market-reading-power-taxonomy"
+          ]
+        }
       },
       "overlap": {
         "ids": [
-          "base-methodology-creative-submission-guide",
-          "base-methodology-creative-platform-analysis",
+          "base-methodology-market-2026-webnovel-trends",
           "base-methodology-platform-genre-adaptation-matrix",
-          "base-methodology-market-2026-webnovel-trends"
+          "base-methodology-creative-platform-analysis",
+          "base-methodology-creative-submission-guide"
         ],
         "count": 4,
         "ratio": 1.0
@@ -947,6 +3101,18 @@
     },
     {
       "query": "第一章 黄金三章 爽点钩子",
+      "gold": {
+        "expected_ids": [
+          "prompts-card-outline_golden_three_chapters-41",
+          "prompts-card-outline_golden_three-12"
+        ],
+        "relevant_ids": [
+          "prompts-card-outline_golden_three_chapters-41",
+          "prompts-card-outline_golden_three-12",
+          "base-methodology-creative-golden-three",
+          "base-methodology-market-reading-power-taxonomy"
+        ]
+      },
       "filters": {
         "stage": "framework",
         "topics": [
@@ -955,53 +3121,258 @@
         "asset_type": "prompt_card",
         "card_intent": "outline_planning",
         "quality_floor": "B",
+        "candidate_k": 20,
         "top_k": 5
       },
       "layer1": {
         "ids": [
-          "prompts-card-outline_golden_three_chapters-41"
+          "prompts-card-outline_golden_three-12",
+          "prompts-card-outline_golden_three_chapters-41",
+          "prompts-card-check-logic_plothole",
+          "prompts-card-polish-final_checklist",
+          "prompts-card-check_foreshadowing_payoff-365"
         ],
         "titles": [
-          "黄金三章细纲生成 (番茄版)"
+          "黄金三章细纲",
+          "黄金三章细纲生成 (番茄版)",
+          "检查逻辑漏洞",
+          "完稿最终检查清单",
+          "流程：伏笔回收检查 (Foreshadowing Payoff)"
         ],
         "hits": [
           {
+            "id": "prompts-card-outline_golden_three-12",
+            "title": "黄金三章细纲"
+          },
+          {
             "id": "prompts-card-outline_golden_three_chapters-41",
             "title": "黄金三章细纲生成 (番茄版)"
+          },
+          {
+            "id": "prompts-card-check-logic_plothole",
+            "title": "检查逻辑漏洞"
+          },
+          {
+            "id": "prompts-card-polish-final_checklist",
+            "title": "完稿最终检查清单"
+          },
+          {
+            "id": "prompts-card-check_foreshadowing_payoff-365",
+            "title": "流程：伏笔回收检查 (Foreshadowing Payoff)"
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 4,
+          "expected_total": 2,
+          "hits": 2,
+          "expected_hits": 2,
+          "recall_at_k": 0.5,
+          "expected_recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.6366824387,
+          "hit_ids": [
+            "prompts-card-outline_golden_three-12",
+            "prompts-card-outline_golden_three_chapters-41"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-outline_golden_three-12",
+            "prompts-card-outline_golden_three_chapters-41"
+          ],
+          "missing_expected_ids": [],
+          "missing_relevant_ids": [
+            "base-methodology-creative-golden-three",
+            "base-methodology-market-reading-power-taxonomy"
+          ]
+        },
+        "diagnostics": {
+          "status": "gold_miss",
+          "candidate_k": 20,
+          "top_k": 5,
+          "candidate_count_before_top_k": 5,
+          "returned_count": 5,
+          "filter_steps": [
+            {
+              "filter": "all_indexed_cards",
+              "value": "*",
+              "remaining": 473,
+              "removed": 0
+            },
+            {
+              "filter": "stage",
+              "value": "framework",
+              "remaining": 55,
+              "removed": 418
+            },
+            {
+              "filter": "asset_type",
+              "value": "prompt_card",
+              "remaining": 52,
+              "removed": 3
+            },
+            {
+              "filter": "card_intent",
+              "value": "outline_planning",
+              "remaining": 13,
+              "removed": 39
+            },
+            {
+              "filter": "quality_floor",
+              "value": "B",
+              "remaining": 13,
+              "removed": 0
+            },
+            {
+              "filter": "topic",
+              "value": [
+                "通用"
+              ],
+              "remaining": 5,
+              "removed": 8
+            }
+          ],
+          "gold_blockers": [
+            {
+              "id": "base-methodology-creative-golden-three",
+              "title": "黄金三章架构设计指南",
+              "blocked_by": [
+                {
+                  "filter": "asset_type",
+                  "wanted": "prompt_card",
+                  "actual": "methodology"
+                },
+                {
+                  "filter": "card_intent",
+                  "wanted": "outline_planning",
+                  "actual": ""
+                }
+              ]
+            },
+            {
+              "id": "base-methodology-market-reading-power-taxonomy",
+              "title": "读者吸引力分类法",
+              "blocked_by": [
+                {
+                  "filter": "asset_type",
+                  "wanted": "prompt_card",
+                  "actual": "methodology"
+                },
+                {
+                  "filter": "card_intent",
+                  "wanted": "outline_planning",
+                  "actual": ""
+                }
+              ]
+            }
+          ]
+        }
       },
       "layer2": {
         "ids": [
-          "prompts-card-outline_golden_three_chapters-41"
+          "prompts-card-outline_golden_three_chapters-41",
+          "prompts-card-outline_golden_three-12",
+          "prompts-card-check_foreshadowing_payoff-365",
+          "prompts-card-check-logic_plothole",
+          "prompts-card-polish-final_checklist"
         ],
         "titles": [
-          "黄金三章细纲生成 (番茄版)"
+          "黄金三章细纲生成 (番茄版)",
+          "黄金三章细纲",
+          "流程：伏笔回收检查 (Foreshadowing Payoff)",
+          "检查逻辑漏洞",
+          "完稿最终检查清单"
         ],
         "scores": [
-          0.0
+          0.407225,
+          0.398396,
+          0.41044,
+          0.408188,
+          0.398595
         ],
         "hits": [
           {
             "id": "prompts-card-outline_golden_three_chapters-41",
             "title": "黄金三章细纲生成 (番茄版)",
-            "score": 0.0
+            "score": 0.407225
+          },
+          {
+            "id": "prompts-card-outline_golden_three-12",
+            "title": "黄金三章细纲",
+            "score": 0.398396
+          },
+          {
+            "id": "prompts-card-check_foreshadowing_payoff-365",
+            "title": "流程：伏笔回收检查 (Foreshadowing Payoff)",
+            "score": 0.41044
+          },
+          {
+            "id": "prompts-card-check-logic_plothole",
+            "title": "检查逻辑漏洞",
+            "score": 0.408188
+          },
+          {
+            "id": "prompts-card-polish-final_checklist",
+            "title": "完稿最终检查清单",
+            "score": 0.398595
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 4,
+          "expected_total": 2,
+          "hits": 2,
+          "expected_hits": 2,
+          "recall_at_k": 0.5,
+          "expected_recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.6366824387,
+          "hit_ids": [
+            "prompts-card-outline_golden_three_chapters-41",
+            "prompts-card-outline_golden_three-12"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-outline_golden_three_chapters-41",
+            "prompts-card-outline_golden_three-12"
+          ],
+          "missing_expected_ids": [],
+          "missing_relevant_ids": [
+            "base-methodology-creative-golden-three",
+            "base-methodology-market-reading-power-taxonomy"
+          ]
+        }
       },
       "overlap": {
         "ids": [
-          "prompts-card-outline_golden_three_chapters-41"
+          "prompts-card-outline_golden_three_chapters-41",
+          "prompts-card-outline_golden_three-12",
+          "prompts-card-check_foreshadowing_payoff-365",
+          "prompts-card-check-logic_plothole",
+          "prompts-card-polish-final_checklist"
         ],
-        "count": 1,
+        "count": 5,
         "ratio": 1.0
       },
-      "native_sqlite_vec": false,
+      "native_sqlite_vec": true,
       "native_search_error": "",
       "notes": "黄金三章/开篇节奏查询，补充常见章节设计场景。"
     },
     {
       "query": "战斗场景 节奏 动作描写",
+      "gold": {
+        "expected_ids": [
+          "prompts-card-action-beat_sheet-219",
+          "prompts-card-choreograph_fight_scene-355"
+        ],
+        "relevant_ids": [
+          "prompts-card-action-beat_sheet-219",
+          "prompts-card-choreograph_fight_scene-355",
+          "prompts-card-write-combat_scene-13",
+          "prompts-card-write_combat_choreography-456",
+          "prompts-card-write_combat_psychology-376"
+        ]
+      },
       "filters": {
         "stage": "drafting",
         "topics": [
@@ -1011,90 +3382,330 @@
         "asset_type": "prompt_card",
         "card_intent": "structural_design",
         "quality_floor": "B",
+        "candidate_k": 20,
         "top_k": 5
       },
       "layer1": {
         "ids": [
+          "prompts-card-design_power_system-6",
+          "prompts-card-design_academy_curriculum-73",
+          "prompts-card-design-time_loop",
+          "prompts-card-design_faction_war_dungeon-221",
+          "prompts-card-design_cyber_cultivation-105",
           "prompts-card-construct_misunderstanding_chain-69",
-          "prompts-card-design_exam_questions-134",
+          "prompts-card-design-pet_evolution-74",
+          "prompts-card-design_horror_clue-237",
           "prompts-card-action-beat_sheet-219",
-          "prompts-card-choreograph_fight_scene-355"
+          "prompts-card-design_exam_questions-134",
+          "prompts-card-design_magitech_product-230",
+          "prompts-card-tournament_structure-26",
+          "prompts-card-choreograph_fight_scene-355",
+          "prompts-card-design_cheat_code-tomato_custom",
+          "prompts-card-design_bloodline_evolution-405",
+          "prompts-card-design_organization-59",
+          "prompts-card-design-multiverse_travel",
+          "prompts-card-design_battle_royale-110",
+          "prompts-card-design_infinite_dungeon-21",
+          "prompts-card-design_werewolf_game-253"
         ],
         "titles": [
+          "力量体系设计",
+          "设计学院流课程表与考核体系",
+          "时间循环机制设计",
+          "无限流：阵营对抗副本设计",
+          "赛博修仙体系融合",
           "迪化流误解链构建",
-          "设计用于学院流/学霸文的硬核考试题目",
+          "宠物/御兽进化路线设计",
+          "恐怖无限流：生路提示设计",
           "动作戏节奏表",
-          "流程：打斗动作细化 (Combat Choreography)"
+          "设计用于学院流/学霸文的硬核考试题目",
+          "设计结合灵气与科技的现代修真产品",
+          "大比黑马逆袭流",
+          "流程：打斗动作细化 (Combat Choreography)",
+          "金手指设计 (番茄定制版)",
+          "设定：血脉进阶与返祖 (Bloodline Evolution)",
+          "势力/组织架构设计",
+          "诸天万界穿越机制设定",
+          "大逃杀/吃鸡模式逻辑设计",
+          "原创副本世界观设计",
+          "无限流狼人杀副本逻辑设计"
         ],
         "hits": [
+          {
+            "id": "prompts-card-design_power_system-6",
+            "title": "力量体系设计"
+          },
+          {
+            "id": "prompts-card-design_academy_curriculum-73",
+            "title": "设计学院流课程表与考核体系"
+          },
+          {
+            "id": "prompts-card-design-time_loop",
+            "title": "时间循环机制设计"
+          },
+          {
+            "id": "prompts-card-design_faction_war_dungeon-221",
+            "title": "无限流：阵营对抗副本设计"
+          },
+          {
+            "id": "prompts-card-design_cyber_cultivation-105",
+            "title": "赛博修仙体系融合"
+          },
           {
             "id": "prompts-card-construct_misunderstanding_chain-69",
             "title": "迪化流误解链构建"
           },
           {
-            "id": "prompts-card-design_exam_questions-134",
-            "title": "设计用于学院流/学霸文的硬核考试题目"
+            "id": "prompts-card-design-pet_evolution-74",
+            "title": "宠物/御兽进化路线设计"
+          },
+          {
+            "id": "prompts-card-design_horror_clue-237",
+            "title": "恐怖无限流：生路提示设计"
           },
           {
             "id": "prompts-card-action-beat_sheet-219",
             "title": "动作戏节奏表"
           },
           {
+            "id": "prompts-card-design_exam_questions-134",
+            "title": "设计用于学院流/学霸文的硬核考试题目"
+          },
+          {
+            "id": "prompts-card-design_magitech_product-230",
+            "title": "设计结合灵气与科技的现代修真产品"
+          },
+          {
+            "id": "prompts-card-tournament_structure-26",
+            "title": "大比黑马逆袭流"
+          },
+          {
             "id": "prompts-card-choreograph_fight_scene-355",
             "title": "流程：打斗动作细化 (Combat Choreography)"
+          },
+          {
+            "id": "prompts-card-design_cheat_code-tomato_custom",
+            "title": "金手指设计 (番茄定制版)"
+          },
+          {
+            "id": "prompts-card-design_bloodline_evolution-405",
+            "title": "设定：血脉进阶与返祖 (Bloodline Evolution)"
+          },
+          {
+            "id": "prompts-card-design_organization-59",
+            "title": "势力/组织架构设计"
+          },
+          {
+            "id": "prompts-card-design-multiverse_travel",
+            "title": "诸天万界穿越机制设定"
+          },
+          {
+            "id": "prompts-card-design_battle_royale-110",
+            "title": "大逃杀/吃鸡模式逻辑设计"
+          },
+          {
+            "id": "prompts-card-design_infinite_dungeon-21",
+            "title": "原创副本世界观设计"
+          },
+          {
+            "id": "prompts-card-design_werewolf_game-253",
+            "title": "无限流狼人杀副本逻辑设计"
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 5,
+          "expected_total": 2,
+          "hits": 0,
+          "expected_hits": 0,
+          "recall_at_k": 0.0,
+          "expected_recall_at_k": 0.0,
+          "precision_at_k": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_k": 0.0,
+          "hit_ids": [],
+          "expected_hit_ids": [],
+          "missing_expected_ids": [
+            "prompts-card-action-beat_sheet-219",
+            "prompts-card-choreograph_fight_scene-355"
+          ],
+          "missing_relevant_ids": [
+            "prompts-card-action-beat_sheet-219",
+            "prompts-card-choreograph_fight_scene-355",
+            "prompts-card-write-combat_scene-13",
+            "prompts-card-write_combat_choreography-456",
+            "prompts-card-write_combat_psychology-376"
+          ]
+        },
+        "diagnostics": {
+          "status": "gold_miss",
+          "candidate_k": 20,
+          "top_k": 5,
+          "candidate_count_before_top_k": 24,
+          "returned_count": 20,
+          "filter_steps": [
+            {
+              "filter": "all_indexed_cards",
+              "value": "*",
+              "remaining": 473,
+              "removed": 0
+            },
+            {
+              "filter": "stage",
+              "value": "drafting",
+              "remaining": 361,
+              "removed": 112
+            },
+            {
+              "filter": "asset_type",
+              "value": "prompt_card",
+              "remaining": 358,
+              "removed": 3
+            },
+            {
+              "filter": "card_intent",
+              "value": "structural_design",
+              "remaining": 76,
+              "removed": 282
+            },
+            {
+              "filter": "quality_floor",
+              "value": "B",
+              "remaining": 76,
+              "removed": 0
+            },
+            {
+              "filter": "topic",
+              "value": [
+                "玄幻",
+                "动作"
+              ],
+              "remaining": 24,
+              "removed": 52
+            }
+          ],
+          "gold_blockers": [
+            {
+              "id": "prompts-card-write-combat_scene-13",
+              "title": "战斗场景生成",
+              "blocked_by": [
+                {
+                  "filter": "card_intent",
+                  "wanted": "structural_design",
+                  "actual": "prose_generation"
+                }
+              ]
+            },
+            {
+              "id": "prompts-card-write_combat_choreography-456",
+              "title": "润色：战斗节奏与分镜 (Combat Choreography)",
+              "blocked_by": [
+                {
+                  "filter": "card_intent",
+                  "wanted": "structural_design",
+                  "actual": "prose_generation"
+                }
+              ]
+            },
+            {
+              "id": "prompts-card-write_combat_psychology-376",
+              "title": "润色：战斗中的心理博弈 (Combat Psychology)",
+              "blocked_by": [
+                {
+                  "filter": "card_intent",
+                  "wanted": "structural_design",
+                  "actual": "prose_generation"
+                }
+              ]
+            }
+          ]
+        }
       },
       "layer2": {
         "ids": [
-          "prompts-card-choreograph_fight_scene-355",
-          "prompts-card-construct_misunderstanding_chain-69",
           "prompts-card-action-beat_sheet-219",
-          "prompts-card-design_exam_questions-134"
+          "prompts-card-choreograph_fight_scene-355",
+          "prompts-card-tournament_structure-26",
+          "prompts-card-design_battle_royale-110",
+          "prompts-card-design_organization-59"
         ],
         "titles": [
-          "流程：打斗动作细化 (Combat Choreography)",
-          "迪化流误解链构建",
           "动作戏节奏表",
-          "设计用于学院流/学霸文的硬核考试题目"
+          "流程：打斗动作细化 (Combat Choreography)",
+          "大比黑马逆袭流",
+          "大逃杀/吃鸡模式逻辑设计",
+          "势力/组织架构设计"
         ],
         "scores": [
-          0.432626,
-          0.430854,
-          0.421561,
-          0.407728
+          0.47606,
+          0.471444,
+          0.44846,
+          0.443629,
+          0.439664
         ],
         "hits": [
           {
-            "id": "prompts-card-choreograph_fight_scene-355",
-            "title": "流程：打斗动作细化 (Combat Choreography)",
-            "score": 0.432626
-          },
-          {
-            "id": "prompts-card-construct_misunderstanding_chain-69",
-            "title": "迪化流误解链构建",
-            "score": 0.430854
-          },
-          {
             "id": "prompts-card-action-beat_sheet-219",
             "title": "动作戏节奏表",
-            "score": 0.421561
+            "score": 0.47606
           },
           {
-            "id": "prompts-card-design_exam_questions-134",
-            "title": "设计用于学院流/学霸文的硬核考试题目",
-            "score": 0.407728
+            "id": "prompts-card-choreograph_fight_scene-355",
+            "title": "流程：打斗动作细化 (Combat Choreography)",
+            "score": 0.471444
+          },
+          {
+            "id": "prompts-card-tournament_structure-26",
+            "title": "大比黑马逆袭流",
+            "score": 0.44846
+          },
+          {
+            "id": "prompts-card-design_battle_royale-110",
+            "title": "大逃杀/吃鸡模式逻辑设计",
+            "score": 0.443629
+          },
+          {
+            "id": "prompts-card-design_organization-59",
+            "title": "势力/组织架构设计",
+            "score": 0.439664
           }
-        ]
+        ],
+        "metrics": {
+          "k": 5,
+          "relevant_total": 5,
+          "expected_total": 2,
+          "hits": 2,
+          "expected_hits": 2,
+          "recall_at_k": 0.4,
+          "expected_recall_at_k": 1.0,
+          "precision_at_k": 0.4,
+          "mrr": 1.0,
+          "ndcg_at_k": 0.55314647,
+          "hit_ids": [
+            "prompts-card-action-beat_sheet-219",
+            "prompts-card-choreograph_fight_scene-355"
+          ],
+          "expected_hit_ids": [
+            "prompts-card-action-beat_sheet-219",
+            "prompts-card-choreograph_fight_scene-355"
+          ],
+          "missing_expected_ids": [],
+          "missing_relevant_ids": [
+            "prompts-card-write-combat_scene-13",
+            "prompts-card-write_combat_choreography-456",
+            "prompts-card-write_combat_psychology-376"
+          ]
+        }
       },
       "overlap": {
         "ids": [
-          "prompts-card-choreograph_fight_scene-355",
-          "prompts-card-construct_misunderstanding_chain-69",
           "prompts-card-action-beat_sheet-219",
-          "prompts-card-design_exam_questions-134"
+          "prompts-card-choreograph_fight_scene-355",
+          "prompts-card-tournament_structure-26",
+          "prompts-card-design_battle_royale-110",
+          "prompts-card-design_organization-59"
         ],
-        "count": 4,
+        "count": 5,
         "ratio": 1.0
       },
       "native_sqlite_vec": true,
@@ -1103,12 +3714,15 @@
     }
   ],
   "observations": [
+    "Layer 1 窄召回查询: ['终稿润色 文风统一']。请查看每条 query 的 gold_blockers。",
+    "Layer 1 非空但漏掉 gold id 的查询: ['失忆刺客 第一章 开场', '黑暗玄幻 微粒经济', '章节悬念 回收伏笔', '角色状态更新', '世界观设定 天堑 内宇宙', '反转设计 狗血女文', '规则怪谈 副本设计', '多子多福 奖励机制', '市场定位 读者画像', '第一章 黄金三章 爽点钩子', '战斗场景 节奏 动作描写']。这通常是 stage/topic/card_intent 过窄或 top_k 截断。",
     "DeterministicTextEmbedder 是 token hashing，适合复现 smoke/趋势评估，但不等价于生产级语义 embedding。"
   ],
   "recommendations": [
     "把本脚本纳入后续资产变更后的固定评估入口，用 JSON diff 跟踪召回质量漂移。",
-    "为高频业务查询维护 expected/relevant id 集合，后续可计算 recall@k、MRR、nDCG 等更硬的指标。",
+    "持续维护 expected/relevant id 集合；新增资产或重标 metadata 时同步更新 gold set。",
     "针对 Layer 1 空召回或明显窄召回的 query，优先补 metadata topic/card_intent，而不是先改检索代码。",
+    "Layer 2 expected_recall@5 已达到 0.875；下一轮优先把 recall@5 从 0.425 往 0.500+ 推。",
     "对专名强、资产未覆盖的题材词建立同义词/领域词表，降低 Layer 1 过滤漏召回。"
   ]
 }

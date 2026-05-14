@@ -4,10 +4,10 @@
 **取代**：`_distillation-plan.md` §八（保留作历史档案）
 **作者**：主 agent 综合
 **完成日期**：2026-05-13
-**状态更新**：2026-05-14（依据 `STATUS.md`；本文件保留为历史规划 + 当前状态对照）
+**状态更新**：2026-05-15（依据 `STATUS.md`；本文件保留为历史规划 + 当前状态对照）
 **对应架构**：`ARCHITECTURE.md` v1
 
-> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入与 RAG 真实召回质量评估。下一步 P2：补 Layer 1 空召回 metadata，并为评估查询维护 `expected_ids` / `relevant_ids`。
+> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估与 P2 可回归评估收口。下一步按 RAG 报告 blocker summary 提升 metadata/同义词质量。
 >
 > 若本文件与 `STATUS.md` 冲突，以 `STATUS.md` 为当前状态真值。
 
@@ -214,16 +214,17 @@ P-8/9/10 ──┘  (双 skill contract.yaml + adapter，最高风险段)
 
 > 按真实需求驱动 Phase 2 缺口实施；用户反馈循环常态化。
 
-### 4.2 已完成增补（2026-05-14）
+### 4.2 已完成增补（2026-05-15）
 
 - [x] **S4-RAG-1**：native `sqlite-vec` 接入完成。
 - [x] **S4-RAG-2**：RAG 真实召回质量评估完成，可跑 `scripts/evaluate_rag_recall.py`。
+- [x] **P2-1**：补 Layer 1 空召回 metadata，明确空结果原因与诊断字段。
+- [x] **P2-2**：为评估查询维护 `expected_ids` / `relevant_ids`。
+- [x] **P2-3**：把 RAG 质量评估从「能跑」升级为可追踪、可回归。
 
 ### 4.3 当前下一步
 
-- [ ] **P2-1**：补 Layer 1 空召回 metadata，明确空结果原因与诊断字段。
-- [ ] **P2-2**：为评估查询维护 `expected_ids` / `relevant_ids`。
-- [ ] **P2-3**：把 RAG 质量评估从「能跑」升级为可追踪、可回归。
+- [ ] **P2-4**：按 `.ops/reports/rag_recall_quality_report.md` 的 blocker summary 补 topic/card_intent/stage metadata 与少量领域同义词，优先把 Layer 2 `recall@5` 从 0.425 往 0.500+ 推。
 
 ### 4.4 任务清单（按触发条件优先级，尚未触发）
 
@@ -317,7 +318,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 - [x] Jury 修订追踪表（jury 23 条建议全部归属到具体任务编号，§七）
 - [x] 8 决策落地到 ARCHITECTURE §七 + 本文件任务编号
 
-**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-14，下一步是 P2：补 Layer 1 空召回 metadata，并维护评估查询的 `expected_ids` / `relevant_ids`。
+**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-15，下一步是按 RAG 报告 blocker summary 提升 metadata/同义词质量。
 
 ---
 

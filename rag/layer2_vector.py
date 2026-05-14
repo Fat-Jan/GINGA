@@ -78,7 +78,7 @@ class DeterministicTextEmbedder:
     def embed(self, text: str) -> list[float]:
         vector = [0.0] * self.dimension
         tokens = _TOKEN_RE.findall((text or "").lower())
-        for token in tokens:
+        for token in _expand_tokens(tokens):
             digest = hashlib.blake2b(token.encode("utf-8"), digest_size=8).digest()
             bucket = int.from_bytes(digest[:4], "big") % self.dimension
             sign = 1.0 if digest[4] & 1 else -1.0
@@ -352,6 +352,7 @@ def search_vector(
     except Exception as exc:  # noqa: BLE001 - fail-open
         _LOG.warning("rag.layer2_vector: query embed failed: %s", exc)
         return []
+    query_terms = _lexical_terms(query_text or "")
     wanted = {str(x) for x in candidate_ids} if candidate_ids is not None else None
     if wanted is not None and not wanted:
         return []
@@ -365,6 +366,7 @@ def search_vector(
             top_k=top_k,
             candidate_ids=wanted,
             model_id=model_id,
+            query_terms=query_terms,
         )
         if backend_hits:
             return backend_hits
@@ -399,9 +401,11 @@ def search_vector(
             item["topic"] = _decode_topic(item.pop("topic_json", "[]"))
             item.pop("vector_json", None)
             item["_vector_score"] = score
-            item["_score"] = score
+            lexical_score = _lexical_score(query_terms, item)
+            item["_lexical_score"] = lexical_score
+            item["_score"] = score + lexical_score
             out.append(item)
-    out.sort(key=lambda item: (-float(item.get("_vector_score", 0.0)), str(item.get("id", ""))))
+    out.sort(key=lambda item: (-float(item.get("_score", 0.0)), str(item.get("id", ""))))
     return out[: max(0, int(top_k))]
 
 
@@ -435,6 +439,43 @@ def _embed(embedder: Any, text: str) -> list[float]:
     fn = getattr(embedder, "embed", None)
     raw = fn(text) if callable(fn) else embedder(text)
     return [float(x) for x in raw]
+
+
+def _expand_tokens(tokens: Iterable[str]) -> list[str]:
+    expanded: list[str] = []
+    for token in tokens:
+        if not token:
+            continue
+        expanded.append(token)
+        if _contains_cjk(token):
+            chars = list(token)
+            for size in (2, 3):
+                if len(chars) >= size:
+                    expanded.extend("".join(chars[i : i + size]) for i in range(len(chars) - size + 1))
+    return expanded
+
+
+def _contains_cjk(token: str) -> bool:
+    return any("\u4e00" <= char <= "\u9fff" for char in token)
+
+
+def _lexical_terms(text: str) -> set[str]:
+    return set(_expand_tokens(_TOKEN_RE.findall((text or "").lower())))
+
+
+def _lexical_score(query_terms: set[str], item: Mapping[str, Any]) -> float:
+    if not query_terms:
+        return 0.0
+    haystack_parts = [
+        str(item.get("title", "")),
+        " ".join(str(topic) for topic in item.get("topic", []) if str(topic)),
+        str(item.get("body_text", "")),
+    ]
+    doc_terms = _lexical_terms(" ".join(haystack_parts))
+    if not doc_terms:
+        return 0.0
+    overlap = query_terms & doc_terms
+    return 0.08 * (len(overlap) / max(1, len(query_terms)))
 
 
 def _count(conn: sqlite3.Connection, table: str) -> int:
@@ -482,14 +523,16 @@ def _search_sqlite_vec_backend(
     top_k: int,
     candidate_ids: Optional[set[str]],
     model_id: Optional[str],
+    query_terms: set[str],
 ) -> list[dict[str, Any]]:
     with closing(backend.connect(index_path)) as conn:
         conn.row_factory = backend.row_factory
         candidate_rowids = _candidate_rowids(conn, candidate_ids, model_id=model_id)
+        vector_top_k = max(int(top_k), min(len(candidate_rowids or []), int(top_k) * 4)) if candidate_rowids is not None else int(top_k)
         vector_rows = backend.search(
             conn,
             query_vector,
-            top_k=top_k,
+            top_k=vector_top_k,
             candidate_rowids=candidate_rowids,
         )
         if not vector_rows:
@@ -515,9 +558,11 @@ def _search_sqlite_vec_backend(
         item["topic"] = _decode_topic(item.pop("topic_json", "[]"))
         item["_vector_distance"] = distance
         item["_vector_score"] = 1.0 / (1.0 + max(0.0, distance))
-        item["_score"] = item["_vector_score"]
+        lexical_score = _lexical_score(query_terms, item)
+        item["_lexical_score"] = lexical_score
+        item["_score"] = item["_vector_score"] + lexical_score
         out.append(item)
-    out.sort(key=lambda item: (-float(item.get("_vector_score", 0.0)), str(item.get("id", ""))))
+    out.sort(key=lambda item: (-float(item.get("_score", 0.0)), str(item.get("id", ""))))
     return out[: max(0, int(top_k))]
 
 

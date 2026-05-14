@@ -22,6 +22,7 @@ from __future__ import annotations
 import json
 import logging
 import sqlite3
+from contextlib import closing
 from pathlib import Path
 from typing import Any, Iterable, Optional
 
@@ -46,6 +47,21 @@ _QUALITY_ORDER: dict[str, int] = {
 
 # 默认 floor：剔除 C / D；caller 可通过 quality_floor="C" 放宽.
 _DEFAULT_QUALITY_FLOOR = "B"
+
+_TOPIC_ALIAS_GROUPS: tuple[tuple[str, ...], ...] = (
+    ("通用", "general"),
+    ("怪谈", "规则怪谈"),
+    ("动作", "战斗"),
+    ("系统", "系统流"),
+    ("玄幻", "无限流"),
+    ("言情", "女频", "豪门", "反转", "大纲", "细纲"),
+)
+
+_TOPIC_ALIAS_MAP: dict[str, frozenset[str]] = {
+    alias: frozenset(group)
+    for group in _TOPIC_ALIAS_GROUPS
+    for alias in group
+}
 
 
 class Layer1RecallError(RuntimeError):
@@ -110,7 +126,12 @@ def recall(
         _LOG.warning("rag.layer1_filter: index %s missing (cold-start, empty result)", fp)
         return []
 
-    rows = _query(fp, stage=stage, asset_type=asset_type, card_intent=card_intent)
+    rows = _query(
+        fp,
+        stages=_expand_filter_values("stage", stage, config),
+        asset_type=asset_type,
+        card_intents=_expand_filter_values("card_intent", card_intent, config),
+    )
     if not rows:
         _LOG.warning("rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)")
         return []
@@ -120,14 +141,19 @@ def recall(
     rows = [r for r in rows if _quality_score(r.get("quality_grade", "")) <= floor_score]
 
     # topic 部分匹配 (list-as-OR).
+    wanted_topics: list[str] = []
     if topic is not None:
         wanted_topics = _coerce_topic(topic)
         if wanted_topics:
             rows = [r for r in rows if _topic_hit(r.get("topic", []), wanted_topics)]
 
-    # 排序：quality_grade ASC (按 _QUALITY_ORDER) → last_updated DESC (新优先).
+    # 排序：quality_grade ASC → topic specificity DESC → last_updated DESC.
     rows.sort(
-        key=lambda r: (_quality_score(r.get("quality_grade", "")), _negate_str(r.get("last_updated", "")))
+        key=lambda r: (
+            _quality_score(r.get("quality_grade", "")),
+            -_topic_match_count(r.get("topic", []), wanted_topics),
+            _negate_str(r.get("last_updated", "")),
+        )
     )
 
     if top_k is None:
@@ -146,27 +172,27 @@ def recall(
 def _query(
     index_path: Path,
     *,
-    stage: Optional[str],
+    stages: list[str],
     asset_type: Optional[str],
-    card_intent: Optional[str],
+    card_intents: list[str],
 ) -> list[dict[str, Any]]:
     """从 sqlite 拉满足 stage/asset_type/card_intent 条件的候选."""
     sql = "SELECT id, asset_type, stage, topic_json, quality_grade, card_intent, title, source_path, last_updated FROM cards"
     where: list[str] = []
     params: list[Any] = []
-    if stage:
-        where.append("stage = ?")
-        params.append(stage)
+    if stages:
+        where.append(f"stage IN ({','.join('?' for _ in stages)})")
+        params.extend(stages)
     if asset_type:
         where.append("asset_type = ?")
         params.append(asset_type)
-    if card_intent:
-        where.append("card_intent = ?")
-        params.append(card_intent)
+    if card_intents:
+        where.append(f"card_intent IN ({','.join('?' for _ in card_intents)})")
+        params.extend(card_intents)
     if where:
         sql += " WHERE " + " AND ".join(where)
     try:
-        with sqlite3.connect(str(index_path)) as conn:
+        with closing(sqlite3.connect(str(index_path))) as conn:
             conn.row_factory = sqlite3.Row
             cur = conn.execute(sql, params)
             rows = cur.fetchall()
@@ -193,9 +219,56 @@ def _coerce_topic(topic: Any) -> list[str]:
     return []
 
 
+def _expand_filter_values(
+    filter_name: str,
+    value: Optional[str],
+    config: Optional[dict[str, Any]],
+) -> list[str]:
+    if not value:
+        return []
+    values = [str(value)]
+    section = config.get("layer1_filter_expansion") if isinstance(config, dict) else None
+    if isinstance(section, dict):
+        mapping = section.get(filter_name)
+        if isinstance(mapping, dict):
+            configured = mapping.get(value)
+            if isinstance(configured, (list, tuple, set)):
+                values = [str(item) for item in configured if str(item)]
+            elif isinstance(configured, str) and configured:
+                values = [configured]
+    out: list[str] = []
+    seen: set[str] = set()
+    for item in values:
+        if item not in seen:
+            seen.add(item)
+            out.append(item)
+    return out
+
+
 def _topic_hit(card_topics: Iterable[Any], wanted: list[str]) -> bool:
+    return topic_hit(card_topics, wanted)
+
+
+def topic_hit(card_topics: Iterable[Any], wanted: Iterable[str]) -> bool:
+    """Return true when card topics intersect wanted topics after alias expansion."""
+    card_set = _expand_topics(str(t).strip() for t in card_topics if str(t).strip())
+    wanted_set = _expand_topics(wanted)
+    return bool(card_set & wanted_set)
+
+
+def _topic_match_count(card_topics: Iterable[Any], wanted: Iterable[str]) -> int:
     card_set = {str(t).strip() for t in card_topics if str(t).strip()}
-    return any(w in card_set for w in wanted)
+    wanted_set = {str(t).strip() for t in wanted if str(t).strip()}
+    return len(card_set & wanted_set)
+
+
+def _expand_topics(topics: Iterable[str]) -> set[str]:
+    expanded: set[str] = set()
+    for topic in topics:
+        if not topic:
+            continue
+        expanded.update(_TOPIC_ALIAS_MAP.get(topic, (topic,)))
+    return expanded
 
 
 def _decode_topic(blob: str) -> list[str]:
@@ -263,5 +336,6 @@ def _resolve_top_k(stage: Optional[str], config: Optional[dict[str, Any]]) -> in
 
 __all__ = [
     "recall",
+    "topic_hit",
     "Layer1RecallError",
 ]

@@ -290,6 +290,7 @@ def _inject_rag_cards(
             card_intent=hint.get("card_intent"),
             query_text=str(hint.get("query_text") or inputs.get("query_text") or ""),
             top_k=hint.get("top_k"),
+            candidate_k=hint.get("candidate_k"),
             quality_floor=hint.get("quality_floor", "B"),
             index_path=hint.get("index_path"),
             config=ctx.get("rag_config") if isinstance(ctx.get("rag_config"), dict) else None,

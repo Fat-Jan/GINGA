@@ -1,6 +1,6 @@
 # Ginga 当前状态
 
-更新时间：2026-05-14
+更新时间：2026-05-15
 
 本文件是当前状态真值。`ROADMAP.md` 保留为历史/规划资料，不代表最新完成度。
 
@@ -10,10 +10,11 @@
 - S2 已完成：多章连载、完整 `runtime_state`、RAG Layer 1、461 prompt cards 标注、immersive mode 已收口。
 - S3 已完成：RAG Layer 2 native `sqlite-vec`、Layer 3 rerank、prompt audit、methodology assets、dedup evidence、弱示例修复、压力测试已收口。
 - S4 / Phase 2 native `sqlite-vec` + RAG 真实召回质量评估已完成。
+- P2 已完成：Layer 1 空召回 metadata/diagnostics、评估查询 `expected_ids` / `relevant_ids`、candidate pool 与可回归 JSON/Markdown 报告已收口。
 
 ## 下一步
 
-P2：补 Layer 1 空召回 metadata，并为评估查询维护 `expected_ids` / `relevant_ids`，让 RAG 质量评估从「能跑」升级为可追踪、可回归。
+RAG 质量下一轮：基于 `.ops/reports/rag_recall_quality_report.md` 的 blocker summary，优先补 topic/card_intent/stage metadata 与少量领域同义词，把 Layer 2 `recall@5` 从 0.425 往 0.500+ 推；`expected_recall@5` 当前已达 0.875。
 
 ## 架构边界
 
@@ -45,8 +46,9 @@ python3 scripts/evaluate_rag_recall.py
 
 ## 最近主线程结果
 
-- Unit tests：137 tests OK。
+- Unit tests：154 tests OK。
 - Architecture contracts：PASS，warnings=0（workflow 已统一使用 `workspace.chapter_text`）。
 - Prompt frontmatter：461 cards，violations=0。
 - Prompt quality：weak_examples=0。
 - Methodology assets：12 methodology OK。
+- RAG recall eval：473 cards / 473 vectors，native sqlite-vec used，fallback=none；Layer 1/2 空召回均为 0。

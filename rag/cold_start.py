@@ -128,6 +128,19 @@ def _builtin_defaults() -> dict[str, Any]:
             "refinement": 3,
             "default": 5,
         },
+        "candidate_pool": {"default": 20},
+        "layer1_filter_expansion": {
+            "stage": {
+                "drafting": ["drafting", "outline", "setting"],
+                "framework": ["framework", "outline", "analysis", "refinement"],
+            },
+            "card_intent": {
+                "prose_generation": ["prose_generation", "outline_planning", "prototype_creation"],
+                "structural_design": ["structural_design", "simulation"],
+                "outline_planning": ["outline_planning", "checker_diagnostic"],
+                "generator": ["generator", "prototype_creation", "structural_design"],
+            },
+        },
     }
 
 

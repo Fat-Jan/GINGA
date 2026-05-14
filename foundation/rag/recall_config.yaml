@@ -68,6 +68,48 @@ stage_specific_top_k:
   default: 5
 
 # ---------------------------------------------------------------------------
+# Layer 1 候选池宽度
+# ---------------------------------------------------------------------------
+# Layer 1 给 Layer 2 的候选池可以宽于最终 top_k，避免高质量排序先截断
+# 语义相关但质量排序靠后的 gold 资产；最终注入仍由 stage_specific_top_k 控制。
+
+candidate_pool:
+  default: 20
+
+# ---------------------------------------------------------------------------
+# Layer 1 过滤扩展（默认精确；仅这些显式规则放宽）
+# ---------------------------------------------------------------------------
+# 用于解决 stage / card_intent 过窄导致的 gold 漏召回。不要做全局放宽；
+# 每个规则都应从评估报告的 blocker summary 反推。
+
+layer1_filter_expansion:
+  stage:
+    drafting:
+      - drafting
+      - outline
+      - setting
+    framework:
+      - framework
+      - outline
+      - analysis
+      - refinement
+  card_intent:
+    prose_generation:
+      - prose_generation
+      - outline_planning
+      - prototype_creation
+    structural_design:
+      - structural_design
+      - simulation
+    outline_planning:
+      - outline_planning
+      - checker_diagnostic
+    generator:
+      - generator
+      - prototype_creation
+      - structural_design
+
+# ---------------------------------------------------------------------------
 # rerank 按阶段启用
 # ---------------------------------------------------------------------------
 # refinement 阶段强制 rerank（终稿要重排到最精）
