@@ -1,0 +1,347 @@
+entries:
+- ts: '2026-05-15T12:44:16+00:00'
+  source: cli.init.A-E_setup
+  severity: info
+  msg: applied 10 update(s)
+  action: log
+  payload:
+    paths:
+    - locked.STORY_DNA.premise
+    - locked.STORY_DNA.conflict_engine
+    - locked.STORY_DNA.payoff_promise
+    - locked.STORY_DNA.word_target
+    - locked.GENRE_LOCKED.topic
+    - locked.GENRE_LOCKED.style_lock
+    - locked.WORLD.cosmology
+    - locked.WORLD.economy
+    - locked.PLOT_ARCHITECTURE.acts
+    - locked.PLOT_ARCHITECTURE.pivot_points
+- ts: '2026-05-15T12:44:16+00:00'
+  source: cli.init.F_state_init
+  severity: info
+  msg: applied 6 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.CHARACTER_STATE
+    - entity_runtime.RESOURCE_LEDGER.particles
+    - entity_runtime.RESOURCE_LEDGER.items
+    - entity_runtime.FORESHADOW_STATE.pool
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - entity_runtime.GLOBAL_SUMMARY.arc_summaries
+- ts: '2026-05-15T12:44:16+00:00'
+  source: cli.init.workspace_seed
+  severity: info
+  msg: applied 3 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.task_plan
+    - workspace.findings
+    - workspace.progress
+- ts: '2026-05-15T12:44:16+00:00'
+  source: cli.init
+  severity: info
+  msg: 'book initialized: id=jiujiu-4000-smoke-v2 topic=玄幻黑暗 target=50000'
+  action: log
+  payload:
+    locked_premise: 失忆刺客醒来后发现短刃会吞吐微粒，他必须在第一重天堑前判断追杀者来自谁。
+- ts: '2026-05-15T12:44:16+00:00'
+  source: cli.run.A_through_F
+  severity: info
+  msg: setup steps skipped (seeded by init)
+  action: log
+  payload: {}
+- ts: '2026-05-15T12:46:10+00:00'
+  source: demo_pipeline.workflow_router.G_chapter_draft
+  severity: info
+  msg: skill_router selected dark-fantasy-ultimate-engine
+  action: log
+  payload:
+    score: 100
+    matched_rule: topic in [玄幻黑暗, 暗黑奇幻, 黑暗玄幻]
+    candidates:
+    - - dark-fantasy-ultimate-engine
+      - 100
+      - topic in [玄幻黑暗, 暗黑奇幻, 黑暗玄幻]
+    - - planning-with-files
+      - 0
+      - default
+- ts: '2026-05-15T12:46:10+00:00'
+  source: guard:latest-text-priority
+  severity: info
+  msg: structured guard trigger not evaluated (fail-open)
+  action: log
+  payload:
+    step_id: G_chapter_draft
+    trigger:
+      step.preconditions.includes: guard:latest-text-priority
+- ts: '2026-05-15T12:46:10+00:00'
+  source: guard:latest-text-priority
+  severity: info
+  msg: structured guard trigger not evaluated (fail-open)
+  action: log
+  payload:
+    step_id: G_chapter_draft
+    trigger: step.id in [G_chapter_draft, H_chapter_settle, R1_style_polish, R2_consistency_check]
+- ts: '2026-05-15T12:46:10+00:00'
+  source: guard:latest-text-priority
+  severity: info
+  msg: structured guard trigger not evaluated (fail-open)
+  action: log
+  payload:
+    step_id: G_chapter_draft
+    trigger:
+      llm_context.contains_stale_setting_overriding_latest_text: true
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:G_chapter_draft:rag
+  severity: info
+  msg: rag disabled by user (workflow_flags.rag_mode=off)
+  action: log
+  payload: {}
+- ts: '2026-05-15T12:46:10+00:00'
+  source: demo_pipeline.workflow_adapter.G_chapter_draft
+  severity: info
+  msg: dark_fantasy_adapter.output_transform applied
+  action: log
+  payload:
+    paths:
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - workspace.chapter_text
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:G_chapter_draft
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.chapter_text
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:G_chapter_draft
+  severity: info
+  msg: step G_chapter_draft completed
+  action: log
+  payload:
+    used: skill:dark-fantasy-ultimate-engine
+    guards_passed:
+    - latest-text-priority
+    writes_applied:
+    - workspace.chapter_text
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    audit_intents_applied: 0
+    checker_results: []
+- ts: '2026-05-15T12:46:10+00:00'
+  source: cli.run.G_chapter_draft.ch1
+  severity: info
+  msg: 'artifact written: chapter_01.md'
+  action: log
+  payload:
+    chapter_no: 1
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: .ops/real_llm_demo/jiujiu-4000-smoke-state-v2/jiujiu-4000-smoke-v2/chapter_01.md
+    bytes: 13935
+- ts: '2026-05-15T12:46:10+00:00'
+  source: demo_pipeline.apply_chapter_rollup.ch1
+  severity: info
+  msg: applied 4 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.FORESHADOW_STATE.pool
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - entity_runtime.CHARACTER_STATE.protagonist.events
+    - entity_runtime.RESOURCE_LEDGER.particles
+- ts: '2026-05-15T12:46:10+00:00'
+  source: cli.run.chapter_1.rollup
+  severity: info
+  msg: 'chapter 1 rolled up: words+=3988 new_hooks=1 particle_delta=12'
+  action: log
+  payload:
+    new_hook_ids:
+    - fh-002
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:H_chapter_settle:rag
+  severity: info
+  msg: rag disabled by user (workflow_flags.rag_mode=off)
+  action: log
+  payload: {}
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:H_chapter_settle
+  severity: info
+  msg: applied 4 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.CHARACTER_STATE
+    - entity_runtime.FORESHADOW_STATE
+    - entity_runtime.RESOURCE_LEDGER
+    - workspace.progress
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:H_chapter_settle
+  severity: info
+  msg: step H_chapter_settle completed
+  action: log
+  payload:
+    used: capability:base-template-chapter-settle
+    guards_passed: []
+    writes_applied:
+    - entity_runtime.CHARACTER_STATE
+    - entity_runtime.FORESHADOW_STATE
+    - entity_runtime.RESOURCE_LEDGER
+    - workspace.progress
+    audit_intents_applied: 0
+    checker_results:
+    - checker_id: character-iq
+      mode: warn
+      hit_rule: null
+      severity: warn
+    - checker_id: cool-point-payoff
+      mode: warn
+      hit_rule: null
+      severity: warn
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:R1_style_polish:rag
+  severity: info
+  msg: rag disabled by user (workflow_flags.rag_mode=off)
+  action: log
+  payload: {}
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:R1_style_polish
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.chapter_text
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:R1_style_polish
+  severity: info
+  msg: step R1_style_polish completed
+  action: log
+  payload:
+    used: capability:base-methodology-style-polish
+    guards_passed: []
+    writes_applied:
+    - workspace.chapter_text
+    audit_intents_applied: 0
+    checker_results: []
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:R2_consistency_check:rag
+  severity: info
+  msg: rag disabled by user (workflow_flags.rag_mode=off)
+  action: log
+  payload: {}
+- ts: '2026-05-15T12:46:10+00:00'
+  source: asset_provider:R2_consistency_check
+  severity: warn
+  msg: 'R2 consistency WARN: 1 issue(s)'
+  action: log
+  payload:
+    consistency_report:
+      pass: false
+      chapter_no: 1
+      issues:
+      - code: missing_character_anchor
+        severity: warn
+        name: 未命名刺客
+      summary: 离线一致性检查发现 1 个需关注项，先处理高影响锚点和伏笔追踪。
+      recommendations:
+      - 补回主角名字或稳定代称，避免章节游离于角色状态之外。
+      consistency_report:
+        checked:
+        - workspace.chapter_text
+        - locked
+        - entity_runtime
+        checked_details:
+          body_paragraph_count: 67
+          foreshadow_count: 1
+          has_world_anchor: true
+          particle_delta: 0
+          world_anchors:
+          - 四重天堑
+          - 内宇宙四阶
+          - 微粒为通货
+          - 总量硬上限
+          - '840000000'
+        issue_count: 1
+      readability_report:
+        headline: 章节仍有 1 个可读性 / 连续性缺口
+        action_items:
+        - code: missing_character_anchor
+          severity: warn
+          action: 补回主角名字或稳定代称，避免章节游离于角色状态之外。
+        evidence:
+          body_paragraph_count: 67
+          foreshadow_count: 1
+          matched_world_anchors:
+          - 总量硬上限
+          chapter_excerpt: 黑暗并非虚无，而是某种粘稠的、带有铁锈味的实体。它像陈年的淤血，堵塞在耳道与鼻腔之间，每一次试图吸入空气的动作，都像是在吞咽碎玻璃。
+            他睁开眼。 没有光。或者说，光线在这里是一种被诅咒的奢侈品，早已在第一重天堑的边缘被剥夺殆尽。视野中只有灰
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:R2_consistency_check
+  severity: info
+  msg: step R2_consistency_check completed
+  action: log
+  payload:
+    used: capability:base-methodology-consistency-check
+    guards_passed: []
+    writes_applied: []
+    audit_intents_applied: 1
+    checker_results:
+    - checker_id: aigc-style
+      mode: warn
+      hit_rule: null
+      severity: warn
+    - checker_id: consistency
+      mode: warn
+      hit_rule: null
+      severity: warn
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:R3_final_pack:rag
+  severity: info
+  msg: rag disabled by user (workflow_flags.rag_mode=off)
+  action: log
+  payload: {}
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:R3_final_pack
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.GLOBAL_SUMMARY
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:R3_final_pack
+  severity: info
+  msg: step R3_final_pack completed
+  action: log
+  payload:
+    used: capability:base-methodology-final-pack
+    guards_passed: []
+    writes_applied:
+    - entity_runtime.GLOBAL_SUMMARY
+    audit_intents_applied: 0
+    checker_results: []
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:V1_release_check:rag
+  severity: info
+  msg: rag disabled by user (workflow_flags.rag_mode=off)
+  action: log
+  payload: {}
+- ts: '2026-05-15T12:46:10+00:00'
+  source: step_dispatch:V1_release_check
+  severity: info
+  msg: step V1_release_check completed
+  action: log
+  payload:
+    used: capability:base-checker-dod-final
+    guards_passed: []
+    writes_applied: []
+    audit_intents_applied: 0
+    checker_results:
+    - checker_id: dod-final
+      mode: warn
+      hit_rule: null
+      severity: warn

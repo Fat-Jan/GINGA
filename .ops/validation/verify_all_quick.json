@@ -1,0 +1,70 @@
+{
+  "generated_at_epoch": 1778849581.746,
+  "repo_root": "/Users/arm/Desktop/ginga",
+  "passed": true,
+  "results": [
+    {
+      "command": "python -m unittest discover -s ginga_platform -p 'test_*.py'",
+      "exit_code": 0,
+      "duration_seconds": 26.571,
+      "stdout_tail": "PASS: architecture contracts\nPASS: workflow steps - loaded 12 step(s)\nPASS: capability registry - found 12 default capability id(s)\nPASS: foundation asset ids - found 486 frontmatter id(s)\nPASS: skill-router file - ginga_platform/orchestrator/router/skill_router.py\nPASS: skill contracts - found 2 contract(s)\nPASS: recall forbidden paths - contains 8 path(s)\nPASS: v1.3-0 book_analysis boundaries - pollution docs and source manifest schema are present and constrained\nPASS: StateIO write boundary - runtime_state YAML writes are limited to StateIO / locked patch flow\nPASS: current planning hygiene - STATUS.md next step, stale doc wording, and .ops/p7 history notices are aligned\nPASS: P2-7 runner convergence - single-run path keeps workflow DSL, skill-router, adapter, and StateIO dispatch wiring\n\u2705 patch_id=P-5402b0-patch applied=False patch_yaml=/var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmphxvwaid1/patches/P-5402b0-patch.patch.yaml",
+      "stderr_tail": "\u2713 LLM \u8fd4\u56de 4027 \u5b57\u7b26 / 3378 \u4e2a\u6c49\u5b57\n.\ud83d\udcdd \u8c03\u7528 ask-llm windhub \u751f\u6210\u7b2c 1 \u7ae0 (\u76ee\u6807 3500 \u5b57)...\n\u2713 LLM \u8fd4\u56de 4 \u5b57\u7b26 / 4 \u4e2a\u6c49\u5b57\n\ud83d\udcdd \u8c03\u7528 ask-llm windhub \u751f\u6210\u7b2c 2 \u7ae0 (\u76ee\u6807 3500 \u5b57)...\n\u2713 LLM \u8fd4\u56de 4 \u5b57\u7b26 / 4 \u4e2a\u6c49\u5b57\n.\ud83d\udcdd mock_harness \u751f\u6210\u7b2c 1 \u7ae0 (\u76ee\u6807 800 \u5b57\uff0c\u4e0d\u8c03\u7528 ask-llm)...\n\u2713 LLM \u8fd4\u56de 1316 \u5b57\u7b26 / 485 \u4e2a\u6c49\u5b57\n.........................rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n......rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n..rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n..rag.layer1_filter: index /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmpa9caa5si/no-index.sqlite missing (cold-start, empty result)\n.....................rag.layer2_vector: sqlite-vec load failed open: extension unavailable\nrag.layer2_vector: sqlite-vec load failed open: extension unavailable\n..rag.reranker: llm rerank failed open: slow\n..rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n.............................\n----------------------------------------------------------------------\nRan 214 tests in 26.251s\n\nOK"
+    },
+    {
+      "command": "python3 scripts/validate_reference_corpus.py .ops/book_analysis/v1-3-1-smoke-main",
+      "exit_code": 0,
+      "duration_seconds": 0.163,
+      "stdout_tail": "PASS reference corpus validation: errors=0 warnings=0 run=.ops/book_analysis/v1-3-1-smoke-main",
+      "stderr_tail": ""
+    },
+    {
+      "command": "python3 scripts/validate_chapter_atoms.py .ops/book_analysis/v1-3-2-smoke-main",
+      "exit_code": 0,
+      "duration_seconds": 0.153,
+      "stdout_tail": "PASS chapter atom validation: errors=0 warnings=0 run=.ops/book_analysis/v1-3-2-smoke-main",
+      "stderr_tail": ""
+    },
+    {
+      "command": "python3 scripts/validate_trope_recipes.py .ops/book_analysis/v1-3-3-smoke-main",
+      "exit_code": 0,
+      "duration_seconds": 0.159,
+      "stdout_tail": "PASS trope recipe validation: errors=0 warnings=0 run=.ops/book_analysis/v1-3-3-smoke-main",
+      "stderr_tail": ""
+    },
+    {
+      "command": "python3 scripts/build_reference_sidecar_index.py",
+      "exit_code": 0,
+      "duration_seconds": 0.154,
+      "stdout_tail": "PASS reference sidecar index: cards_indexed=0 files_seen=0 index=.ops/validation/reference_sidecar_rag.sqlite",
+      "stderr_tail": ""
+    },
+    {
+      "command": "python3 scripts/validate_architecture_contracts.py",
+      "exit_code": 0,
+      "duration_seconds": 0.966,
+      "stdout_tail": "PASS: architecture contracts\nPASS: workflow steps - loaded 12 step(s)\nPASS: capability registry - found 12 default capability id(s)\nPASS: foundation asset ids - found 486 frontmatter id(s)\nPASS: skill-router file - ginga_platform/orchestrator/router/skill_router.py\nPASS: skill contracts - found 2 contract(s)\nPASS: recall forbidden paths - contains 8 path(s)\nPASS: v1.3-0 book_analysis boundaries - pollution docs and source manifest schema are present and constrained\nPASS: StateIO write boundary - runtime_state YAML writes are limited to StateIO / locked patch flow\nPASS: current planning hygiene - STATUS.md next step, stale doc wording, and .ops/p7 history notices are aligned\nPASS: P2-7 runner convergence - single-run path keeps workflow DSL, skill-router, adapter, and StateIO dispatch wiring",
+      "stderr_tail": ""
+    },
+    {
+      "command": "python3 scripts/validate_prompt_frontmatter.py --strict",
+      "exit_code": 0,
+      "duration_seconds": 0.847,
+      "stdout_tail": "wrote .ops/validation/prompt_frontmatter_report.json: total=461 violations=0",
+      "stderr_tail": ""
+    },
+    {
+      "command": "python3 scripts/report_prompt_quality.py foundation/assets/prompts",
+      "exit_code": 0,
+      "duration_seconds": 0.82,
+      "stdout_tail": "wrote .ops/validation/prompt_quality_report.json: total=461 weak_examples=0",
+      "stderr_tail": ""
+    },
+    {
+      "command": "python3 scripts/validate_methodology_assets.py foundation/assets/methodology foundation/schema/methodology.yaml",
+      "exit_code": 0,
+      "duration_seconds": 0.17,
+      "stdout_tail": "OK: validated 12 asset(s) against foundation/schema/methodology.yaml",
+      "stderr_tail": ""
+    }
+  ]
+}

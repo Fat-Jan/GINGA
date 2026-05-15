@@ -26,7 +26,7 @@ state_io.py (apply 接受 flat dict {path: value}) + .ops/p7-prompts/ST-S2-PHASE
 from __future__ import annotations
 
 import copy
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, overload
 
 if TYPE_CHECKING:  # 仅类型注解使用，避免运行时循环 import
     from .state_io import StateIO
@@ -51,10 +51,30 @@ class OpTranslationError(ValueError):
     """op 翻译失败：op 名未知 / path 非法 / value 类型不匹配等."""
 
 
+@overload
 def adapter_ops_to_state_updates(
     ops: List[Mapping[str, Any]],
     state_io: "StateIO",
 ) -> Dict[str, Any]:
+    ...
+
+
+@overload
+def adapter_ops_to_state_updates(
+    ops: List[Mapping[str, Any]],
+    state_io: "StateIO",
+    *,
+    include_audit_intents: bool,
+) -> tuple[Dict[str, Any], list[dict[str, Any]]]:
+    ...
+
+
+def adapter_ops_to_state_updates(
+    ops: List[Mapping[str, Any]],
+    state_io: "StateIO",
+    *,
+    include_audit_intents: bool = False,
+) -> Dict[str, Any] | tuple[Dict[str, Any], list[dict[str, Any]]]:
     """把 adapter.output_transform 的 list-of-ops 转成 state_io.apply 用的 flat dict.
 
     Args:
@@ -76,6 +96,7 @@ def adapter_ops_to_state_updates(
         raise OpTranslationError(f"ops must be list, got {type(ops).__name__}")
 
     pending: Dict[str, Any] = {}
+    audit_intents: list[dict[str, Any]] = []
 
     for idx, op_entry in enumerate(ops):
         if not isinstance(op_entry, Mapping):
@@ -88,6 +109,18 @@ def adapter_ops_to_state_updates(
         if not raw_path or not isinstance(raw_path, str):
             raise OpTranslationError(f"ops[{idx}].path must be non-empty str, got {raw_path!r}")
 
+        if raw_path == "audit_log.entries":
+            if op_name != "append":
+                raise OpTranslationError(
+                    f"ops[{idx}] path='audit_log.entries' only supports op=append, got {op_name!r}"
+                )
+            if not isinstance(value, Mapping):
+                raise OpTranslationError(
+                    f"ops[{idx}] path='audit_log.entries' value must be mapping, got {type(value).__name__}"
+                )
+            audit_intents.append(_audit_intent_from_value(value))
+            continue
+
         norm_path = _normalize_path(raw_path)
 
         # 取「当前」值：优先 pending（同 path 链式），fallback 到 state_io.
@@ -98,6 +131,8 @@ def adapter_ops_to_state_updates(
 
         if op_name == "write":
             new_value = copy.deepcopy(value)
+        elif op_name == "write_or_append":
+            new_value = _apply_write_or_append(current, value, path=norm_path, idx=idx)
         elif op_name == "delta":
             new_value = _apply_delta(current, value, path=norm_path, idx=idx)
         elif op_name == "append":
@@ -113,11 +148,14 @@ def adapter_ops_to_state_updates(
             )
         else:
             raise OpTranslationError(
-                f"ops[{idx}] unknown op {op_name!r}; expected one of write/delta/append/append_or_update"
+                f"ops[{idx}] unknown op {op_name!r}; expected one of "
+                "write/write_or_append/delta/append/append_or_update"
             )
 
         pending[norm_path] = new_value
 
+    if include_audit_intents:
+        return pending, audit_intents
     return pending
 
 
@@ -190,6 +228,32 @@ def _apply_append(current: Any, value: Any, *, path: str, idx: int) -> List[Any]
     new_list = copy.deepcopy(current)
     new_list.append(copy.deepcopy(value))
     return new_list
+
+
+def _apply_write_or_append(current: Any, value: Any, *, path: str, idx: int) -> str:
+    if not isinstance(value, str):
+        raise OpTranslationError(
+            f"ops[{idx}] op=write_or_append path={path!r}: value must be str, got {type(value).__name__}"
+        )
+    if current is None or current == "":
+        return value
+    if not isinstance(current, str):
+        raise OpTranslationError(
+            f"ops[{idx}] op=write_or_append path={path!r}: current must be str or empty, "
+            f"got {type(current).__name__}"
+        )
+    return current.rstrip() + "\n\n" + value.lstrip()
+
+
+def _audit_intent_from_value(value: Mapping[str, Any]) -> dict[str, Any]:
+    payload = value.get("payload") if isinstance(value.get("payload"), Mapping) else {}
+    return {
+        "source": str(value.get("source") or "adapter.audit"),
+        "severity": str(value.get("severity") or "info"),
+        "msg": str(value.get("msg") or ""),
+        "action": str(value.get("action") or "log"),
+        "payload": copy.deepcopy(dict(payload)),
+    }
 
 
 def _apply_append_or_update(

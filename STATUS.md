@@ -35,7 +35,9 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 | v1.3-1 Reference Corpus P0 MVP | `done` | `ginga_platform/book_analysis/`；`scripts/build_reference_corpus.py`；`scripts/validate_reference_corpus.py`；`test_book_analysis_corpus`；`.ops/book_analysis/v1-3-1-smoke-main/validation_report.json`；`python3 scripts/verify_all.py` | 已完成纯函数化 scan / split / manifest / validator / report；输出限定 `.ops/book_analysis/<run_id>/`；仍不做内容分析、D1-D12、Promote 或 Sidecar RAG |
 | v1.3-2 Chapter Atom + Quality Gates | `done` | `ginga_platform/book_analysis/chapter_atoms.py`；`scripts/build_chapter_atoms.py`；`scripts/validate_chapter_atoms.py`；`test_book_analysis_corpus`；`.ops/book_analysis/v1-3-2-smoke-main/validation_report.json`；`python3 scripts/verify_all.py` | 已完成结构性 `chapter_boundary` atom、quality gates 与 validator；仍不保存标题/原文摘录，不做 D1-D12、trope recipe、Promote 或 Sidecar RAG |
 | v1.3-3 Trope Recipe Candidate | `done` | `ginga_platform/book_analysis/trope_recipes.py`；`scripts/build_trope_recipes.py`；`scripts/validate_trope_recipes.py`；`test_book_analysis_corpus`；`.ops/book_analysis/v1-3-3-smoke-main/validation_report.json`；`python3 scripts/verify_all.py` | 已完成去来源污染的 `trope_recipe_candidate` sidecar、quality gates 与 validator；仍不自动 promote，不进默认 RAG / prompt / `raw_ideas` / Foundation assets/schema / `StateIO` |
-| v1.4 BookView / explorer | `deferred` | `.ops/reports/oh_story_inspiration_roadmap.md` | 尚无 `.ops/book_views/` 或 inspect/query 实现；依赖 v1.3-1 P0 corpus 稳定 |
+| v1.3-4 Promote Flow | `done` | `ginga_platform/book_analysis/promote.py`；`scripts/promote_trope_recipes.py`；`scripts/validate_promoted_trope_assets.py`；`test_book_analysis_corpus.TropeRecipePromoteFlowV134ContractTest`；`python3 scripts/verify_all.py --quick` | 已完成人工审核 + 污染检查通过后才允许 promote 到白名单 Foundation methodology 资产；仍不进默认 RAG、prompt、`raw_ideas` 或 `StateIO` |
+| v1.3-5 Reference Sidecar RAG | `done` | `rag/reference_sidecar.py`；`scripts/build_reference_sidecar_index.py`；`ReferenceSidecarRagTest`；`python3 scripts/verify_all.py --quick` | 已新增显式 opt-in 的 sidecar index / recall 入口；只索引 `foundation/assets/methodology/promoted-*.md` 中 approved + contamination pass + `default_rag_eligible=false` 的 methodology 资产；默认 RAG 仍按 `source_path=.ops/book_analysis/**` 排除 |
+| v1.4 BookView / explorer | `deferred` | `.ops/reports/oh_story_inspiration_roadmap.md` | 尚无 `.ops/book_views/` 或 inspect/query 实现；依赖 v1.3-5 sidecar 边界稳定 |
 | v1.5 review / deslop | `deferred` | `.ops/reports/oh_story_inspiration_roadmap.md` | 只可作为 report sidecar，rubric 不进创作 prompt |
 | v1.6 market sidecar / v2 运营线 | `deferred` | `ROADMAP.md` §九 | 外部依赖重，需显式授权和 offline fixture |
 
@@ -52,19 +54,20 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 - P2-7A Platform runner 收敛切片已完成：`novel_pipeline_mvp.yaml` 的 G 步可由 DSL 解析为 capability asset hint + `skill-router`，默认 `SkillRouter()` 可读取仓库 `ginga_platform/skills/registry.yaml`；单章 `ginga run --mock-llm` 进入 `step_dispatch:G_chapter_draft`，经 `dark-fantasy` adapter 写 `workspace.chapter_text`，并继续跑 H/R1/R2/R3/V1 的 workflow step 审计。
 - P2-7B Platform runner 收敛已完成：A-F/H/R1/R2/R3/V1 的默认 capability 已由固定 stub 收敛为 asset-backed deterministic provider；`CapabilityRegistry.from_defaults()` 注册 12 个 provider，输出 `provider=asset-backed` / `asset_ref`，并继续由 `step_dispatch` + `StateIO` 白名单写入 state；R2 provider 的结构化 `audit_intents` 已通过 `StateIO.audit()` 落审计，G 步仍优先经 `skill-router` + dark-fantasy adapter 写 `workspace.chapter_text`。
 - P2-7C provider 质量与真实 demo 收口已完成：`scripts/run_real_llm_smoke.py` 支持 dry-run、显式 `--run` 与 `--refresh-existing`；`.ops/validation/real_llm_demo_smoke.json` 记录 `passed=true`、`dry_run=false`、`refreshed_existing=true`、`execution_mode=real_llm_demo`、endpoint、`context_snapshot`、`gap_report` 与 residual risk；H/R/V provider 输出已补可读报告字段，且仍不绕过 `StateIO` 或把报告写入 runtime_state YAML。
-- 新增规划路线已完成定位梳理：oh-story 参考路线、拆书融梗 / `ReferenceTropeDistillation`、BookView / explorer、review / deslop、market sidecar 已有规划与 jury 查漏补缺；其中 v1.3-0 污染隔离底座、v1.3-1 Reference Corpus P0 MVP、v1.3-2 Chapter Atom + Quality Gates 与 v1.3-3 Trope Recipe Candidate 已完成，后续 promote / sidecar RAG 能力仍按 `deferred` 处理。
+- 新增规划路线已完成定位梳理：oh-story 参考路线、拆书融梗 / `ReferenceTropeDistillation`、BookView / explorer、review / deslop、market sidecar 已有规划与 jury 查漏补缺；其中 v1.3-0 污染隔离底座、v1.3-1 Reference Corpus P0 MVP、v1.3-2 Chapter Atom + Quality Gates、v1.3-3 Trope Recipe Candidate、v1.3-4 Promote Flow 与 v1.3-5 Reference Sidecar RAG 已完成。
 - v1.3-3 Trope Recipe Candidate 已完成：新增 `trope_recipes.py`、build / validate 脚本、validator 与固定 smoke run `.ops/book_analysis/v1-3-3-smoke-main`；候选只由结构性 chapter atoms 派生，包含 `trope_core`、`reader_payoff`、`trigger_conditions`、`variation_axes`、`forbidden_copy_elements` 与 safety / promotion 边界，状态保持 `not_promoted`。
+- 架构缝隙修复已完成：`step_dispatch` 缺 capability / skill / router 默认 fail-loud，仅 `execution_mode=dev/noop_allowed` 保留旧 noop；`planning-with-files` adapter 输出可经 `op_translator` 转为 `StateIO` updates / audit intents；`rag/index_builder.py` 已按 `recall_forbidden_paths` 过滤文件路径和 `source_path`，避免 `.ops/book_analysis/**` 误入默认索引。
+- v1.3-4 Promote Flow 已完成最小可验证实现：`promote_trope_recipes()` 只接受 `human_review_status=approved` 且 `source_contamination_check=pass` 的 candidate，并只写入 `foundation/assets/methodology/promoted-*.md`；`validate_promoted_trope_assets()` 校验白名单落点、审批字段、污染检查字段和默认 RAG 禁入标记。
+- v1.3-5 Reference Sidecar RAG 已完成最小可验证实现：`build_reference_sidecar_index()` 只从白名单 Foundation methodology promoted 资产构建独立 sqlite index，`recall_reference_sidecar()` 作为显式 opt-in 召回入口；默认 `build_index()` 仍过滤 `source_path=.ops/book_analysis/**`，默认 RAG / `evaluate_rag_recall.py` 不读污染域。
 
 ## 下一步
 
-当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。P2-5 harness 已成为回归门；RAG 指标已超过阶段目标，不宜继续把主线押在 metadata 小修上。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
+当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路已从污染隔离、P0 corpus、chapter atom、trope candidate、promote 到显式 opt-in sidecar RAG 收口。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
 
 优先任务：
 
-- **v1.3-4 Promote Flow（deferred）**：只有在人工审核 + 污染检查规则明确后，才允许把已批准候选转为 Foundation 可治理资产；不得把 v1.3-3 的 `pending` candidate 自动写入 Foundation、默认 RAG、prompt、`raw_ideas` 或 `StateIO`。
+- **v1.4 BookView / explorer（deferred）**：下一步可做只读 projection / inspect / query；默认输入白名单不得包含 `.ops/book_analysis/**`，真值仍是 `StateIO`，Reference Sidecar 只能通过显式 opt-in 读取 promoted methodology 资产。
 - **RAG 残余观察**：保留 `.ops/reports/rag_recall_quality_report.md` 的 `candidate_k` / `asset_type` blocker 作为后续小修观察项；守住 Layer 2 `recall@5 >= 0.500` 与 `expected_recall@5 >= 0.875`。
-
-当前 v1.3-4 只新增规格计划：`.ops/plans/v1-3-4-promote-flow-spec.md`。下一轮若开工，应先做 Promotion Candidate schema + 只读 validator fixture，不应直接实现 promote CLI 或写 Foundation。
 
 ## 规划索引（不代表已完成）
 
@@ -119,3 +122,5 @@ python3 scripts/evaluate_rag_recall.py
 - v1.3-1 Reference Corpus P0 MVP：已新增 `ginga_platform/book_analysis/` 纯函数核心、`scripts/build_reference_corpus.py`、`scripts/validate_reference_corpus.py`、`test_book_analysis_corpus` 和固定 smoke run `.ops/book_analysis/v1-3-1-smoke-main`；`validate_reference_corpus.py .ops/book_analysis/v1-3-1-smoke-main` 已纳入 `verify_all.py`，仍只覆盖 P0 结构扫描边界，不证明拆书分析或创作可用性。
 - v1.3-2 Chapter Atom + Quality Gates：已新增 `ginga_platform/book_analysis/chapter_atoms.py`、`scripts/build_chapter_atoms.py`、`scripts/validate_chapter_atoms.py` 和固定 smoke run `.ops/book_analysis/v1-3-2-smoke-main`；`validate_chapter_atoms.py .ops/book_analysis/v1-3-2-smoke-main` 已纳入 `verify_all.py`，只证明结构性 chapter_boundary atom 与 quality gates，不证明 D1-D12 拆书分析、融梗配方或创作可用性。
 - v1.3-3 Trope Recipe Candidate：已新增 `ginga_platform/book_analysis/trope_recipes.py`、`scripts/build_trope_recipes.py`、`scripts/validate_trope_recipes.py` 和固定 smoke run `.ops/book_analysis/v1-3-3-smoke-main`；`validate_trope_recipes.py .ops/book_analysis/v1-3-3-smoke-main` 已纳入 `verify_all.py`，只证明去来源污染的 candidate sidecar 与红线 validator，不证明 promote、Sidecar RAG 或创作可用性。
+- v1.3-4 Promote Flow：已新增 `ginga_platform/book_analysis/promote.py`、`scripts/promote_trope_recipes.py`、`scripts/validate_promoted_trope_assets.py` 与 `TropeRecipePromoteFlowV134ContractTest`；只证明 approved + contamination pass 的候选可转为白名单 Foundation methodology 资产，不证明 Sidecar RAG 或创作链默认可用。
+- v1.3-5 Reference Sidecar RAG：已新增 `rag/reference_sidecar.py`、`scripts/build_reference_sidecar_index.py` 与 `ReferenceSidecarRagTest`；只证明显式 opt-in sidecar 可召回 approved promoted methodology 资产，不证明它会自动进入创作 workflow、默认 RAG 或 prompt 注入。

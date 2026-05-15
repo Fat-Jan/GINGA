@@ -1,0 +1,181 @@
+{
+  "generated_from": "scripts/run_real_llm_smoke.py",
+  "execution_mode": "real_llm_demo",
+  "dry_run": true,
+  "refreshed_existing": false,
+  "passed": false,
+  "endpoint": "久久",
+  "book_id": "p2-7c-real-llm-smoke-20260515-204719",
+  "topic": "玄幻黑暗",
+  "premise": "失忆刺客醒来后发现短刃会吞吐微粒，他必须在第一重天堑前判断追杀者来自谁。",
+  "word_target": 800,
+  "state_root": "/Users/arm/Desktop/ginga/.ops/real_llm_demo/p2-7c-smoke-state",
+  "output_path": "/Users/arm/Desktop/ginga/.ops/real_llm_demo/p2-7c-smoke-state/p2-7c-real-llm-smoke-20260515-204719/chapter_01.md",
+  "artifact_execution_mode": null,
+  "cost_risk": "1 ask-llm call, dynamic max_tokens based on word_target, timeout=300s; smoke quality only, not production readiness",
+  "will_not_overwrite": [
+    "foundation/runtime_state/demo-book",
+    "foundation/runtime_state/s2-demo",
+    "foundation/runtime_state/immersive-demo",
+    ".ops/reports/agent_harness_report.md"
+  ],
+  "commands": [
+    {
+      "name": "init",
+      "argv": [
+        "init",
+        "p2-7c-real-llm-smoke-20260515-204719",
+        "--topic",
+        "玄幻黑暗",
+        "--premise",
+        "失忆刺客醒来后发现短刃会吞吐微粒，他必须在第一重天堑前判断追杀者来自谁。",
+        "--word-target",
+        "50000",
+        "--state-root",
+        "/Users/arm/Desktop/ginga/.ops/real_llm_demo/p2-7c-smoke-state"
+      ],
+      "exit_code": null,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "name": "run",
+      "argv": [
+        "run",
+        "p2-7c-real-llm-smoke-20260515-204719",
+        "--llm-endpoint",
+        "久久",
+        "--word-target",
+        "800",
+        "--state-root",
+        "/Users/arm/Desktop/ginga/.ops/real_llm_demo/p2-7c-smoke-state"
+      ],
+      "exit_code": null,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    },
+    {
+      "name": "status",
+      "argv": [
+        "status",
+        "p2-7c-real-llm-smoke-20260515-204719",
+        "--state-root",
+        "/Users/arm/Desktop/ginga/.ops/real_llm_demo/p2-7c-smoke-state"
+      ],
+      "exit_code": null,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    }
+  ],
+  "context_snapshot": {
+    "status": "planned",
+    "before_run": {
+      "status": "missing",
+      "state_dir": "/Users/arm/Desktop/ginga/.ops/real_llm_demo/p2-7c-smoke-state/p2-7c-real-llm-smoke-20260515-204719",
+      "state_domains": {
+        "locked": false,
+        "entity_runtime": false,
+        "workspace": false,
+        "retrieved": false,
+        "audit_log": false
+      },
+      "audit_entries": 0,
+      "locked_summary": {
+        "has_story_dna": false,
+        "has_world": false,
+        "has_plot_architecture": false
+      },
+      "runtime_summary": {
+        "total_words": null,
+        "foreshadow_pool_size": 0,
+        "particles": null,
+        "character_events": 0
+      },
+      "chapter_artifact": {
+        "exists": false,
+        "path": "/Users/arm/Desktop/ginga/.ops/real_llm_demo/p2-7c-smoke-state/p2-7c-real-llm-smoke-20260515-204719/chapter_01.md",
+        "execution_mode": null,
+        "chars": 0,
+        "foreshadow_markers": 0
+      }
+    },
+    "after_run": {
+      "status": "missing",
+      "state_dir": "/Users/arm/Desktop/ginga/.ops/real_llm_demo/p2-7c-smoke-state/p2-7c-real-llm-smoke-20260515-204719",
+      "state_domains": {
+        "locked": false,
+        "entity_runtime": false,
+        "workspace": false,
+        "retrieved": false,
+        "audit_log": false
+      },
+      "audit_entries": 0,
+      "locked_summary": {
+        "has_story_dna": false,
+        "has_world": false,
+        "has_plot_architecture": false
+      },
+      "runtime_summary": {
+        "total_words": null,
+        "foreshadow_pool_size": 0,
+        "particles": null,
+        "character_events": 0
+      },
+      "chapter_artifact": {
+        "exists": false,
+        "path": "/Users/arm/Desktop/ginga/.ops/real_llm_demo/p2-7c-smoke-state/p2-7c-real-llm-smoke-20260515-204719/chapter_01.md",
+        "execution_mode": null,
+        "chars": 0,
+        "foreshadow_markers": 0
+      }
+    },
+    "observed_delta": {
+      "chapter_created": false,
+      "audit_entries_added": 0,
+      "total_words_after": null,
+      "foreshadow_pool_after": 0
+    }
+  },
+  "gap_report": {
+    "status": "planned",
+    "open_gaps": [
+      {
+        "code": "real_call_not_executed",
+        "severity": "info",
+        "detail": "dry-run only records scope and expected artifact paths."
+      },
+      {
+        "code": "production_quality_not_proven",
+        "severity": "warn",
+        "detail": "a smoke run is still required before reading chapter quality evidence."
+      }
+    ]
+  },
+  "residual_risk": [
+    {
+      "code": "dry_run_has_no_quality_evidence",
+      "severity": "high",
+      "mitigation": "run with --run before using this as real LLM evidence."
+    },
+    {
+      "code": "real_llm_variability",
+      "severity": "medium",
+      "mitigation": "record endpoint, prompt scope, artifact path, and rerun only with explicit approval."
+    },
+    {
+      "code": "single_chapter_scope",
+      "severity": "medium",
+      "mitigation": "treat this as smoke evidence, not a multi-chapter quality claim."
+    },
+    {
+      "code": "provider_quality_not_longform_proven",
+      "severity": "medium",
+      "mitigation": "keep mock harness as boundary regression and use real demo reports for quality review."
+    },
+    {
+      "code": "endpoint_cost_dependency",
+      "severity": "low",
+      "mitigation": "default to dry-run; real calls require explicit --run."
+    }
+  ]
+}

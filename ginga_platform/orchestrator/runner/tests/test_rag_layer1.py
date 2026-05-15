@@ -17,6 +17,7 @@ import tempfile
 import textwrap
 import unittest
 import warnings
+from contextlib import closing
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -33,6 +34,28 @@ def _write_card_md(dirp: Path, slug: str, meta: dict[str, Any]) -> Path:
         encoding="utf-8",
     )
     return fp
+
+
+def _promoted_methodology_meta(
+    *,
+    card_id: str = "promoted-trope-ch-0001-001",
+    approved: bool = True,
+    contamination_pass: bool = True,
+) -> dict[str, Any]:
+    return {
+        "id": card_id,
+        "asset_type": "methodology",
+        "title": "Promoted Trope Recipe",
+        "topic": ["reference_trope"],
+        "stage": "ideation",
+        "quality_grade": "B",
+        "source_path": ".ops/book_analysis/**",
+        "last_updated": "2026-05-15",
+        "promoted_from": "trope-ch-0001-001",
+        "human_review_status": "approved" if approved else "pending",
+        "source_contamination_check": "pass" if contamination_pass else "fail",
+        "default_rag_eligible": False,
+    }
 
 
 class ColdStartTest(unittest.TestCase):
@@ -52,6 +75,143 @@ class ColdStartTest(unittest.TestCase):
             self.assertEqual(detect_state(idx), "cold")
             result = recall(stage="drafting", topic="玄幻黑暗", top_k=5, index_path=idx)
             self.assertEqual(result, [])
+
+    def test_index_builder_excludes_forbidden_book_analysis_paths(self) -> None:
+        from rag.index_builder import build_index, count_cards
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            allowed = root / "foundation" / "assets" / "prompts"
+            forbidden = root / ".ops" / "book_analysis" / "run-1"
+            allowed.mkdir(parents=True)
+            forbidden.mkdir(parents=True)
+            card_meta = dict(
+                id="allowed-card",
+                asset_type="prompt_card",
+                title="clean",
+                topic=["玄幻黑暗"],
+                stage="drafting",
+                quality_grade="A",
+                card_intent="prose_generation",
+                source_path="foundation/assets/prompts/allowed.md",
+                last_updated="2026-05-15",
+            )
+            _write_card_md(allowed, "allowed", card_meta)
+            polluted = dict(card_meta)
+            polluted["id"] = "polluted-card"
+            polluted["source_path"] = ".ops/book_analysis/run-1/polluted.md"
+            _write_card_md(forbidden, "polluted", polluted)
+
+            idx = root / "index.sqlite"
+            stats = build_index(
+                [allowed, forbidden],
+                idx,
+                repo_root=root,
+                forbidden_paths=[".ops/book_analysis/**"],
+            )
+
+            self.assertEqual(stats.cards_indexed, 1)
+            self.assertEqual(count_cards(idx), 1)
+            with closing(sqlite3.connect(idx)) as conn:
+                ids = [row[0] for row in conn.execute("SELECT id FROM cards ORDER BY id")]
+            self.assertEqual(ids, ["allowed-card"])
+
+    def test_default_index_builder_excludes_promoted_book_analysis_projection(self) -> None:
+        from rag.index_builder import build_index, count_cards
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            methodology = root / "foundation" / "assets" / "methodology"
+            methodology.mkdir(parents=True)
+            _write_card_md(
+                methodology,
+                "promoted-trope-ch-0001-001",
+                _promoted_methodology_meta(),
+            )
+
+            idx = root / "index.sqlite"
+            stats = build_index(
+                [methodology],
+                idx,
+                repo_root=root,
+                forbidden_paths=[".ops/book_analysis/**"],
+            )
+
+            self.assertEqual(stats.cards_indexed, 0)
+            self.assertEqual(stats.skipped_forbidden_path, 1)
+            self.assertEqual(count_cards(idx), 0)
+
+
+class ReferenceSidecarRagTest(unittest.TestCase):
+    def test_sidecar_builds_only_approved_promoted_methodology_assets(self) -> None:
+        from rag.reference_sidecar import build_reference_sidecar_index
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            methodology = root / "foundation" / "assets" / "methodology"
+            polluted = root / ".ops" / "book_analysis" / "run-1"
+            methodology.mkdir(parents=True)
+            polluted.mkdir(parents=True)
+            _write_card_md(methodology, "promoted-approved", _promoted_methodology_meta())
+            _write_card_md(
+                methodology,
+                "promoted-pending",
+                _promoted_methodology_meta(card_id="promoted-pending", approved=False),
+            )
+            _write_card_md(
+                methodology,
+                "promoted-contaminated",
+                _promoted_methodology_meta(card_id="promoted-contaminated", contamination_pass=False),
+            )
+            _write_card_md(polluted, "promoted-illegal", _promoted_methodology_meta(card_id="promoted-illegal"))
+
+            idx = root / "sidecar.sqlite"
+            stats = build_reference_sidecar_index(repo_root=root, index_path=idx)
+
+            self.assertEqual(stats.cards_indexed, 1)
+            with closing(sqlite3.connect(idx)) as conn:
+                ids = [row[0] for row in conn.execute("SELECT id FROM cards ORDER BY id")]
+            self.assertEqual(ids, ["promoted-trope-ch-0001-001"])
+
+    def test_sidecar_recall_is_explicit_opt_in_and_default_rag_stays_empty(self) -> None:
+        from rag.index_builder import build_index
+        from rag.layer1_filter import recall
+        from rag.reference_sidecar import build_reference_sidecar_index, recall_reference_sidecar
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            methodology = root / "foundation" / "assets" / "methodology"
+            methodology.mkdir(parents=True)
+            _write_card_md(methodology, "promoted-approved", _promoted_methodology_meta())
+
+            default_idx = root / "default.sqlite"
+            build_index(
+                [methodology],
+                default_idx,
+                repo_root=root,
+                forbidden_paths=[".ops/book_analysis/**"],
+            )
+            default_hits = recall(
+                stage="ideation",
+                topic="reference_trope",
+                asset_type="methodology",
+                top_k=5,
+                index_path=default_idx,
+            )
+            self.assertEqual(default_hits, [])
+
+            sidecar_idx = root / "sidecar.sqlite"
+            build_reference_sidecar_index(repo_root=root, index_path=sidecar_idx)
+            sidecar = recall_reference_sidecar(
+                stage="ideation",
+                topic="reference_trope",
+                top_k=5,
+                index_path=sidecar_idx,
+            )
+
+            self.assertEqual([card["id"] for card in sidecar["cards"]], ["promoted-trope-ch-0001-001"])
+            self.assertEqual(sidecar["diagnostics"]["execution_mode"], "reference_sidecar_rag")
+            self.assertTrue(sidecar["diagnostics"]["explicit_opt_in_required"])
 
 
 class TopicFilterTest(unittest.TestCase):

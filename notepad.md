@@ -5,7 +5,8 @@
 - 定位：Ginga 是以 workflow DSL + skill adapters + StateIO 为真实运行主线的小说创作平台底座，STATUS.md 是当前状态真值。
 - 入口：先看 AGENTS.md、STATUS.md、notepad.md、ARCHITECTURE.md。
 - 验证：常用 python3 scripts/verify_all.py、python3 scripts/run_agent_harness.py、python3 scripts/evaluate_rag_recall.py。
-- 坑点：P2-7C 已收口但仍只证明单章 smoke 边界；v1.3-3 Trope Recipe Candidate 已收口但只证明污染源 sidecar 内的去来源候选、quality gates 与 validator，不证明 promote、Sidecar RAG 或创作可用性；book_analysis 与市场原文仍不得默认进入 StateIO、RAG、prompt、raw_ideas、Foundation assets/schema 或 explorer/review 白名单。
+- 坑点：P2-7C 已收口但仍只证明单章 smoke 边界；v1.3-5 Reference Sidecar RAG 只证明显式 opt-in 可召回 approved promoted methodology 资产，不证明它会自动进入创作 workflow、默认 RAG 或 prompt 注入；book_analysis 与市场原文仍不得默认进入 StateIO、RAG、prompt、raw_ideas、Foundation assets/schema 或 explorer/review 白名单。
+- 模型：内容生成默认走 ask-llm 端点 `久久`（qwen3.6-max-preview-nothinking，key 在 macOS Keychain）；每章默认 4000 字，4000 字 smoke 实测 3988 汉字、无 `<think>` / AI 解释 / 提纲化漂移。
 
 ## 项目定位
 
@@ -88,7 +89,7 @@ _原料/
 | 3 | Ark Jury Court 4 角法庭 | ✅ 完成 | `.ops/jury/jury-{1-4}-*.md`（4 票 revise） |
 | 4 | 综合判决与交付 | ✅ 完成 | `ARCHITECTURE.md` + `ROADMAP.md` |
 
-**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 拆书融梗污染隔离底座、v1.3-1 Reference Corpus P0 MVP、v1.3-2 Chapter Atom + Quality Gates 与 v1.3-3 Trope Recipe Candidate 已完成。v1.3-4 当前只新增规格计划 `.ops/plans/v1-3-4-promote-flow-spec.md`；下一轮若继续 v1.3，应先做 Promotion Candidate schema + 只读 validator fixture，不应直接实现 promote CLI 或写 Foundation。
+**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 拆书融梗污染隔离底座、v1.3-1 Reference Corpus P0 MVP、v1.3-2 Chapter Atom + Quality Gates、v1.3-3 Trope Recipe Candidate、v1.3-4 Promote Flow 与 v1.3-5 Reference Sidecar RAG 已完成。下一轮优先看 v1.4 BookView / explorer：只读 projection / inspect / query，真值仍是 StateIO，默认输入白名单不得包含 `.ops/book_analysis/**`。
 
 ## 验证
 

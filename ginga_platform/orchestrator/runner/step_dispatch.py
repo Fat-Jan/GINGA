@@ -74,8 +74,9 @@ def dispatch_step(
 
     ``runtime_context`` 必含 ``state_io: StateIO``（jury-1 P0 强约束）.
     可选键：``book_id`` / ``params`` / 其他上下文.
-    ``capability_registry`` / ``skill_registry`` 是 P7-critical 注册的 adapter 表，
-    S1 内允许为空：dispatch 会 fall back 到 noop 并记 audit_log.
+    ``capability_registry`` / ``skill_registry`` 是 P7-critical 注册的 adapter 表。
+    P2-7 收敛后缺失注册项默认 fail-loud；只有显式
+    ``execution_mode="dev/noop_allowed"`` 才保留旧 S1 noop 行为。
     """
     state_io = runtime_context.get("state_io")
     if not isinstance(state_io, StateIO):
@@ -171,25 +172,34 @@ def _execute_body(
         cap = step.uses_capability or ""
         fn = capability_registry.get(cap)
         if fn is None:
-            # S1 fallback：capability 还没注册（P7-critical 的 adapter 在串供之外）.
-            return ({"result": None, "note": f"capability {cap!r} not registered (S1 noop)"}, f"capability:{cap}")
+            if _noop_allowed(ctx):
+                return ({"result": None, "note": f"capability {cap!r} not registered (dev noop)"}, f"capability:{cap}")
+            raise StepFailed(step.id, f"capability not registered: {cap!r}")
         return (_safe_call(fn, step.id, inputs, ctx), f"capability:{cap}")
 
     if step.is_skill_step:
         wanted = step.uses_skill or ""
         if wanted == "skill-router":
             if skill_router is None:
-                return ({"result": None, "note": "skill_router not provided (S1 noop)"}, "skill:default_writer")
+                if _noop_allowed(ctx):
+                    return ({"result": None, "note": "skill_router not provided (dev noop)"}, "skill:default_writer")
+                raise StepFailed(step.id, "skill_router not provided")
             chosen = skill_router(step, ctx) or "default_writer"
         else:
             chosen = wanted
         fn = skill_registry.get(chosen)
         if fn is None:
-            return ({"result": None, "note": f"skill {chosen!r} not registered (S1 noop)"}, f"skill:{chosen}")
+            if _noop_allowed(ctx):
+                return ({"result": None, "note": f"skill {chosen!r} not registered (dev noop)"}, f"skill:{chosen}")
+            raise StepFailed(step.id, f"skill not registered: {chosen!r}")
         return (_safe_call(fn, step.id, inputs, ctx), f"skill:{chosen}")
 
     # 既不 uses_capability 也不 uses_skill：当作纯 state-only step (如 F_state_init).
     return ({"result": None, "note": "no-op step (state-only)"}, "noop")
+
+
+def _noop_allowed(ctx: Mapping[str, Any]) -> bool:
+    return str(ctx.get("execution_mode") or ctx.get("mode") or "") == "dev/noop_allowed"
 
 
 def _safe_call(

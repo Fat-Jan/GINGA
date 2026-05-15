@@ -26,7 +26,7 @@ from ginga_platform.orchestrator.runner.op_translator import (
     adapter_ops_to_state_updates,
 )
 from ginga_platform.orchestrator.runner.state_io import StateIO
-from ginga_platform.orchestrator.runner.step_dispatch import dispatch_step
+from ginga_platform.orchestrator.runner.step_dispatch import StepFailed, dispatch_step
 from ginga_platform.skills.dark_fantasy_ultimate_engine.adapter import (
     DarkFantasyAdapter,
 )
@@ -324,6 +324,70 @@ class TwelveStepIntegrationTest(unittest.TestCase):
                 mock_input.call_count, 1,
                 "DarkFantasyAdapter.input_transform should be called at least once (G step)",
             )
+
+
+class StepDispatchNoopPolicyTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.state_io = StateIO("noop-policy", state_root=Path(self._tmp.name) / "state")
+
+    def test_missing_capability_fails_loud_by_default(self) -> None:
+        wf = parse_workflow_dict(
+            {
+                "name": "missing_capability",
+                "steps": [
+                    {
+                        "id": "A_missing",
+                        "uses_capability": "missing-capability",
+                        "state_writes": ["workspace.progress"],
+                    }
+                ],
+            }
+        )
+
+        with self.assertRaisesRegex(StepFailed, "capability not registered"):
+            dispatch_step(wf.steps[0], {"state_io": self.state_io}, capability_registry={})
+
+    def test_missing_skill_router_fails_loud_by_default(self) -> None:
+        wf = parse_workflow_dict(
+            {
+                "name": "missing_router",
+                "steps": [
+                    {
+                        "id": "G_missing_router",
+                        "uses_skill": "skill-router",
+                        "state_writes": ["workspace.chapter_text"],
+                    }
+                ],
+            }
+        )
+
+        with self.assertRaisesRegex(StepFailed, "skill_router not provided"):
+            dispatch_step(wf.steps[0], {"state_io": self.state_io}, skill_registry={})
+
+    def test_explicit_dev_noop_allowed_preserves_legacy_noop(self) -> None:
+        wf = parse_workflow_dict(
+            {
+                "name": "dev_noop",
+                "steps": [
+                    {
+                        "id": "A_missing",
+                        "uses_capability": "missing-capability",
+                        "state_writes": ["workspace.progress"],
+                    }
+                ],
+            }
+        )
+
+        result = dispatch_step(
+            wf.steps[0],
+            {"state_io": self.state_io, "execution_mode": "dev/noop_allowed"},
+            capability_registry={},
+        )
+
+        self.assertEqual(result.used, "capability:missing-capability")
+        self.assertIn("noop", result.output["note"])
 
 
 if __name__ == "__main__":  # pragma: no cover

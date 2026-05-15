@@ -13,6 +13,7 @@ from .report import render_scan_report
 from .scan import SourceScanResult, scan_source_bytes
 from .split import ChapterEntry, SplitResult, split_chapters as _split_text
 from .chapter_atoms import write_chapter_atoms_run
+from .promote import promote_trope_recipes
 from .trope_recipes import write_trope_recipe_run
 
 

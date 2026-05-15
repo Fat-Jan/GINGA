@@ -189,15 +189,11 @@ class PlanningWithFilesAdapter:
         触发时记 audit_log，便于运维排查（如果出现误调用）。
         """
         # 不修改 self._immersive_active；planning 状态机里它永远是 False
-        try:
-            self.state_io.append_audit(  # type: ignore[attr-defined]
-                source="planning-with-files.adapter",
-                severity="info",
-                msg="enter_immersive_mode called on planning adapter (no-op by design)",
-            )
-        except Exception:
-            # 兜底：state_io 未实现 append_audit 时静默；不阻塞 step 主流程
-            pass
+        self.state_io.audit(
+            source="planning-with-files.adapter",
+            severity="info",
+            msg="enter_immersive_mode called on planning adapter (no-op by design)",
+        )
 
     def exit_immersive_mode(self) -> Dict[str, Any]:
         """no-op：planning-with-files 不参与 dark-fantasy 的沉浸专线。
@@ -206,14 +202,11 @@ class PlanningWithFilesAdapter:
             dict：与 dark-fantasy adapter exit_immersive_mode 同 shape，
             applied_count / failed_count / last_error 全为 0 / None。
         """
-        try:
-            self.state_io.append_audit(  # type: ignore[attr-defined]
-                source="planning-with-files.adapter",
-                severity="info",
-                msg="exit_immersive_mode called on planning adapter (no-op by design)",
-            )
-        except Exception:
-            pass
+        self.state_io.audit(
+            source="planning-with-files.adapter",
+            severity="info",
+            msg="exit_immersive_mode called on planning adapter (no-op by design)",
+        )
         return {"applied_count": 0, "failed_count": 0, "last_error": None}
 
     # ------------------------------------------------------------------

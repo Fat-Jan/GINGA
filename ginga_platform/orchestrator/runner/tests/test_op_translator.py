@@ -312,6 +312,43 @@ class OpTranslatorOpTest(unittest.TestCase):
         with self.assertRaises(OpTranslationError):
             adapter_ops_to_state_updates({"not": "list"}, self.sio)  # type: ignore[arg-type]
 
+    def test_write_or_append_appends_text_with_separator(self) -> None:
+        self.sio.apply({"workspace.task_plan": "existing"}, source="seed")
+        updates = adapter_ops_to_state_updates(
+            [
+                {
+                    "op": "write_or_append",
+                    "path": "runtime_state.workspace.task_plan",
+                    "value": "new section",
+                }
+            ],
+            self.sio,
+        )
+
+        self.assertEqual(updates, {"workspace.task_plan": "existing\n\nnew section"})
+
+    def test_planning_audit_entries_are_returned_as_audit_intents(self) -> None:
+        updates, audit_intents = adapter_ops_to_state_updates(
+            [
+                {
+                    "op": "append",
+                    "path": "audit_log.entries",
+                    "value": {
+                        "source": "planning-with-files.self_check",
+                        "severity": "info",
+                        "msg": "planning self-check",
+                        "payload": {"ok": True},
+                    },
+                }
+            ],
+            self.sio,
+            include_audit_intents=True,
+        )
+
+        self.assertEqual(updates, {})
+        self.assertEqual(audit_intents[0]["source"], "planning-with-files.self_check")
+        self.assertEqual(audit_intents[0]["payload"], {"ok": True})
+
 
 class OpTranslatorE2EWithAdapterShapeTest(unittest.TestCase):
     """模拟 dark-fantasy adapter.output_transform 的完整返回结构 → 翻译 → apply."""

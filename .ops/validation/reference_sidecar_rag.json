@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "execution_mode": "reference_sidecar_rag",
+  "explicit_opt_in_required": true,
+  "index_path": ".ops/validation/reference_sidecar_rag.sqlite",
+  "stats": {
+    "sources_scanned": 0,
+    "files_seen": 0,
+    "cards_indexed": 0,
+    "skipped_no_frontmatter": 0,
+    "skipped_invalid_yaml": 0,
+    "skipped_missing_id": 0,
+    "skipped_forbidden_path": 0
+  }
+}

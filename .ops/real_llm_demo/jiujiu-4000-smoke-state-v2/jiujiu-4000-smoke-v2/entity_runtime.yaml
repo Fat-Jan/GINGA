@@ -1,0 +1,53 @@
+CHARACTER_STATE:
+  protagonist:
+    name: 未命名刺客
+    inventory:
+    - item: 刻有古老符文的短刃
+      count: 1
+    abilities:
+    - skill: 影迹潜行
+      level: 5
+      cooldown: 0
+    body:
+      hp: 100
+      mp: 80
+      status:
+      - 失忆
+      - 微粒残留
+    psyche:
+      mood: 警觉
+      beliefs:
+      - 不信任任何人
+      traumas:
+      - 记忆缺失带来的存在性恐惧
+    relations: []
+    events:
+    - ch: 1
+      type: draft
+      impact: 第1章草稿生成（3988字，新增1个伏笔）
+    - ch: 1
+      type: settle
+      impact: 黑暗并非虚无，而是某种粘稠的、带有铁锈味的实体。它像陈年的淤血，堵塞在耳道与鼻腔之间，每一次试图吸入空气的动作，都像是在吞咽碎玻璃。 他睁开眼。
+        没有光。或者说
+RESOURCE_LEDGER:
+  particles: 12
+  items: []
+FORESHADOW_STATE:
+  pool:
+  - id: fh-001
+    planted_ch: 1
+    expected_payoff: 30
+    status: open
+    summary: 短刃上的古老符文
+  - id: fh-002
+    planted_ch: 1
+    expected_payoff: 5
+    status: open
+    summary: 地图边缘的圆圈竖线符号与主角记忆深处的关联
+GLOBAL_SUMMARY:
+  total_words: 12541
+  arc_summaries:
+  - chapter: 1
+    summary: 黑暗并非虚无，而是某种粘稠的、带有铁锈味的实体。它像陈年的淤血，堵塞在耳道与鼻腔之间，每一次试图吸入空气的动作，都像是在吞咽碎玻璃。 他睁开眼。
+      没有光。或者说
+    words: 3999

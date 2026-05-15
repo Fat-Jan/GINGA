@@ -72,7 +72,7 @@ class ImmersiveRunner:
     Usage::
 
         runner = ImmersiveRunner(book_id="demo-book")
-        result = runner.run_block(chapters=5, llm_endpoint="windhub", word_target=3500)
+        result = runner.run_block(chapters=5, llm_endpoint="久久", word_target=4000)
         # result: {"chapter_count": 5, "applied_count": ..., "chapter_paths": [...], ...}
 
     测试 / 离线模式::
@@ -101,8 +101,8 @@ class ImmersiveRunner:
         self,
         chapters: int,
         *,
-        llm_endpoint: str = "windhub",
-        word_target: int = 3500,
+        llm_endpoint: str = "久久",
+        word_target: int = 4000,
         start_chapter_no: int = 1,
         execution_mode: str | None = None,
     ) -> Dict[str, Any]:
@@ -118,8 +118,8 @@ class ImmersiveRunner:
 
         Args:
             chapters: 章节数，必须 >= 1
-            llm_endpoint: ask-llm endpoint alias (default "windhub")
-            word_target: 每章字数目标 (default 3500)
+            llm_endpoint: ask-llm endpoint alias (default "久久")
+            word_target: 每章字数目标 (default 4000)
             start_chapter_no: 起始章号 (default 1，每章号 +1)
 
         Returns:

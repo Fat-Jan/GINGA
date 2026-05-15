@@ -24,7 +24,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 REAL_MODE = "real_llm_demo"
-DEFAULT_ENDPOINT = "xiaomi-tp"
+DEFAULT_ENDPOINT = "久久"
 DEFAULT_STATE_ROOT = REPO_ROOT / ".ops" / "real_llm_demo" / "p2-7c-smoke-state"
 DEFAULT_JSON_OUTPUT = REPO_ROOT / ".ops" / "validation" / "real_llm_demo_smoke.json"
 DEFAULT_REPORT_OUTPUT = REPO_ROOT / ".ops" / "reports" / "real_llm_demo_report.md"
@@ -310,7 +310,7 @@ def _payload_from_snapshots(
         "state_root": str(state_root),
         "output_path": str(chapter_path),
         "artifact_execution_mode": artifact_mode,
-        "cost_risk": "1 ask-llm call, max_tokens=4096, timeout=300s; smoke quality only, not production readiness",
+        "cost_risk": "1 ask-llm call, dynamic max_tokens based on word_target, timeout=300s; smoke quality only, not production readiness",
         "will_not_overwrite": list(WILL_NOT_OVERWRITE),
         "commands": [asdict(run) for run in runs],
     }

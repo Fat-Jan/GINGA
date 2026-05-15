@@ -53,14 +53,14 @@ def main(argv: list[str] | None = None) -> int:
     p_run.add_argument("book_id")
     p_run.add_argument(
         "--llm-endpoint",
-        default="windhub",
-        help="ask-llm 端点 alias（默认 windhub）",
+        default="久久",
+        help="ask-llm 端点 alias（默认 久久）",
     )
     p_run.add_argument(
         "--word-target",
         type=int,
-        default=3500,
-        help="第一章字数目标（默认 3500）",
+        default=4000,
+        help="第一章字数目标（默认 4000）",
     )
     # immersive_mode（dark-fantasy 独有，ST-S2-I IMMERSIVE）
     p_run.add_argument(

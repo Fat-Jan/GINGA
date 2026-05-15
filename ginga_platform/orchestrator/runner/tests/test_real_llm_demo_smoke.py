@@ -22,7 +22,7 @@ class RealLLMDemoSmokeTest(unittest.TestCase):
 
             payload = run_smoke(
                 book_id="p2-7c-smoke-test",
-                endpoint="xiaomi-tp",
+                endpoint="久久",
                 state_root=state_root,
                 json_output=json_output,
                 report_output=report_output,
@@ -32,7 +32,7 @@ class RealLLMDemoSmokeTest(unittest.TestCase):
 
             self.assertEqual(payload["execution_mode"], "real_llm_demo")
             self.assertTrue(payload["dry_run"])
-            self.assertEqual(payload["endpoint"], "xiaomi-tp")
+            self.assertEqual(payload["endpoint"], "久久")
             self.assertIn("1 ask-llm call", payload["cost_risk"])
             self.assertIn("context_snapshot", payload)
             self.assertEqual(payload["context_snapshot"]["status"], "planned")
@@ -113,7 +113,7 @@ class RealLLMDemoSmokeTest(unittest.TestCase):
             try:
                 payload = run_smoke(
                     book_id=book_id,
-                    endpoint="xiaomi-tp",
+                    endpoint="久久",
                     state_root=state_root,
                     json_output=root / "real.json",
                     report_output=root / "real.md",
@@ -170,7 +170,7 @@ class RealLLMDemoSmokeTest(unittest.TestCase):
 
             payload = refresh_existing_smoke(
                 book_id=book_id,
-                endpoint="xiaomi-tp",
+                endpoint="久久",
                 state_root=state_root,
                 json_output=root / "existing.json",
                 report_output=root / "existing.md",

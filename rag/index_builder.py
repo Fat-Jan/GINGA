@@ -26,6 +26,7 @@ import logging
 import re
 import hashlib
 import sqlite3
+from fnmatch import fnmatch
 from contextlib import closing
 from dataclasses import dataclass
 from pathlib import Path
@@ -84,6 +85,7 @@ class IndexBuildStats:
     skipped_no_frontmatter: int = 0
     skipped_invalid_yaml: int = 0
     skipped_missing_id: int = 0
+    skipped_forbidden_path: int = 0
 
     def to_dict(self) -> dict[str, int]:
         return {
@@ -93,6 +95,7 @@ class IndexBuildStats:
             "skipped_no_frontmatter": self.skipped_no_frontmatter,
             "skipped_invalid_yaml": self.skipped_invalid_yaml,
             "skipped_missing_id": self.skipped_missing_id,
+            "skipped_forbidden_path": self.skipped_forbidden_path,
         }
 
 
@@ -106,6 +109,9 @@ def build_index(
     index_path: Path | str,
     *,
     fail_fast: bool = False,
+    repo_root: Path | str | None = None,
+    forbidden_paths: Iterable[str] | None = None,
+    filter_source_path: bool = True,
 ) -> IndexBuildStats:
     """扫 ``sources`` 下的 ``*.md``，把 frontmatter 写到 sqlite.
 
@@ -121,6 +127,8 @@ def build_index(
     if fp.exists():
         fp.unlink()
     stats = IndexBuildStats()
+    repo_root_path = Path(repo_root) if repo_root is not None else None
+    forbidden_patterns = tuple(forbidden_paths or _load_default_forbidden_paths())
 
     with closing(sqlite3.connect(str(fp))) as conn:
         conn.executescript(_SCHEMA_SQL)
@@ -132,8 +140,14 @@ def build_index(
                 continue
             for md_path in _iter_md_files(root):
                 stats.files_seen += 1
+                if _is_forbidden_path(md_path, patterns=forbidden_patterns, repo_root=repo_root_path):
+                    stats.skipped_forbidden_path += 1
+                    continue
                 row = _parse_md(md_path, stats, fail_fast=fail_fast)
                 if row is None:
+                    continue
+                if filter_source_path and _source_path_is_forbidden(row.get("source_path", ""), patterns=forbidden_patterns):
+                    stats.skipped_forbidden_path += 1
                     continue
                 _upsert_card(conn, row)
                 stats.cards_indexed += 1
@@ -183,6 +197,52 @@ def _iter_md_files(root: Path) -> Iterable[Path]:
     if root.is_dir():
         # 递归扫 *.md (foundation/assets/prompts/*.md 现阶段平铺，但允许子目录).
         yield from sorted(root.rglob("*.md"))
+
+
+def _load_default_forbidden_paths() -> tuple[str, ...]:
+    config_path = Path("foundation/rag/recall_config.yaml")
+    if not config_path.exists():
+        return ()
+    try:
+        raw = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError:
+        return ()
+    values = raw.get("recall_forbidden_paths", []) if isinstance(raw, Mapping) else []
+    if not isinstance(values, list):
+        return ()
+    return tuple(str(item) for item in values if isinstance(item, str))
+
+
+def _is_forbidden_path(path: Path, *, patterns: tuple[str, ...], repo_root: Path | None) -> bool:
+    if not patterns:
+        return False
+    candidates = {_normalize_for_match(path)}
+    if repo_root is not None:
+        try:
+            candidates.add(_normalize_for_match(path.resolve().relative_to(repo_root.resolve())))
+        except ValueError:
+            pass
+    return any(_matches_forbidden(candidate, patterns) for candidate in candidates)
+
+
+def _source_path_is_forbidden(source_path: str, *, patterns: tuple[str, ...]) -> bool:
+    if not source_path or not patterns:
+        return False
+    return _matches_forbidden(_normalize_for_match(Path(source_path)), patterns)
+
+
+def _normalize_for_match(path: Path) -> str:
+    return path.as_posix().lstrip("./")
+
+
+def _matches_forbidden(value: str, patterns: tuple[str, ...]) -> bool:
+    value = value.lstrip("./")
+    for pattern in patterns:
+        normalized = pattern.lstrip("./")
+        base = normalized[:-3] if normalized.endswith("/**") else normalized
+        if value == base or value.startswith(base.rstrip("/") + "/") or fnmatch(value, normalized):
+            return True
+    return False
 
 
 def _parse_md(

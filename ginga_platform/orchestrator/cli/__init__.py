@@ -4,7 +4,7 @@
 
 依赖：
     - ginga_platform.orchestrator.runner.state_io.StateIO（唯一 state 入口）
-    - ask-llm（外部 CLI，用于 LLM 生成；S1 用 windhub deepseek-v3.2 默认）
+    - ask-llm（外部 CLI，用于 LLM 生成；默认端点为 久久 / qwen3.6-max-preview-nothinking）
 
 约束：
     - 不直接读写 state 文件，全部经 StateIO

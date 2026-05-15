@@ -22,7 +22,7 @@ Sprint 2 扩展（ST-S2-S-MULTI-CHAPTER）：
 简化说明：
     - 不跑完整 12 step（A-F 设定步骤的 mock 已在 init 内完成；G 真调 LLM；H/R/V 用 audit log 标记）
     - adapter.input_transform 的复杂数据组织由本模块直接做（S2 末完善 adapter wire-up）
-    - LLM 默认走 windhub (deepseek-v3.2)，可 --llm-endpoint 切换
+    - LLM 默认走 久久（qwen3.6-max-preview-nothinking），可 --llm-endpoint 切换
 """
 from __future__ import annotations
 
@@ -83,14 +83,22 @@ def _call_llm_or_mock(
     prompt: str,
     endpoint: str,
     *,
-    max_tokens: int = 4096,
+    max_tokens: int | None = None,
     mock_llm: bool = False,
     chapter_no: int = 1,
-    word_target: int = 3500,
+    word_target: int = 4000,
 ) -> tuple[str, str]:
     if mock_llm:
         return _mock_chapter_text(chapter_no, word_target), MOCK_HARNESS_MODE
+    if max_tokens is None:
+        max_tokens = _max_tokens_for_word_target(word_target)
     return _call_llm(prompt, endpoint, max_tokens=max_tokens), REAL_LLM_DEMO_MODE
+
+
+def _max_tokens_for_word_target(word_target: int) -> int:
+    """Give Chinese prose enough budget to finish around the requested length."""
+
+    return max(4096, min(12000, int(word_target * 2.2)))
 
 
 def _state_io_kwargs(state_root: Path | str | None) -> dict[str, Any]:
@@ -308,6 +316,9 @@ def _build_chapter_prompt(state: dict, word_target: int, chapter_no: int = 1) ->
 ## 输出要求
 1. 必须先输出一个 markdown 表格《写作自检》（4 行：当前锚定 / 当前微粒 / 预计微粒变化 / 主要冲突）
 2. 然后输出章节正文，目标字数 {word_target} 字（中文计算），章节标题用「{chapter_label}」
+   - 正文章节不得低于 {max(800, int(word_target * 0.9))} 个中文汉字；接近结尾但未达到字数时，继续推进场景，不要用总结段提前收束
+   - 用 5-8 个连续场景段落扩展动作、环境压迫、身体代价、对手反应和伏笔推进；不要用设定说明替代正文推进
+   - 禁止输出提纲、说明、创作分析或“以下是正文”之类包装语
 3. 章节正文要求：
    - 暗黑、压抑、凶性显化、暴力美学
    - {embed_hint}
@@ -630,8 +641,8 @@ def _workflow_step_dispatch(
 
 def run_workflow(
     book_id: str,
-    llm_endpoint: str = "windhub",
-    word_target: int = 3500,
+    llm_endpoint: str = "久久",
+    word_target: int = 4000,
     chapter_no: int = 1,
     *,
     state_root: Path | str | None = None,

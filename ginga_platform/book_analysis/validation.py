@@ -36,6 +36,20 @@ FORBIDDEN_RECIPE_TEXT_FIELDS = FORBIDDEN_ATOM_TEXT_FIELDS | {
     "raw_idea",
     "runtime_state",
 }
+PROMOTED_TROPE_REQUIRED_FIELDS = (
+    "id",
+    "asset_type",
+    "title",
+    "topic",
+    "stage",
+    "quality_grade",
+    "source_path",
+    "last_updated",
+    "promoted_from",
+    "human_review_status",
+    "source_contamination_check",
+    "default_rag_eligible",
+)
 
 
 def validate_manifest_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
@@ -390,6 +404,54 @@ def validate_trope_recipe_run(run_root: str | Path, *, repo_root: str | Path | N
     return {"status": "failed" if errors else ("warning" if warnings else "passed"), "errors": errors, "warnings": warnings}
 
 
+def validate_promoted_trope_assets(
+    assets_root: str | Path,
+    *,
+    repo_root: str | Path | None = None,
+) -> dict[str, Any]:
+    """Validate v1.3-4 promoted trope assets stay in the approved whitelist."""
+
+    assets_root = Path(assets_root)
+    root_for_boundary = Path(repo_root) if repo_root is not None else Path.cwd()
+    allowed_root = root_for_boundary / "foundation" / "assets" / "methodology"
+    errors: list[dict[str, str]] = []
+    warnings: list[dict[str, str]] = []
+
+    if not _is_within(allowed_root, assets_root):
+        errors.append(
+            _issue(
+                "promote_target_not_whitelisted",
+                "promoted trope assets must be under foundation/assets/methodology",
+                str(assets_root),
+            )
+        )
+    paths = sorted(assets_root.glob("promoted-*.md")) if assets_root.exists() else []
+    if not paths:
+        errors.append(_issue("missing_promoted_assets", "no promoted trope assets found", str(assets_root)))
+
+    for path in paths:
+        frontmatter = _read_markdown_frontmatter(path, errors)
+        if not frontmatter:
+            continue
+        for field in PROMOTED_TROPE_REQUIRED_FIELDS:
+            if field not in frontmatter:
+                errors.append(_issue("missing_promoted_field", f"missing {field}", f"{path}:{field}"))
+        if frontmatter.get("asset_type") != "methodology":
+            errors.append(_issue("invalid_promoted_asset_type", "promoted asset_type must be methodology", f"{path}:asset_type"))
+        if frontmatter.get("human_review_status") != "approved":
+            errors.append(_issue("promote_review_missing", "human_review_status must be approved", f"{path}:human_review_status"))
+        if frontmatter.get("source_contamination_check") != "pass":
+            errors.append(
+                _issue("promote_contamination_missing", "source_contamination_check must be pass", f"{path}:source_contamination_check")
+            )
+        if frontmatter.get("default_rag_eligible") is not False:
+            errors.append(_issue("promote_rag_flag_invalid", "default_rag_eligible must be false", f"{path}:default_rag_eligible"))
+        if not str(frontmatter.get("promoted_from", "")).startswith("trope-"):
+            errors.append(_issue("invalid_promoted_from", "promoted_from must reference a trope candidate", f"{path}:promoted_from"))
+
+    return {"status": "failed" if errors else ("warning" if warnings else "passed"), "errors": errors, "warnings": warnings}
+
+
 def _mapping(value: Any) -> Mapping[str, Any]:
     return value if isinstance(value, Mapping) else {}
 
@@ -410,6 +472,28 @@ def _read_json_mapping(path: Path, errors: list[dict[str, str]]) -> Mapping[str,
         return {}
     if not isinstance(payload, Mapping):
         errors.append(_issue("invalid_payload", f"{path.name} must contain a JSON object", str(path)))
+        return {}
+    return payload
+
+
+def _read_markdown_frontmatter(path: Path, errors: list[dict[str, str]]) -> Mapping[str, Any]:
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---\n"):
+        errors.append(_issue("missing_frontmatter", "promoted asset must start with YAML frontmatter", str(path)))
+        return {}
+    end = text.find("\n---\n", 4)
+    if end == -1:
+        errors.append(_issue("unterminated_frontmatter", "promoted asset frontmatter is unterminated", str(path)))
+        return {}
+    try:
+        import yaml
+
+        payload = yaml.safe_load(text[4:end]) or {}
+    except Exception as exc:  # noqa: BLE001
+        errors.append(_issue("invalid_frontmatter", f"cannot parse frontmatter: {exc}", str(path)))
+        return {}
+    if not isinstance(payload, Mapping):
+        errors.append(_issue("invalid_frontmatter", "frontmatter must be a mapping", str(path)))
         return {}
     return payload
 

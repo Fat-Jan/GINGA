@@ -26,6 +26,10 @@ EXPECTED_API = {
         "build_reference_corpus",
         "build_chapter_atoms",
         "build_trope_recipes",
+        "promote_trope_recipes",
+    ],
+    "ginga_platform.book_analysis.promote": [
+        "promote_trope_recipes",
     ],
     "ginga_platform.book_analysis.chapter_atoms": [
         "extract_chapter_atoms",
@@ -41,6 +45,7 @@ EXPECTED_API = {
         "validate_reference_corpus",
         "validate_chapter_atoms_run",
         "validate_trope_recipe_run",
+        "validate_promoted_trope_assets",
     ],
 }
 
@@ -695,6 +700,112 @@ class TropeRecipeV133ContractTest(unittest.TestCase):
         self.assertIn("similarity_score_failed", codes)
         self.assertIn("recipe_forbidden_field_saved", codes)
         self.assertIn("quality_gate_failed", codes)
+
+
+class TropeRecipePromoteFlowV134ContractTest(unittest.TestCase):
+    def _candidate(self, *, approved: bool = True, contamination: str = "pass") -> dict[str, Any]:
+        return {
+            "candidate_id": "trope-ch-0001-001",
+            "candidate_type": "trope_recipe_candidate",
+            "pollution_source": True,
+            "recipe_type": "underestimated_reversal",
+            "source_refs": [
+                {
+                    "evidence_id": "atom-ch-0001-001",
+                    "source_hash": "b" * 64,
+                    "chapter_hash": "b" * 64,
+                    "excerpt_hash": "c" * 64,
+                    "chapter_locator": {"source_chapter_id": "ch-0001"},
+                }
+            ],
+            "trope_core": "弱势角色被低估后，通过公开验证场景证明隐藏能力，使地位判断发生反转。",
+            "reader_payoff": "读者获得压抑后的反转释放。",
+            "trigger_conditions": ["角色被公开低估"],
+            "variation_axes": ["genre_swap", "identity_swap"],
+            "forbidden_copy_elements": ["source proper nouns", "source dialogue"],
+            "safety": {
+                "source_contamination_check": contamination,
+                "similarity_score": 0.12,
+                "human_review_status": "approved" if approved else "pending",
+            },
+            "target": {"promote_to": "none"},
+        }
+
+    def _recipe_payload(self, candidate: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "schema_version": "0.3.0",
+            "run_id": "v1-3-3-recipes",
+            "pollution": {
+                "pollution_source": True,
+                "source_marker": "[SOURCE_TROPE]",
+                "default_rag_excluded": True,
+                "runtime_state_write_allowed": False,
+                "raw_ideas_write_allowed": False,
+                "prompt_injection_allowed": False,
+                "default_input_whitelist_allowed": False,
+            },
+            "promotion": {
+                "status": "not_promoted",
+                "promote_to": "none",
+                "requires_human_review": True,
+            },
+            "candidates": [candidate],
+            "quality_gates": {"status": "passed", "errors": [], "warnings": []},
+        }
+
+    def test_promote_flow_requires_human_review_and_contamination_pass(self) -> None:
+        promote_trope_recipes = _require("ginga_platform.book_analysis.promote", "promote_trope_recipes")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = Path(tmp)
+            with self.assertRaisesRegex(ValueError, "human_review_status"):
+                promote_trope_recipes(
+                    self._recipe_payload(self._candidate(approved=False)),
+                    repo_root=repo_root,
+                    approved_candidate_ids=["trope-ch-0001-001"],
+                    target_kind="methodology",
+                )
+            with self.assertRaisesRegex(ValueError, "source_contamination_check"):
+                promote_trope_recipes(
+                    self._recipe_payload(self._candidate(contamination="pending")),
+                    repo_root=repo_root,
+                    approved_candidate_ids=["trope-ch-0001-001"],
+                    target_kind="methodology",
+                )
+
+    def test_promote_flow_writes_only_whitelisted_foundation_asset(self) -> None:
+        promote_trope_recipes = _require("ginga_platform.book_analysis.promote", "promote_trope_recipes")
+        validate_promoted_trope_assets = _require(
+            "ginga_platform.book_analysis.validation",
+            "validate_promoted_trope_assets",
+        )
+
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = Path(tmp)
+            report = promote_trope_recipes(
+                self._recipe_payload(self._candidate()),
+                repo_root=repo_root,
+                approved_candidate_ids=["trope-ch-0001-001"],
+                target_kind="methodology",
+            )
+
+            self.assertEqual(report["status"], "promoted")
+            output_path = repo_root / report["promoted_assets"][0]["path"]
+            self.assertTrue(output_path.exists())
+            self.assertTrue(output_path.is_relative_to(repo_root / "foundation" / "assets" / "methodology"))
+            text = output_path.read_text(encoding="utf-8")
+            self.assertIn("asset_type: methodology", text)
+            self.assertIn("promoted_from: trope-ch-0001-001", text)
+            self.assertIn("source_contamination_check: pass", text)
+            self.assertFalse((repo_root / "foundation" / "runtime_state").exists())
+            self.assertFalse((repo_root / "foundation" / "raw_ideas").exists())
+            self.assertFalse((repo_root / "foundation" / "assets" / "prompts").exists())
+
+            validation = validate_promoted_trope_assets(
+                repo_root / "foundation" / "assets" / "methodology",
+                repo_root=repo_root,
+            )
+            self.assertEqual(validation["status"], "passed", validation)
 
 
 if __name__ == "__main__":  # pragma: no cover
