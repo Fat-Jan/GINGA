@@ -3,7 +3,7 @@
   "project": "ginga-novel-distillation",
   "schema_note": "推荐状态机: queued -> assigned -> running -> validating -> done; 异常: stale/zombie/retry_wait/failed/blocked. done 只能由主 agent 复核后写入。底层派活规范见 .ops/subagents/dispatch-protocol.md。",
   "created_at": "2026-05-12T22:50:00+08:00",
-  "updated_at": "2026-05-16T01:14:49+08:00",
+  "updated_at": "2026-05-16T01:20:47+08:00",
   "tasks": [
     {
       "task_id": "scout-1-base",
@@ -1175,8 +1175,8 @@
     {
       "task_id": "v1.9-1-source-audit",
       "title": "v1.9-1 Story Truth Template 原料字段矩阵固定",
-      "status": "assigned",
-      "owner": "spawn_agent worker (inherited/default tier requested)",
+      "status": "done",
+      "owner": "Popper (spawn_agent worker 019e2ca3-cf0b-7af3-b773-a28e340d277d)",
       "model_contract": {
         "provider": "OpenAI via Codex spawn_agent",
         "model_tier": "inherited/default worker tier",
@@ -1205,13 +1205,17 @@
       "expected_output": "source audit report with core / genre_extension / candidate_only / report_only matrix and missing-field checklist",
       "verification": "main agent checks report exists, samples cited files, and maps conclusions into STATUS/ROADMAP after review",
       "created_at": "2026-05-16T01:14:49+08:00",
-      "updated_at": "2026-05-16T01:14:49+08:00",
+      "updated_at": "2026-05-16T01:20:47+08:00",
       "checkpoint_due_at": null,
       "attempt_count": 1,
       "max_attempts": 2,
-      "evidence": [],
+      "evidence": [
+        "spawn_agent worker callback received: report written to .ops/reports/story_truth_template_source_audit.md",
+        "main-agent review: report contains sampling scope, field matrix, core / genre_extension / candidate_only / report_only categories, drift gap-check, missing fields, forbidden-promotion redlines, and v1.9-2 schema suggestions",
+        "main-agent evidence scan: rg confirmed required headings/terms and source audit keeps .ops/book_analysis/review/market/jury as gap-check/candidate/report-only"
+      ],
       "blockers": [],
-      "handoff_note": "Worker must not promote book_analysis or reports into truth; audit only."
+      "handoff_note": "Completed by Popper; main agent synced STATUS/ROADMAP/notepad and will commit v1.9-1 as a standalone backup."
     },
     {
       "task_id": "v1.9-2-schema-validator",

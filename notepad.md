@@ -5,7 +5,7 @@
 - 定位：Ginga 是以 workflow DSL + skill adapters + StateIO 为真实运行主线的小说创作平台底座，STATUS.md 是当前状态真值。
 - 入口：先看 AGENTS.md、STATUS.md、notepad.md、ARCHITECTURE.md。
 - 验证：常用 python3 scripts/verify_all.py、python3 scripts/run_agent_harness.py、python3 scripts/evaluate_rag_recall.py。
-- 坑点：P2-7C 已收口但仍只证明单章 smoke 边界；v1.7-0 已证明 `久久` 30 章真实 smoke，首个 drift 出现在 10 连发第 19 章；v1.7-1 已把批后状态快照、回环检测、低频题材锚点检测和异常章 reviewer queue 接入 `ginga review`；v1.7-2 已把 queue 先交外部模型评审并生成人工终审 brief；v1.7-3 已收紧正式真实 LLM 批量并启用生成前 hard gate；v1.7-4 已按 4+5 跑完 9 章真实回归，脚本级 drift=stable，但 `ginga review` 仍因第 6-9 章连续开篇回环和第 7/9 章低频锚点缺失阻断下一批，所以不能继续扩大真实生成；v1.9 Story Truth Template 只是规划，入口是 `.ops/plans/v1-9-story-truth-template-plan.md`，下一步先做原料字段矩阵固定，不直接写 schema、不写 StateIO、不改默认 RAG；v1.3-5 Reference Sidecar RAG 只证明显式 opt-in 可召回 approved promoted methodology 资产，不证明它会自动进入创作 workflow、默认 RAG 或 prompt 注入；v1.5 Review / deslop 只写 `.ops/reviews/<book_id>/<run_id>/` sidecar，不自动改正文、不写 StateIO、不调用 LLM、rubric 不进入创作 prompt；v1.6 Market Research Sidecar 只在显式授权下读 offline fixture，剥离 raw_text，默认不进 RAG；book_analysis 与市场原文仍不得默认进入 StateIO、RAG、prompt、raw_ideas、Foundation assets/schema 或 explorer/review 白名单。
+- 坑点：P2-7C 已收口但仍只证明单章 smoke 边界；v1.7-0 已证明 `久久` 30 章真实 smoke，首个 drift 出现在 10 连发第 19 章；v1.7-1 已把批后状态快照、回环检测、低频题材锚点检测和异常章 reviewer queue 接入 `ginga review`；v1.7-2 已把 queue 先交外部模型评审并生成人工终审 brief；v1.7-3 已收紧正式真实 LLM 批量并启用生成前 hard gate；v1.7-4 已按 4+5 跑完 9 章真实回归，脚本级 drift=stable，但 `ginga review` 仍因第 6-9 章连续开篇回环和第 7/9 章低频锚点缺失阻断下一批，所以不能继续扩大真实生成；v1.9-1 Story Truth Template source audit 已完成，入口是 `.ops/reports/story_truth_template_source_audit.md`，v1.9-2 正在复核只读 schema / validator，仍不写 StateIO、不改默认 RAG；v1.3-5 Reference Sidecar RAG 只证明显式 opt-in 可召回 approved promoted methodology 资产，不证明它会自动进入创作 workflow、默认 RAG 或 prompt 注入；v1.5 Review / deslop 只写 `.ops/reviews/<book_id>/<run_id>/` sidecar，不自动改正文、不写 StateIO、不调用 LLM、rubric 不进入创作 prompt；v1.6 Market Research Sidecar 只在显式授权下读 offline fixture，剥离 raw_text，默认不进 RAG；book_analysis 与市场原文仍不得默认进入 StateIO、RAG、prompt、raw_ideas、Foundation assets/schema 或 explorer/review 白名单。
 - 模型：内容生成默认走 ask-llm 端点 `久久`（qwen3.6-max-preview-nothinking，key 在 macOS Keychain）；评审别名 `jiujiu-jury` 已注册为 qwen3.6-max-preview-thinking，但 2026-05-15 对 132KB / 22KB / 5.5KB queue 包均 504，只保留为短输入手动 juror，不进默认 `ask-jury-safe` 主力；每章默认 4000 字；正式真实 LLM 批量生成推荐 4 章、上限 5 章，6 章及以上只作压力测试。
 
 ## 项目定位
@@ -91,7 +91,7 @@ _原料/
 
 **下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 到 v1.3-5 拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review 与 v1.7-3 Longform Hard Gate 已完成。v1.7-4 真实 4+5 章回归已给出观察结论：脚本级稳定，但 review hard gate 阻断下一批；真实长篇继续前先修续写输入包和低频锚点保持，仍不自动改正文。
 
-**新增规划**：v1.9 Story Truth Template 已落 `.ops/plans/v1-9-story-truth-template-plan.md`。顺序是先从原料归纳「项目契约 / 题材契约 / 故事架构 / 角色势力 / 世界体系 / 爽点钩子伏笔账本 / 章节输入包 / 运行状态 / 风格锁 / 候选晋升门禁」，再用拆书产物和长篇 drift 证据校验缺口；当前状态是 `planned`，下一步只做原料字段矩阵和 source audit。
+**新增规划**：v1.9 Story Truth Template 已落 `.ops/plans/v1-9-story-truth-template-plan.md`。v1.9-1 source audit 已落 `.ops/reports/story_truth_template_source_audit.md`，确认字段层为「项目契约 / 题材契约 / 故事架构 / 角色势力 / 世界体系 / 爽点钩子伏笔账本 / 章节输入包 / 运行状态 / 风格锁 / 候选晋升门禁」；下一步复核 v1.9-2 只读 schema / validator。
 
 ## 验证
 

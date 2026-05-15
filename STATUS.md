@@ -48,7 +48,8 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 | v1.8-0 Model Topology Observation | `done` | `ginga_platform/orchestrator/model_topology.py`；`ginga model-topology observe`；`test_model_topology_observation`；`validate_architecture_contracts.py`；`.ops/model_topology/v1-8-0-smoke-main/model_topology_report.json` | 已新增只读 role/stage/provider 观察矩阵与可选 `--probe-live` 探针；默认 live probe 关闭，报告只写 `.ops/model_topology/<run_id>/`，不接管 runtime provider、不写 `StateIO`、不改变 workflow |
 | v1.8-1 Candidate Truth Gate Wording | `done` | `.ops/governance/candidate_truth_gate.md`；`test_architecture_contracts`；`validate_architecture_contracts.py` | 已统一 `candidate-only` / `report-only` / `truth` 术语和晋升规则；这是治理文档与架构检查，不新增通用 accept/refill 写入链，不改变 `StateIO` |
 | v1.8-2 Review Style Fingerprint | `done` | `ginga_platform/orchestrator/review.py`；`test_review_deslop`；`validate_architecture_contracts.py` | 已把 style fingerprint 接入 `ginga review` report-only sidecar，输出句长、段落、对话占比、锚点命中和风格模式命中；不自动改正文、不写 `StateIO`、不进入创作 prompt、不作为 hard fail |
-| v1.9 Story Truth Template | `planned` | `.ops/plans/v1-9-story-truth-template-plan.md` | 只完成规划：先从原料整理小说真值模板，再用拆书产物做缺口校验；下一步是 v1.9-1 原料字段矩阵固定，不直接写 schema、不写 `StateIO`、不改默认 RAG |
+| v1.9-1 Story Truth Template Source Audit | `done` | `.ops/plans/v1-9-story-truth-template-plan.md`；`.ops/reports/story_truth_template_source_audit.md` | 已按原料抽样固定字段矩阵，明确 `core / genre_extension / candidate_only / report_only` 分类、拆书 / 长文 drift 反向校验、遗漏字段清单和禁止晋升红线；不写 schema、不写 `StateIO`、不改默认 RAG |
+| v1.9-2 Story Truth Template Schema Validator | `in_progress` | `foundation/schema/story_truth_template.yaml`；`scripts/validate_story_truth_template.py`；`test_story_truth_template` | worker 已提交 schema / validator / tests，正在主控复核；目标是只读校验，拒绝 candidate / report / 污染路径直接进入 truth |
 
 ## 已完成
 
@@ -82,7 +83,7 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 
 ## 下一步
 
-当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7 Longform Production Policy / Quality Gate / Reviewer Queue / Hard Gate 与 v1.8-0/v1.8-1/v1.8-2 Genm 机制吸收已收口。v1.9 Story Truth Template 仅为 `planned` 规划线。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
+当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7 Longform Production Policy / Quality Gate / Reviewer Queue / Hard Gate 与 v1.8-0/v1.8-1/v1.8-2 Genm 机制吸收已收口。v1.9-1 Story Truth Template source audit 已完成，v1.9-2 schema / validator 正在复核。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
 
 优先任务：
 
@@ -91,13 +92,13 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 - **Model topology 后续**：v1.8-0 只做 observation，不接管 runtime；若后续要做 provider router，必须先补 live probe 证据、失败降级策略、same-chapter-single-writer 边界和 agent harness 回归。
 - **Candidate Truth Gate 后续**：v1.8-1 只统一术语；若后续要做通用候选接受链，必须先选一个现有 candidate surface 做窄切片，不得一次性重写 `StateIO` 或 promote flow。
 - **Style Fingerprint 后续**：v1.8-2 只在 `ginga review` 输出 report-only 指标；若后续要把它接入 jury evidence pack 或 stage runner 观测，仍必须保持候选证据身份，不得进入创作 prompt、默认 RAG 或自动改文链。
-- **Story Truth Template 后续**：v1.9 当前只落规划；下一步先做 v1.9-1 原料字段矩阵固定和 source audit，再决定是否进入 schema 草案。不得直接把拆书候选、review report、market report 或 jury 原文写入 truth。
+- **Story Truth Template 后续**：v1.9-1 已完成原料字段矩阵和 source audit；下一步复核 v1.9-2 schema / validator，继续保持只读校验，不得直接把拆书候选、review report、market report 或 jury 原文写入 truth。
 
 ## 规划索引（不代表已完成）
 
 - **oh-story 参考路线**：详见 `.ops/reports/oh_story_inspiration_roadmap.md` 与 `ROADMAP.md` §九；当前判定是分层吸收而非原样复制。
 - **可吸收机制**：hooks 的生命周期信号、references 的操作手册化组织方式、书目目录的人类可读视图、Genm 的 model topology / registry-as-reference / report-only 机制，分别落到显式 context/gap report、Foundation asset 组织范式、BookView/import-export projection、`.ops/model_topology` 观察报告、review style fingerprint 与后续 planned 能力。
-- **Story Truth Template**：详见 `.ops/plans/v1-9-story-truth-template-plan.md`；当前结论是先用原料归纳「项目契约 / 题材契约 / 故事架构 / 角色势力 / 世界体系 / 爽点钩子伏笔账本 / 章节输入包 / 运行状态 / 风格锁 / 候选晋升门禁」，再用拆书产物做缺口校验。
+- **Story Truth Template**：详见 `.ops/plans/v1-9-story-truth-template-plan.md` 与 `.ops/reports/story_truth_template_source_audit.md`；当前 source audit 已确认「项目契约 / 题材契约 / 故事架构 / 角色势力 / 世界体系 / 爽点钩子伏笔账本 / 章节输入包 / 运行状态 / 风格锁 / 候选晋升门禁」是 v1.9 schema 草案的主字段层。
 - **关键红线**：`STATUS.md` 仍只作为当前状态真值；oh-story 参考路线是 planned，不计入已完成能力；`.ops/book_analysis/`、外部榜单原文、市场采集原始数据默认不得进入 RAG 或 explorer/review 输入白名单；默认 `recall_config.yaml` 只维护污染源排除清单，不得把污染源加入 `recall_sources`。
 
 ## 架构边界
