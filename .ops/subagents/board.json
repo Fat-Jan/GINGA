@@ -3,7 +3,7 @@
   "project": "ginga-novel-distillation",
   "schema_note": "推荐状态机: queued -> assigned -> running -> validating -> done; 异常: stale/zombie/retry_wait/failed/blocked. done 只能由主 agent 复核后写入。底层派活规范见 .ops/subagents/dispatch-protocol.md。",
   "created_at": "2026-05-12T22:50:00+08:00",
-  "updated_at": "2026-05-16T00:34:30+08:00",
+  "updated_at": "2026-05-16T01:14:49+08:00",
   "tasks": [
     {
       "task_id": "scout-1-base",
@@ -1171,6 +1171,204 @@
       ],
       "blockers": [],
       "handoff_note": "Read-only scout completed and reviewed by main agent; recommendations consolidated into .ops/reports/genm_absorption_jury_2026-05-16.md."
+    },
+    {
+      "task_id": "v1.9-1-source-audit",
+      "title": "v1.9-1 Story Truth Template 原料字段矩阵固定",
+      "status": "assigned",
+      "owner": "spawn_agent worker (inherited/default tier requested)",
+      "model_contract": {
+        "provider": "OpenAI via Codex spawn_agent",
+        "model_tier": "inherited/default worker tier",
+        "reason": "需要读取多类原料并写审计报告，复杂度中等；主控保留最终字段取舍权",
+        "fallback": "若 worker 不可用，主控按 .ops/plans/v1-9-story-truth-template-plan.md 本地完成 source audit"
+      },
+      "owned_files": [
+        ".ops/reports/story_truth_template_source_audit.md"
+      ],
+      "forbidden_files": [
+        "STATUS.md",
+        "ROADMAP.md",
+        "notepad.md",
+        "foundation/schema/**",
+        "ginga_platform/**",
+        "scripts/**",
+        ".ops/book_analysis/** writes"
+      ],
+      "input_refs": [
+        ".ops/plans/v1-9-story-truth-template-plan.md",
+        "_原料/基座/**",
+        ".ops/book_analysis/**",
+        ".ops/reports/longform_jiujiu_v173_45_regression.md",
+        ".ops/validation/longform_jiujiu_v173_45_regression.json"
+      ],
+      "expected_output": "source audit report with core / genre_extension / candidate_only / report_only matrix and missing-field checklist",
+      "verification": "main agent checks report exists, samples cited files, and maps conclusions into STATUS/ROADMAP after review",
+      "created_at": "2026-05-16T01:14:49+08:00",
+      "updated_at": "2026-05-16T01:14:49+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 2,
+      "evidence": [],
+      "blockers": [],
+      "handoff_note": "Worker must not promote book_analysis or reports into truth; audit only."
+    },
+    {
+      "task_id": "v1.9-2-schema-validator",
+      "title": "v1.9-2 Story Truth Template schema 草案与 validator",
+      "status": "assigned",
+      "owner": "spawn_agent worker (inherited/default tier requested)",
+      "model_contract": {
+        "provider": "OpenAI via Codex spawn_agent",
+        "model_tier": "inherited/default worker tier",
+        "reason": "schema、validator 和单元测试写范围清晰，适合与 source audit 并行",
+        "fallback": "若 worker 不可用，主控基于 v1.9 规划本地实现最小 schema validator"
+      },
+      "owned_files": [
+        "foundation/schema/story_truth_template.yaml",
+        "scripts/validate_story_truth_template.py",
+        "ginga_platform/orchestrator/runner/tests/test_story_truth_template.py"
+      ],
+      "forbidden_files": [
+        "STATUS.md",
+        "ROADMAP.md",
+        "notepad.md",
+        ".ops/book_analysis/**",
+        ".ops/reports/** except temporary notes are forbidden"
+      ],
+      "input_refs": [
+        ".ops/plans/v1-9-story-truth-template-plan.md",
+        ".ops/governance/candidate_truth_gate.md",
+        "scripts/validate_architecture_contracts.py",
+        "ginga_platform/orchestrator/runner/tests/**"
+      ],
+      "expected_output": "schema file, validator CLI, focused tests proving required fields, genre extension slots, and candidate/report rejection",
+      "verification": "python -m unittest ginga_platform.orchestrator.runner.tests.test_story_truth_template && python3 scripts/validate_story_truth_template.py foundation/schema/story_truth_template.yaml",
+      "created_at": "2026-05-16T01:14:49+08:00",
+      "updated_at": "2026-05-16T01:14:49+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 2,
+      "evidence": [],
+      "blockers": [],
+      "handoff_note": "Worker must keep candidate/report evidence outside truth and list changed paths in final answer."
+    },
+    {
+      "task_id": "v1.9-3-stateio-contract",
+      "title": "v1.9-3 StateIO 项目/题材契约窄切片",
+      "status": "queued",
+      "owner": "main agent",
+      "model_contract": {
+        "provider": "OpenAI Codex main session",
+        "model_tier": "current session model",
+        "reason": "需要在前两阶段验证后选择最小安全 runtime 落点",
+        "fallback": "若风险高，降级为设计文档和测试占位，不写 StateIO"
+      },
+      "owned_files": [
+        "ginga_platform/orchestrator/**",
+        "ginga_platform/orchestrator/runner/tests/**",
+        "STATUS.md",
+        "ROADMAP.md",
+        "notepad.md"
+      ],
+      "forbidden_files": [
+        ".ops/book_analysis/** writes",
+        "default RAG source expansion"
+      ],
+      "input_refs": [
+        ".ops/plans/v1-9-story-truth-template-plan.md",
+        "foundation/schema/story_truth_template.yaml",
+        "ginga_platform/orchestrator/state_io.py"
+      ],
+      "expected_output": "one safe locked.* contract written through StateIO with focused tests",
+      "verification": "focused unit tests, run_agent_harness, validate_architecture_contracts",
+      "created_at": "2026-05-16T01:14:49+08:00",
+      "updated_at": "2026-05-16T01:14:49+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 0,
+      "max_attempts": 1,
+      "evidence": [],
+      "blockers": [],
+      "handoff_note": "Do not introduce second truth surface; StateIO remains write gate."
+    },
+    {
+      "task_id": "v1.9-4-chapter-input-bundle",
+      "title": "v1.9-4 workspace.CHAPTER_INPUT_BUNDLE 接入",
+      "status": "queued",
+      "owner": "main agent",
+      "model_contract": {
+        "provider": "OpenAI Codex main session",
+        "model_tier": "current session model",
+        "reason": "需要贴近现有 workflow prompt 构建路径整合",
+        "fallback": "若 runtime 接入风险高，保留 read-only builder 和 preflight 测试"
+      },
+      "owned_files": [
+        "ginga_platform/orchestrator/**",
+        "ginga_platform/orchestrator/runner/tests/**",
+        "STATUS.md",
+        "ROADMAP.md",
+        "notepad.md"
+      ],
+      "forbidden_files": [
+        ".ops/book_analysis/** reads at runtime",
+        "review report injection into prompt",
+        "market report injection into prompt"
+      ],
+      "input_refs": [
+        "ginga_platform/orchestrator/cli/demo_pipeline.py",
+        "ginga_platform/orchestrator/state_io.py",
+        ".ops/plans/v1-9-story-truth-template-plan.md"
+      ],
+      "expected_output": "chapter input bundle builder and harness-visible workspace entry before generation",
+      "verification": "focused unit tests plus run_agent_harness",
+      "created_at": "2026-05-16T01:14:49+08:00",
+      "updated_at": "2026-05-16T01:14:49+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 0,
+      "max_attempts": 1,
+      "evidence": [],
+      "blockers": [],
+      "handoff_note": "Input bundle may project truth/runtime state but must not pull candidate or report surfaces."
+    },
+    {
+      "task_id": "v1.9-5-longform-regression",
+      "title": "v1.9-5 Story Truth Template 长篇质量回归",
+      "status": "queued",
+      "owner": "main agent",
+      "model_contract": {
+        "provider": "OpenAI Codex main session plus configured ask-llm endpoint if run is authorized by existing project command",
+        "model_tier": "current session model for orchestration; project-configured writing endpoint for smoke",
+        "reason": "真实 LLM 回归有成本和外部依赖，必须由主控保留边界和证据",
+        "fallback": "若真实端点不可用，生成 failed/blocked 报告，不伪造质量结果"
+      },
+      "owned_files": [
+        ".ops/reports/story_truth_template_longform_regression.md",
+        ".ops/validation/story_truth_template_longform_regression.json",
+        "STATUS.md",
+        "ROADMAP.md",
+        "notepad.md"
+      ],
+      "forbidden_files": [
+        "automatic story text edits from review",
+        "StateIO writes from review report",
+        "default RAG expansion"
+      ],
+      "input_refs": [
+        "scripts/run_longform_llm_smoke.py",
+        "scripts/run_agent_harness.py",
+        "ginga_platform/orchestrator/review.py",
+        ".ops/plans/v1-9-story-truth-template-plan.md"
+      ],
+      "expected_output": "small regression report using v1.7-3 4/5 chapter policy, with review evidence report-only",
+      "verification": "longform command/report evidence plus validate_architecture_contracts and final verify_all when feasible",
+      "created_at": "2026-05-16T01:14:49+08:00",
+      "updated_at": "2026-05-16T01:14:49+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 0,
+      "max_attempts": 1,
+      "evidence": [],
+      "blockers": [],
+      "handoff_note": "If credentials or endpoint fail, record blocked truthfully and do not mark quality regression as passed."
     }
   ]
 }

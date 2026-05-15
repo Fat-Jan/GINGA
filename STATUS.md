@@ -18,7 +18,7 @@
 
 Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `workflow DSL + skill adapters + StateIO` 为真实运行主线的小说创作平台底座：Foundation 负责治理资产与 schema，Platform 负责 workflow / provider / skill 编排，RAG 负责洁净资产召回，Meta 负责 guard / checker 审计边界。
 
-新增的 oh-story / Genm 参考路线、拆书融梗 Evidence Pipeline、BookView / explorer、review / deslop、market sidecar、model topology observation 都属于后续能力索引，不改变当前生产完成度。它们只能作为显式 sidecar、projection、report 或 planned workflow 推进，不能替代 `StateIO` 真值、不能默认进入 RAG、不能抢 P2-7C 主线。
+新增的 oh-story / Genm 参考路线、拆书融梗 Evidence Pipeline、BookView / explorer、review / deslop、market sidecar、model topology observation、Story Truth Template 都属于后续能力索引，不改变当前生产完成度。它们只能作为显式 sidecar、projection、report、governance plan 或 planned workflow 推进，不能替代 `StateIO` 真值、不能默认进入 RAG、不能抢 P2-7C 主线。
 
 ## 任务状态总表
 
@@ -44,9 +44,11 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 | v1.7-1 Longform Quality Gate | `done` | `ginga_platform/orchestrator/review.py`；`test_longform_quality_gate`；`test_review_deslop`；`validate_architecture_contracts.py`；`.ops/reviews/longform-jiujiu-combo-smoke/v1-7-1-longform-gate/review_report.json` | 已把批后状态快照、回环检测、低频题材锚点检测、短章/伏笔/禁词检测与异常章 reviewer 队列接入 `ginga review` sidecar；v1.7-3 已让 review 与生成前 hard gate 共享检测口径 |
 | v1.7-2 Longform Reviewer Queue Review | `done` | `.ops/jury/longform_reviewer_queue_2026-05-15/reviewer_queue_packet.md`；`.ops/jury/longform_reviewer_queue_2026-05-15/ioll-grok__reviewer_queue_packet.md`；`.ops/jury/longform_reviewer_queue_2026-05-15/human_review_brief.md`；`ask-llm list jiujiu-jury`；`ask-jury-safe --help` | 已按“先外部、再人工”把 21 个异常章交给外部模型评审并生成人工终审 brief；`jiujiu-jury` 已注册为久久评审 alias，但多章包连续 504，本轮不作为有效 jury 结论；`wzw` 输出为空，未纳入共识 |
 | v1.7-3 Longform Hard Gate | `done` | `ginga_platform/orchestrator/cli/longform_policy.py`；`ginga_platform/orchestrator/cli/__main__.py`；`ginga_platform/orchestrator/review.py`；`scripts/run_longform_llm_smoke.py`；`test_agent_harness` / `test_longform_quality_gate` / `test_longform_llm_smoke`；`.ops/reports/v1_7_longform_production_policy.md` | 已采纳人工裁决：正式真实 LLM 批量推荐 4 章、上限 5 章，6 章及以上只作压力测试；CLI 在真实 LLM 调用前 hard gate 阻断连续回环、低频锚点缺失或伏笔标记缺失，mock harness 不受影响；仍不自动改正文 |
+| v1.7-4 Longform 4/5 Real Regression | `observation` | `.ops/validation/longform_jiujiu_v173_45_regression.json`；`.ops/reports/longform_jiujiu_v173_45_regression.md`；`.ops/reports/longform_jiujiu_v173_45_regression_findings.md`；`.ops/reviews/longform-jiujiu-v173-45-regression/v1-7-3-45-regression-review/` | `久久` 按新口径完成 4+5 共 9 章真实生成，脚本级 drift 为 `stable` 且无短章/禁词/伏笔缺失；但 `ginga review` 的 hard gate 对第 6-9 章判定 `consecutive_opening_loop_risk`，第 7/9 章缺低频锚点，下一批真实生成仍应先阻断并修续写输入 |
 | v1.8-0 Model Topology Observation | `done` | `ginga_platform/orchestrator/model_topology.py`；`ginga model-topology observe`；`test_model_topology_observation`；`validate_architecture_contracts.py`；`.ops/model_topology/v1-8-0-smoke-main/model_topology_report.json` | 已新增只读 role/stage/provider 观察矩阵与可选 `--probe-live` 探针；默认 live probe 关闭，报告只写 `.ops/model_topology/<run_id>/`，不接管 runtime provider、不写 `StateIO`、不改变 workflow |
 | v1.8-1 Candidate Truth Gate Wording | `done` | `.ops/governance/candidate_truth_gate.md`；`test_architecture_contracts`；`validate_architecture_contracts.py` | 已统一 `candidate-only` / `report-only` / `truth` 术语和晋升规则；这是治理文档与架构检查，不新增通用 accept/refill 写入链，不改变 `StateIO` |
 | v1.8-2 Review Style Fingerprint | `done` | `ginga_platform/orchestrator/review.py`；`test_review_deslop`；`validate_architecture_contracts.py` | 已把 style fingerprint 接入 `ginga review` report-only sidecar，输出句长、段落、对话占比、锚点命中和风格模式命中；不自动改正文、不写 `StateIO`、不进入创作 prompt、不作为 hard fail |
+| v1.9 Story Truth Template | `planned` | `.ops/plans/v1-9-story-truth-template-plan.md` | 只完成规划：先从原料整理小说真值模板，再用拆书产物做缺口校验；下一步是 v1.9-1 原料字段矩阵固定，不直接写 schema、不写 `StateIO`、不改默认 RAG |
 
 ## 已完成
 
@@ -73,26 +75,29 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 - v1.7-1 Longform Quality Gate 已完成：`build_review_report()` 现在输出 `longform_quality_gate`，包含每 4 章 `batch_state_snapshots`、`quality_snapshot`、回环风险、低频题材锚点缺失、短章、伏笔标记缺失、禁词命中、`reviewer_queue` 与 `hard_gate`；已对 v1.7-0 真实 30 章样本生成 `.ops/reviews/longform-jiujiu-combo-smoke/v1-7-1-longform-gate/review_report.json`。
 - v1.7-2 Longform Reviewer Queue Review 已完成：`.ops/jury/longform_reviewer_queue_2026-05-15/` 保留完整 queue 评审包、外部模型意见和人工终审 brief。有效外部意见确认多章开头回到“痛觉 / 睁眼 / 灰白视野 / 天堑边缘 / 体内微粒 / 短刃”模板，P0/P1 聚焦第 19、24、25 章；`jiujiu-jury` 已接入 ask-llm 但对 132KB / 22KB / 5.5KB 包均 504，保留为短输入手动 juror，不进入默认 jury 主力。
 - v1.7-3 Longform Hard Gate 已完成：正式真实 LLM 批量生成推荐 4 章、上限 5 章，6 章及以上只作压力测试；`ginga run` 在真实 LLM 调用前检查最近窗口，若连续 2 章命中 `opening_loop_risk`、任一章缺低频题材锚点、或任一章缺伏笔标记，则 fail-loud 阻断下一批真实生成；`ginga review` 的 `longform_quality_gate.hard_gate` 使用同一套检测函数。
+- v1.7-4 Longform 4/5 Real Regression 已记录为观察项：`scripts/run_longform_llm_smoke.py --run --chapters 9 --batch-schedule 4,5` 在隔离 state_root 生成 9/9 章，脚本级 drift=`stable`；但 `ginga review` 复核显示后 4 章窗口仍触发 `consecutive_opening_loop_risk` 与 `missing_low_frequency_anchor`，因此不能据此继续扩大真实生成。
 - v1.8-0 Model Topology Observation 已完成：`ginga model-topology observe` 生成 `.ops/model_topology/<run_id>/model_topology_report.json` 与 `README.md`，记录 showrunner / prose_writer / state_settler / style_reviewer / longform_critic 的 role matrix、capability surface 与 probe summary；默认 `probe_live=false`，只有显式 `--probe-live` 才调用 `ask-llm` 最小探针；架构契约已禁止 runtime takeover、StateIO 写入和 workflow 接管。
 - v1.8-1 Candidate Truth Gate Wording 已完成：`.ops/governance/candidate_truth_gate.md` 将 `candidate-only`、`report-only`、`truth` 分成三类，并规定 `operator_accept`、`schema_validation`、`source_contamination_check`、`StateIO_or_validator_entrypoint`、`audit_evidence` 作为 candidate 晋升 truth 的必要条件；架构契约会检查这些固定术语，防止后续报告或候选产物绕过默认 RAG / prompt / StateIO 边界。
 - v1.8-2 Review Style Fingerprint 已完成：`build_review_report()` 现在输出 `style_fingerprint`，包含 `scope=report_only`、`auto_edit=false`、`writes_runtime_state=false`、`enters_creation_prompt=false` 以及章节数、中文字符数、平均句长、句长桶、段落数、对话行占比、style anchor 命中和 anti-AI / 平台风格模式命中；该指标只给人工审稿和后续 jury evidence pack 使用，不改变 `passed` / hard gate 语义。
 
 ## 下一步
 
-当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7 Longform Production Policy / Quality Gate / Reviewer Queue / Hard Gate 与 v1.8-0/v1.8-1/v1.8-2 Genm 机制吸收已收口。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
+当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7 Longform Production Policy / Quality Gate / Reviewer Queue / Hard Gate 与 v1.8-0/v1.8-1/v1.8-2 Genm 机制吸收已收口。v1.9 Story Truth Template 仅为 `planned` 规划线。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
 
 优先任务：
 
 - **RAG 残余观察**：2026-05-16 已刷新 `.ops/reports/rag_recall_quality_report.md` 与 `.ops/validation/rag_recall_quality.json`；473 cards / 473 vectors，native sqlite-vec used，fallback=none，Layer 1/2 空召回均为 0，Layer 2 `expected_recall@5=0.917` / `recall@5=0.614`。保留 `candidate_k` / `asset_type` blocker 作为观察项；只有指标回退或新 gold query 暴露问题时再修。
-- **真实长篇生产化后续**：v1.7-3 已完成批量收紧与生成前 hard gate；下一步若继续长篇验证，应基于新口径跑小规模真实 LLM 回归，优先验证 4 章默认批次与 5 章上限下的 drift 延迟效果；仍不得自动改正文。
+- **真实长篇生产化后续**：v1.7-4 已跑 4+5 共 9 章真实回归；脚本级短章/禁词/伏笔指标稳定，但 review hard gate 仍阻断下一批。下一步不应继续扩大真实生成，应先修章节输入包 / prompt 续写连续性和低频题材锚点保持；仍不得自动改正文。
 - **Model topology 后续**：v1.8-0 只做 observation，不接管 runtime；若后续要做 provider router，必须先补 live probe 证据、失败降级策略、same-chapter-single-writer 边界和 agent harness 回归。
 - **Candidate Truth Gate 后续**：v1.8-1 只统一术语；若后续要做通用候选接受链，必须先选一个现有 candidate surface 做窄切片，不得一次性重写 `StateIO` 或 promote flow。
 - **Style Fingerprint 后续**：v1.8-2 只在 `ginga review` 输出 report-only 指标；若后续要把它接入 jury evidence pack 或 stage runner 观测，仍必须保持候选证据身份，不得进入创作 prompt、默认 RAG 或自动改文链。
+- **Story Truth Template 后续**：v1.9 当前只落规划；下一步先做 v1.9-1 原料字段矩阵固定和 source audit，再决定是否进入 schema 草案。不得直接把拆书候选、review report、market report 或 jury 原文写入 truth。
 
 ## 规划索引（不代表已完成）
 
 - **oh-story 参考路线**：详见 `.ops/reports/oh_story_inspiration_roadmap.md` 与 `ROADMAP.md` §九；当前判定是分层吸收而非原样复制。
 - **可吸收机制**：hooks 的生命周期信号、references 的操作手册化组织方式、书目目录的人类可读视图、Genm 的 model topology / registry-as-reference / report-only 机制，分别落到显式 context/gap report、Foundation asset 组织范式、BookView/import-export projection、`.ops/model_topology` 观察报告、review style fingerprint 与后续 planned 能力。
+- **Story Truth Template**：详见 `.ops/plans/v1-9-story-truth-template-plan.md`；当前结论是先用原料归纳「项目契约 / 题材契约 / 故事架构 / 角色势力 / 世界体系 / 爽点钩子伏笔账本 / 章节输入包 / 运行状态 / 风格锁 / 候选晋升门禁」，再用拆书产物做缺口校验。
 - **关键红线**：`STATUS.md` 仍只作为当前状态真值；oh-story 参考路线是 planned，不计入已完成能力；`.ops/book_analysis/`、外部榜单原文、市场采集原始数据默认不得进入 RAG 或 explorer/review 输入白名单；默认 `recall_config.yaml` 只维护污染源排除清单，不得把污染源加入 `recall_sources`。
 
 ## 架构边界

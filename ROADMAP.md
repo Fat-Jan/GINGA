@@ -353,8 +353,9 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 | **v1.4 / Book Workspace View + Explorer** | 从 StateIO/artifacts 派生可读书目视图与只读查询，不产生第二状态真值 | ✅ done | 已完成 `BookView` projection、`ginga inspect` 与 `ginga query`；输出限定 `.ops/book_views/<book_id>/<run_id>/`，默认输入白名单不包含 `.ops/book_analysis/**` |
 | **v1.5 / Review + Anti-AI warn-only gate** | 审稿、去 AI 味、平台 rubric 报告化；只做审计/报告，不自动改正文 | ✅ done | 已完成 `ginga review` 与 `.ops/reviews/<book_id>/<run_id>/` sidecar；rubric 只用于 review report，不进入创作 prompt |
 | **v1.6 / Market Research Sidecar** | 扫榜、外部研究、市场信号报告，带采集时间、来源和数据质量状态 | ✅ done | 已完成显式授权 + offline fixture sidecar；外部原文剥离，默认不进 RAG |
-| **v1.7 / Longform Production Policy + Gate** | 真实 LLM 长篇批量策略、成本/质量 smoke、jury 评审、CLI 上限保护、正式质量 gate、queue 外部评审与人工终审 brief、生成前 hard gate | 🟢 v1.7-0 done；v1.7-1 done；v1.7-2 done；v1.7-3 done | `久久` 30 章真实 smoke 显示 10 连发开始 drift；当前正式批量生成推荐 4 章、上限 5 章，6 章及以上只作压力测试；`ginga review` 已输出批后状态快照、回环/锚点/短章/伏笔/禁词检测、reviewer queue 与 hard_gate；CLI 已在真实 LLM 调用前阻断连续回环、低频锚点缺失或伏笔标记缺失 |
+| **v1.7 / Longform Production Policy + Gate** | 真实 LLM 长篇批量策略、成本/质量 smoke、jury 评审、CLI 上限保护、正式质量 gate、queue 外部评审与人工终审 brief、生成前 hard gate | 🟢 v1.7-0 done；v1.7-1 done；v1.7-2 done；v1.7-3 done；v1.7-4 observation | `久久` 30 章真实 smoke 显示 10 连发开始 drift；当前正式批量生成推荐 4 章、上限 5 章，6 章及以上只作压力测试；v1.7-4 已按 4+5 生成 9/9 章且脚本级 drift=stable，但 `ginga review` hard gate 仍因第 6-9 章连续开篇回环阻断下一批；继续真实生成前应先修章节输入包 / prompt 续写连续性 |
 | **v1.8 / Genm 治理机制吸收** | 从 Genm 吸收 role/stage/provider 观察矩阵、candidate/report/truth 门禁语言和 style fingerprint 指标，先做报告和治理规则，不接管 runtime | 🟢 v1.8-0 done；v1.8-1 done；v1.8-2 done | 已完成 `ginga model-topology observe`、`.ops/governance/candidate_truth_gate.md` 与 `ginga review` 的 report-only style fingerprint；默认 `probe_live=false`，不写 `StateIO`，不改变 workflow/provider 路由；candidate 晋升 truth 必须先过人工接受、schema、污染检查、写入口和审计证据 |
+| **v1.9 / Story Truth Template** | 从原料整理小说真值模板，再用拆书产物、题材系列和长篇 drift 证据做缺口校验 | 🟡 planned | 已落规划 `.ops/plans/v1-9-story-truth-template-plan.md`；下一步先做 v1.9-1 原料字段矩阵固定和 source audit，不直接写 schema、不写 `StateIO`、不改默认 RAG |
 | **v2 / 完整创作运营线** | N/P/D/V 阶段、发布后数据分析、版本管理、第 3+ skill 接入、封面/发布包 | ⏳ 按触发条件推进 | 不抢 v1.2 / v1.3 前置 |
 
 ### 9.1 v1.3：拆书融梗 Evidence Pipeline
@@ -413,6 +414,46 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 | references | 吸收“操作手册化”组织方式、输出模板、质量清单和 validator | 不复制整套知识库，不制造口径冲突 |
 | `设定/大纲/正文/追踪` 书目目录 | 吸收为 `BookView`、import/export、发布包等人类可读 projection | 不替代 StateIO，不成为第二状态真值 |
 | 拆文库 / 市场原始数据 | 吸收为 sidecar 证据与报告 | 不进默认 RAG，不进 explorer/review 默认白名单 |
+
+### 9.3 v1.9：Story Truth Template
+
+定位：
+
+Story Truth Template 不是把 Story Bible 写成一个大文件，而是先从原料归纳小说系统必须记住的字段，再用拆书产物和长篇质量证据反向校验字段缺口。它服务后续 schema / validator / StateIO 窄切片，不直接替代现有 `runtime_state`。
+
+当前规划产物：
+
+- `.ops/plans/v1-9-story-truth-template-plan.md`
+
+计划拆分：
+
+| 阶段 | 名称 | 目标 | 状态 |
+|---|---|---|---|
+| v1.9-1 | 原料字段矩阵固定 | 抽样读取创意、设定、框架、创作、进阶、数据分析、商业化和题材系列原料，生成 source audit；标清 core / genre_extension / candidate_only / report_only | 🟡 planned |
+| v1.9-2 | schema 草案与 validator 设计 | 草拟 `story_truth_template` schema 与只读 validator，拒绝 candidate / report 直接进入 truth | 🟡 planned |
+| v1.9-3 | StateIO 窄切片 | 只选择一个安全落点，例如 `locked.PROJECT_CONTRACT` 或 `locked.GENRE_CONTRACT`，经 `StateIO` 写入 | 🟡 planned |
+| v1.9-4 | 章节输入包接入 | 构建 `workspace.CHAPTER_INPUT_BUNDLE`，在生成前检查角色状态、世界规则、伏笔操作、爽点目标、风格锁和风险提示 | 🟡 planned |
+| v1.9-5 | 长篇质量回归 | 基于 v1.7-3 的 4 / 5 章口径做小规模真实 LLM 回归，review 只作为 report-only 证据 | 🟡 planned |
+
+模板层：
+
+- 项目契约：作品定位、目标平台、目标读者、总字数、更新频率、核心卖点、付费点、留存目标。
+- 题材契约：核心爽点、读者期待、黄金三章、情绪弧线、钩子策略、章节结构、平台策略、禁忌清单。
+- 故事架构：总纲、卷纲、章纲、三幕结构、关键转折、冲突升级、主题载体。
+- 角色与势力：主角、配角、反派、阵营、势力资源、关系网络、行为模式、成长弧线。
+- 世界与体系：世界类型、地理、历史、文化、法律、经济、力量体系、官职 / 宗门 / 家族、金手指。
+- 爽点 / 钩子 / 伏笔账本：读者回报、触发条件、章末钩子、伏笔 ID、回收状态和遗忘风险。
+- 章节输入包：本章目标、场景纲、段落蓝图、关键句、出场角色状态、相关世界规则和风险提示。
+- 运行状态账本：角色状态、资源、关系、事件历史、全局摘要、章节游标。
+- 风格锁：叙事视角、文风、对白风格、句式密度、禁用腔调、低频题材锚点、反 AI 味指标。
+- 候选池与晋升门禁：候选来源、人工接受、schema 校验、污染检查、写入口和审计证据。
+
+关键红线：
+
+- 不把 `.ops/book_analysis/**`、review report、market report、jury 原文或外部原文自动写入 truth。
+- 不把 `trope_recipe_candidate` 直接注入创作 prompt；它只能作为 `candidate-only`，经人工接受和污染检查后再讨论 promote。
+- 不新增第二状态真值；`BookView` 仍是 projection，`StateIO` 仍是 `runtime_state` 唯一写入口。
+- 不在 v1.9-1 直接写 schema；先做字段矩阵和 source audit。
 
 ---
 
