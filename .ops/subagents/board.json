@@ -3,7 +3,7 @@
   "project": "ginga-novel-distillation",
   "schema_note": "推荐状态机: queued -> assigned -> running -> validating -> done; 异常: stale/zombie/retry_wait/failed/blocked. done 只能由主 agent 复核后写入。底层派活规范见 .ops/subagents/dispatch-protocol.md。",
   "created_at": "2026-05-12T22:50:00+08:00",
-  "updated_at": "2026-05-16T01:33:19+08:00",
+  "updated_at": "2026-05-16T01:38:03+08:00",
   "tasks": [
     {
       "task_id": "scout-1-base",
@@ -1310,7 +1310,7 @@
     {
       "task_id": "v1.9-4-chapter-input-bundle",
       "title": "v1.9-4 workspace.CHAPTER_INPUT_BUNDLE 接入",
-      "status": "queued",
+      "status": "done",
       "owner": "main agent",
       "model_contract": {
         "provider": "OpenAI Codex main session",
@@ -1332,19 +1332,28 @@
       ],
       "input_refs": [
         "ginga_platform/orchestrator/cli/demo_pipeline.py",
-        "ginga_platform/orchestrator/state_io.py",
+        "ginga_platform/orchestrator/runner/state_io.py",
         ".ops/plans/v1-9-story-truth-template-plan.md"
       ],
       "expected_output": "chapter input bundle builder and harness-visible workspace entry before generation",
       "verification": "focused unit tests plus run_agent_harness",
       "created_at": "2026-05-16T01:14:49+08:00",
-      "updated_at": "2026-05-16T01:14:49+08:00",
+      "updated_at": "2026-05-16T01:38:03+08:00",
       "checkpoint_due_at": null,
-      "attempt_count": 0,
+      "attempt_count": 1,
       "max_attempts": 1,
-      "evidence": [],
+      "evidence": [
+        "TDD red: ChapterInputBundleTest failed because workspace.CHAPTER_INPUT_BUNDLE was None after run_workflow",
+        "implementation: build_chapter_input_bundle projects current StateIO state into workspace.CHAPTER_INPUT_BUNDLE",
+        "implementation: run_workflow writes bundle via StateIO.apply before prompt generation",
+        "verification: python3 -m unittest ginga_platform.orchestrator.runner.tests.test_story_truth_template passed 9 tests",
+        "verification: python3 -m unittest ginga_platform.orchestrator.runner.tests.test_multi_chapter passed 19 tests",
+        "verification: python3 -m unittest ginga_platform.orchestrator.runner.tests.test_agent_harness passed",
+        "verification: python3 scripts/run_agent_harness.py passed",
+        "verification: python3 scripts/validate_architecture_contracts.py returned PASS"
+      ],
       "blockers": [],
-      "handoff_note": "Input bundle may project truth/runtime state but must not pull candidate or report surfaces."
+      "handoff_note": "Completed by main agent; bundle records forbidden report/candidate sources and reads only the StateIO state view."
     },
     {
       "task_id": "v1.9-5-longform-regression",

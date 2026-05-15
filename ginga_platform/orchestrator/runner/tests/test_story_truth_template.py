@@ -234,5 +234,42 @@ class StoryTruthTemplateStateSliceTest(unittest.TestCase):
         self.assertEqual(sio.read("locked.GENRE_CONTRACT.profile_ref"), "规则怪谈")
 
 
+class ChapterInputBundleTest(unittest.TestCase):
+    def test_run_workflow_writes_chapter_input_bundle_before_generation(self) -> None:
+        from ginga_platform.orchestrator.cli.demo_pipeline import init_book, run_workflow
+        from ginga_platform.orchestrator.runner.state_io import StateIO
+
+        with tempfile.TemporaryDirectory() as tmp:
+            state_root = Path(tmp) / "state"
+            init_book(
+                "chapter-bundle-book",
+                topic="玄幻黑暗",
+                premise="失忆刺客追索微粒真相",
+                word_target=500000,
+                state_root=state_root,
+            )
+            chapter_path = run_workflow(
+                "chapter-bundle-book",
+                word_target=800,
+                state_root=state_root,
+                mock_llm=True,
+            )
+            self.assertIsNotNone(chapter_path)
+            sio = StateIO("chapter-bundle-book", state_root=state_root)
+
+        bundle = sio.read("workspace.CHAPTER_INPUT_BUNDLE")
+        self.assertEqual(bundle["chapter_no"], 1)
+        self.assertIn("失忆刺客", bundle["chapter_goal"])
+        self.assertTrue(bundle["active_character_state"])
+        self.assertTrue(bundle["relevant_world_rules"])
+        self.assertTrue(bundle["hook_or_foreshadow_ops"])
+        self.assertIn("previous_chapter_bridge", bundle)
+        self.assertIn("opening_continuity_guard", bundle)
+        self.assertIn("low_frequency_anchors", bundle)
+        self.assertEqual(bundle["truth_source"], "StateIO")
+        self.assertFalse(bundle["reads_report_only_sources"])
+        self.assertIn(".ops/book_analysis/**", bundle["forbidden_sources"])
+
+
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()

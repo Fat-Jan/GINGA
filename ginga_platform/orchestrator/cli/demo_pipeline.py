@@ -379,6 +379,126 @@ def _build_chapter_prompt(state: dict, word_target: int, chapter_no: int = 1) ->
     return prompt
 
 
+def build_chapter_input_bundle(state: dict, word_target: int, chapter_no: int = 1) -> dict[str, Any]:
+    """Project StateIO truth/runtime state into the per-chapter input bundle.
+
+    The bundle is a workspace projection for prompt preparation.  It reads only
+    the current StateIO state view and deliberately records forbidden external
+    report/candidate sources so later wiring cannot silently pull them in.
+    """
+
+    locked = state.get("locked", {}) or {}
+    entity = state.get("entity_runtime", {}) or {}
+
+    story_dna = locked.get("STORY_DNA", {}) or {}
+    project_contract = locked.get("PROJECT_CONTRACT", {}) or {}
+    genre_contract = locked.get("GENRE_CONTRACT", {}) or {}
+    genre_locked = locked.get("GENRE_LOCKED", {}) or {}
+    world = locked.get("WORLD", {}) or {}
+    plot = locked.get("PLOT_ARCHITECTURE", {}) or {}
+    char_state = entity.get("CHARACTER_STATE", {}) or {}
+    protagonist = char_state.get("protagonist", {}) or {}
+    foreshadow_pool = (entity.get("FORESHADOW_STATE", {}) or {}).get("pool", []) or []
+    resource_ledger = entity.get("RESOURCE_LEDGER", {}) or {}
+    global_summary = entity.get("GLOBAL_SUMMARY", {}) or {}
+
+    pivot_points = [p for p in plot.get("pivot_points", []) if isinstance(p, dict)]
+    current_pivot = next(
+        (p for p in reversed(pivot_points) if int(p.get("ch", 1) or 1) <= chapter_no),
+        pivot_points[0] if pivot_points else {},
+    )
+    recent_events = (protagonist.get("events", []) or [])[-5:]
+    recent_arcs = (global_summary.get("arc_summaries", []) or [])[-3:]
+    if chapter_no == 1:
+        previous_chapter_bridge = "首章，无前情；直接建立主角困境、异常状态和核心伏笔。"
+        opening_guard = "禁止用无承接的感官重启模板；首段必须落在 premise、异常状态或行动压力上。"
+    else:
+        previous_chapter_bridge = "承接最近事件：" + "; ".join(
+            str(event.get("impact", ""))[:80] for event in recent_events
+        ) if recent_events else "缺少前章事件摘要；开篇需先确认上一章收束点。"
+        opening_guard = "开篇必须承接上一章状态变化，避免重新醒来、重新观察灰白环境等循环。"
+
+    low_frequency_anchors = list(
+        dict.fromkeys(
+            (genre_locked.get("style_lock", {}) or {}).get("anchor_phrases", [])
+            + genre_contract.get("core_payoffs", [])
+        )
+    )
+
+    return {
+        "chapter_no": chapter_no,
+        "word_target": word_target,
+        "truth_source": "StateIO",
+        "reads_report_only_sources": False,
+        "forbidden_sources": [
+            ".ops/book_analysis/**",
+            ".ops/reports/**",
+            ".ops/reviews/**",
+            ".ops/jury/**",
+            ".ops/market_research/**",
+        ],
+        "project_contract": {
+            "positioning": project_contract.get("positioning") or story_dna.get("premise", ""),
+            "target_platform": project_contract.get("target_platform"),
+            "target_reader": project_contract.get("target_reader"),
+        },
+        "genre_contract": {
+            "profile_ref": genre_contract.get("profile_ref") or ", ".join(genre_locked.get("topic", [])),
+            "reader_expectations": genre_contract.get("reader_expectations", []),
+            "taboos": genre_contract.get("taboos", []),
+        },
+        "chapter_goal": current_pivot.get("beat") or story_dna.get("premise", ""),
+        "scene_outline": [
+            {"scene": "setup", "goal": "承接状态并压入本章冲突"},
+            {"scene": "pressure", "goal": "展示身体代价、对手反应或世界规则"},
+            {"scene": "turn", "goal": "推进伏笔、爽点或章节钩子"},
+        ],
+        "paragraph_blueprint": [
+            {"part": "opening", "guard": opening_guard},
+            {"part": "middle", "guard": "每个场景必须有行动、代价或信息增量。"},
+            {"part": "ending", "guard": "保留状态变化、伏笔推进或可追读钩子。"},
+        ],
+        "key_sentences": [
+            story_dna.get("payoff_promise", ""),
+            current_pivot.get("beat", ""),
+        ],
+        "active_character_state": [
+            {
+                "role": "protagonist",
+                "name": protagonist.get("name"),
+                "body": protagonist.get("body", {}),
+                "psyche": protagonist.get("psyche", {}),
+                "resources": resource_ledger,
+                "recent_events": recent_events,
+            }
+        ],
+        "relevant_world_rules": [
+            {"name": "cosmology", "rule": world.get("cosmology", "")},
+            {"name": "economy", "rule": world.get("economy", "")},
+        ],
+        "payoff_targets": genre_contract.get("core_payoffs", []),
+        "hook_or_foreshadow_ops": [
+            {
+                "id": item.get("id"),
+                "status": item.get("status"),
+                "expected_payoff": item.get("expected_payoff"),
+                "summary": item.get("summary"),
+            }
+            for item in foreshadow_pool
+            if isinstance(item, dict)
+        ],
+        "previous_chapter_bridge": previous_chapter_bridge,
+        "opening_continuity_guard": opening_guard,
+        "low_frequency_anchors": low_frequency_anchors,
+        "recent_arc_summaries": recent_arcs,
+        "risk_notes": [
+            "不得读取 candidate-only/report-only 外部来源。",
+            "不得把 review/jury/market 结论自动写入 truth。",
+            "不得绕过 StateIO 修改 runtime_state。",
+        ],
+    }
+
+
 def _call_llm(prompt: str, endpoint: str, max_tokens: int = 4096) -> str:
     """调用 ask-llm 子进程，返回 LLM 输出。失败 raise."""
     cmd = [
@@ -711,6 +831,13 @@ def run_workflow(
         return None
 
     sio.audit("cli.run.A_through_F", severity="info", msg="setup steps skipped (seeded by init)")
+
+    chapter_input_bundle = build_chapter_input_bundle(state, word_target, chapter_no=chapter_no)
+    sio.apply(
+        {"workspace.CHAPTER_INPUT_BUNDLE": chapter_input_bundle},
+        source=f"cli.run.chapter_{chapter_no}.input_bundle",
+    )
+    state = sio.state
 
     # G_chapter_draft：真实 demo 调 LLM；mock harness 只走固定离线章节。
     if mock_llm:
