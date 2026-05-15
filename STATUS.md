@@ -34,6 +34,7 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 | v1.3-0 拆书融梗污染隔离底座 | `done` | `.ops/book_analysis/contamination_check_rules.md`；`.ops/book_analysis/p0_mvp_boundary.md`；`.ops/book_analysis/schema/source_manifest.schema.yaml`；`foundation/rag/recall_config.yaml`；架构契约检查 | 已补污染规则、P0 边界、manifest schema、RAG 排除、资源上限、关键词来源与 validator DoD；实现能力另见 v1.3-1 |
 | v1.3-1 Reference Corpus P0 MVP | `done` | `ginga_platform/book_analysis/`；`scripts/build_reference_corpus.py`；`scripts/validate_reference_corpus.py`；`test_book_analysis_corpus`；`.ops/book_analysis/v1-3-1-smoke-main/validation_report.json`；`python3 scripts/verify_all.py` | 已完成纯函数化 scan / split / manifest / validator / report；输出限定 `.ops/book_analysis/<run_id>/`；仍不做内容分析、D1-D12、Promote 或 Sidecar RAG |
 | v1.3-2 Chapter Atom + Quality Gates | `done` | `ginga_platform/book_analysis/chapter_atoms.py`；`scripts/build_chapter_atoms.py`；`scripts/validate_chapter_atoms.py`；`test_book_analysis_corpus`；`.ops/book_analysis/v1-3-2-smoke-main/validation_report.json`；`python3 scripts/verify_all.py` | 已完成结构性 `chapter_boundary` atom、quality gates 与 validator；仍不保存标题/原文摘录，不做 D1-D12、trope recipe、Promote 或 Sidecar RAG |
+| v1.3-3 Trope Recipe Candidate | `done` | `ginga_platform/book_analysis/trope_recipes.py`；`scripts/build_trope_recipes.py`；`scripts/validate_trope_recipes.py`；`test_book_analysis_corpus`；`.ops/book_analysis/v1-3-3-smoke-main/validation_report.json`；`python3 scripts/verify_all.py` | 已完成去来源污染的 `trope_recipe_candidate` sidecar、quality gates 与 validator；仍不自动 promote，不进默认 RAG / prompt / `raw_ideas` / Foundation assets/schema / `StateIO` |
 | v1.4 BookView / explorer | `deferred` | `.ops/reports/oh_story_inspiration_roadmap.md` | 尚无 `.ops/book_views/` 或 inspect/query 实现；依赖 v1.3-1 P0 corpus 稳定 |
 | v1.5 review / deslop | `deferred` | `.ops/reports/oh_story_inspiration_roadmap.md` | 只可作为 report sidecar，rubric 不进创作 prompt |
 | v1.6 market sidecar / v2 运营线 | `deferred` | `ROADMAP.md` §九 | 外部依赖重，需显式授权和 offline fixture |
@@ -51,7 +52,8 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 - P2-7A Platform runner 收敛切片已完成：`novel_pipeline_mvp.yaml` 的 G 步可由 DSL 解析为 capability asset hint + `skill-router`，默认 `SkillRouter()` 可读取仓库 `ginga_platform/skills/registry.yaml`；单章 `ginga run --mock-llm` 进入 `step_dispatch:G_chapter_draft`，经 `dark-fantasy` adapter 写 `workspace.chapter_text`，并继续跑 H/R1/R2/R3/V1 的 workflow step 审计。
 - P2-7B Platform runner 收敛已完成：A-F/H/R1/R2/R3/V1 的默认 capability 已由固定 stub 收敛为 asset-backed deterministic provider；`CapabilityRegistry.from_defaults()` 注册 12 个 provider，输出 `provider=asset-backed` / `asset_ref`，并继续由 `step_dispatch` + `StateIO` 白名单写入 state；R2 provider 的结构化 `audit_intents` 已通过 `StateIO.audit()` 落审计，G 步仍优先经 `skill-router` + dark-fantasy adapter 写 `workspace.chapter_text`。
 - P2-7C provider 质量与真实 demo 收口已完成：`scripts/run_real_llm_smoke.py` 支持 dry-run、显式 `--run` 与 `--refresh-existing`；`.ops/validation/real_llm_demo_smoke.json` 记录 `passed=true`、`dry_run=false`、`refreshed_existing=true`、`execution_mode=real_llm_demo`、endpoint、`context_snapshot`、`gap_report` 与 residual risk；H/R/V provider 输出已补可读报告字段，且仍不绕过 `StateIO` 或把报告写入 runtime_state YAML。
-- 新增规划路线已完成定位梳理：oh-story 参考路线、拆书融梗 / `ReferenceTropeDistillation`、BookView / explorer、review / deslop、market sidecar 已有规划与 jury 查漏补缺；其中 v1.3-0 污染隔离底座、v1.3-1 Reference Corpus P0 MVP 与 v1.3-2 Chapter Atom + Quality Gates 已完成，后续 recipe / promote / sidecar RAG 能力仍按 `planned` / `deferred` 处理。
+- 新增规划路线已完成定位梳理：oh-story 参考路线、拆书融梗 / `ReferenceTropeDistillation`、BookView / explorer、review / deslop、market sidecar 已有规划与 jury 查漏补缺；其中 v1.3-0 污染隔离底座、v1.3-1 Reference Corpus P0 MVP、v1.3-2 Chapter Atom + Quality Gates 与 v1.3-3 Trope Recipe Candidate 已完成，后续 promote / sidecar RAG 能力仍按 `deferred` 处理。
+- v1.3-3 Trope Recipe Candidate 已完成：新增 `trope_recipes.py`、build / validate 脚本、validator 与固定 smoke run `.ops/book_analysis/v1-3-3-smoke-main`；候选只由结构性 chapter atoms 派生，包含 `trope_core`、`reader_payoff`、`trigger_conditions`、`variation_axes`、`forbidden_copy_elements` 与 safety / promotion 边界，状态保持 `not_promoted`。
 
 ## 下一步
 
@@ -59,7 +61,7 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 
 优先任务：
 
-- **v1.3-3 Trope Recipe Candidate（planned）**：v1.3-2 只证明结构性 chapter atom 可检查、可拒绝、可报告；下一步若继续拆书融梗，只能在污染源 sidecar 内推进去来源污染的 `trope_recipe` 候选与人工审核前置，不得进入默认 RAG、prompt、`raw_ideas`、Foundation assets/schema 或覆盖 `StateIO` 真值。
+- **v1.3-4 Promote Flow（deferred）**：只有在人工审核 + 污染检查规则明确后，才允许把已批准候选转为 Foundation 可治理资产；不得把 v1.3-3 的 `pending` candidate 自动写入 Foundation、默认 RAG、prompt、`raw_ideas` 或 `StateIO`。
 - **RAG 残余观察**：保留 `.ops/reports/rag_recall_quality_report.md` 的 `candidate_k` / `asset_type` blocker 作为后续小修观察项；守住 Layer 2 `recall@5 >= 0.500` 与 `expected_recall@5 >= 0.875`。
 
 ## 规划索引（不代表已完成）
@@ -114,3 +116,4 @@ python3 scripts/evaluate_rag_recall.py
 - v1.3-0 污染隔离底座：已新增 `.ops/book_analysis/contamination_check_rules.md`、`.ops/book_analysis/p0_mvp_boundary.md`、`.ops/book_analysis/schema/source_manifest.schema.yaml`，并在 `foundation/rag/recall_config.yaml` / 架构契约检查中要求 `.ops/book_analysis/**`、`.ops/market_research/**`、`.ops/external_sources/**` 默认排除。
 - v1.3-1 Reference Corpus P0 MVP：已新增 `ginga_platform/book_analysis/` 纯函数核心、`scripts/build_reference_corpus.py`、`scripts/validate_reference_corpus.py`、`test_book_analysis_corpus` 和固定 smoke run `.ops/book_analysis/v1-3-1-smoke-main`；`validate_reference_corpus.py .ops/book_analysis/v1-3-1-smoke-main` 已纳入 `verify_all.py`，仍只覆盖 P0 结构扫描边界，不证明拆书分析或创作可用性。
 - v1.3-2 Chapter Atom + Quality Gates：已新增 `ginga_platform/book_analysis/chapter_atoms.py`、`scripts/build_chapter_atoms.py`、`scripts/validate_chapter_atoms.py` 和固定 smoke run `.ops/book_analysis/v1-3-2-smoke-main`；`validate_chapter_atoms.py .ops/book_analysis/v1-3-2-smoke-main` 已纳入 `verify_all.py`，只证明结构性 chapter_boundary atom 与 quality gates，不证明 D1-D12 拆书分析、融梗配方或创作可用性。
+- v1.3-3 Trope Recipe Candidate：已新增 `ginga_platform/book_analysis/trope_recipes.py`、`scripts/build_trope_recipes.py`、`scripts/validate_trope_recipes.py` 和固定 smoke run `.ops/book_analysis/v1-3-3-smoke-main`；`validate_trope_recipes.py .ops/book_analysis/v1-3-3-smoke-main` 已纳入 `verify_all.py`，只证明去来源污染的 candidate sidecar 与红线 validator，不证明 promote、Sidecar RAG 或创作可用性。

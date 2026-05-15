@@ -1,0 +1,153 @@
+{
+  "schema_version": "0.3.0",
+  "run_id": "v1-3-3-smoke-main",
+  "created_at": "2026-05-15T11:23:12.369522+00:00",
+  "source_run_id": "v1-3-2-smoke-main",
+  "pollution": {
+    "pollution_source": true,
+    "source_marker": "[SOURCE_TROPE]",
+    "default_rag_excluded": true,
+    "prompt_injection_allowed": false,
+    "runtime_state_write_allowed": false,
+    "raw_ideas_write_allowed": false,
+    "default_input_whitelist_allowed": false
+  },
+  "candidates": [
+    {
+      "candidate_id": "trope-ch-0001-001",
+      "candidate_type": "trope_recipe_candidate",
+      "recipe_type": "underestimated_reversal",
+      "pollution_source": true,
+      "source_refs": [
+        {
+          "evidence_id": "atom-ch-0001-001",
+          "source_hash": "75e378cafccdfddc248034b3c5315bf2db61967e5216720a575ce9e04d39c484",
+          "chapter_hash": "75e378cafccdfddc248034b3c5315bf2db61967e5216720a575ce9e04d39c484",
+          "excerpt_hash": "99072e7cb1098c5e3307c8959e1212347294df46ea0763d87334eb10717a55fe",
+          "chapter_locator": {
+            "source_chapter_id": "ch-0001"
+          }
+        }
+      ],
+      "trope_core": "弱势角色被低估后，通过公开验证场景证明隐藏能力，使地位判断发生反转。",
+      "reader_payoff": "读者获得压抑后的证明快感和地位重估快感。",
+      "trigger_conditions": [
+        "外界形成明确低估判断",
+        "存在可公开验证的能力或成果"
+      ],
+      "variation_axes": [
+        "genre_swap",
+        "identity_swap",
+        "conflict_scale_swap"
+      ],
+      "forbidden_copy_elements": [
+        "source proper nouns",
+        "source dialogue",
+        "source event chain",
+        "unique mystery answer"
+      ],
+      "safety": {
+        "source_contamination_check": "pending",
+        "similarity_score": null,
+        "human_review_status": "pending"
+      },
+      "target": {
+        "promote_to": "none"
+      }
+    },
+    {
+      "candidate_id": "trope-ch-0002-002",
+      "candidate_type": "trope_recipe_candidate",
+      "recipe_type": "resource_pressure_breakthrough",
+      "pollution_source": true,
+      "source_refs": [
+        {
+          "evidence_id": "atom-ch-0002-001",
+          "source_hash": "ebad53cb2e7dc781da58d5ed398ff083a6864e2bd8b520eb84170d7c78a87457",
+          "chapter_hash": "ebad53cb2e7dc781da58d5ed398ff083a6864e2bd8b520eb84170d7c78a87457",
+          "excerpt_hash": "ba8a28d0022aa5f758262bfbe2a3c62c9276be2846d7499a70eb3d0f81d825b7",
+          "chapter_locator": {
+            "source_chapter_id": "ch-0002"
+          }
+        }
+      ],
+      "trope_core": "短期资源缺口制造明确压力，角色付出可见代价换取阶段性突破。",
+      "reader_payoff": "读者获得倒计时压力释放、代价兑现和成长确认。",
+      "trigger_conditions": [
+        "资源缺口有时间压力",
+        "突破收益和代价都能被读者理解"
+      ],
+      "variation_axes": [
+        "genre_swap",
+        "identity_swap",
+        "conflict_scale_swap"
+      ],
+      "forbidden_copy_elements": [
+        "source proper nouns",
+        "source dialogue",
+        "source event chain",
+        "unique mystery answer"
+      ],
+      "safety": {
+        "source_contamination_check": "pending",
+        "similarity_score": null,
+        "human_review_status": "pending"
+      },
+      "target": {
+        "promote_to": "none"
+      }
+    },
+    {
+      "candidate_id": "trope-ch-0003-003",
+      "candidate_type": "trope_recipe_candidate",
+      "recipe_type": "misdirection_reveal",
+      "pollution_source": true,
+      "source_refs": [
+        {
+          "evidence_id": "atom-ch-0003-001",
+          "source_hash": "b32109b53c72ec0f7659c4b29164952bc803976334b96c67542ad7d462ce08a3",
+          "chapter_hash": "b32109b53c72ec0f7659c4b29164952bc803976334b96c67542ad7d462ce08a3",
+          "excerpt_hash": "f371668c8e65b17eca1c13561985335189491e99b7dda92f8321b52fa2cd3e11",
+          "chapter_locator": {
+            "source_chapter_id": "ch-0003"
+          }
+        }
+      ],
+      "trope_core": "前置线索先服务读者预期，再在关键节点转为身份或因果反差。",
+      "reader_payoff": "读者获得重读线索的恍然感和信息差被翻转的惊喜。",
+      "trigger_conditions": [
+        "前置线索可被合理误读",
+        "揭示节点能改变读者对因果的判断"
+      ],
+      "variation_axes": [
+        "genre_swap",
+        "identity_swap",
+        "conflict_scale_swap"
+      ],
+      "forbidden_copy_elements": [
+        "source proper nouns",
+        "source dialogue",
+        "source event chain",
+        "unique mystery answer"
+      ],
+      "safety": {
+        "source_contamination_check": "pending",
+        "similarity_score": null,
+        "human_review_status": "pending"
+      },
+      "target": {
+        "promote_to": "none"
+      }
+    }
+  ],
+  "quality_gates": {
+    "status": "passed",
+    "errors": [],
+    "warnings": []
+  },
+  "promotion": {
+    "status": "not_promoted",
+    "promote_to": "none",
+    "requires_human_review": true
+  }
+}

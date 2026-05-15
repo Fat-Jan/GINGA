@@ -5,7 +5,7 @@
 - 定位：Ginga 是以 workflow DSL + skill adapters + StateIO 为真实运行主线的小说创作平台底座，STATUS.md 是当前状态真值。
 - 入口：先看 AGENTS.md、STATUS.md、notepad.md、ARCHITECTURE.md。
 - 验证：常用 python3 scripts/verify_all.py、python3 scripts/run_agent_harness.py、python3 scripts/evaluate_rag_recall.py。
-- 坑点：P2-7C 已收口但仍只证明单章 smoke 边界；v1.3-2 Chapter Atom + Quality Gates 已收口但只证明结构性 `chapter_boundary` atom 可检查、可拒绝、可报告，book_analysis 与市场原文仍不得默认进入 StateIO、RAG、prompt、raw_ideas、Foundation assets/schema 或 explorer/review 白名单。
+- 坑点：P2-7C 已收口但仍只证明单章 smoke 边界；v1.3-3 Trope Recipe Candidate 已收口但只证明污染源 sidecar 内的去来源候选、quality gates 与 validator，不证明 promote、Sidecar RAG 或创作可用性；book_analysis 与市场原文仍不得默认进入 StateIO、RAG、prompt、raw_ideas、Foundation assets/schema 或 explorer/review 白名单。
 
 ## 项目定位
 
@@ -88,7 +88,7 @@ _原料/
 | 3 | Ark Jury Court 4 角法庭 | ✅ 完成 | `.ops/jury/jury-{1-4}-*.md`（4 票 revise） |
 | 4 | 综合判决与交付 | ✅ 完成 | `ARCHITECTURE.md` + `ROADMAP.md` |
 
-**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 拆书融梗污染隔离底座、v1.3-1 Reference Corpus P0 MVP 与 v1.3-2 Chapter Atom + Quality Gates 已完成。v1.3-2 新增结构性 atom / quality gates / validator / report，并用 `test_book_analysis_corpus`、`.ops/book_analysis/v1-3-2-smoke-main` 和 `verify_all.py` 验收；下一步若继续 v1.3，应从 v1.3-3 Trope Recipe Candidate 开始。
+**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 拆书融梗污染隔离底座、v1.3-1 Reference Corpus P0 MVP、v1.3-2 Chapter Atom + Quality Gates 与 v1.3-3 Trope Recipe Candidate 已完成。v1.3-3 新增 `trope_recipe_candidate` sidecar / quality gates / validator / report，并用 `test_book_analysis_corpus`、`.ops/book_analysis/v1-3-3-smoke-main` 和 `verify_all.py` 验收；下一步若继续 v1.3，应从 v1.3-4 Promote Flow 的人工审核 + 污染检查开始。
 
 ## 验证
 

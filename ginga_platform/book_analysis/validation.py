@@ -16,6 +16,11 @@ BOOK_ANALYSIS_RUN_FILES = (
     ("quality_gates.json", "missing_quality_gates"),
     ("chapter_atom_report.md", "missing_chapter_atom_report"),
 )
+TROPE_RECIPE_RUN_FILES = (
+    ("trope_recipes.json", "missing_trope_recipes"),
+    ("quality_gates.json", "missing_quality_gates"),
+    ("trope_recipe_report.md", "missing_trope_recipe_report"),
+)
 FORBIDDEN_ATOM_TEXT_FIELDS = {
     "excerpt",
     "text",
@@ -24,6 +29,12 @@ FORBIDDEN_ATOM_TEXT_FIELDS = {
     "raw_text",
     "source_text",
     "title",
+}
+FORBIDDEN_RECIPE_TEXT_FIELDS = FORBIDDEN_ATOM_TEXT_FIELDS | {
+    "asset",
+    "prompt",
+    "raw_idea",
+    "runtime_state",
 }
 
 
@@ -302,6 +313,83 @@ def validate_chapter_atoms_run(run_root: str | Path, *, repo_root: str | Path | 
     return {"status": "failed" if errors else ("warning" if warnings else "passed"), "errors": errors, "warnings": warnings}
 
 
+def validate_trope_recipe_run(run_root: str | Path, *, repo_root: str | Path | None = None) -> dict[str, Any]:
+    """Validate files produced by the v1.3-3 Trope Recipe Candidate builder."""
+
+    run_root = Path(run_root)
+    root_for_boundary = Path(repo_root) if repo_root is not None else Path.cwd()
+    errors: list[dict[str, str]] = []
+    warnings: list[dict[str, str]] = []
+
+    if not _is_within(root_for_boundary / ".ops" / "book_analysis", run_root):
+        errors.append(
+            _issue(
+                "run_root_outside_book_analysis",
+                "trope recipe run_root must be under .ops/book_analysis",
+                str(run_root),
+            )
+        )
+
+    recipe_path = run_root / "trope_recipes.json"
+    gates_path = run_root / "quality_gates.json"
+    report_path = run_root / "trope_recipe_report.md"
+    for filename, code in TROPE_RECIPE_RUN_FILES:
+        path = run_root / filename
+        if not path.exists():
+            errors.append(_issue(code, f"missing {filename}", str(path)))
+    if errors:
+        return {"status": "failed", "errors": errors, "warnings": warnings}
+
+    recipe_payload = _read_json_mapping(recipe_path, errors)
+    gates_payload = _read_json_mapping(gates_path, errors)
+    if errors:
+        return {"status": "failed", "errors": errors, "warnings": warnings}
+
+    _validate_trope_recipe_payload(recipe_payload, recipe_path, run_root, errors, warnings)
+    _validate_quality_gates(gates_payload, gates_path, errors)
+    embedded_gates = recipe_payload.get("quality_gates")
+    if isinstance(embedded_gates, Mapping):
+        _validate_quality_gates(embedded_gates, recipe_path, errors)
+    else:
+        errors.append(_issue("missing_quality_gates", "trope_recipes.json must embed quality_gates", str(recipe_path)))
+
+    report_text = report_path.read_text(encoding="utf-8")
+    if not report_text.startswith(SOURCE_MARKER):
+        errors.append(_issue("missing_report_source_marker", "report must start with [SOURCE_TROPE]", str(report_path)))
+    if ".private_evidence" in report_text:
+        errors.append(_issue("private_evidence_referenced", "report must not reference .private_evidence", str(report_path)))
+
+    if (run_root / ".private_evidence").exists():
+        errors.append(
+            _issue(
+                "private_evidence_created",
+                "trope recipe run must not create .private_evidence",
+                str(run_root / ".private_evidence"),
+            )
+        )
+
+    recall_config = _load_recall_config(repo_root)
+    if recall_config is not None:
+        if _recall_sources_include_book_analysis(recall_config):
+            errors.append(
+                _issue(
+                    "default_rag_not_excluded",
+                    "default RAG recall_sources includes .ops/book_analysis",
+                    "recall_config.recall_sources",
+                )
+            )
+        if not _recall_forbidden_excludes_book_analysis(recall_config):
+            errors.append(
+                _issue(
+                    "rag_forbidden_missing",
+                    "default RAG recall_forbidden_paths must exclude .ops/book_analysis",
+                    "recall_config.recall_forbidden_paths",
+                )
+            )
+
+    return {"status": "failed" if errors else ("warning" if warnings else "passed"), "errors": errors, "warnings": warnings}
+
+
 def _mapping(value: Any) -> Mapping[str, Any]:
     return value if isinstance(value, Mapping) else {}
 
@@ -360,6 +448,115 @@ def _validate_chapter_atom_payload(
         _reject_forbidden_atom_fields(atom, path, errors)
 
 
+def _validate_trope_recipe_payload(
+    payload: Mapping[str, Any],
+    payload_path: Path,
+    run_root: Path,
+    errors: list[dict[str, str]],
+    warnings: list[dict[str, str]],
+) -> None:
+    del warnings
+
+    pollution = _mapping(payload.get("pollution"))
+    if pollution.get("pollution_source") is not True:
+        errors.append(_issue("missing_pollution_source", "pollution_source must be true", f"{payload_path}:pollution.pollution_source"))
+    if pollution.get("source_marker") != SOURCE_MARKER:
+        errors.append(_issue("missing_source_marker", "source marker must be [SOURCE_TROPE]", f"{payload_path}:pollution.source_marker"))
+    if pollution.get("default_rag_excluded") is not True:
+        errors.append(_issue("rag_not_excluded", "default RAG exclusion must be true", f"{payload_path}:pollution.default_rag_excluded"))
+    for field in (
+        "prompt_injection_allowed",
+        "runtime_state_write_allowed",
+        "raw_ideas_write_allowed",
+        "default_input_whitelist_allowed",
+    ):
+        if pollution.get(field) is not False:
+            errors.append(_issue("boundary_flag_not_false", f"{field} must be false", f"{payload_path}:pollution.{field}"))
+
+    output = _mapping(payload.get("output"))
+    for key, value in output.items():
+        if isinstance(value, str) and value and not _is_within(run_root, Path(value)):
+            errors.append(_issue("output_path_outside_run_root", f"{key} is outside run root", f"{payload_path}:output.{key}"))
+
+    promotion = _mapping(payload.get("promotion"))
+    if promotion.get("status") != "not_promoted":
+        errors.append(_issue("promotion_not_allowed", "v1.3-3 run must stay not_promoted", f"{payload_path}:promotion.status"))
+    if promotion.get("promote_to") != "none":
+        errors.append(_issue("promotion_not_allowed", "v1.3-3 run must not target promotion", f"{payload_path}:promotion.promote_to"))
+
+    candidates = payload.get("candidates")
+    if not isinstance(candidates, list):
+        errors.append(_issue("invalid_trope_recipes", "candidates must be a list", f"{payload_path}:candidates"))
+        return
+    if not candidates:
+        errors.append(_issue("missing_candidates", "at least one candidate is required", f"{payload_path}:candidates"))
+        return
+
+    seen_ids: set[str] = set()
+    for idx, candidate in enumerate(candidates):
+        path = f"{payload_path}:candidates[{idx}]"
+        if not isinstance(candidate, Mapping):
+            errors.append(_issue("invalid_trope_recipe", "candidate must be an object", path))
+            continue
+        candidate_id = str(candidate.get("candidate_id", ""))
+        if not candidate_id:
+            errors.append(_issue("missing_candidate_id", "candidate_id is required", f"{path}.candidate_id"))
+        elif candidate_id in seen_ids:
+            errors.append(_issue("duplicate_candidate_id", "candidate_id must be unique", f"{path}.candidate_id"))
+        seen_ids.add(candidate_id)
+
+        if candidate.get("pollution_source") is not True:
+            errors.append(_issue("missing_pollution_source", "pollution_source must be true", f"{path}.pollution_source"))
+        if candidate.get("candidate_type") != "trope_recipe_candidate":
+            errors.append(_issue("invalid_candidate_type", "candidate_type must be trope_recipe_candidate", f"{path}.candidate_type"))
+        if not str(candidate.get("trope_core", "")).strip():
+            errors.append(_issue("missing_trope_core", "trope_core is required", f"{path}.trope_core"))
+        if not str(candidate.get("reader_payoff", "")).strip():
+            errors.append(_issue("missing_reader_payoff", "reader_payoff is required", f"{path}.reader_payoff"))
+        if len(_list(candidate.get("trigger_conditions"))) < 1:
+            errors.append(_issue("missing_trigger_conditions", "trigger_conditions is required", f"{path}.trigger_conditions"))
+        if len(_list(candidate.get("variation_axes"))) < 2:
+            errors.append(_issue("insufficient_variation_axes", "variation_axes must contain at least two items", f"{path}.variation_axes"))
+        if len(_list(candidate.get("forbidden_copy_elements"))) < 1:
+            errors.append(_issue("missing_forbidden_copy_elements", "forbidden_copy_elements is required", f"{path}.forbidden_copy_elements"))
+
+        source_refs = _list(candidate.get("source_refs"))
+        if not source_refs:
+            errors.append(_issue("missing_source_refs", "source_refs is required", f"{path}.source_refs"))
+        for ref_idx, source_ref in enumerate(source_refs):
+            ref_path = f"{path}.source_refs[{ref_idx}]"
+            if not isinstance(source_ref, Mapping):
+                errors.append(_issue("invalid_source_ref", "source_ref must be an object", ref_path))
+                continue
+            for field in ("evidence_id", "source_hash", "chapter_hash", "excerpt_hash"):
+                if not str(source_ref.get(field, "")).strip():
+                    errors.append(_issue("missing_source_ref_field", f"{field} is required", f"{ref_path}.{field}"))
+            if ".private_evidence" in json.dumps(source_ref, ensure_ascii=False):
+                errors.append(_issue("private_evidence_referenced", "source_ref must not reference .private_evidence", ref_path))
+
+        safety = _mapping(candidate.get("safety"))
+        if safety.get("source_contamination_check") not in {"pending", "pass"}:
+            errors.append(
+                _issue(
+                    "invalid_source_contamination_check",
+                    "source_contamination_check must be pending or pass",
+                    f"{path}.safety.source_contamination_check",
+                )
+            )
+        similarity_score = safety.get("similarity_score")
+        if isinstance(similarity_score, (int, float)) and similarity_score >= 0.8:
+            errors.append(_issue("similarity_score_failed", "similarity_score >= 0.80 must fail", f"{path}.safety.similarity_score"))
+        if safety.get("human_review_status") not in {"pending", "approved", "rejected"}:
+            errors.append(
+                _issue("invalid_human_review_status", "human_review_status must be pending/approved/rejected", f"{path}.safety.human_review_status")
+            )
+        target = _mapping(candidate.get("target"))
+        if target.get("promote_to") != "none":
+            errors.append(_issue("promotion_not_allowed", "candidate promote_to must remain none in v1.3-3", f"{path}.target.promote_to"))
+
+        _reject_forbidden_recipe_fields(candidate, path, errors)
+
+
 def _validate_quality_gates(payload: Mapping[str, Any], path: Path, errors: list[dict[str, str]]) -> None:
     gate_errors = payload.get("errors")
     if payload.get("status") != "passed" or bool(gate_errors):
@@ -376,6 +573,18 @@ def _reject_forbidden_atom_fields(value: Any, path: str, errors: list[dict[str, 
     elif isinstance(value, list):
         for idx, child in enumerate(value):
             _reject_forbidden_atom_fields(child, f"{path}[{idx}]", errors)
+
+
+def _reject_forbidden_recipe_fields(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    if isinstance(value, Mapping):
+        for key, child in value.items():
+            child_path = f"{path}.{key}"
+            if key in FORBIDDEN_RECIPE_TEXT_FIELDS:
+                errors.append(_issue("recipe_forbidden_field_saved", f"recipe must not persist or masquerade as {key}", child_path))
+            _reject_forbidden_recipe_fields(child, child_path, errors)
+    elif isinstance(value, list):
+        for idx, child in enumerate(value):
+            _reject_forbidden_recipe_fields(child, f"{path}[{idx}]", errors)
 
 
 def _is_within(root: Path, path: Path) -> bool:

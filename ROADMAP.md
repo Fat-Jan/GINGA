@@ -7,7 +7,7 @@
 **状态更新**：2026-05-15（依据 `STATUS.md`；本文件保留为历史规划 + 当前状态对照）
 **对应架构**：`ARCHITECTURE.md` v1
 
-> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A/P2-7B/P2-7C Platform runner 收敛。P2-7C 严格状态是 `done`：真实 LLM smoke 边界切片、provider 输出可读性、`context_snapshot`、`gap_report` 与 residual risk 报告均已收口；该证据仍只证明单章 smoke 边界，不证明长篇生产质量。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。新增规划路线只更新后续定位与版本索引，不改变当前生产完成度：拆书融梗 / `ReferenceTropeDistillation` 已完成 v1.3-0/v1.3-1/v1.3-2，后续 v1.3-3+、BookView / explorer、review / deslop、market sidecar 仍为 planned / deferred。
+> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A/P2-7B/P2-7C Platform runner 收敛。P2-7C 严格状态是 `done`：真实 LLM smoke 边界切片、provider 输出可读性、`context_snapshot`、`gap_report` 与 residual risk 报告均已收口；该证据仍只证明单章 smoke 边界，不证明长篇生产质量。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。新增规划路线只更新后续定位与版本索引，不改变当前生产完成度：拆书融梗 / `ReferenceTropeDistillation` 已完成 v1.3-0/v1.3-1/v1.3-2/v1.3-3，后续 Promote、Sidecar RAG、BookView / explorer、review / deslop、market sidecar 仍为 deferred。
 >
 > 若本文件与 `STATUS.md` 冲突，以 `STATUS.md` 为当前状态真值。
 
@@ -330,7 +330,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 - [x] Jury 修订追踪表（jury 23 条建议全部归属到具体任务编号，§七）
 - [x] 8 决策落地到 ARCHITECTURE §七 + 本文件任务编号
 
-**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-15，P2-7C Platform runner 收敛、v1.3-0 拆书融梗污染隔离底座、v1.3-1 Reference Corpus P0 MVP 与 v1.3-2 Chapter Atom + Quality Gates 均已收口。下一步若继续 v1.3，应转入 v1.3-3 Trope Recipe Candidate；RAG 残余 `candidate_k` / `asset_type` blocker 仅作为后续小修观察项。
+**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-15，P2-7C Platform runner 收敛、v1.3-0 拆书融梗污染隔离底座、v1.3-1 Reference Corpus P0 MVP、v1.3-2 Chapter Atom + Quality Gates 与 v1.3-3 Trope Recipe Candidate 均已收口。下一步若继续 v1.3，只能转入 v1.3-4 Promote Flow 的人工审核 + 污染检查，不得把 pending candidate 自动接入创作链；RAG 残余 `candidate_k` / `asset_type` blocker 仅作为后续小修观察项。
 
 ---
 
@@ -345,7 +345,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 | **v1 / S1-S3** | Foundation / Meta / Platform / RAG MVP；第一章、多章、immersive、RAG Layer 1-3、prompt / methodology 治理 | ✅ 已完成 | 已达到可回归基础底座 |
 | **v1.1 / P2 质量线** | RAG 真实召回质量评估、RAG 小迭代、agent harness、StateIO artifact 边界、mock / real demo 标识 | ✅ 已完成 | 以 `STATUS.md` 和验证产物为准 |
 | **v1.2 / P2-7 Platform runner 收敛** | workflow DSL + skill adapters + `StateIO`，12 step asset-backed deterministic provider | ✅ P2-7A/P2-7B/P2-7C 已完成 | 已完成真实 LLM smoke 边界切片、provider 可读性、context/gap report 与 residual risk；仍不声明长篇生产质量 |
-| **v1.3 / 拆书融梗 Evidence Pipeline** | `ReferenceTropeDistillation`：参考作品拆章、manifest、污染检查、章节原子事件、质量门、trope_recipe 候选 | 🟢 v1.3-0 done；v1.3-1 done；v1.3-2 done | 已完成污染隔离底座、Reference Corpus P0 MVP 与结构性 Chapter Atom + Quality Gates；后续从 v1.3-3 开始 |
+| **v1.3 / 拆书融梗 Evidence Pipeline** | `ReferenceTropeDistillation`：参考作品拆章、manifest、污染检查、章节原子事件、质量门、trope_recipe 候选 | 🟢 v1.3-0 done；v1.3-1 done；v1.3-2 done；v1.3-3 done | 已完成污染隔离底座、Reference Corpus P0 MVP、结构性 Chapter Atom + Quality Gates 与去来源 `trope_recipe` candidate sidecar；后续从 v1.3-4 Promote Flow 开始 |
 | **v1.4 / Book Workspace View + Explorer** | 从 StateIO/artifacts 派生可读书目视图与只读查询，不产生第二状态真值 | ⏳ deferred | 依赖 v1.3-1 P0 corpus 稳定 |
 | **v1.5 / Review + Anti-AI warn-only gate** | 审稿、去 AI 味、平台 rubric 报告化；只做审计/报告，不自动改正文 | ⏳ deferred | rubric 只用于 review report，不进入创作 prompt |
 | **v1.6 / Market Research Sidecar** | 扫榜、外部研究、市场信号报告，带采集时间、来源和数据质量状态 | ⏳ deferred | 外部依赖重，需 mock fixture 与显式授权 |
@@ -374,7 +374,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 | v1.3-0 | 文档补强 + 污染隔离前置 | 补 `contamination_check_rules.md`、P0 MVP 边界、manifest schema、RAG 排除规则、资源上限、关键词来源规则 | ✅ done；证据见 `.ops/book_analysis/` 与架构验证 |
 | v1.3-1 | Reference Corpus P0 MVP | 纯函数化 scan / split / manifest / validator / report，输出 `.ops/book_analysis/<run_id>/`；不做内容分析，不进 `StateIO`、默认 RAG、prompt、`raw_ideas`、Foundation assets/schema | ✅ done；证据见 `test_book_analysis_corpus`、`.ops/book_analysis/v1-3-1-smoke-main/validation_report.json` 与 `verify_all.py` |
 | v1.3-2 | Chapter Atom + Quality Gates | 结构性 `chapter_boundary` atom、可拒绝 quality gates、validator / report，所有产物标 `pollution_source: true`，不保存标题或原文摘录 | ✅ done；证据见 `test_book_analysis_corpus`、`.ops/book_analysis/v1-3-2-smoke-main/validation_report.json` 与 `verify_all.py` |
-| v1.3-3 | Trope Recipe Candidate | D1-D12 转为 `trope_recipe` 候选：梗核、读者爽点、触发条件、变形参数、禁搬元素；不得自动进入创作 workflow | ⏳ deferred |
+| v1.3-3 | Trope Recipe Candidate | D1-D12 转为 `trope_recipe` 候选：梗核、读者爽点、触发条件、变形参数、禁搬元素；不得自动进入创作 workflow | ✅ done；证据见 `trope_recipes.py`、`validate_trope_recipes.py`、`.ops/book_analysis/v1-3-3-smoke-main/validation_report.json` 与 `verify_all.py` |
 | v1.3-4 | Promote Flow | 人工审核 + 污染检查后 promote 到 Foundation methodology / prompt example / reference pattern | ⏳ deferred |
 | v1.3-5 | Reference Sidecar RAG | 显式启用的 sidecar 召回；不污染默认 RAG | ⏳ deferred |
 

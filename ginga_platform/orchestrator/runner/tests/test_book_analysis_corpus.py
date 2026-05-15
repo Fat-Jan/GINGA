@@ -25,16 +25,22 @@ EXPECTED_API = {
         "build_source_manifest",
         "build_reference_corpus",
         "build_chapter_atoms",
+        "build_trope_recipes",
     ],
     "ginga_platform.book_analysis.chapter_atoms": [
         "extract_chapter_atoms",
         "write_chapter_atoms_run",
+    ],
+    "ginga_platform.book_analysis.trope_recipes": [
+        "extract_trope_recipe_candidates",
+        "write_trope_recipe_run",
     ],
     "ginga_platform.book_analysis.report": ["render_scan_report"],
     "ginga_platform.book_analysis.validation": [
         "validate_manifest_dict",
         "validate_reference_corpus",
         "validate_chapter_atoms_run",
+        "validate_trope_recipe_run",
     ],
 }
 
@@ -519,6 +525,175 @@ class ChapterAtomV132ContractTest(unittest.TestCase):
 
         codes = _issue_codes(validation.get("errors"))
         self.assertIn("atom_excerpt_saved", codes)
+        self.assertIn("quality_gate_failed", codes)
+
+
+class TropeRecipeV133ContractTest(unittest.TestCase):
+    def _build_atom_run(self, repo_root: Path) -> Path:
+        build_reference_corpus = _require("ginga_platform.book_analysis.corpus", "build_reference_corpus")
+        build_chapter_atoms = _require("ginga_platform.book_analysis.corpus", "build_chapter_atoms")
+        source = repo_root / "incoming" / "reference.txt"
+        source.parent.mkdir(parents=True, exist_ok=True)
+        _write_source(source, _chaptered_text())
+        source_run_root = Path(
+            build_reference_corpus(
+                source_path=source,
+                run_id="v1-3-3-source",
+                output_base=repo_root / ".ops" / "book_analysis",
+            )
+        )
+        return Path(
+            build_chapter_atoms(
+                source_run_root=source_run_root,
+                run_id="v1-3-3-atoms",
+                output_base=repo_root / ".ops" / "book_analysis",
+            )
+        )
+
+    def test_extract_trope_recipe_candidates_returns_de_sourced_candidates(self) -> None:
+        extract_trope_recipe_candidates = _require(
+            "ginga_platform.book_analysis.trope_recipes",
+            "extract_trope_recipe_candidates",
+        )
+        atoms_payload = {
+            "run_id": "v1-3-3-atoms",
+            "chapter_atoms": [
+                {
+                    "atom_id": "atom-ch-0001-001",
+                    "source_chapter_id": "ch-0001",
+                    "chapter_sha256": "b" * 64,
+                    "title_fingerprint": "c" * 64,
+                }
+            ],
+        }
+
+        result = extract_trope_recipe_candidates(atoms_payload)
+
+        self.assertEqual(result["schema_version"], "0.3.0")
+        self.assertEqual(result["quality_gates"]["status"], "passed")
+        self.assertEqual(result["promotion"]["status"], "not_promoted")
+        self.assertEqual(len(result["candidates"]), 1)
+        candidate = result["candidates"][0]
+        self.assertEqual(candidate["candidate_type"], "trope_recipe_candidate")
+        self.assertTrue(candidate["pollution_source"])
+        self.assertEqual(candidate["target"]["promote_to"], "none")
+        self.assertGreaterEqual(len(candidate["variation_axes"]), 2)
+        self.assertGreaterEqual(len(candidate["forbidden_copy_elements"]), 1)
+        self.assertEqual(candidate["safety"]["source_contamination_check"], "pending")
+        self.assertEqual(candidate["safety"]["human_review_status"], "pending")
+        self.assertNotIn(UNIQUE_SOURCE_SENTENCE, json.dumps(candidate, ensure_ascii=False))
+        self.assertNotIn("雾桥来信", json.dumps(candidate, ensure_ascii=False))
+        for forbidden in ("excerpt", "text", "content", "body", "raw_text", "source_text", "title"):
+            self.assertNotIn(forbidden, candidate, f"trope recipe must not persist source material: {forbidden}")
+
+    def test_build_trope_recipes_writes_sidecar_outputs_and_validator_passes(self) -> None:
+        build_trope_recipes = _require("ginga_platform.book_analysis.corpus", "build_trope_recipes")
+        validate_trope_recipe_run = _require(
+            "ginga_platform.book_analysis.validation",
+            "validate_trope_recipe_run",
+        )
+
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = Path(tmp)
+            atom_run_root = self._build_atom_run(repo_root)
+
+            recipe_run_root = Path(
+                build_trope_recipes(
+                    source_atom_run_root=atom_run_root,
+                    run_id="v1-3-3-recipes",
+                    output_base=repo_root / ".ops" / "book_analysis",
+                )
+            )
+
+            self.assertEqual(recipe_run_root, repo_root / ".ops" / "book_analysis" / "v1-3-3-recipes")
+            recipes_path = recipe_run_root / "trope_recipes.json"
+            gates_path = recipe_run_root / "quality_gates.json"
+            report_path = recipe_run_root / "trope_recipe_report.md"
+            run_config_path = recipe_run_root / "run_config.json"
+            for path in (recipes_path, gates_path, report_path, run_config_path):
+                self.assertTrue(path.exists(), f"missing v1.3-3 output: {path}")
+
+            recipes_payload = json.loads(recipes_path.read_text(encoding="utf-8"))
+            gates_payload = json.loads(gates_path.read_text(encoding="utf-8"))
+            report_md = report_path.read_text(encoding="utf-8")
+            self.assertEqual(len(recipes_payload["candidates"]), 3)
+            self.assertEqual(gates_payload["status"], "passed")
+            self.assertTrue(report_md.startswith("[SOURCE_TROPE]"))
+            self.assertIn("Trope Recipe Candidate", report_md)
+            self.assertNotIn(UNIQUE_SOURCE_SENTENCE, report_md)
+            self.assertNotIn("桥下只有潮声", report_md)
+
+            validation = validate_trope_recipe_run(recipe_run_root, repo_root=repo_root)
+            self.assertEqual(validation["status"], "passed", validation)
+
+            for unexpected in (
+                repo_root / "foundation" / "runtime_state",
+                repo_root / "foundation" / "raw_ideas",
+                repo_root / "foundation" / "assets",
+                repo_root / "foundation" / "schema",
+                recipe_run_root / ".private_evidence",
+            ):
+                self.assertFalse(unexpected.exists(), f"v1.3-3 recipe build must not create {unexpected}")
+
+    def test_trope_recipe_validator_rejects_pollution_promotion_and_missing_safety(self) -> None:
+        validate_trope_recipe_run = _require(
+            "ginga_platform.book_analysis.validation",
+            "validate_trope_recipe_run",
+        )
+
+        with tempfile.TemporaryDirectory() as tmp:
+            repo_root = Path(tmp)
+            run_root = repo_root / ".ops" / "book_analysis" / "bad-recipes"
+            run_root.mkdir(parents=True)
+            _write_json(
+                run_root / "trope_recipes.json",
+                {
+                    "schema_version": "0.3.0",
+                    "run_id": "bad-recipes",
+                    "pollution": {
+                        "pollution_source": True,
+                        "source_marker": "[SOURCE_TROPE]",
+                        "default_rag_excluded": True,
+                        "runtime_state_write_allowed": True,
+                    },
+                    "promotion": {"status": "promoted", "promote_to": "foundation"},
+                    "candidates": [
+                        {
+                            "candidate_id": "trope-bad-001",
+                            "candidate_type": "trope_recipe_candidate",
+                            "pollution_source": True,
+                            "source_refs": [{"evidence_id": "atom-bad", "source_hash": "b" * 64}],
+                            "trope_core": "把雾桥来信的桥下潮声事件链改名复用。",
+                            "reader_payoff": "复刻原作反转。",
+                            "trigger_conditions": [],
+                            "variation_axes": ["genre_swap"],
+                            "forbidden_copy_elements": [],
+                            "safety": {
+                                "source_contamination_check": "fail",
+                                "similarity_score": 0.9,
+                                "human_review_status": "pending",
+                            },
+                            "target": {"promote_to": "foundation"},
+                            "excerpt": UNIQUE_SOURCE_SENTENCE,
+                        }
+                    ],
+                    "quality_gates": {"status": "failed", "errors": [{"code": "manual_failure"}], "warnings": []},
+                },
+            )
+            _write_json(run_root / "quality_gates.json", {"status": "failed", "errors": [{"code": "manual_failure"}], "warnings": []})
+            (run_root / "trope_recipe_report.md").write_text("[SOURCE_TROPE]\n# Bad Recipe Report\n", encoding="utf-8")
+
+            validation = validate_trope_recipe_run(run_root, repo_root=repo_root)
+
+        codes = _issue_codes(validation.get("errors"))
+        self.assertIn("boundary_flag_not_false", codes)
+        self.assertIn("promotion_not_allowed", codes)
+        self.assertIn("missing_source_ref_field", codes)
+        self.assertIn("insufficient_variation_axes", codes)
+        self.assertIn("missing_forbidden_copy_elements", codes)
+        self.assertIn("invalid_source_contamination_check", codes)
+        self.assertIn("similarity_score_failed", codes)
+        self.assertIn("recipe_forbidden_field_saved", codes)
         self.assertIn("quality_gate_failed", codes)
 
 

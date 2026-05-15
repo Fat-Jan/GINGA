@@ -3,7 +3,7 @@
   "project": "ginga-novel-distillation",
   "schema_note": "推荐状态机: queued -> assigned -> running -> validating -> done; 异常: stale/zombie/retry_wait/failed/blocked. done 只能由主 agent 复核后写入。底层派活规范见 .ops/subagents/dispatch-protocol.md。",
   "created_at": "2026-05-12T22:50:00+08:00",
-  "updated_at": "2026-05-14T18:35:00+08:00",
+  "updated_at": "2026-05-15T19:31:30+08:00",
   "tasks": [
     {
       "task_id": "scout-1-base",
@@ -1019,6 +1019,78 @@
       ],
       "blockers": [],
       "handoff_note": "Completed by Huygens. Local pressure test passes target at 85.7%; remaining issue is immersive chapter heading progression."
+    },
+    {
+      "task_id": "V1.3-3-E1-STRUCTURE-SCAN",
+      "title": "v1.3-3 explorer：现有 book_analysis 结构与接入点扫描",
+      "status": "done",
+      "owner": "explorer Faraday (spawn_agent 019e2b5c-8cdb-7301-84e6-9adae4edd0ff)",
+      "owned_files": [
+        "read-only: ginga_platform/book_analysis/**",
+        "read-only: scripts/build_*",
+        "read-only: scripts/validate_*",
+        "read-only: ginga_platform/orchestrator/runner/tests/test_book_analysis_corpus.py"
+      ],
+      "input_refs": [
+        "STATUS.md",
+        ".ops/subagents/dispatch-protocol.md",
+        "ginga_platform/book_analysis/chapter_atoms.py",
+        "ginga_platform/book_analysis/validation.py"
+      ],
+      "expected_output": "短报告：v1.3-3 trope_recipe candidate 应复用/新增的模块、脚本、测试接入点，不写文件",
+      "verification": "main agent cross-checks returned paths and tests before implementation",
+      "depends_on": [
+        "v1.3-2 Chapter Atom + Quality Gates"
+      ],
+      "created_at": "2026-05-15T19:18:34+08:00",
+      "updated_at": "2026-05-15T19:31:30+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 2,
+      "evidence": [
+        "callback: recommended trope_recipes.py + build/validate scripts + validation.py + test_book_analysis_corpus integration",
+        "main integrated: ginga_platform/book_analysis/trope_recipes.py, scripts/build_trope_recipes.py, scripts/validate_trope_recipes.py",
+        "verification: python -m unittest ginga_platform.orchestrator.runner.tests.test_book_analysis_corpus PASS (14 tests)"
+      ],
+      "blockers": [],
+      "handoff_note": "Completed by Faraday; main agent integrated the recommended v1.3-3 shape and kept writes in sidecar-only paths."
+    },
+    {
+      "task_id": "V1.3-3-E2-BOUNDARY-SCAN",
+      "title": "v1.3-3 explorer：污染规则与验收红线扫描",
+      "status": "done",
+      "owner": "explorer Confucius (spawn_agent 019e2b5c-b03f-7863-a5da-85c64a78cc91)",
+      "owned_files": [
+        "read-only: STATUS.md",
+        "read-only: ROADMAP.md",
+        "read-only: .ops/book_analysis/**",
+        "read-only: .ops/reports/book_analysis_distillation_fusion_plan.md",
+        "read-only: foundation/rag/recall_config.yaml"
+      ],
+      "input_refs": [
+        "STATUS.md",
+        ".ops/book_analysis/contamination_check_rules.md",
+        ".ops/book_analysis/p0_mvp_boundary.md",
+        ".ops/subagents/dispatch-protocol.md"
+      ],
+      "expected_output": "短报告：trope_recipe candidate 必须验证的污染边界、禁止路径、字段红线和 DoD，不写文件",
+      "verification": "main agent maps returned redlines into validator tests and completion audit",
+      "depends_on": [
+        "v1.3-0 contamination boundary",
+        "v1.3-2 Chapter Atom + Quality Gates"
+      ],
+      "created_at": "2026-05-15T19:18:34+08:00",
+      "updated_at": "2026-05-15T19:31:30+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 2,
+      "evidence": [
+        "callback: confirmed required fields source_refs/trope_core/reader_payoff/trigger_conditions/variation_axes/forbidden_copy_elements/safety/target",
+        "main integrated: validator enforces .ops/book_analysis boundary, pollution flags, no promotion, variation_axes >= 2, forbidden_copy_elements, source hash fields, RAG exclusion",
+        "verification: fixed smoke run .ops/book_analysis/v1-3-3-smoke-main validation_report.json status passed"
+      ],
+      "blockers": [],
+      "handoff_note": "Completed by Confucius; main agent mapped redlines into v1.3-3 validator and tests."
     }
   ]
 }

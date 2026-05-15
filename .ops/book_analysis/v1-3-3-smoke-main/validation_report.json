@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "errors": [],
+  "warnings": [],
+  "run_dir": ".ops/book_analysis/v1-3-3-smoke-main",
+  "validator": "ginga_platform.book_analysis.validation.validate_trope_recipe_run"
+}

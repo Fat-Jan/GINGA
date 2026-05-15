@@ -13,6 +13,7 @@ from .report import render_scan_report
 from .scan import SourceScanResult, scan_source_bytes
 from .split import ChapterEntry, SplitResult, split_chapters as _split_text
 from .chapter_atoms import write_chapter_atoms_run
+from .trope_recipes import write_trope_recipe_run
 
 
 def scan_source(
@@ -139,6 +140,12 @@ def build_chapter_atoms(*, source_run_root: str | Path, run_id: str, output_base
     """Build v1.3-2 Chapter Atom sidecar outputs from a P0 run."""
 
     return write_chapter_atoms_run(source_run_root=source_run_root, run_id=run_id, output_base=output_base)
+
+
+def build_trope_recipes(*, source_atom_run_root: str | Path, run_id: str, output_base: str | Path) -> Path:
+    """Build v1.3-3 Trope Recipe Candidate sidecar outputs from a chapter atom run."""
+
+    return write_trope_recipe_run(source_atom_run_root=source_atom_run_root, run_id=run_id, output_base=output_base)
 
 
 def _coerce_limits(value: Mapping[str, Any] | BookAnalysisLimits | None) -> BookAnalysisLimits:
