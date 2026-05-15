@@ -93,6 +93,31 @@ def main(argv: list[str] | None = None) -> int:
         help="runtime_state 根目录；测试/harness 可传临时目录，默认 foundation/runtime_state",
     )
 
+    p_inspect = sub.add_parser("inspect", help="导出只读 BookView projection")
+    p_inspect.add_argument("book_id")
+    p_inspect.add_argument("--run-id", help="BookView run id；默认 UTC 时间戳")
+    p_inspect.add_argument(
+        "--state-root",
+        type=Path,
+        help="runtime_state 根目录；测试/harness 可传临时目录，默认 foundation/runtime_state",
+    )
+    p_inspect.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path(".ops/book_views"),
+        help="BookView 输出根目录（默认 .ops/book_views）",
+    )
+
+    p_query = sub.add_parser("query", help="只读查询 StateIO / chapter artifacts")
+    p_query.add_argument("book_id")
+    p_query.add_argument("query")
+    p_query.add_argument("--limit", type=int, default=10)
+    p_query.add_argument(
+        "--state-root",
+        type=Path,
+        help="runtime_state 根目录；测试/harness 可传临时目录，默认 foundation/runtime_state",
+    )
+
     p_idea = sub.add_parser("idea", help="raw idea 暂存区：只落盘，不进 state/RAG")
     idea_sub = p_idea.add_subparsers(dest="idea_cmd", required=True)
     p_idea_add = idea_sub.add_parser("add", help="写入一条 raw idea")
@@ -180,6 +205,30 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     elif args.cmd == "status":
         show_status(args.book_id, state_root=args.state_root)
+        return 0
+    elif args.cmd == "inspect":
+        from ginga_platform.orchestrator.book_view import export_book_view
+
+        result = export_book_view(
+            args.book_id,
+            run_id=args.run_id,
+            state_root=args.state_root,
+            output_root=args.output_root,
+        )
+        print(f"✅ BookView exported: {result['output_dir']}")
+        return 0
+    elif args.cmd == "query":
+        import json
+
+        from ginga_platform.orchestrator.book_view import query_book_view
+
+        result = query_book_view(
+            args.book_id,
+            args.query,
+            state_root=args.state_root,
+            limit=args.limit,
+        )
+        print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0
     elif args.cmd == "idea":
         if args.idea_cmd == "add":

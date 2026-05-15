@@ -126,6 +126,18 @@ P27_RUNNER_SNIPPETS = {
         'if path == "audit_log"',
     ),
 }
+BOOK_VIEW_PATH = Path("ginga_platform/orchestrator/book_view.py")
+BOOK_VIEW_REQUIRED_SNIPPETS = (
+    "DEFAULT_OUTPUT_ROOT = Path(\".ops/book_views\")",
+    "\"is_state_truth\": False",
+    "\"writes_runtime_state\": False",
+    "\".ops/book_analysis/**\"",
+)
+BOOK_VIEW_FORBIDDEN_SNIPPETS = (
+    ".apply(",
+    ".audit(",
+    ".write_artifact(",
+)
 
 
 def load_yaml(path: Path) -> Any:
@@ -611,6 +623,30 @@ def validate_platform_runner_convergence(repo_root: Path, report: dict[str, Any]
     )
 
 
+def validate_book_view_boundary(repo_root: Path, report: dict[str, Any]) -> None:
+    """Ensure v1.4 BookView remains a read-only projection."""
+    path = repo_root / BOOK_VIEW_PATH
+    try:
+        text = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        add_error(report, BOOK_VIEW_PATH, "BookView boundary", "book_view module missing")
+        add_check(report, "v1.4 BookView boundary", False, "book_view module missing")
+        return
+
+    missing = [snippet for snippet in BOOK_VIEW_REQUIRED_SNIPPETS if snippet not in text]
+    forbidden = [snippet for snippet in BOOK_VIEW_FORBIDDEN_SNIPPETS if snippet in text]
+    if missing:
+        add_error(report, BOOK_VIEW_PATH, "BookView boundary", f"missing required snippet(s): {missing}")
+    if forbidden:
+        add_error(report, BOOK_VIEW_PATH, "BookView boundary", f"forbidden runtime-state write/source snippet(s): {forbidden}")
+    add_check(
+        report,
+        "v1.4 BookView boundary",
+        not missing and not forbidden,
+        "BookView is constrained to .ops/book_views and does not write StateIO",
+    )
+
+
 def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     root = (repo_root or Path.cwd()).resolve()
     root_text = str(root)
@@ -631,6 +667,7 @@ def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     validate_state_write_boundaries(root, report)
     validate_current_planning_hygiene(root, report)
     validate_platform_runner_convergence(root, report)
+    validate_book_view_boundary(root, report)
     report["status"] = "FAIL" if report["errors"] else "PASS"
     return report
 

@@ -89,7 +89,7 @@ _原料/
 | 3 | Ark Jury Court 4 角法庭 | ✅ 完成 | `.ops/jury/jury-{1-4}-*.md`（4 票 revise） |
 | 4 | 综合判决与交付 | ✅ 完成 | `ARCHITECTURE.md` + `ROADMAP.md` |
 
-**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 拆书融梗污染隔离底座、v1.3-1 Reference Corpus P0 MVP、v1.3-2 Chapter Atom + Quality Gates、v1.3-3 Trope Recipe Candidate、v1.3-4 Promote Flow 与 v1.3-5 Reference Sidecar RAG 已完成。下一轮优先看 v1.4 BookView / explorer：只读 projection / inspect / query，真值仍是 StateIO，默认输入白名单不得包含 `.ops/book_analysis/**`。
+**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 到 v1.3-5 拆书融梗支线与 v1.4 BookView / explorer 已完成。下一轮优先看 v1.5 Review / deslop：审稿、去 AI 味、平台 rubric 报告化；只做 warn-only report，不自动改正文，rubric 不进入创作 prompt。
 
 ## 验证
 
@@ -105,7 +105,7 @@ _原料/
 - **oh-story 要分层吸收**：hooks 有生命周期信号价值，references 有操作手册化价值，中文书目目录有人类可读价值；Ginga 要把它们改造成显式 context/gap report、Foundation asset 组织范式、BookView/import-export projection，而不是原样复制为隐式机制或主存储。
 - **拆书 / 市场 sidecar 是污染源域**：`.ops/book_analysis/`、外部榜单原文、市场采集原始数据默认不得进入 RAG 或 explorer/review 输入白名单；如要 promote 必须人工审核 + 污染检查。
 - **v1.3-0 已有底线文件**：污染检查看 `.ops/book_analysis/contamination_check_rules.md`，P0 边界看 `.ops/book_analysis/p0_mvp_boundary.md`，manifest 草案看 `.ops/book_analysis/schema/source_manifest.schema.yaml`；默认 `recall_config.yaml` 只维护排除清单，不把污染源加入 `recall_sources`。
-- **BookView 是 projection**：未来若做 `.ops/book_views/<book_id>/<run_id>/`，必须显著标注真值仍是 StateIO，不得建立第二状态真值。
+- **BookView 是 projection**：`ginga inspect` 只输出 `.ops/book_views/<book_id>/<run_id>/`，显著标注真值仍是 StateIO，不得建立第二状态真值。
 - **用户已有 skill 必须先识别**：思路 2/3 是完整 skill，蒸馏产物必须做差异分析（哪些已有/哪些是新增/哪些可增强）。
 - **1002 md 不能塞主上下文**：必须用 Scout 子代理隔离扫描，Scout 把详细报告 Write 到文件，只回主 agent 摘要。
 - **基座 vs 提示词库参考有重叠**：必须做去重分析（同样的场景在两个地方都出现，用哪个？合并还是 drop？）。
