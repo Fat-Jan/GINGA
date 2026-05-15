@@ -37,7 +37,7 @@ from typing import Any, Mapping, Optional
 import yaml
 
 
-_DEFAULT_SKILLS_ROOT = Path("platform/skills")
+_DEFAULT_SKILLS_ROOT = Path("ginga_platform/skills")
 _DEFAULT_REGISTRY_PATH = _DEFAULT_SKILLS_ROOT / "registry.yaml"
 _DEFAULT_FALLBACK_SKILL = "default_writer"
 
@@ -134,18 +134,30 @@ class SkillRouter:
         if not isinstance(raw, dict):
             raise RouterError(f"{self.registry_path.name} must be a mapping")
         items_raw = raw.get("skills") or []
-        if not isinstance(items_raw, list):
-            raise RouterError(f"{self.registry_path.name}.skills must be list")
+        if isinstance(items_raw, Mapping):
+            iterable = [
+                {"skill_id": skill_id, **(item if isinstance(item, Mapping) else {})}
+                for skill_id, item in items_raw.items()
+            ]
+        elif isinstance(items_raw, list):
+            iterable = items_raw
+        else:
+            raise RouterError(f"{self.registry_path.name}.skills must be list or mapping")
         out: list[SkillEntry] = []
-        for item in items_raw:
+        for item in iterable:
             if not isinstance(item, Mapping):
                 continue
             skill_id = str(item.get("skill_id") or item.get("id") or "").strip()
             if not skill_id:
                 continue
             enabled = bool(item.get("enabled", True))
-            contract_rel = item.get("contract_path") or f"{skill_id}/contract.yaml"
-            contract_path = self.skills_root / contract_rel if not Path(contract_rel).is_absolute() else Path(contract_rel)
+            contract_rel = item.get("contract_path") or item.get("contract") or f"{skill_id}/contract.yaml"
+            contract_path = Path(str(contract_rel))
+            if not contract_path.is_absolute():
+                if contract_path.exists():
+                    contract_path = contract_path
+                else:
+                    contract_path = self.skills_root / contract_path
             out.append(SkillEntry(skill_id=skill_id, enabled=enabled, contract_path=contract_path))
         return out
 

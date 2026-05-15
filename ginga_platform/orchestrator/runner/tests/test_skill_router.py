@@ -142,6 +142,14 @@ class SkillRouterTest(unittest.TestCase):
             chosen = router(_StubStep("G"), {"state_io": sio})
             self.assertEqual(chosen, "dark-fantasy-ultimate-engine")
 
+    def test_default_router_reads_repo_registry_mapping(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            sio = self._make_state_io(Path(d) / "state", ["玄幻黑暗"])
+            router = self.router_mod.SkillRouter()
+            decision = router.route(_StubStep("G_chapter_draft"), {"state_io": sio})
+            self.assertEqual(decision.skill_id, "dark-fantasy-ultimate-engine")
+            self.assertEqual(decision.score, 100)
+
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()

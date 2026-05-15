@@ -38,7 +38,13 @@ from typing import Any
 from ginga_platform.orchestrator.runner.op_translator import (
     adapter_ops_to_state_updates,
 )
+from ginga_platform.orchestrator.runner.dsl_parser import Step, parse_workflow
 from ginga_platform.orchestrator.runner.state_io import StateIO
+from ginga_platform.orchestrator.router.skill_router import SkillRouter
+from ginga_platform.orchestrator.runner.step_dispatch import dispatch_step
+from ginga_platform.skills.dark_fantasy_ultimate_engine.adapter import (
+    DarkFantasyAdapter,
+)
 
 
 # ---------- execution mode ---------------------------------------------------
@@ -47,6 +53,7 @@ from ginga_platform.orchestrator.runner.state_io import StateIO
 MOCK_HARNESS_MODE = "mock_harness"
 DETERMINISTIC_EVAL_MODE = "deterministic_eval"
 REAL_LLM_DEMO_MODE = "real_llm_demo"
+WORKFLOW_PATH = Path("ginga_platform/orchestrator/workflows/novel_pipeline_mvp.yaml")
 
 
 def _mock_chapter_text(chapter_no: int, word_target: int) -> str:
@@ -87,6 +94,14 @@ def _call_llm_or_mock(
 
 def _state_io_kwargs(state_root: Path | str | None) -> dict[str, Any]:
     return {"state_root": state_root} if state_root is not None else {}
+
+
+def _load_workflow_step(step_id: str) -> Step:
+    workflow = parse_workflow(WORKFLOW_PATH)
+    step = workflow.find(step_id)
+    if step is None:
+        raise RuntimeError(f"workflow step not found: {step_id}")
+    return step
 
 
 # ---------- init_book --------------------------------------------------------
@@ -530,6 +545,87 @@ def apply_chapter_rollup(
     }
 
 
+def _build_dark_fantasy_step_executor(
+    sio: StateIO,
+    *,
+    chapter_text: str,
+) -> Any:
+    """Create the G_chapter_draft skill executor used by the CLI runner."""
+    adapter = DarkFantasyAdapter(sio)
+
+    def _execute(inputs: Any, ctx: Any) -> dict[str, Any]:
+        runtime_state = {
+            "locked": sio.read("locked") or {},
+            "entity_runtime": sio.read("entity_runtime") or {},
+            "retrieved": sio.read("retrieved") or {},
+            "workspace": sio.read("workspace") or {},
+        }
+        adapter.input_transform(runtime_state)
+        ops = adapter.output_transform({"chapter_text": chapter_text})
+        flat_updates = adapter_ops_to_state_updates(ops, sio)
+        sio.audit(
+            source="demo_pipeline.workflow_adapter.G_chapter_draft",
+            severity="info",
+            msg="dark_fantasy_adapter.output_transform applied",
+            action="log",
+            payload={"paths": sorted(flat_updates.keys())},
+        )
+        return {
+            "result": chapter_text,
+            "chapter_text": chapter_text,
+            "state_updates": flat_updates,
+        }
+
+    return _execute
+
+
+def _workflow_step_dispatch(
+    sio: StateIO,
+    step_id: str,
+    *,
+    chapter_text: str | None = None,
+) -> None:
+    """Run one real workflow DSL step for the CLI convergence path."""
+    step = _load_workflow_step(step_id)
+    runtime_ctx: dict[str, Any] = {
+        "state_io": sio,
+        "book_id": sio.book_id,
+        "workflow_flags": {"rag_mode": "off"},
+    }
+    skill_registry: dict[str, Any] = {}
+    skill_router = None
+
+    if step_id == "G_chapter_draft":
+        if chapter_text is None:
+            raise RuntimeError("G_chapter_draft requires chapter_text")
+        router = SkillRouter()
+        decision = router.route(step, runtime_ctx)
+        sio.audit(
+            source="demo_pipeline.workflow_router.G_chapter_draft",
+            severity="info",
+            msg=f"skill_router selected {decision.skill_id}",
+            action="log",
+            payload={
+                "score": decision.score,
+                "matched_rule": decision.matched_rule,
+                "candidates": decision.candidates,
+            },
+        )
+        skill_router = lambda _step, _ctx: decision.skill_id
+        if decision.skill_id == "dark-fantasy-ultimate-engine":
+            skill_registry[decision.skill_id] = _build_dark_fantasy_step_executor(
+                sio,
+                chapter_text=chapter_text,
+            )
+
+    dispatch_step(
+        step,
+        runtime_ctx,
+        skill_registry=skill_registry,
+        skill_router=skill_router,
+    )
+
+
 def run_workflow(
     book_id: str,
     llm_endpoint: str = "windhub",
@@ -594,6 +690,18 @@ def run_workflow(
     word_count = sum(1 for ch in chapter_text if "一" <= ch <= "鿿")
     print(f"✓ LLM 返回 {len(chapter_text)} 字符 / {word_count} 个汉字", file=sys.stderr)
 
+    try:
+        _workflow_step_dispatch(sio, "G_chapter_draft", chapter_text=chapter_text)
+    except Exception as exc:
+        sio.audit(
+            f"cli.run.G_chapter_draft.ch{chapter_no}",
+            severity="error",
+            msg=f"workflow G_chapter_draft failed: {exc}",
+            action="block",
+        )
+        print(f"❌ workflow G_chapter_draft failed: {exc}", file=sys.stderr)
+        return None
+
     # 落 chapter_NN.md（两位补零）
     chapter_path = sio.write_artifact(
         f"chapter_{chapter_no:02d}.md",
@@ -611,13 +719,16 @@ def run_workflow(
         word_count=word_count,
     )
 
-    # R1-R3 + V1 audit log（mock；真实现由 multi_chapter.py 包装）
-    for step in ("R1_style_polish", "R2_consistency_check", "R3_final_pack", "V1_release_check"):
-        sio.audit(
-            f"cli.run.{step}.ch{chapter_no}",
-            severity="info",
-            msg=f"{step} stub (multi_chapter.py implements full)",
-        )
+    for step in ("H_chapter_settle", "R1_style_polish", "R2_consistency_check", "R3_final_pack", "V1_release_check"):
+        try:
+            _workflow_step_dispatch(sio, step)
+        except Exception as exc:
+            sio.audit(
+                f"cli.run.{step}.ch{chapter_no}",
+                severity="warn",
+                msg=f"{step} workflow dispatch fallback: {exc}",
+                action="log",
+            )
 
     return str(chapter_path)
 

@@ -4,7 +4,7 @@
 
 - 项目目标：把 `_原料/` 蒸馏成一个**分层**的小说创作系统底座，不是堆成单一 RAG。
 - 四层目标：**Meta（用户宪法）→ Foundation（数据本体）→ Platform（agent + workflow）→ RAG（检索）**。
-- **当前阶段**：阶段 0..4 全部完成 ✅ + **Sprint 1 全部完成 ✅** + **Sprint 2 全部完成 ✅** + **Sprint 3 全部收口 ✅** + **S4/Phase 2 native sqlite-vec 接入 + RAG 真实召回质量评估完成 ✅** + **P2 可回归评估收口 ✅** + **RAG 质量小迭代完成 ✅** + **P2-5 agent harness 补强完成 ✅**；当前 Layer 2 `recall@5=0.614`、`expected_recall@5=0.917`。下一步主线：以 agent harness 作为回归门，收敛真实 runner 到 workflow DSL + skill adapter + StateIO 统一编排。
+- **当前阶段**：阶段 0..4 全部完成 ✅ + **Sprint 1 全部完成 ✅** + **Sprint 2 全部完成 ✅** + **Sprint 3 全部收口 ✅** + **S4/Phase 2 native sqlite-vec 接入 + RAG 真实召回质量评估完成 ✅** + **P2 可回归评估收口 ✅** + **RAG 质量小迭代完成 ✅** + **P2-5 agent harness 补强完成 ✅** + **P2-7A Platform runner 收敛切片完成 ✅**；当前 Layer 2 `recall@5=0.614`、`expected_recall@5=0.917`。下一步主线：P2-7B 继续把剩余 stub capability 收敛到 workflow DSL + skill adapter + StateIO 统一编排。
 - 最终架构：`ARCHITECTURE.md` v1（36.5KB / 8 章节 + Killer Use Case + 8 决策最终判决 + Jury 判决归属表 23 条）
 - 实施路线：`ROADMAP.md` v1（已补 2026-05-14 状态更新；历史规划 + 当前状态对照）
 - **Sprint 2 进度（2026-05-14 02:35 收口复核）**：
@@ -25,7 +25,7 @@
   - ✅ ST-S3-D-DEDUP-EVIDENCE：461 prompt cards / 541 base docs / 25 样本 dedup evidence；strict PASS
   - ✅ ST-S3-Q-WEAK-EXAMPLES-A..D：202 个弱示例 prompt card 已补具体 `## 示例输入`；`report_prompt_quality.py` 复核 `weak_examples=0`
   - ✅ ST-S3-P-PRESSURE-TEST：本地压力测试 `100% PASS (7/7)`；`immersive-demo` 章号标题序列已修复为 `[1,2,3,4,5]`
-- 主验证命令：`python3 scripts/verify_all.py`（quick gate）+ `python3 scripts/run_agent_harness.py`（mock_harness 离线覆盖 init / single run / multi_chapter / immersive / missing_state_error）+ `python3 scripts/evaluate_rag_recall.py`（473 cards / 473 vectors / sqlite-vec native / fallback=none；Layer 1/2 空召回均为 0；Layer 2 expected_recall@5=0.917 / recall@5=0.614）
+- 主验证命令：`python3 scripts/verify_all.py`（quick gate）+ `python3 scripts/run_agent_harness.py`（mock_harness 离线覆盖 init / single run / multi_chapter / immersive / missing_state_error，并守住 P2-7A 单章 workflow/adapter 审计）+ `python3 scripts/evaluate_rag_recall.py`（473 cards / 473 vectors / sqlite-vec native / fallback=none；Layer 1/2 空召回均为 0；Layer 2 expected_recall@5=0.917 / recall@5=0.614）
 - 灵感逃逸通道：`ginga idea add` 已实现；`foundation/raw_ideas/` 只落盘，仍禁止进入 state/RAG。
 - 历史档案：`_distillation-plan.md`（阶段 2 草稿，47.6KB，保留）
 - 4 jury 评审：`.ops/jury/jury-{1-4}-*.md`（4 票 revise / ~32KB）→ 100% 吸收到 ARCHITECTURE
@@ -120,7 +120,7 @@ _原料/
 | 3 | Ark Jury Court 4 角法庭 | ✅ 完成 | `.ops/jury/jury-{1-4}-*.md`（4 票 revise） |
 | 4 | 综合判决与交付 | ✅ 完成 | `ARCHITECTURE.md` + `ROADMAP.md` |
 
-**下一步**：主线做 agent harness 补强；RAG 残余 `candidate_k` / `asset_type` blocker 作为 sidecar 处理；当前完成度以 `STATUS.md` 为准。
+**下一步**：主线做 P2-7B Platform runner 收敛；RAG 残余 `candidate_k` / `asset_type` blocker 仅作为后续小修观察项；当前完成度以 `STATUS.md` 为准。
 
 ## 验证
 

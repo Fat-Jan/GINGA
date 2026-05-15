@@ -73,13 +73,29 @@ class DslParserTest(unittest.TestCase):
         with self.assertRaises(self.mod.DSLParseError):
             self.mod.parse_workflow_dict(raw)
 
-    def test_parse_rejects_capability_and_skill_together(self) -> None:
+    def test_parse_allows_skill_step_with_capability_asset_hint(self) -> None:
         raw = {
             "name": "x",
             "steps": [{"id": "A", "uses_capability": "foo", "uses_skill": "bar"}],
         }
-        with self.assertRaises(self.mod.DSLParseError):
-            self.mod.parse_workflow_dict(raw)
+        wf = self.mod.parse_workflow_dict(raw)
+        step = wf.find("A")
+        self.assertIsNotNone(step)
+        assert step is not None
+        self.assertTrue(step.is_skill_step)
+        self.assertFalse(step.is_capability_step)
+        self.assertEqual(step.uses_capability, "foo")
+        self.assertEqual(step.uses_skill, "bar")
+
+    def test_parse_repo_workflow_g_step_keeps_capability_and_skill(self) -> None:
+        wf = self.mod.parse_workflow(_REPO_ROOT / "ginga_platform/orchestrator/workflows/novel_pipeline_mvp.yaml")
+        g_step = wf.find("G_chapter_draft")
+        self.assertIsNotNone(g_step)
+        assert g_step is not None
+        self.assertEqual(g_step.uses_capability, "base-card-chapter-draft")
+        self.assertEqual(g_step.uses_skill, "skill-router")
+        self.assertTrue(g_step.is_skill_step)
+        self.assertFalse(g_step.is_capability_step)
 
     def test_parse_from_yaml_file(self) -> None:
         yaml_text = textwrap.dedent(

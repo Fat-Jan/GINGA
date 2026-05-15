@@ -14,14 +14,15 @@
 - RAG 质量小迭代已完成：补充高影响 topic/stage/card_intent 扩展与候选排序先验，Layer 2 `recall@5` 提升到 0.614，`expected_recall@5` 提升到 0.917。
 - P2-5 agent harness 补强已完成：`scripts/run_agent_harness.py` 离线覆盖 `ginga init`、单章 `run`、`--chapters` 多章、`--immersive` 与错误退出路径；使用 mock LLM + 临时 `state_root`，产出 `.ops/validation/agent_harness.json` 和 `.ops/reports/agent_harness_report.md`。
 - P2-5A/P2-5B 已完成：章节正文通过 `StateIO.write_artifact()` 明确为 `chapter_text` artifact 并落 audit；架构验证增加 StateIO 写入边界检查；CLI/harness/report 明确区分 `mock_harness`、RAG 的 `deterministic_eval` 与 `real_llm_demo`，mock 结果不得声明生产链路完成。
+- P2-7A Platform runner 收敛切片已完成：`novel_pipeline_mvp.yaml` 的 G 步可由 DSL 解析为 capability asset hint + `skill-router`，默认 `SkillRouter()` 可读取仓库 `ginga_platform/skills/registry.yaml`；单章 `ginga run --mock-llm` 进入 `step_dispatch:G_chapter_draft`，经 `dark-fantasy` adapter 写 `workspace.chapter_text`，并继续跑 H/R1/R2/R3/V1 的 workflow step 审计。
 
 ## 下一步
 
-当前主线从「agent harness 补强」转入「用 harness 守住后续真实 workflow / skill adapter 收敛」。RAG 指标已超过阶段目标，不宜继续把主线押在 metadata 小修上；后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
+当前主线是 P2-7 Platform runner 收敛。P2-5 harness 已成为回归门；RAG 指标已超过阶段目标，不宜继续把主线押在 metadata 小修上。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
 
 优先任务：
 
-- **下一轮 Platform 收敛**：逐步把单章 `demo_pipeline` 的简化 wire-up 向 workflow DSL + skill adapters + `StateIO` 统一编排收拢，每次改动必须跑 `scripts/run_agent_harness.py`。
+- **P2-7B Platform runner 收敛**：把 `demo_pipeline` 中剩余简化能力（A-F/H/R1/R2/R3/V1 的 stub capability）继续替换为 asset-backed capability provider，同时保持 workflow DSL + skill adapters + `StateIO` 统一编排；每次改动必须跑 `scripts/run_agent_harness.py`。
 - **RAG 残余观察**：保留 `.ops/reports/rag_recall_quality_report.md` 的 `candidate_k` / `asset_type` blocker 作为后续小修观察项；守住 Layer 2 `recall@5 >= 0.500` 与 `expected_recall@5 >= 0.875`。
 
 ## 架构边界
@@ -58,6 +59,7 @@ python3 scripts/evaluate_rag_recall.py
 - Unit tests：新增 agent harness / StateIO artifact 边界覆盖；完整数量以最新 `verify_all.py` 输出为准。
 - Architecture contracts：PASS，含 StateIO 写入边界检查（runtime_state YAML 写入限制在 StateIO / locked patch flow）。
 - Agent harness：mock_harness PASS，覆盖 init / single run / multi_chapter / immersive / missing_state_error；报告 `.ops/reports/agent_harness_report.md`。
+- P2-7A runner 收敛：单章 mock run 可经 workflow DSL `G_chapter_draft` + `skill-router` + `dark-fantasy` adapter 写 `workspace.chapter_text`，并留下 H/R1/R2/R3/V1 `step_dispatch` 审计。
 - Prompt frontmatter：461 cards，violations=0。
 - Prompt quality：weak_examples=0。
 - Methodology assets：12 methodology OK。

@@ -50,6 +50,10 @@
         "state_domains": true,
         "chapter_artifact": true,
         "artifact_audit": true,
+        "workflow_g_dispatch": true,
+        "workflow_v1_dispatch": true,
+        "skill_router": true,
+        "adapter_transform": true,
         "rollup_audit": true
       },
       "passed": true

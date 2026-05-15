@@ -7,7 +7,7 @@
 **状态更新**：2026-05-15（依据 `STATUS.md`；本文件保留为历史规划 + 当前状态对照）
 **对应架构**：`ARCHITECTURE.md` v1
 
-> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口与 RAG 质量小迭代。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。下一步主线转入 agent harness 补强，RAG 残余 blocker 作为 sidecar 处理。
+> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A Platform runner 收敛切片。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。下一步主线是 P2-7B Platform runner 收敛，RAG 残余 blocker 仅作为观察项。
 >
 > 若本文件与 `STATUS.md` 冲突，以 `STATUS.md` 为当前状态真值。
 
@@ -25,7 +25,7 @@
 | **S1: MVP 跑通第一章** ⭐ critical path | 1-2 周 | Foundation schema 最小子集 + 双 skill contract + workflow 12 step + 端到端 CLI demo | "输入创意，得到第一章正文 + 状态文件" | ✅ 已完成 |
 | **S2: 多章连载 + 基础召回** | 1-2 周 | 完整 runtime_state + RAG Layer 1 + 461 prompts 标注（A/A- 优先） + immersive_mode | "写到第 N 章不崩 + 召回辅助卡片 + 沉浸写作模式" | ✅ 已完成 |
 | **S3: RAG 增强 + 标注扩展** | 1 周 | RAG Layer 2/3 + B/B+ 卡补示例 + scout-1 风险治理 | "向量召回 + LLM rerank + 召回质量提升" | ✅ 已完成 |
-| **S4: Phase 2 缺口 + 用户反馈循环** | 持续 | N/P/D/V 阶段 + 多技能扩展 + 4 scout 全部建议落地 + agent harness 补强 | "完整 pipeline + 持续优化" | 🔄 持续；RAG 评估与质量小迭代已完成，下一步 agent harness |
+| **S4: Phase 2 缺口 + 用户反馈循环** | 持续 | N/P/D/V 阶段 + 多技能扩展 + 4 scout 全部建议落地 + agent harness 补强 + Platform runner 收敛 | "完整 pipeline + 持续优化" | 🔄 持续；RAG 评估、质量小迭代、P2-5 harness 与 P2-7A 已完成，下一步 P2-7B |
 
 **总周期估计**：MVP 上线 3-5 周（S1+S2+S3）；Phase 2 持续。
 
@@ -226,10 +226,11 @@ P-8/9/10 ──┘  (双 skill contract.yaml + adapter，最高风险段)
 - [x] **P2-5A**：StateIO 写入边界审计完成：`runtime_state` YAML 域写入保持在 `StateIO` / locked patch flow；章节正文 `chapter_NN.md` 通过 `StateIO.write_artifact()` 明确标注为 `chapter_text` artifact。
 - [x] **P2-5B**：demo 真实性标识完成：CLI / harness / 报告区分 `mock_harness`、`deterministic_eval` 与 `real_llm_demo`，mock harness 报告显式声明不证明 production readiness。
 - [x] **P2-6**：RAG 残余小迭代完成：Layer 2 `recall@5=0.614`、`expected_recall@5=0.917`，剩余 `candidate_k` / `asset_type` blocker 转为后续观察项。
+- [x] **P2-7A**：Platform runner 收敛切片完成：repo workflow DSL 的 `G_chapter_draft` 同时保留 capability asset hint 与 `skill-router`，默认 router 可读取真实 skill registry；单章 `demo_pipeline.run_workflow` 进入 `step_dispatch`，经 dark-fantasy adapter 写 `workspace.chapter_text`，并跑 H/R1/R2/R3/V1 workflow step 审计。
 
 ### 4.3 当前下一步
 
-- [ ] **P2-7**：Platform runner 收敛（后续主线）：以 P2-5 harness 为回归门，逐步减少单章 `demo_pipeline` 的简化 wire-up，把真实路径向 workflow DSL + skill adapters + `StateIO` 统一编排收拢。
+- [ ] **P2-7B**：Platform runner 收敛（后续主线）：以 P2-5 harness 为回归门，把 `demo_pipeline` 中剩余 A-F/H/R1/R2/R3/V1 stub capability 继续替换为 asset-backed capability provider，保持真实路径向 workflow DSL + skill adapters + `StateIO` 统一编排收拢。
 
 ### 4.4 任务清单（按触发条件优先级，尚未触发）
 
@@ -323,7 +324,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 - [x] Jury 修订追踪表（jury 23 条建议全部归属到具体任务编号，§七）
 - [x] 8 决策落地到 ARCHITECTURE §七 + 本文件任务编号
 
-**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-15，下一步主线是 agent harness 补强，RAG 残余 `candidate_k` / `asset_type` blocker 作为 sidecar 处理。
+**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-15，下一步主线是 P2-7B Platform runner 收敛，RAG 残余 `candidate_k` / `asset_type` blocker 仅作为后续小修观察项。
 
 ---
 

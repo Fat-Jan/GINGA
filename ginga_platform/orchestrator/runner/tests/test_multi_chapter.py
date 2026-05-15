@@ -198,6 +198,66 @@ class ApplyChapterRollupTest(unittest.TestCase):
         self.assertEqual(particles, 1200)
 
 
+class SingleChapterWorkflowConvergenceTest(unittest.TestCase):
+    """P2-7: single chapter run should enter workflow DSL + skill adapter path."""
+
+    def test_single_run_uses_workflow_steps_skill_router_and_adapter(self) -> None:
+        with tempfile.TemporaryDirectory() as d:
+            state_root = Path(d) / "state"
+            book_id = "p2-7-single"
+            init_book(
+                book_id,
+                topic="玄幻黑暗",
+                premise="测试 P2-7 runner 收敛",
+                word_target=10000,
+                state_root=state_root,
+            )
+
+            chapter_path = run_workflow(
+                book_id,
+                word_target=800,
+                state_root=state_root,
+                mock_llm=True,
+            )
+
+            self.assertIsNotNone(chapter_path)
+            sio = StateIO(book_id, state_root=state_root)
+            entries = sio.audit_log
+            sources = [entry.get("source", "") for entry in entries]
+            messages = [entry.get("msg", "") for entry in entries]
+
+            self.assertTrue(
+                any(source.startswith("step_dispatch:G_chapter_draft") for source in sources),
+                sources,
+            )
+            self.assertTrue(
+                any(source.startswith("step_dispatch:H_chapter_settle") for source in sources),
+                sources,
+            )
+            self.assertTrue(
+                any(source.startswith("step_dispatch:R1_style_polish") for source in sources),
+                sources,
+            )
+            self.assertTrue(
+                any(source.startswith("step_dispatch:V1_release_check") for source in sources),
+                sources,
+            )
+            self.assertTrue(
+                any("skill_router selected dark-fantasy-ultimate-engine" in msg for msg in messages),
+                messages,
+            )
+            self.assertTrue(
+                any("dark_fantasy_adapter.output_transform applied" in msg for msg in messages),
+                messages,
+            )
+            self.assertIn("离线演练", sio.read("workspace.chapter_text", ""))
+            artifact_entries = [
+                entry for entry in entries
+                if entry.get("payload", {}).get("artifact_type") == "chapter_text"
+            ]
+            self.assertTrue(artifact_entries, entries)
+
+
 # -- S-3 / S-4 / S-5 tests are in test cases below ---------------------------
 
 

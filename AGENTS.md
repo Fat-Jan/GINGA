@@ -1,6 +1,6 @@
 # Agent 入口说明
 
-给未来 agent 的短入口：先确认当前事实，再动代码。这个项目正在从「文档蒸馏」进入「agent harness 补强」，不是推倒重来。
+给未来 agent 的短入口：先确认当前事实，再动代码。这个项目已经完成 agent harness 补强，当前主线是 P2-7 Platform runner 收敛：把真实路径继续收拢到 workflow DSL + skill adapters + `StateIO`。
 
 ## 先读顺序
 
@@ -40,6 +40,7 @@ python3 scripts/validate_architecture_contracts.py
 python3 scripts/validate_prompt_frontmatter.py --strict
 python3 scripts/report_prompt_quality.py foundation/assets/prompts
 python3 scripts/validate_methodology_assets.py foundation/assets/methodology foundation/schema/methodology.yaml
+python3 scripts/run_agent_harness.py
 python3 scripts/check_dedup_evidence.py --strict
 python3 scripts/run_s3_pressure_tests.py
 python3 scripts/evaluate_rag_recall.py

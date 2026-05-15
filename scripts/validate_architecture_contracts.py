@@ -17,6 +17,18 @@ SKILLS_DIR = Path("ginga_platform/skills")
 SKILL_ROUTER_PATH = Path("ginga_platform/orchestrator/router/skill_router.py")
 FOUNDATION_ASSETS_DIR = Path("foundation/assets")
 RECALL_CONFIG_PATH = Path("foundation/rag/recall_config.yaml")
+CURRENT_STATUS_PATH = Path("STATUS.md")
+PLANNING_DOC_PATHS = (
+    Path("AGENTS.md"),
+    Path("STATUS.md"),
+    Path("ROADMAP.md"),
+    Path("notepad.md"),
+    Path("ARCHITECTURE.md"),
+)
+P7_HISTORY_NOTICE_PATHS = (
+    Path(".ops/p7-prompts/README.md"),
+    Path(".ops/p7-handoff/README.md"),
+)
 CODE_STATE_WRITE_ALLOWLIST = {
     Path("ginga_platform/orchestrator/runner/state_io.py"),
     Path("ginga_platform/orchestrator/cli/locked_patch.py"),
@@ -50,6 +62,36 @@ REQUIRED_CONTRACT_FIELDS = {
 REQUIRED_RECALL_FORBIDDEN_PATHS = {
     "foundation/raw_ideas/**",
     "meta/checkers/**",
+}
+REQUIRED_STATUS_SNIPPETS = (
+    "P2-7",
+    "Platform runner 收敛",
+    "RAG 残余观察",
+)
+STALE_NEXT_STEP_PHRASES = (
+    "下一步主线转入 agent harness 补强",
+    "下一步 agent harness",
+    "下一步主线是 agent harness 补强",
+    "下一步：主线做 agent harness 补强",
+    "正在从「文档蒸馏」进入「agent harness 补强」",
+)
+P27_RUNNER_SNIPPETS = {
+    Path("ginga_platform/orchestrator/cli/demo_pipeline.py"): (
+        "_workflow_step_dispatch",
+        "DarkFantasyAdapter",
+        "SkillRouter",
+        "dispatch_step",
+    ),
+    Path("ginga_platform/orchestrator/router/skill_router.py"): (
+        "skills must be list or mapping",
+        'item.get("contract_path") or item.get("contract")',
+    ),
+    Path("ginga_platform/orchestrator/runner/dsl_parser.py"): (
+        "return bool(self.uses_capability) and not self.uses_skill",
+    ),
+    Path("ginga_platform/orchestrator/runner/step_dispatch.py"): (
+        'if path == "audit_log"',
+    ),
 }
 
 
@@ -333,6 +375,100 @@ def validate_state_write_boundaries(repo_root: Path, report: dict[str, Any]) -> 
     )
 
 
+def validate_current_planning_hygiene(repo_root: Path, report: dict[str, Any]) -> None:
+    """Keep current planning docs aligned with STATUS.md."""
+    error_count_before = len(report["errors"])
+
+    status_path = repo_root / CURRENT_STATUS_PATH
+    try:
+        status_text = status_path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        status_text = ""
+        add_error(report, CURRENT_STATUS_PATH, "current status", "STATUS.md missing")
+
+    for snippet in REQUIRED_STATUS_SNIPPETS:
+        if snippet not in status_text:
+            add_error(
+                report,
+                CURRENT_STATUS_PATH,
+                "current status",
+                f"missing current planning marker: {snippet}",
+            )
+
+    for rel_path in PLANNING_DOC_PATHS:
+        path = repo_root / rel_path
+        try:
+            text = path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            add_error(report, rel_path, "planning hygiene", "required planning doc missing")
+            continue
+        for phrase in STALE_NEXT_STEP_PHRASES:
+            if phrase in text:
+                add_error(
+                    report,
+                    rel_path,
+                    "stale next-step wording",
+                    f"replace stale phrase with P2-7 Platform runner 收敛: {phrase}",
+                )
+
+    for rel_path in P7_HISTORY_NOTICE_PATHS:
+        path = repo_root / rel_path
+        try:
+            text = path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            add_error(
+                report,
+                rel_path,
+                "historical notice",
+                "missing README.md that marks this directory as historical, not current todo",
+            )
+            continue
+        missing = [marker for marker in ("历史", "STATUS.md") if marker not in text]
+        if missing:
+            add_error(
+                report,
+                rel_path,
+                "historical notice",
+                f"README.md must mention {missing} so old [ ] items are not read as current todo",
+            )
+
+    add_check(
+        report,
+        "current planning hygiene",
+        len(report["errors"]) == error_count_before,
+        "STATUS.md next step, stale doc wording, and .ops/p7 history notices are aligned",
+    )
+
+
+def validate_platform_runner_convergence(repo_root: Path, report: dict[str, Any]) -> None:
+    """Check that the P2-7A runner convergence wiring remains present."""
+    missing: list[str] = []
+    for rel_path, snippets in P27_RUNNER_SNIPPETS.items():
+        path = repo_root / rel_path
+        try:
+            text = path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            add_error(report, rel_path, "P2-7 runner convergence", "required source file missing")
+            continue
+        for snippet in snippets:
+            if snippet not in text:
+                missing.append(f"{rel_path}: {snippet}")
+
+    if missing:
+        add_error(
+            report,
+            Path("ginga_platform/orchestrator"),
+            "P2-7 runner convergence",
+            f"missing required wiring snippet(s): {missing}",
+        )
+    add_check(
+        report,
+        "P2-7 runner convergence",
+        not missing,
+        "single-run path keeps workflow DSL, skill-router, adapter, and StateIO dispatch wiring",
+    )
+
+
 def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     root = (repo_root or Path.cwd()).resolve()
     root_text = str(root)
@@ -350,6 +486,8 @@ def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     validate_skill_contracts(root, report)
     validate_recall_config(root, report)
     validate_state_write_boundaries(root, report)
+    validate_current_planning_hygiene(root, report)
+    validate_platform_runner_convergence(root, report)
     report["status"] = "FAIL" if report["errors"] else "PASS"
     return report
 

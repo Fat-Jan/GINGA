@@ -99,6 +99,17 @@ def _has_artifact_audit(state_root: Path, book_id: str, *, mode: str = MOCK_MODE
     return False
 
 
+def _has_audit_source_prefix(state_root: Path, book_id: str, prefix: str) -> bool:
+    return any(
+        isinstance(entry.get("source"), str) and entry["source"].startswith(prefix)
+        for entry in _audit_entries(state_root, book_id)
+    )
+
+
+def _has_audit_message(state_root: Path, book_id: str, needle: str) -> bool:
+    return any(needle in str(entry.get("msg", "")) for entry in _audit_entries(state_root, book_id))
+
+
 def _seed_book(state_root: Path, book_id: str) -> None:
     exit_code, stdout, stderr = _invoke_cli(
         [
@@ -219,6 +230,18 @@ def run_harness(
                 "state_domains": _state_domains_exist(state_root, single_book),
                 "chapter_artifact": len(_chapter_files(state_root, single_book)) == 1,
                 "artifact_audit": _has_artifact_audit(state_root, single_book),
+                "workflow_g_dispatch": _has_audit_source_prefix(
+                    state_root, single_book, "step_dispatch:G_chapter_draft"
+                ),
+                "workflow_v1_dispatch": _has_audit_source_prefix(
+                    state_root, single_book, "step_dispatch:V1_release_check"
+                ),
+                "skill_router": _has_audit_message(
+                    state_root, single_book, "skill_router selected dark-fantasy-ultimate-engine"
+                ),
+                "adapter_transform": _has_audit_message(
+                    state_root, single_book, "dark_fantasy_adapter.output_transform applied"
+                ),
                 "rollup_audit": any(
                     "rolled up" in entry.get("msg", "") for entry in _audit_entries(state_root, single_book)
                 ),

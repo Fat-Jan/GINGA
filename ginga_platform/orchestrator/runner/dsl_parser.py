@@ -52,7 +52,7 @@ class Step:
 
     @property
     def is_capability_step(self) -> bool:
-        return bool(self.uses_capability)
+        return bool(self.uses_capability) and not self.uses_skill
 
     def guard_ids(self) -> list[str]:
         """从 ``preconditions`` 抽出形如 ``guard:<id>`` 的 id 列表."""
@@ -133,10 +133,6 @@ def _parse_step(item: Any, idx: int) -> Step:
         raise DSLParseError(f"step[{idx}] missing required field: id")
     uses_capability = item.get("uses_capability")
     uses_skill = item.get("uses_skill")
-    if uses_capability and uses_skill:
-        raise DSLParseError(
-            f"step {sid!r}: uses_capability and uses_skill are mutually exclusive"
-        )
     return Step(
         id=sid,
         uses_capability=str(uses_capability) if uses_capability else None,

@@ -144,6 +144,9 @@ def dispatch_step(
 def _gather_inputs(step: Step, state_io: StateIO) -> dict[str, Any]:
     inputs: dict[str, Any] = {}
     for path in step.state_reads:
+        if path == "audit_log":
+            inputs[path] = list(state_io.audit_log)
+            continue
         # 支持 wildcard "<domain>.*"：直接读整域（dispatch 不做更复杂模式匹配）.
         if path.endswith(".*"):
             domain = path[:-2]

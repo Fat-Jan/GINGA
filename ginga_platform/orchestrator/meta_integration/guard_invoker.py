@@ -129,13 +129,11 @@ def _load_guard_spec(guard_id: str, guards_root: Path) -> GuardSpec:
         raise GuardLoadError(f"failed to parse {fp}: {exc}") from exc
     if not isinstance(raw, dict):
         raise GuardLoadError(f"{fp.name} must be a mapping, got {type(raw).__name__}")
-    trigger_when = raw.get("trigger_when") or []
-    if not isinstance(trigger_when, list):
-        raise GuardLoadError(f"{fp.name} trigger_when must be list, got {type(trigger_when).__name__}")
+    trigger_when = _normalize_trigger_when(raw.get("trigger_when"))
     llm_block = raw.get("llm_check") or {}
     return GuardSpec(
         guard_id=str(raw.get("guard_id", guard_id)),
-        trigger_when=list(trigger_when),
+        trigger_when=trigger_when,
         message=str(raw.get("message", "")),
         severity=str(raw.get("severity", "block")),
         llm_check_enabled=bool(llm_block.get("enabled", False)),
@@ -157,6 +155,19 @@ def _eval_trigger_when(spec: GuardSpec, ctx: Mapping[str, Any]) -> Optional[str]
     for rule in spec.trigger_when:
         if not isinstance(rule, dict) or not rule:
             continue
+        if "__structured__" in rule:
+            if state_io is not None and hasattr(state_io, "audit"):
+                state_io.audit(
+                    source=f"guard:{spec.guard_id}",
+                    severity="info",
+                    msg="structured guard trigger not evaluated (fail-open)",
+                    action="log",
+                    payload={
+                        "step_id": str(ctx.get("step_id", "<unknown>")),
+                        "trigger": rule["__structured__"],
+                    },
+                )
+            continue
         # 每个 rule 是单 key dict (rule_name -> args).
         rule_name, args = next(iter(rule.items()))
         args = args or {}
@@ -168,6 +179,29 @@ def _eval_trigger_when(spec: GuardSpec, ctx: Mapping[str, Any]) -> Optional[str]
         if hit:
             return rule_name
     return None
+
+
+def _normalize_trigger_when(raw: Any) -> list[dict[str, Any]]:
+    if raw is None:
+        return []
+    if isinstance(raw, list):
+        return list(raw)
+    if isinstance(raw, dict):
+        rules: list[dict[str, Any]] = []
+        any_of = raw.get("any_of")
+        if isinstance(any_of, list):
+            for item in any_of:
+                if isinstance(item, dict) and len(item) == 1:
+                    key, value = next(iter(item.items()))
+                    if key in {"state_eq", "state_ne", "state_missing", "state_in", "context_truthy"}:
+                        rules.append({key: value})
+                    else:
+                        rules.append({"__structured__": {key: value}})
+                else:
+                    rules.append({"__structured__": item})
+            return rules
+        return [{"__structured__": raw}]
+    raise GuardLoadError(f"trigger_when must be list or mapping, got {type(raw).__name__}")
 
 
 class StateLookupError(RuntimeError):

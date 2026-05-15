@@ -758,4 +758,4 @@ ginga/
 - [x] workflow deferred / Phase 2 对照清单明示（§八）
 - [x] Killer Use Case 集中陈述（§〇）
 
-**当前实施状态**：S1/S2/S3 已完成；S4/Phase 2 native `sqlite-vec` + RAG 真实召回质量评估 + P2 可回归评估已完成。下一步以 `STATUS.md` 为准。
+**当前实施状态**：S1/S2/S3 已完成；S4/Phase 2 native `sqlite-vec` + RAG 真实召回质量评估 + P2 可回归评估 + P2-5 agent harness + P2-7A Platform runner 收敛切片已完成。下一步以 `STATUS.md` 为准。

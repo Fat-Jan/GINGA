@@ -19,13 +19,14 @@
 
 - 入口：`ginga init` / `ginga run`、`multi_chapter.py`、`immersive_runner.py`。
 - 用途：通过 `ask-llm` 跑真实模型，适合端到端演示、章节滚动验证和压力测试。
-- 边界：这是 real LLM demo path，部分 wire-up 保持简化；单章 `demo_pipeline` 仍不等于完整 workflow DSL production runner。
+- 当前收敛：单章 `demo_pipeline` 已进入 workflow DSL 的 `G_chapter_draft`，通过 `skill-router` 选择 dark-fantasy adapter 写 `workspace.chapter_text`，并继续跑 H/R1/R2/R3/V1 step 审计。
+- 边界：这是 real LLM demo path，仍有 A-F/H/R1/R2/R3/V1 的 stub capability；尚不等于完整 workflow DSL production runner。
 
 ## 3. Future production path
 
 - 目标：由 workflow DSL + skill adapters + StateIO + RAG hook 统一编排。
 - 方向：把 capability provider 收拢为 asset-backed 实现，并进一步收拢 `demo_pipeline` 的简化路径。
-- 当前状态：生产路径尚未完全成形，不能把 mock harness 或单章 demo 直接标记为 production runner。
+- 当前状态：P2-7A 已完成单章 G 步 workflow/adapter 收敛；生产路径尚未完全成形，不能把 mock harness 或单章 demo 直接标记为 production runner。
 
 ## 推荐默认
 
