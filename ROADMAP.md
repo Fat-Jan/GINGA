@@ -7,7 +7,7 @@
 **状态更新**：2026-05-15（依据 `STATUS.md`；本文件保留为历史规划 + 当前状态对照）
 **对应架构**：`ARCHITECTURE.md` v1
 
-> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A/P2-7B/P2-7C Platform runner 收敛。P2-7C 严格状态是 `done`：真实 LLM smoke 边界切片、provider 输出可读性、`context_snapshot`、`gap_report` 与 residual risk 报告均已收口；该证据仍只证明单章 smoke 边界，不证明长篇生产质量。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。新增规划路线只更新后续定位与版本索引，不改变当前生产完成度：拆书融梗 / `ReferenceTropeDistillation` 已完成 v1.3-0 到 v1.3-5，v1.4 BookView / explorer、v1.5 Review / deslop 与 v1.6 Market Research Sidecar 已完成；RAG 残余仅观察，真实长篇生产化另开任务。
+> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A/P2-7B/P2-7C Platform runner 收敛。P2-7C 严格状态是 `done`：真实 LLM smoke 边界切片、provider 输出可读性、`context_snapshot`、`gap_report` 与 residual risk 报告均已收口；该证据仍只证明单章 smoke 边界，不证明长篇生产质量。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。新增规划路线只更新后续定位与版本索引，不改变当前生产完成度：拆书融梗 / `ReferenceTropeDistillation` 已完成 v1.3-0 到 v1.3-5，v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar 与 v1.7-0 Longform Production Policy 已完成；RAG 残余仅观察，真实长篇生产化后续转向批后状态快照与质量 gate。
 >
 > 若本文件与 `STATUS.md` 冲突，以 `STATUS.md` 为当前状态真值。
 
@@ -333,7 +333,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 - [x] Jury 修订追踪表（jury 23 条建议全部归属到具体任务编号，§七）
 - [x] 8 决策落地到 ARCHITECTURE §七 + 本文件任务编号
 
-**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-15，P2-7C Platform runner 收敛、v1.3-0 到 v1.3-5 的拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop 与 v1.6 Market Research Sidecar 均已收口。RAG 残余 `candidate_k` / `asset_type` blocker 仅作为观察项，只有指标回退或新 gold query 暴露问题时再修；真实长篇生产化需要另开多章真实 LLM smoke、失败恢复、成本和质量报告。
+**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-15，P2-7C Platform runner 收敛、v1.3-0 到 v1.3-5 的拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar 与 v1.7-0 Longform Production Policy 均已收口。RAG 残余 `candidate_k` / `asset_type` blocker 仅作为观察项，只有指标回退或新 gold query 暴露问题时再修；真实长篇生产化下一步是批后状态快照、回环检测、低频题材锚点检测和异常章 reviewer gate。
 
 ---
 
@@ -352,6 +352,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 | **v1.4 / Book Workspace View + Explorer** | 从 StateIO/artifacts 派生可读书目视图与只读查询，不产生第二状态真值 | ✅ done | 已完成 `BookView` projection、`ginga inspect` 与 `ginga query`；输出限定 `.ops/book_views/<book_id>/<run_id>/`，默认输入白名单不包含 `.ops/book_analysis/**` |
 | **v1.5 / Review + Anti-AI warn-only gate** | 审稿、去 AI 味、平台 rubric 报告化；只做审计/报告，不自动改正文 | ✅ done | 已完成 `ginga review` 与 `.ops/reviews/<book_id>/<run_id>/` sidecar；rubric 只用于 review report，不进入创作 prompt |
 | **v1.6 / Market Research Sidecar** | 扫榜、外部研究、市场信号报告，带采集时间、来源和数据质量状态 | ✅ done | 已完成显式授权 + offline fixture sidecar；外部原文剥离，默认不进 RAG |
+| **v1.7 / Longform Production Policy** | 真实 LLM 长篇批量策略、成本/质量 smoke、jury 评审与 CLI 上限保护 | 🟢 v1.7-0 done | `久久` 30 章真实 smoke 显示 10 连发开始 drift；正式批量生成推荐 5 章、上限 7 章，10 章及以上仅压力测试 |
 | **v2 / 完整创作运营线** | N/P/D/V 阶段、发布后数据分析、版本管理、第 3+ skill 接入、封面/发布包 | ⏳ 按触发条件推进 | 不抢 v1.2 / v1.3 前置 |
 
 ### 9.1 v1.3：拆书融梗 Evidence Pipeline

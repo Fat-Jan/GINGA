@@ -1,0 +1,858 @@
+{
+  "generated_from": "scripts/run_longform_llm_smoke.py",
+  "dry_run": false,
+  "passed": true,
+  "endpoint": "久久",
+  "book_id": "longform-jiujiu-combo-smoke",
+  "topic": "玄幻黑暗 + 规则怪谈 + 末日多子多福",
+  "premise": "失忆刺客无明在末日天堑边缘醒来，发现短刃能吞吐微粒，而每座城都被规则怪谈式禁令和血脉繁衍契约共同支配。",
+  "requested_chapters": 30,
+  "completed_chapters": 30,
+  "existing_completed_before": 30,
+  "resume": true,
+  "batch_schedule": [
+    3,
+    5,
+    7,
+    10
+  ],
+  "batch_runs": [],
+  "word_target": 4000,
+  "state_root": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state",
+  "anchors": [
+    "无明",
+    "短刃",
+    "微粒",
+    "天堑",
+    "规则",
+    "血脉",
+    "末日"
+  ],
+  "forbidden_terms": [
+    "系统提示",
+    "叮",
+    "恭喜获得",
+    "都市腔",
+    "轻小说吐槽"
+  ],
+  "production_policy": {
+    "recommended_batch_size": 5,
+    "upper_bound": 7,
+    "pressure_test_only_at_or_above": 10
+  },
+  "state_summary": {
+    "audit_entries": 101,
+    "total_words": 115328,
+    "foreshadow_pool_size": 1,
+    "character_events": 0
+  },
+  "chapter_runs": [
+    {
+      "chapter_no": 1,
+      "batch_no": 1,
+      "batch_size": 3,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_01.md",
+      "chars": 4158,
+      "chinese_chars": 3481,
+      "anchor_hits": {
+        "无明": 21,
+        "短刃": 17,
+        "微粒": 21,
+        "天堑": 3,
+        "规则": 6,
+        "血脉": 2,
+        "末日": 1
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 2,
+      "batch_no": 1,
+      "batch_size": 3,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_02.md",
+      "chars": 3927,
+      "chinese_chars": 3246,
+      "anchor_hits": {
+        "无明": 24,
+        "短刃": 10,
+        "微粒": 18,
+        "天堑": 4,
+        "规则": 0,
+        "血脉": 0,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 3,
+      "batch_no": 1,
+      "batch_size": 3,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_03.md",
+      "chars": 4559,
+      "chinese_chars": 3786,
+      "anchor_hits": {
+        "无明": 35,
+        "短刃": 26,
+        "微粒": 27,
+        "天堑": 2,
+        "规则": 2,
+        "血脉": 0,
+        "末日": 1
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 4,
+      "batch_no": 2,
+      "batch_size": 5,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_04.md",
+      "chars": 4189,
+      "chinese_chars": 3487,
+      "anchor_hits": {
+        "无明": 28,
+        "短刃": 14,
+        "微粒": 7,
+        "天堑": 3,
+        "规则": 0,
+        "血脉": 0,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 5,
+      "batch_no": 2,
+      "batch_size": 5,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_05.md",
+      "chars": 3644,
+      "chinese_chars": 3026,
+      "anchor_hits": {
+        "无明": 20,
+        "短刃": 9,
+        "微粒": 19,
+        "天堑": 1,
+        "规则": 1,
+        "血脉": 0,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 6,
+      "batch_no": 2,
+      "batch_size": 5,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_06.md",
+      "chars": 4217,
+      "chinese_chars": 3483,
+      "anchor_hits": {
+        "无明": 29,
+        "短刃": 11,
+        "微粒": 18,
+        "天堑": 2,
+        "规则": 1,
+        "血脉": 1,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 7,
+      "batch_no": 2,
+      "batch_size": 5,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_07.md",
+      "chars": 3970,
+      "chinese_chars": 3292,
+      "anchor_hits": {
+        "无明": 33,
+        "短刃": 12,
+        "微粒": 24,
+        "天堑": 3,
+        "规则": 6,
+        "血脉": 0,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 8,
+      "batch_no": 2,
+      "batch_size": 5,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_08.md",
+      "chars": 4343,
+      "chinese_chars": 3574,
+      "anchor_hits": {
+        "无明": 31,
+        "短刃": 18,
+        "微粒": 25,
+        "天堑": 4,
+        "规则": 4,
+        "血脉": 1,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 9,
+      "batch_no": 3,
+      "batch_size": 7,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_09.md",
+      "chars": 4287,
+      "chinese_chars": 3537,
+      "anchor_hits": {
+        "无明": 38,
+        "短刃": 21,
+        "微粒": 19,
+        "天堑": 4,
+        "规则": 1,
+        "血脉": 0,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 10,
+      "batch_no": 3,
+      "batch_size": 7,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_10.md",
+      "chars": 3715,
+      "chinese_chars": 3020,
+      "anchor_hits": {
+        "无明": 33,
+        "短刃": 15,
+        "微粒": 11,
+        "天堑": 1,
+        "规则": 1,
+        "血脉": 1,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 11,
+      "batch_no": 3,
+      "batch_size": 7,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_11.md",
+      "chars": 3970,
+      "chinese_chars": 3289,
+      "anchor_hits": {
+        "无明": 21,
+        "短刃": 12,
+        "微粒": 33,
+        "天堑": 2,
+        "规则": 0,
+        "血脉": 0,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 12,
+      "batch_no": 3,
+      "batch_size": 7,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_12.md",
+      "chars": 3308,
+      "chinese_chars": 2679,
+      "anchor_hits": {
+        "无明": 18,
+        "短刃": 12,
+        "微粒": 14,
+        "天堑": 5,
+        "规则": 2,
+        "血脉": 1,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 13,
+      "batch_no": 3,
+      "batch_size": 7,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_13.md",
+      "chars": 3840,
+      "chinese_chars": 3236,
+      "anchor_hits": {
+        "无明": 29,
+        "短刃": 14,
+        "微粒": 20,
+        "天堑": 5,
+        "规则": 1,
+        "血脉": 0,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 14,
+      "batch_no": 3,
+      "batch_size": 7,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_14.md",
+      "chars": 3925,
+      "chinese_chars": 3166,
+      "anchor_hits": {
+        "无明": 29,
+        "短刃": 13,
+        "微粒": 15,
+        "天堑": 7,
+        "规则": 3,
+        "血脉": 1,
+        "末日": 1
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 15,
+      "batch_no": 3,
+      "batch_size": 7,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_15.md",
+      "chars": 3592,
+      "chinese_chars": 2966,
+      "anchor_hits": {
+        "无明": 27,
+        "短刃": 17,
+        "微粒": 14,
+        "天堑": 3,
+        "规则": 5,
+        "血脉": 0,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 16,
+      "batch_no": 4,
+      "batch_size": 10,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_16.md",
+      "chars": 4370,
+      "chinese_chars": 3612,
+      "anchor_hits": {
+        "无明": 32,
+        "短刃": 22,
+        "微粒": 32,
+        "天堑": 5,
+        "规则": 2,
+        "血脉": 0,
+        "末日": 1
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 17,
+      "batch_no": 4,
+      "batch_size": 10,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_17.md",
+      "chars": 4120,
+      "chinese_chars": 3379,
+      "anchor_hits": {
+        "无明": 26,
+        "短刃": 18,
+        "微粒": 26,
+        "天堑": 3,
+        "规则": 2,
+        "血脉": 0,
+        "末日": 1
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 18,
+      "batch_no": 4,
+      "batch_size": 10,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_18.md",
+      "chars": 5607,
+      "chinese_chars": 4660,
+      "anchor_hits": {
+        "无明": 44,
+        "短刃": 16,
+        "微粒": 27,
+        "天堑": 9,
+        "规则": 6,
+        "血脉": 0,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 19,
+      "batch_no": 4,
+      "batch_size": 10,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_19.md",
+      "chars": 2880,
+      "chinese_chars": 2367,
+      "anchor_hits": {
+        "无明": 20,
+        "短刃": 12,
+        "微粒": 29,
+        "天堑": 5,
+        "规则": 4,
+        "血脉": 1,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 20,
+      "batch_no": 4,
+      "batch_size": 10,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_20.md",
+      "chars": 4011,
+      "chinese_chars": 3292,
+      "anchor_hits": {
+        "无明": 35,
+        "短刃": 15,
+        "微粒": 11,
+        "天堑": 3,
+        "规则": 2,
+        "血脉": 0,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 21,
+      "batch_no": 4,
+      "batch_size": 10,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_21.md",
+      "chars": 5008,
+      "chinese_chars": 4181,
+      "anchor_hits": {
+        "无明": 39,
+        "短刃": 15,
+        "微粒": 23,
+        "天堑": 5,
+        "规则": 1,
+        "血脉": 0,
+        "末日": 1
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 22,
+      "batch_no": 4,
+      "batch_size": 10,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_22.md",
+      "chars": 4354,
+      "chinese_chars": 3576,
+      "anchor_hits": {
+        "无明": 35,
+        "短刃": 14,
+        "微粒": 14,
+        "天堑": 2,
+        "规则": 3,
+        "血脉": 0,
+        "末日": 1
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 23,
+      "batch_no": 4,
+      "batch_size": 10,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_23.md",
+      "chars": 3897,
+      "chinese_chars": 3234,
+      "anchor_hits": {
+        "无明": 28,
+        "短刃": 10,
+        "微粒": 18,
+        "天堑": 4,
+        "规则": 0,
+        "血脉": 1,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 24,
+      "batch_no": 4,
+      "batch_size": 10,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_24.md",
+      "chars": 3854,
+      "chinese_chars": 3294,
+      "anchor_hits": {
+        "无明": 25,
+        "短刃": 7,
+        "微粒": 19,
+        "天堑": 3,
+        "规则": 6,
+        "血脉": 2,
+        "末日": 1
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 0,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 25,
+      "batch_no": 4,
+      "batch_size": 10,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_25.md",
+      "chars": 4407,
+      "chinese_chars": 3664,
+      "anchor_hits": {
+        "无明": 34,
+        "短刃": 23,
+        "微粒": 23,
+        "天堑": 7,
+        "规则": 1,
+        "血脉": 0,
+        "末日": 0
+      },
+      "forbidden_hits": {
+        "叮": 1
+      },
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 26,
+      "batch_no": 5,
+      "batch_size": 5,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_26.md",
+      "chars": 4480,
+      "chinese_chars": 3661,
+      "anchor_hits": {
+        "无明": 33,
+        "短刃": 11,
+        "微粒": 15,
+        "天堑": 8,
+        "规则": 4,
+        "血脉": 2,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 27,
+      "batch_no": 5,
+      "batch_size": 5,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_27.md",
+      "chars": 4935,
+      "chinese_chars": 4043,
+      "anchor_hits": {
+        "无明": 48,
+        "短刃": 14,
+        "微粒": 23,
+        "天堑": 3,
+        "规则": 4,
+        "血脉": 2,
+        "末日": 2
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 28,
+      "batch_no": 5,
+      "batch_size": 5,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_28.md",
+      "chars": 4478,
+      "chinese_chars": 3750,
+      "anchor_hits": {
+        "无明": 0,
+        "短刃": 19,
+        "微粒": 28,
+        "天堑": 7,
+        "规则": 2,
+        "血脉": 3,
+        "末日": 1
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 29,
+      "batch_no": 5,
+      "batch_size": 5,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_29.md",
+      "chars": 3292,
+      "chinese_chars": 2718,
+      "anchor_hits": {
+        "无明": 21,
+        "短刃": 14,
+        "微粒": 18,
+        "天堑": 5,
+        "规则": 0,
+        "血脉": 1,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 30,
+      "batch_no": 5,
+      "batch_size": 5,
+      "status": "ok",
+      "path": "/Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_30.md",
+      "chars": 4325,
+      "chinese_chars": 3514,
+      "anchor_hits": {
+        "无明": 24,
+        "短刃": 17,
+        "微粒": 24,
+        "天堑": 12,
+        "规则": 8,
+        "血脉": 4,
+        "末日": 1
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    }
+  ],
+  "drift_report": {
+    "status": "needs_review",
+    "completed_chapters": 30,
+    "first_drift_chapter": 19,
+    "first_drift_batch": {
+      "batch_no": 4,
+      "batch_size": 10,
+      "chapter_no": 19
+    },
+    "low_anchor_chapters": [],
+    "forbidden_hit_chapters": [
+      25
+    ],
+    "short_chapters": [
+      19
+    ],
+    "missing_foreshadow_chapters": [
+      24
+    ],
+    "anchor_totals": {
+      "无明": 860,
+      "短刃": 448,
+      "微粒": 615,
+      "天堑": 130,
+      "规则": 78,
+      "血脉": 23,
+      "末日": 12
+    }
+  },
+  "batch_drift_summary": [
+    {
+      "batch_no": 1,
+      "batch_size": 3,
+      "chapters": [
+        1,
+        2,
+        3
+      ],
+      "completed": 3,
+      "low_anchor_chapters": [],
+      "forbidden_hit_chapters": [],
+      "short_chapters": []
+    },
+    {
+      "batch_no": 2,
+      "batch_size": 5,
+      "chapters": [
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "completed": 5,
+      "low_anchor_chapters": [],
+      "forbidden_hit_chapters": [],
+      "short_chapters": []
+    },
+    {
+      "batch_no": 3,
+      "batch_size": 7,
+      "chapters": [
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "completed": 7,
+      "low_anchor_chapters": [],
+      "forbidden_hit_chapters": [],
+      "short_chapters": []
+    },
+    {
+      "batch_no": 4,
+      "batch_size": 10,
+      "chapters": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25
+      ],
+      "completed": 10,
+      "low_anchor_chapters": [],
+      "forbidden_hit_chapters": [
+        25
+      ],
+      "short_chapters": [
+        19
+      ]
+    },
+    {
+      "batch_no": 5,
+      "batch_size": 5,
+      "chapters": [
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "completed": 5,
+      "low_anchor_chapters": [],
+      "forbidden_hit_chapters": [],
+      "short_chapters": []
+    }
+  ]
+}

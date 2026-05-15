@@ -1,0 +1,950 @@
+entries:
+- ts: '2026-05-15T13:40:30+00:00'
+  source: cli.init.A-E_setup
+  severity: info
+  msg: applied 10 update(s)
+  action: log
+  payload:
+    paths:
+    - locked.STORY_DNA.premise
+    - locked.STORY_DNA.conflict_engine
+    - locked.STORY_DNA.payoff_promise
+    - locked.STORY_DNA.word_target
+    - locked.GENRE_LOCKED.topic
+    - locked.GENRE_LOCKED.style_lock
+    - locked.WORLD.cosmology
+    - locked.WORLD.economy
+    - locked.PLOT_ARCHITECTURE.acts
+    - locked.PLOT_ARCHITECTURE.pivot_points
+- ts: '2026-05-15T13:40:30+00:00'
+  source: cli.init.F_state_init
+  severity: info
+  msg: applied 6 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.CHARACTER_STATE
+    - entity_runtime.RESOURCE_LEDGER.particles
+    - entity_runtime.RESOURCE_LEDGER.items
+    - entity_runtime.FORESHADOW_STATE.pool
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - entity_runtime.GLOBAL_SUMMARY.arc_summaries
+- ts: '2026-05-15T13:40:31+00:00'
+  source: cli.init.workspace_seed
+  severity: info
+  msg: applied 3 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.task_plan
+    - workspace.findings
+    - workspace.progress
+- ts: '2026-05-15T13:40:31+00:00'
+  source: cli.init
+  severity: info
+  msg: 'book initialized: id=longform-jiujiu-combo-smoke topic=玄幻黑暗 + 规则怪谈 + 末日多子多福
+    target=500000'
+  action: log
+  payload:
+    locked_premise: 失忆刺客无明在末日天堑边缘醒来，发现短刃能吞吐微粒，而每座城都被规则怪谈式禁令和血脉繁衍契约共同支配。
+- ts: '2026-05-15T13:40:31+00:00'
+  source: dark_fantasy_adapter.enter_immersive_mode
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-15T13:40:31+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: immersive entered
+  action: log
+  payload:
+    checker_silenced: true
+- ts: '2026-05-15T13:42:03+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_01.md'
+  action: log
+  payload:
+    chapter_no: 1
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_01.md
+    bytes: 11961
+- ts: '2026-05-15T13:42:03+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 1 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 1
+    word_count: 3481
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_01.md
+- ts: '2026-05-15T13:43:35+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_02.md'
+  action: log
+  payload:
+    chapter_no: 2
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_02.md
+    bytes: 11224
+- ts: '2026-05-15T13:43:35+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 2 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 2
+    word_count: 3246
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_02.md
+- ts: '2026-05-15T13:45:09+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_03.md'
+  action: log
+  payload:
+    chapter_no: 3
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_03.md
+    bytes: 13066
+- ts: '2026-05-15T13:45:09+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 3 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 3
+    word_count: 3786
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_03.md
+- ts: '2026-05-15T13:45:09+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-15T13:45:09+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode.batch
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.chapter_text
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+- ts: '2026-05-15T13:45:09+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+- ts: '2026-05-15T13:45:09+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: 3 chapters batch applied
+  action: log
+  payload:
+    applied_paths: 2
+    chapter_count: 3
+- ts: '2026-05-15T13:45:09+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: R2_consistency_check triggered (immersive_block)
+  action: log
+  payload:
+    scope: immersive_block
+    chapter_count: 3
+- ts: '2026-05-15T13:45:09+00:00'
+  source: dark_fantasy_adapter.enter_immersive_mode
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-15T13:45:09+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: immersive entered
+  action: log
+  payload:
+    checker_silenced: true
+- ts: '2026-05-15T13:46:34+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_04.md'
+  action: log
+  payload:
+    chapter_no: 4
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_04.md
+    bytes: 12062
+- ts: '2026-05-15T13:46:34+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 4 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 4
+    word_count: 3487
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_04.md
+- ts: '2026-05-15T13:48:30+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_05.md'
+  action: log
+  payload:
+    chapter_no: 5
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_05.md
+    bytes: 10423
+- ts: '2026-05-15T13:48:30+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 5 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 5
+    word_count: 3026
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_05.md
+- ts: '2026-05-15T13:49:52+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_06.md'
+  action: log
+  payload:
+    chapter_no: 6
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_06.md
+    bytes: 12046
+- ts: '2026-05-15T13:49:52+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 6 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 6
+    word_count: 3483
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_06.md
+- ts: '2026-05-15T13:51:16+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_07.md'
+  action: log
+  payload:
+    chapter_no: 7
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_07.md
+    bytes: 11435
+- ts: '2026-05-15T13:51:16+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 7 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 7
+    word_count: 3292
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_07.md
+- ts: '2026-05-15T13:52:47+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_08.md'
+  action: log
+  payload:
+    chapter_no: 8
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_08.md
+    bytes: 12444
+- ts: '2026-05-15T13:52:47+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 8 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 8
+    word_count: 3574
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_08.md
+- ts: '2026-05-15T13:52:47+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-15T13:52:47+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode.batch
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.chapter_text
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+- ts: '2026-05-15T13:52:47+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+- ts: '2026-05-15T13:52:47+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: 5 chapters batch applied
+  action: log
+  payload:
+    applied_paths: 2
+    chapter_count: 5
+- ts: '2026-05-15T13:52:47+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: R2_consistency_check triggered (immersive_block)
+  action: log
+  payload:
+    scope: immersive_block
+    chapter_count: 5
+- ts: '2026-05-15T13:52:47+00:00'
+  source: dark_fantasy_adapter.enter_immersive_mode
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-15T13:52:47+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: immersive entered
+  action: log
+  payload:
+    checker_silenced: true
+- ts: '2026-05-15T13:54:14+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_09.md'
+  action: log
+  payload:
+    chapter_no: 9
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_09.md
+    bytes: 12300
+- ts: '2026-05-15T13:54:14+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 9 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 9
+    word_count: 3537
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_09.md
+- ts: '2026-05-15T13:55:27+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_10.md'
+  action: log
+  payload:
+    chapter_no: 10
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_10.md
+    bytes: 10538
+- ts: '2026-05-15T13:55:27+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 10 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 10
+    word_count: 3020
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_10.md
+- ts: '2026-05-15T13:56:56+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_11.md'
+  action: log
+  payload:
+    chapter_no: 11
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_11.md
+    bytes: 11335
+- ts: '2026-05-15T13:56:56+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 11 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 11
+    word_count: 3289
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_11.md
+- ts: '2026-05-15T13:58:11+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_12.md'
+  action: log
+  payload:
+    chapter_no: 12
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_12.md
+    bytes: 9393
+- ts: '2026-05-15T13:58:11+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 12 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 12
+    word_count: 2679
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_12.md
+- ts: '2026-05-15T13:59:27+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_13.md'
+  action: log
+  payload:
+    chapter_no: 13
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_13.md
+    bytes: 11097
+- ts: '2026-05-15T13:59:27+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 13 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 13
+    word_count: 3236
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_13.md
+- ts: '2026-05-15T14:00:48+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_14.md'
+  action: log
+  payload:
+    chapter_no: 14
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_14.md
+    bytes: 11156
+- ts: '2026-05-15T14:00:48+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 14 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 14
+    word_count: 3166
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_14.md
+- ts: '2026-05-15T14:02:01+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_15.md'
+  action: log
+  payload:
+    chapter_no: 15
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_15.md
+    bytes: 10232
+- ts: '2026-05-15T14:02:01+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 15 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 15
+    word_count: 2966
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_15.md
+- ts: '2026-05-15T14:02:01+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-15T14:02:01+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode.batch
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.chapter_text
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+- ts: '2026-05-15T14:02:01+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+- ts: '2026-05-15T14:02:01+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: 7 chapters batch applied
+  action: log
+  payload:
+    applied_paths: 2
+    chapter_count: 7
+- ts: '2026-05-15T14:02:01+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: R2_consistency_check triggered (immersive_block)
+  action: log
+  payload:
+    scope: immersive_block
+    chapter_count: 7
+- ts: '2026-05-15T14:02:01+00:00'
+  source: dark_fantasy_adapter.enter_immersive_mode
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-15T14:02:01+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: immersive entered
+  action: log
+  payload:
+    checker_silenced: true
+- ts: '2026-05-15T14:03:34+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_16.md'
+  action: log
+  payload:
+    chapter_no: 16
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_16.md
+    bytes: 12497
+- ts: '2026-05-15T14:03:34+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 16 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 16
+    word_count: 3612
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_16.md
+- ts: '2026-05-15T14:05:05+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_17.md'
+  action: log
+  payload:
+    chapter_no: 17
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_17.md
+    bytes: 11763
+- ts: '2026-05-15T14:05:06+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 17 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 17
+    word_count: 3379
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_17.md
+- ts: '2026-05-15T14:07:16+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_18.md'
+  action: log
+  payload:
+    chapter_no: 18
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_18.md
+    bytes: 16126
+- ts: '2026-05-15T14:07:16+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 18 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 18
+    word_count: 4660
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_18.md
+- ts: '2026-05-15T14:08:34+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_19.md'
+  action: log
+  payload:
+    chapter_no: 19
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_19.md
+    bytes: 8171
+- ts: '2026-05-15T14:08:34+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 19 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 19
+    word_count: 2367
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_19.md
+- ts: '2026-05-15T14:10:04+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_20.md'
+  action: log
+  payload:
+    chapter_no: 20
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_20.md
+    bytes: 11484
+- ts: '2026-05-15T14:10:04+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 20 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 20
+    word_count: 3292
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_20.md
+- ts: '2026-05-15T14:12:02+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_21.md'
+  action: log
+  payload:
+    chapter_no: 21
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_21.md
+    bytes: 14413
+- ts: '2026-05-15T14:12:02+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 21 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 21
+    word_count: 4181
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_21.md
+- ts: '2026-05-15T14:13:47+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_22.md'
+  action: log
+  payload:
+    chapter_no: 22
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_22.md
+    bytes: 12417
+- ts: '2026-05-15T14:13:47+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 22 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 22
+    word_count: 3576
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_22.md
+- ts: '2026-05-15T14:15:22+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_23.md'
+  action: log
+  payload:
+    chapter_no: 23
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_23.md
+    bytes: 11172
+- ts: '2026-05-15T14:15:22+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 23 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 23
+    word_count: 3234
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_23.md
+- ts: '2026-05-15T14:16:53+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_24.md'
+  action: log
+  payload:
+    chapter_no: 24
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_24.md
+    bytes: 11231
+- ts: '2026-05-15T14:16:54+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 24 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 24
+    word_count: 3294
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_24.md
+- ts: '2026-05-15T14:18:34+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_25.md'
+  action: log
+  payload:
+    chapter_no: 25
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_25.md
+    bytes: 12674
+- ts: '2026-05-15T14:18:34+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 25 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 25
+    word_count: 3664
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_25.md
+- ts: '2026-05-15T14:18:34+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-15T14:18:34+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode.batch
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.chapter_text
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+- ts: '2026-05-15T14:18:34+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+- ts: '2026-05-15T14:18:34+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: 10 chapters batch applied
+  action: log
+  payload:
+    applied_paths: 2
+    chapter_count: 10
+- ts: '2026-05-15T14:18:34+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: R2_consistency_check triggered (immersive_block)
+  action: log
+  payload:
+    scope: immersive_block
+    chapter_count: 10
+- ts: '2026-05-15T14:18:34+00:00'
+  source: dark_fantasy_adapter.enter_immersive_mode
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-15T14:18:34+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: immersive entered
+  action: log
+  payload:
+    checker_silenced: true
+- ts: '2026-05-15T14:19:11+00:00'
+  source: dark_fantasy_adapter.enter_immersive_mode
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-15T14:19:11+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: immersive entered
+  action: log
+  payload:
+    checker_silenced: true
+- ts: '2026-05-15T14:20:47+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_26.md'
+  action: log
+  payload:
+    chapter_no: 26
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_26.md
+    bytes: 12791
+- ts: '2026-05-15T14:20:47+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 26 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 26
+    word_count: 3661
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_26.md
+- ts: '2026-05-15T14:22:36+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_27.md'
+  action: log
+  payload:
+    chapter_no: 27
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_27.md
+    bytes: 14136
+- ts: '2026-05-15T14:22:36+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 27 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 27
+    word_count: 4043
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_27.md
+- ts: '2026-05-15T14:24:12+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_28.md'
+  action: log
+  payload:
+    chapter_no: 28
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_28.md
+    bytes: 12887
+- ts: '2026-05-15T14:24:12+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 28 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 28
+    word_count: 3750
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_28.md
+- ts: '2026-05-15T14:26:37+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_29.md'
+  action: log
+  payload:
+    chapter_no: 29
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_29.md
+    bytes: 9375
+- ts: '2026-05-15T14:26:37+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 29 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 29
+    word_count: 2718
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_29.md
+- ts: '2026-05-15T14:29:10+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_30.md'
+  action: log
+  payload:
+    chapter_no: 30
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_30.md
+    bytes: 12241
+- ts: '2026-05-15T14:29:10+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 30 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 30
+    word_count: 3514
+    file: /Users/arm/Desktop/ginga/.ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_30.md
+- ts: '2026-05-15T14:29:10+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-15T14:29:10+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode.batch
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.chapter_text
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+- ts: '2026-05-15T14:29:10+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+- ts: '2026-05-15T14:29:10+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: 5 chapters batch applied
+  action: log
+  payload:
+    applied_paths: 2
+    chapter_count: 5
+- ts: '2026-05-15T14:29:11+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: R2_consistency_check triggered (immersive_block)
+  action: log
+  payload:
+    scope: immersive_block
+    chapter_count: 5

@@ -69,6 +69,79 @@ class AgentHarnessTest(unittest.TestCase):
             self.assertIn("mock_harness", report_text)
             self.assertIn("does not prove production readiness", report_text)
 
+    def test_cli_rejects_real_llm_batches_above_v17_upper_bound(self) -> None:
+        from ginga_platform.orchestrator.cli.__main__ import main as cli_main
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            state_root = root / "runtime_state"
+            init_code = cli_main(
+                [
+                    "init",
+                    "policy-book",
+                    "--topic",
+                    "玄幻黑暗",
+                    "--premise",
+                    "policy test premise",
+                    "--state-root",
+                    str(state_root),
+                ]
+            )
+            self.assertEqual(init_code, 0)
+
+            run_code = cli_main(
+                [
+                    "run",
+                    "policy-book",
+                    "--chapters",
+                    "8",
+                    "--state-root",
+                    str(state_root),
+                ]
+            )
+            self.assertEqual(run_code, 1)
+            self.assertEqual(list((state_root / "policy-book").glob("chapter_*.md")), [])
+
+    def test_cli_immersive_defaults_to_recommended_five_chapter_batch(self) -> None:
+        from ginga_platform.orchestrator.cli.__main__ import main as cli_main
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            state_root = root / "runtime_state"
+            self.assertEqual(
+                cli_main(
+                    [
+                        "init",
+                        "default-immersive-book",
+                        "--topic",
+                        "玄幻黑暗",
+                        "--premise",
+                        "default batch policy premise",
+                        "--state-root",
+                        str(state_root),
+                    ]
+                ),
+                0,
+            )
+
+            self.assertEqual(
+                cli_main(
+                    [
+                        "run",
+                        "default-immersive-book",
+                        "--mock-llm",
+                        "--immersive",
+                        "--word-target",
+                        "200",
+                        "--state-root",
+                        str(state_root),
+                    ]
+                ),
+                0,
+            )
+            chapters = sorted((state_root / "default-immersive-book").glob("chapter_*.md"))
+            self.assertEqual([path.name for path in chapters], [f"chapter_{idx:02d}.md" for idx in range(1, 6)])
+
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()

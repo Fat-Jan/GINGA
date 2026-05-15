@@ -22,6 +22,11 @@ from ginga_platform.orchestrator.cli.demo_pipeline import (
     show_status,
 )
 from ginga_platform.orchestrator.cli.idea import add_idea
+from ginga_platform.orchestrator.cli.longform_policy import (
+    DEFAULT_CHAPTER_BATCH_SIZE,
+    MAX_REAL_LLM_CHAPTER_BATCH_SIZE,
+    validate_real_llm_batch_size,
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -73,8 +78,11 @@ def main(argv: list[str] | None = None) -> int:
     p_run.add_argument(
         "--chapters",
         type=int,
-        default=1,
-        help="章节数：>=2 触发 multi_chapter runner（S-3/S-4/S-5 R1-R3 + V1 DoD）；仅 --immersive 时走沉浸专线",
+        default=None,
+        help=(
+            "章节数：>=2 触发 multi_chapter runner；--immersive 未指定时默认 5 章；"
+            f"真实 LLM 生产上限 {MAX_REAL_LLM_CHAPTER_BATCH_SIZE} 章"
+        ),
     )
     p_run.add_argument(
         "--state-root",
@@ -173,6 +181,16 @@ def main(argv: list[str] | None = None) -> int:
         print(f"✅ init done: {state_root / args.book_id}")
         return 0
     elif args.cmd == "run":
+        requested_chapters = (
+            args.chapters
+            if args.chapters is not None
+            else (DEFAULT_CHAPTER_BATCH_SIZE if getattr(args, "immersive", False) else 1)
+        )
+        try:
+            validate_real_llm_batch_size(requested_chapters, mock_llm=args.mock_llm)
+        except ValueError as exc:
+            print(f"❌ {exc}", file=sys.stderr)
+            return 1
         # immersive 分支：dispatch 到 ImmersiveRunner.run_block
         if getattr(args, "immersive", False):
             from ginga_platform.orchestrator.cli.immersive_runner import ImmersiveRunner
@@ -189,7 +207,7 @@ def main(argv: list[str] | None = None) -> int:
                 setattr(llm_caller, "_calls", [])
             runner = ImmersiveRunner(args.book_id, state_root=args.state_root, llm_caller=llm_caller)
             result = runner.run_block(
-                chapters=args.chapters,
+                chapters=requested_chapters,
                 llm_endpoint=args.llm_endpoint,
                 word_target=args.word_target,
                 execution_mode=execution_mode,
@@ -201,11 +219,11 @@ def main(argv: list[str] | None = None) -> int:
                   f"applied={result['applied_count']}, paths={result['chapter_paths']}")
             return 0
         # 非 immersive：--chapters >= 2 走 multi_chapter runner（S-3/S-4/S-5）
-        if getattr(args, "chapters", 1) >= 2:
+        if requested_chapters >= 2:
             from ginga_platform.orchestrator.cli.multi_chapter import run_multi_chapter
             result = run_multi_chapter(
                 args.book_id,
-                chapters=args.chapters,
+                chapters=requested_chapters,
                 llm_endpoint=args.llm_endpoint,
                 word_target=args.word_target,
                 state_root=args.state_root,
@@ -219,7 +237,7 @@ def main(argv: list[str] | None = None) -> int:
                 )
                 return 1
             print(
-                f"✅ multi_chapter done: {result['chapters_done']}/{args.chapters} chapters, "
+                f"✅ multi_chapter done: {result['chapters_done']}/{requested_chapters} chapters, "
                 f"DoD PASS, total_words={result['dod_report']['total_words']}, "
                 f"foreshadow_pool={result['dod_report']['foreshadow_pool_size']}"
             )

@@ -25,6 +25,7 @@ from typing import Any, Callable, Dict, Optional
 from ginga_platform.skills.dark_fantasy_ultimate_engine.adapter import DarkFantasyAdapter
 from ginga_platform.orchestrator.runner.state_io import StateIO
 from ginga_platform.orchestrator.cli.demo_pipeline import MOCK_HARNESS_MODE, REAL_LLM_DEMO_MODE
+from ginga_platform.orchestrator.cli.longform_policy import DEFAULT_CHAPTER_BATCH_SIZE
 
 
 # 默认 LLM 调用器（subprocess ask-llm）——延迟 import 避免 demo_pipeline 依赖闭环
@@ -99,7 +100,7 @@ class ImmersiveRunner:
 
     def run_block(
         self,
-        chapters: int,
+        chapters: int = DEFAULT_CHAPTER_BATCH_SIZE,
         *,
         llm_endpoint: str = "久久",
         word_target: int = 4000,
