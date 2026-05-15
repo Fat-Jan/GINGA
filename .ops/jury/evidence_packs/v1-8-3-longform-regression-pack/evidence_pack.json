@@ -1,0 +1,39 @@
+{
+  "kind": "JuryEvidencePack",
+  "schema_version": "v1.8-3",
+  "run_id": "v1-8-3-longform-regression-pack",
+  "generated_at": "2026-05-15T17:20:33+00:00",
+  "mode": "report_only",
+  "writes_runtime_state": false,
+  "enters_creation_prompt": false,
+  "default_rag_eligible": false,
+  "output_boundary": ".ops/jury/evidence_packs/<run_id>/",
+  "evidence_count": 3,
+  "evidence_refs": [
+    {
+      "path": ".ops/validation/longform_jiujiu_v173_45_regression.json",
+      "exists": true,
+      "sha256": "5c0693421b217f922e8f46a2756172a0c1062ee9132dc3aff0e7ee53486d4466",
+      "bytes": 7678,
+      "kind_hint": "json_report"
+    },
+    {
+      "path": ".ops/reports/longform_jiujiu_v173_45_regression_findings.md",
+      "exists": true,
+      "sha256": "5115b15aeb9466a197620beb863ad41a611b0ff36c9f14a6fd79ccd1f69f6226",
+      "bytes": 2535,
+      "kind_hint": "markdown_report"
+    },
+    {
+      "path": ".ops/reviews/longform-jiujiu-v173-45-regression/v1-7-3-45-regression-review/review_report.json",
+      "exists": true,
+      "sha256": "9318d5f45736a07cef639d0ea7a3e0646c2b89221bb1d61b47dcd7cae4137269",
+      "bytes": 35423,
+      "kind_hint": "json_report"
+    }
+  ],
+  "instructions": [
+    "Use evidence_refs as citations; do not copy report bodies into prompts by default.",
+    "Jury conclusions remain report-only until operator_accept and promotion checks pass."
+  ]
+}

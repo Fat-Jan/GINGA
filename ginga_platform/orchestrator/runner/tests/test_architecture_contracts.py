@@ -24,6 +24,7 @@ class ArchitectureContractsTest(unittest.TestCase):
         self.assertIn("P2-7 runner convergence", check_names)
         self.assertIn("v1.8-0 Model Topology observation boundary", check_names)
         self.assertIn("v1.8-1 Candidate Truth Gate wording", check_names)
+        self.assertIn("v1.8-3 Genm optional observability boundary", check_names)
 
     def test_current_planning_hygiene_detects_stale_next_step_text(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -171,6 +172,39 @@ class ArchitectureContractsTest(unittest.TestCase):
             self.assertEqual(report["checks"][0]["status"], "FAIL")
             self.assertTrue(any("operator_accept" in error for error in report["errors"]))
             self.assertTrue(any("default RAG" in error for error in report["errors"]))
+
+    def test_genm_observability_boundary_rejects_runtime_or_migration_mutation(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo_root = Path(tmpdir)
+            module = repo_root / "ginga_platform/orchestrator/genm_observability.py"
+            module.parent.mkdir(parents=True)
+            module.write_text(
+                "\n".join(
+                    [
+                        'DEFAULT_EVIDENCE_PACK_ROOT = Path(".ops/jury/evidence_packs")',
+                        'DEFAULT_WORKFLOW_OBSERVABILITY_ROOT = Path(".ops/workflow_observability")',
+                        'DEFAULT_MIGRATION_AUDIT_ROOT = Path(".ops/migration_audit")',
+                        '"mode": "report_only"',
+                        '"writes_runtime_state": False',
+                        '"enters_creation_prompt": False',
+                        '"default_rag_eligible": False',
+                        '"runs_workflow": False',
+                        '"auto_migrate": False',
+                        "export_jury_evidence_pack",
+                        "export_workflow_stage_observation",
+                        "export_migration_audit",
+                        "StateIO(",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            report = {"checks": [], "warnings": [], "errors": []}
+            archlint.validate_genm_observability_boundary(repo_root, report)
+
+            self.assertEqual(report["checks"][0]["name"], "v1.8-3 Genm optional observability boundary")
+            self.assertEqual(report["checks"][0]["status"], "FAIL")
+            self.assertTrue(any("StateIO" in error for error in report["errors"]))
 
     def test_main_writes_json_report(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:

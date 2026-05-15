@@ -48,6 +48,7 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 | v1.8-0 Model Topology Observation | `done` | `ginga_platform/orchestrator/model_topology.py`；`ginga model-topology observe`；`test_model_topology_observation`；`validate_architecture_contracts.py`；`.ops/model_topology/v1-8-0-smoke-main/model_topology_report.json` | 已新增只读 role/stage/provider 观察矩阵与可选 `--probe-live` 探针；默认 live probe 关闭，报告只写 `.ops/model_topology/<run_id>/`，不接管 runtime provider、不写 `StateIO`、不改变 workflow |
 | v1.8-1 Candidate Truth Gate Wording | `done` | `.ops/governance/candidate_truth_gate.md`；`test_architecture_contracts`；`validate_architecture_contracts.py` | 已统一 `candidate-only` / `report-only` / `truth` 术语和晋升规则；这是治理文档与架构检查，不新增通用 accept/refill 写入链，不改变 `StateIO` |
 | v1.8-2 Review Style Fingerprint | `done` | `ginga_platform/orchestrator/review.py`；`test_review_deslop`；`validate_architecture_contracts.py` | 已把 style fingerprint 接入 `ginga review` report-only sidecar，输出句长、段落、对话占比、锚点命中和风格模式命中；不自动改正文、不写 `StateIO`、不进入创作 prompt、不作为 hard fail |
+| v1.8-3 Genm Optional Observability | `done` | `ginga_platform/orchestrator/genm_observability.py`；`ginga observability workflow-stages/evidence-pack/migration-audit`；`test_genm_optional_observability`；`validate_architecture_contracts.py`；`.ops/workflow_observability/v1-8-3-main-workflow/`；`.ops/jury/evidence_packs/v1-8-3-longform-regression-pack/`；`.ops/migration_audit/v1-8-3-main-boundary-audit/` | 已吸收 Genm 可选项为三类 report-only 观察面：jury evidence pack 只做引用包、workflow stage observation 只读 12 step YAML、migration audit 只报边界风险；不跑 workflow、不迁移文件、不写 `StateIO`、不进默认 RAG |
 | v1.9-1 Story Truth Template Source Audit | `done` | `.ops/plans/v1-9-story-truth-template-plan.md`；`.ops/reports/story_truth_template_source_audit.md` | 已按原料抽样固定字段矩阵，明确 `core / genre_extension / candidate_only / report_only` 分类、拆书 / 长文 drift 反向校验、遗漏字段清单和禁止晋升红线；不写 schema、不写 `StateIO`、不改默认 RAG |
 | v1.9-2 Story Truth Template Schema Validator | `in_progress` | `foundation/schema/story_truth_template.yaml`；`scripts/validate_story_truth_template.py`；`test_story_truth_template` | worker 已提交 schema / validator / tests，正在主控复核；目标是只读校验，拒绝 candidate / report / 污染路径直接进入 truth |
 
@@ -80,10 +81,11 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 - v1.8-0 Model Topology Observation 已完成：`ginga model-topology observe` 生成 `.ops/model_topology/<run_id>/model_topology_report.json` 与 `README.md`，记录 showrunner / prose_writer / state_settler / style_reviewer / longform_critic 的 role matrix、capability surface 与 probe summary；默认 `probe_live=false`，只有显式 `--probe-live` 才调用 `ask-llm` 最小探针；架构契约已禁止 runtime takeover、StateIO 写入和 workflow 接管。
 - v1.8-1 Candidate Truth Gate Wording 已完成：`.ops/governance/candidate_truth_gate.md` 将 `candidate-only`、`report-only`、`truth` 分成三类，并规定 `operator_accept`、`schema_validation`、`source_contamination_check`、`StateIO_or_validator_entrypoint`、`audit_evidence` 作为 candidate 晋升 truth 的必要条件；架构契约会检查这些固定术语，防止后续报告或候选产物绕过默认 RAG / prompt / StateIO 边界。
 - v1.8-2 Review Style Fingerprint 已完成：`build_review_report()` 现在输出 `style_fingerprint`，包含 `scope=report_only`、`auto_edit=false`、`writes_runtime_state=false`、`enters_creation_prompt=false` 以及章节数、中文字符数、平均句长、句长桶、段落数、对话行占比、style anchor 命中和 anti-AI / 平台风格模式命中；该指标只给人工审稿和后续 jury evidence pack 使用，不改变 `passed` / hard gate 语义。
+- v1.8-3 Genm Optional Observability 已完成：新增 `ginga observability workflow-stages`、`evidence-pack`、`migration-audit` 三个 report-only 命令；主工作流观察报告显示 12 个 stage，长篇 4/5 回归 evidence pack 只记录 3 个证据引用和 sha256，migration audit 扫描 811 个文件并列出 71 个禁入源命中作为风险清单；架构契约禁止这些工具调用 `StateIO`、运行 workflow、dispatch step 或做文件迁移。
 
 ## 下一步
 
-当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7 Longform Production Policy / Quality Gate / Reviewer Queue / Hard Gate 与 v1.8-0/v1.8-1/v1.8-2 Genm 机制吸收已收口。v1.9-1 Story Truth Template source audit 已完成，v1.9-2 schema / validator 正在复核。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
+当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7 Longform Production Policy / Quality Gate / Reviewer Queue / Hard Gate 与 v1.8-0/v1.8-1/v1.8-2/v1.8-3 Genm 机制吸收已收口。v1.9-1 Story Truth Template source audit 已完成，v1.9-2 schema / validator 正在复核。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
 
 优先任务：
 
@@ -91,7 +93,7 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 - **真实长篇生产化后续**：v1.7-4 已跑 4+5 共 9 章真实回归；脚本级短章/禁词/伏笔指标稳定，但 review hard gate 仍阻断下一批。下一步不应继续扩大真实生成，应先修章节输入包 / prompt 续写连续性和低频题材锚点保持；仍不得自动改正文。
 - **Model topology 后续**：v1.8-0 只做 observation，不接管 runtime；若后续要做 provider router，必须先补 live probe 证据、失败降级策略、same-chapter-single-writer 边界和 agent harness 回归。
 - **Candidate Truth Gate 后续**：v1.8-1 只统一术语；若后续要做通用候选接受链，必须先选一个现有 candidate surface 做窄切片，不得一次性重写 `StateIO` 或 promote flow。
-- **Style Fingerprint 后续**：v1.8-2 只在 `ginga review` 输出 report-only 指标；若后续要把它接入 jury evidence pack 或 stage runner 观测，仍必须保持候选证据身份，不得进入创作 prompt、默认 RAG 或自动改文链。
+- **Genm 可观测性后续**：v1.8-3 已把 jury evidence pack、workflow stage observation 和 migration audit 落为 report-only 工具；后续若要接入 CI 或 stage runner，只能先扩观察指标，不得接管 workflow 执行或自动迁移文件。
 - **Story Truth Template 后续**：v1.9-1 已完成原料字段矩阵和 source audit；下一步复核 v1.9-2 schema / validator，继续保持只读校验，不得直接把拆书候选、review report、market report 或 jury 原文写入 truth。
 
 ## 规划索引（不代表已完成）

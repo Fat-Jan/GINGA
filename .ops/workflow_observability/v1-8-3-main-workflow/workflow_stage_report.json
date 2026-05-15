@@ -1,0 +1,225 @@
+{
+  "kind": "WorkflowStageObservation",
+  "schema_version": "v1.8-3",
+  "run_id": "v1-8-3-main-workflow",
+  "generated_at": "2026-05-15T17:20:33+00:00",
+  "mode": "report_only",
+  "writes_runtime_state": false,
+  "enters_creation_prompt": false,
+  "default_rag_eligible": false,
+  "output_boundary": ".ops/workflow_observability/<run_id>/",
+  "workflow_path": "ginga_platform/orchestrator/workflows/novel_pipeline_mvp.yaml",
+  "workflow_name": "novel_pipeline_mvp",
+  "runs_workflow": false,
+  "stage_count": 12,
+  "stages": [
+    {
+      "index": 1,
+      "id": "A_brainstorm",
+      "uses_capability": "base-methodology-creative-brainstorm",
+      "uses_skill": null,
+      "state_reads": [],
+      "state_writes": [
+        "retrieved.brainstorm"
+      ],
+      "preconditions": [
+        "guard:no-fake-read"
+      ],
+      "postconditions": []
+    },
+    {
+      "index": 2,
+      "id": "B_premise_lock",
+      "uses_capability": "base-template-story-dna",
+      "uses_skill": null,
+      "state_reads": [
+        "retrieved.brainstorm"
+      ],
+      "state_writes": [
+        "locked.STORY_DNA"
+      ],
+      "preconditions": [],
+      "postconditions": []
+    },
+    {
+      "index": 3,
+      "id": "C_world_build",
+      "uses_capability": "base-template-worldview",
+      "uses_skill": null,
+      "state_reads": [
+        "locked.STORY_DNA"
+      ],
+      "state_writes": [
+        "locked.GENRE_LOCKED",
+        "locked.WORLD"
+      ],
+      "preconditions": [],
+      "postconditions": []
+    },
+    {
+      "index": 4,
+      "id": "D_character_seed",
+      "uses_capability": "base-template-protagonist",
+      "uses_skill": null,
+      "state_reads": [
+        "locked.STORY_DNA",
+        "locked.WORLD"
+      ],
+      "state_writes": [
+        "entity_runtime.CHARACTER_STATE"
+      ],
+      "preconditions": [],
+      "postconditions": []
+    },
+    {
+      "index": 5,
+      "id": "E_outline",
+      "uses_capability": "base-template-outline",
+      "uses_skill": null,
+      "state_reads": [
+        "locked.STORY_DNA",
+        "locked.WORLD",
+        "entity_runtime.CHARACTER_STATE"
+      ],
+      "state_writes": [
+        "locked.PLOT_ARCHITECTURE"
+      ],
+      "preconditions": [],
+      "postconditions": []
+    },
+    {
+      "index": 6,
+      "id": "F_state_init",
+      "uses_capability": "base-template-state-init",
+      "uses_skill": null,
+      "state_reads": [
+        "locked.*",
+        "entity_runtime.CHARACTER_STATE"
+      ],
+      "state_writes": [
+        "entity_runtime.RESOURCE_LEDGER",
+        "entity_runtime.FORESHADOW_STATE",
+        "entity_runtime.GLOBAL_SUMMARY",
+        "workspace.task_plan",
+        "workspace.findings",
+        "workspace.progress"
+      ],
+      "preconditions": [],
+      "postconditions": []
+    },
+    {
+      "index": 7,
+      "id": "G_chapter_draft",
+      "uses_capability": "base-card-chapter-draft",
+      "uses_skill": "skill-router",
+      "state_reads": [
+        "locked.*",
+        "entity_runtime.*",
+        "retrieved.*"
+      ],
+      "state_writes": [
+        "workspace.chapter_text",
+        "entity_runtime.GLOBAL_SUMMARY.total_words"
+      ],
+      "preconditions": [
+        "guard:latest-text-priority"
+      ],
+      "postconditions": []
+    },
+    {
+      "index": 8,
+      "id": "H_chapter_settle",
+      "uses_capability": "base-template-chapter-settle",
+      "uses_skill": null,
+      "state_reads": [
+        "workspace.chapter_text",
+        "entity_runtime.*"
+      ],
+      "state_writes": [
+        "entity_runtime.CHARACTER_STATE",
+        "entity_runtime.RESOURCE_LEDGER",
+        "entity_runtime.FORESHADOW_STATE",
+        "workspace.progress"
+      ],
+      "preconditions": [],
+      "postconditions": [
+        "checker:character-iq",
+        "checker:cool-point-payoff"
+      ]
+    },
+    {
+      "index": 9,
+      "id": "R1_style_polish",
+      "uses_capability": "base-methodology-style-polish",
+      "uses_skill": null,
+      "state_reads": [
+        "workspace.chapter_text",
+        "locked.GENRE_LOCKED"
+      ],
+      "state_writes": [
+        "workspace.chapter_text"
+      ],
+      "preconditions": [],
+      "postconditions": []
+    },
+    {
+      "index": 10,
+      "id": "R2_consistency_check",
+      "uses_capability": "base-methodology-consistency-check",
+      "uses_skill": null,
+      "state_reads": [
+        "workspace.chapter_text",
+        "locked.*",
+        "entity_runtime.*"
+      ],
+      "state_writes": [
+        "audit_log"
+      ],
+      "preconditions": [],
+      "postconditions": [
+        "checker:aigc-style",
+        "checker:consistency"
+      ]
+    },
+    {
+      "index": 11,
+      "id": "R3_final_pack",
+      "uses_capability": "base-methodology-final-pack",
+      "uses_skill": null,
+      "state_reads": [
+        "workspace.chapter_text",
+        "entity_runtime.GLOBAL_SUMMARY"
+      ],
+      "state_writes": [
+        "entity_runtime.GLOBAL_SUMMARY"
+      ],
+      "preconditions": [],
+      "postconditions": []
+    },
+    {
+      "index": 12,
+      "id": "V1_release_check",
+      "uses_capability": "base-checker-dod-final",
+      "uses_skill": null,
+      "state_reads": [
+        "workspace.chapter_text",
+        "locked.*",
+        "entity_runtime.*",
+        "audit_log"
+      ],
+      "state_writes": [
+        "audit_log"
+      ],
+      "preconditions": [],
+      "postconditions": [
+        "checker:dod-final"
+      ]
+    }
+  ],
+  "observability": {
+    "state_read_count": 25,
+    "state_write_count": 22,
+    "postcondition_count": 5,
+    "skill_stage_count": 1
+  }
+}

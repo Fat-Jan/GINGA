@@ -1,0 +1,81 @@
+# Migration Audit: v1-8-3-main-boundary-audit
+
+> Report-only audit. It does not move, rewrite, or promote files.
+
+- status: `needs_review`
+- scanned_file_count: 811
+- forbidden_hit_count: 71
+
+## Forbidden Source Hits
+
+- `.ops/book_analysis/contamination_check_rules.md`
+- `.ops/book_analysis/fixtures/reference_corpus_p0_smoke.txt`
+- `.ops/book_analysis/p0_mvp_boundary.md`
+- `.ops/book_analysis/schema/source_manifest.schema.yaml`
+- `.ops/book_analysis/v1-3-1-smoke-main/chapter_index.json`
+- `.ops/book_analysis/v1-3-1-smoke-main/run_config.json`
+- `.ops/book_analysis/v1-3-1-smoke-main/scan_report.md`
+- `.ops/book_analysis/v1-3-1-smoke-main/source_manifest.json`
+- `.ops/book_analysis/v1-3-1-smoke-main/validation_report.json`
+- `.ops/book_analysis/v1-3-2-smoke-main/chapter_atom_report.md`
+- `.ops/book_analysis/v1-3-2-smoke-main/chapter_atoms.json`
+- `.ops/book_analysis/v1-3-2-smoke-main/quality_gates.json`
+- `.ops/book_analysis/v1-3-2-smoke-main/run_config.json`
+- `.ops/book_analysis/v1-3-2-smoke-main/validation_report.json`
+- `.ops/book_analysis/v1-3-3-smoke-main/quality_gates.json`
+- `.ops/book_analysis/v1-3-3-smoke-main/run_config.json`
+- `.ops/book_analysis/v1-3-3-smoke-main/trope_recipe_report.md`
+- `.ops/book_analysis/v1-3-3-smoke-main/trope_recipes.json`
+- `.ops/book_analysis/v1-3-3-smoke-main/validation_report.json`
+- `.ops/jury/.jury-1.stderr`
+- `.ops/jury/.jury-1.stdout`
+- `.ops/jury/.jury-2.stderr`
+- `.ops/jury/.jury-2.stdout`
+- `.ops/jury/.jury-3.stderr`
+- `.ops/jury/.jury-3.stdout`
+- `.ops/jury/.jury-4.stderr`
+- `.ops/jury/.jury-4.stdout`
+- `.ops/jury/book_analysis_distillation_plan_review_2026-05-15/ioll-grok__book_analysis_distillation_fusion_plan.md`
+- `.ops/jury/book_analysis_distillation_plan_review_2026-05-15/summary.md`
+- `.ops/jury/book_analysis_distillation_plan_review_2026-05-15/windhub__book_analysis_distillation_fusion_plan.md`
+- `.ops/jury/book_analysis_distillation_plan_review_2026-05-15/xiaomi-tp__book_analysis_distillation_fusion_plan.md`
+- `.ops/jury/chai_shu_fusion_review_2026-05-15/ioll-grok__chai_shu_fusion_research_draft.md`
+- `.ops/jury/chai_shu_fusion_review_2026-05-15/summary.md`
+- `.ops/jury/chai_shu_fusion_review_2026-05-15/wzw__chai_shu_fusion_research_draft.md`
+- `.ops/jury/chai_shu_fusion_review_2026-05-15_reserve/summary.md`
+- `.ops/jury/chai_shu_fusion_review_2026-05-15_reserve/windhub__chai_shu_fusion_research_draft.md`
+- `.ops/jury/chai_shu_fusion_review_2026-05-15_reserve/xiaomi-tp__chai_shu_fusion_research_draft.md`
+- `.ops/jury/jury-1-architect.md`
+- `.ops/jury/jury-2-data-engineer.md`
+- `.ops/jury/jury-3-novel-editor.md`
+- `.ops/jury/jury-4-product.md`
+- `.ops/jury/longform_jiujiu_30_review_2026-05-15/ioll-grok__longform_jiujiu_30_review_packet.md`
+- `.ops/jury/longform_jiujiu_30_review_2026-05-15/ioll-mix__longform_jiujiu_30_review_packet.md`
+- `.ops/jury/longform_jiujiu_30_review_2026-05-15/jury_prompt.md`
+- `.ops/jury/longform_jiujiu_30_review_2026-05-15/jury_prompt_expanded.md`
+- `.ops/jury/longform_jiujiu_30_review_2026-05-15/longform_jiujiu_30_review_packet.md`
+- `.ops/jury/longform_jiujiu_30_review_2026-05-15/summary.md`
+- `.ops/jury/longform_jiujiu_30_review_2026-05-15/wzw__longform_jiujiu_30_review_packet.md`
+- `.ops/jury/longform_reviewer_queue_2026-05-15/core_jiujiu/summary.md`
+- `.ops/jury/longform_reviewer_queue_2026-05-15/human_review_brief.md`
+- `.ops/jury/longform_reviewer_queue_2026-05-15/ioll-grok__reviewer_queue_packet.md`
+- `.ops/jury/longform_reviewer_queue_2026-05-15/jiujiu-jury__reviewer_queue_packet.md`
+- `.ops/jury/longform_reviewer_queue_2026-05-15/jury_prompt.md`
+- `.ops/jury/longform_reviewer_queue_2026-05-15/model_probe_notes.md`
+- `.ops/jury/longform_reviewer_queue_2026-05-15/reviewer_queue_core_packet.md`
+- `.ops/jury/longform_reviewer_queue_2026-05-15/reviewer_queue_p0_mini_packet.md`
+- `.ops/jury/longform_reviewer_queue_2026-05-15/reviewer_queue_packet.md`
+- `.ops/jury/longform_reviewer_queue_2026-05-15/summary.md`
+- `.ops/jury/longform_reviewer_queue_2026-05-15/wzw__reviewer_queue_packet.md`
+- `.ops/jury/oh_story_roadmap_review_2026-05-15/ioll-grok__oh_story_inspiration_roadmap.md`
+- `.ops/jury/oh_story_roadmap_review_2026-05-15/summary.md`
+- `.ops/jury/oh_story_roadmap_review_2026-05-15/wzw__oh_story_inspiration_roadmap.md`
+- `.ops/jury/oh_story_roadmap_review_2026-05-15_reserve/summary.md`
+- `.ops/jury/oh_story_roadmap_review_2026-05-15_reserve/windhub__oh_story_inspiration_roadmap.md`
+- `.ops/jury/oh_story_roadmap_review_2026-05-15_reserve/xiaomi-tp__oh_story_inspiration_roadmap.md`
+- `.ops/reviews/longform-jiujiu-combo-smoke/v1-7-1-longform-gate/README.md`
+- `.ops/reviews/longform-jiujiu-combo-smoke/v1-7-1-longform-gate/review_report.json`
+- `.ops/reviews/longform-jiujiu-combo-smoke/v1-7-3-hard-gate/README.md`
+- `.ops/reviews/longform-jiujiu-combo-smoke/v1-7-3-hard-gate/review_report.json`
+- `.ops/reviews/longform-jiujiu-v173-45-regression/v1-7-3-45-regression-review/README.md`
+- `.ops/reviews/longform-jiujiu-v173-45-regression/v1-7-3-45-regression-review/review_report.json`

@@ -216,6 +216,32 @@ REQUIRED_CANDIDATE_TRUTH_GATE_MARKERS = (
     ".ops/book_analysis/**",
     "not enter default RAG",
 )
+GENM_OBSERVABILITY_PATH = Path("ginga_platform/orchestrator/genm_observability.py")
+GENM_OBSERVABILITY_REQUIRED_SNIPPETS = (
+    "DEFAULT_EVIDENCE_PACK_ROOT = Path(\".ops/jury/evidence_packs\")",
+    "DEFAULT_WORKFLOW_OBSERVABILITY_ROOT = Path(\".ops/workflow_observability\")",
+    "DEFAULT_MIGRATION_AUDIT_ROOT = Path(\".ops/migration_audit\")",
+    "\"mode\": \"report_only\"",
+    "\"writes_runtime_state\": False",
+    "\"enters_creation_prompt\": False",
+    "\"default_rag_eligible\": False",
+    "\"runs_workflow\": False",
+    "\"auto_migrate\": False",
+    "export_jury_evidence_pack",
+    "export_workflow_stage_observation",
+    "export_migration_audit",
+)
+GENM_OBSERVABILITY_FORBIDDEN_SNIPPETS = (
+    "StateIO(",
+    "run_workflow(",
+    "dispatch_step(",
+    ".apply(",
+    ".audit(",
+    ".write_artifact(",
+    "shutil.move",
+    "shutil.copy",
+    "unlink(",
+)
 
 
 def load_yaml(path: Path) -> Any:
@@ -818,6 +844,30 @@ def validate_candidate_truth_gate(repo_root: Path, report: dict[str, Any]) -> No
     )
 
 
+def validate_genm_observability_boundary(repo_root: Path, report: dict[str, Any]) -> None:
+    """Ensure v1.8-3 optional Genm absorption remains report-only observability."""
+    path = repo_root / GENM_OBSERVABILITY_PATH
+    try:
+        text = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        add_error(report, GENM_OBSERVABILITY_PATH, "Genm observability boundary", "genm_observability module missing")
+        add_check(report, "v1.8-3 Genm optional observability boundary", False, "genm_observability module missing")
+        return
+
+    missing = [snippet for snippet in GENM_OBSERVABILITY_REQUIRED_SNIPPETS if snippet not in text]
+    forbidden = [snippet for snippet in GENM_OBSERVABILITY_FORBIDDEN_SNIPPETS if snippet in text]
+    if missing:
+        add_error(report, GENM_OBSERVABILITY_PATH, "Genm observability boundary", f"missing required snippet(s): {missing}")
+    if forbidden:
+        add_error(report, GENM_OBSERVABILITY_PATH, "Genm observability boundary", f"forbidden runtime/migration mutation snippet(s): {forbidden}")
+    add_check(
+        report,
+        "v1.8-3 Genm optional observability boundary",
+        not missing and not forbidden,
+        "Genm optional observability is constrained to report-only evidence/workflow/migration reports",
+    )
+
+
 def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     root = (repo_root or Path.cwd()).resolve()
     root_text = str(root)
@@ -843,6 +893,7 @@ def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     validate_market_research_boundary(root, report)
     validate_model_topology_boundary(root, report)
     validate_candidate_truth_gate(root, report)
+    validate_genm_observability_boundary(root, report)
     report["status"] = "FAIL" if report["errors"] else "PASS"
     return report
 

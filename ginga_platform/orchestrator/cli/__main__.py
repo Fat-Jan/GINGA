@@ -7,6 +7,7 @@ Usage:
     python3 -m ginga_platform.orchestrator.cli review <book_id>
     python3 -m ginga_platform.orchestrator.cli market <book_id> --fixture <path> --authorize
     python3 -m ginga_platform.orchestrator.cli model-topology observe
+    python3 -m ginga_platform.orchestrator.cli observability workflow-stages
     python3 -m ginga_platform.orchestrator.cli idea add <title> [--body <text>] [--stdin]
 """
 from __future__ import annotations
@@ -191,6 +192,53 @@ def main(argv: list[str] | None = None) -> int:
         help="显式运行 ask-llm 最小探针；默认只写 not_run 观察报告",
     )
 
+    p_observability = sub.add_parser("observability", help="report-only 证据与工作流可观测性")
+    observability_sub = p_observability.add_subparsers(dest="observability_cmd", required=True)
+    p_workflow_stages = observability_sub.add_parser("workflow-stages", help="导出只读 workflow stage 观察报告")
+    p_workflow_stages.add_argument("--run-id", help="run id；默认 UTC 时间戳")
+    p_workflow_stages.add_argument(
+        "--workflow-path",
+        type=Path,
+        default=Path("ginga_platform/orchestrator/workflows/novel_pipeline_mvp.yaml"),
+        help="Workflow YAML 路径",
+    )
+    p_workflow_stages.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path(".ops/workflow_observability"),
+        help="Workflow observability 输出根目录（默认 .ops/workflow_observability）",
+    )
+    p_evidence_pack = observability_sub.add_parser("evidence-pack", help="导出 citation-only jury evidence pack")
+    p_evidence_pack.add_argument("--run-id", help="run id；默认 UTC 时间戳")
+    p_evidence_pack.add_argument(
+        "--evidence",
+        type=Path,
+        action="append",
+        required=True,
+        help="证据文件路径，可重复；只引用 sha256/大小，不复制全文",
+    )
+    p_evidence_pack.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path(".ops/jury/evidence_packs"),
+        help="Evidence pack 输出根目录（默认 .ops/jury/evidence_packs）",
+    )
+    p_migration_audit = observability_sub.add_parser("migration-audit", help="导出只读迁移/污染源审计报告")
+    p_migration_audit.add_argument("--run-id", help="run id；默认 UTC 时间戳")
+    p_migration_audit.add_argument(
+        "--scan-root",
+        type=Path,
+        action="append",
+        required=True,
+        help="扫描根路径，可重复",
+    )
+    p_migration_audit.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path(".ops/migration_audit"),
+        help="Migration audit 输出根目录（默认 .ops/migration_audit）",
+    )
+
     p_idea = sub.add_parser("idea", help="raw idea 暂存区：只落盘，不进 state/RAG")
     idea_sub = p_idea.add_subparsers(dest="idea_cmd", required=True)
     p_idea_add = idea_sub.add_parser("add", help="写入一条 raw idea")
@@ -356,6 +404,41 @@ def main(argv: list[str] | None = None) -> int:
             print(
                 f"✅ Model topology observation exported: {result['output_dir']} "
                 f"(live_probe={result['probe_summary']['live_probe_enabled']})"
+            )
+            return 0
+    elif args.cmd == "observability":
+        if args.observability_cmd == "workflow-stages":
+            from ginga_platform.orchestrator.genm_observability import export_workflow_stage_observation
+
+            result = export_workflow_stage_observation(
+                run_id=args.run_id,
+                workflow_path=args.workflow_path,
+                output_root=args.output_root,
+            )
+            print(f"✅ Workflow stage observation exported: {result['output_dir']}")
+            return 0
+        if args.observability_cmd == "evidence-pack":
+            from ginga_platform.orchestrator.genm_observability import export_jury_evidence_pack
+
+            result = export_jury_evidence_pack(
+                run_id=args.run_id,
+                evidence_paths=args.evidence,
+                output_root=args.output_root,
+            )
+            print(f"✅ Jury evidence pack exported: {result['output_dir']} (evidence={result['evidence_count']})")
+            return 0
+        if args.observability_cmd == "migration-audit":
+            from ginga_platform.orchestrator.genm_observability import export_migration_audit
+
+            result = export_migration_audit(
+                run_id=args.run_id,
+                scan_roots=args.scan_root,
+                output_root=args.output_root,
+                repo_root=Path.cwd(),
+            )
+            print(
+                f"✅ Migration audit exported: {result['output_dir']} "
+                f"(status={result['status']}, forbidden_hits={len(result['forbidden_source_hits'])})"
             )
             return 0
     elif args.cmd == "idea":
