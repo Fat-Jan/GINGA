@@ -53,6 +53,7 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 | v1.9-2 Story Truth Template Schema Validator | `done` | `foundation/schema/story_truth_template.yaml`；`scripts/validate_story_truth_template.py`；`ginga_platform/orchestrator/runner/tests/test_story_truth_template.py`；`.ops/validation/story_truth_template_schema.json` | 已新增只读 schema / validator / tests，覆盖合法模板、缺层失败、genre extension、candidate/report 污染源拒绝和晋升门禁必填；不接 `StateIO` 写链、不改默认 RAG |
 | v1.9-3 Story Truth Template StateIO Slice | `done` | `ginga_platform/orchestrator/cli/demo_pipeline.py`；`ginga_platform/orchestrator/cli/__main__.py`；`test_story_truth_template`；`scripts/run_agent_harness.py` | 已在 `ginga init` 通过 `StateIO.apply` 写入 `locked.PROJECT_CONTRACT` 与 `locked.GENRE_CONTRACT`，并新增 CLI 参数 `--target-platform`、`--target-reader`、`--update-frequency`；不读取 `.ops/book_analysis/**`、不改默认 RAG |
 | v1.9-4 Story Truth Template Chapter Input Bundle | `done` | `ginga_platform/orchestrator/cli/demo_pipeline.py`；`test_story_truth_template`；`test_multi_chapter`；`scripts/run_agent_harness.py` | 已新增 `build_chapter_input_bundle()`，在 `run_workflow` 生成前经 `StateIO.apply` 写入 `workspace.CHAPTER_INPUT_BUNDLE`，包含章节目标、场景/段落蓝图、角色状态、世界规则、伏笔操作、上一章承接、开篇连续性和低频锚点；显式禁止 `.ops/book_analysis/**`、review/report/jury/market 输入 |
+| v1.9-5 Story Truth Template Longform Regression | `done` + `observation` | `.ops/validation/story_truth_template_longform_regression.json`；`.ops/reports/story_truth_template_longform_regression.md`；`.ops/longform_smoke/v1-9-5-story-truth/`；`.ops/reviews/story-truth-v195-regression/v1-9-5-story-truth-review/` | 已用 `久久` 在隔离 state_root 完成 4/4 章真实小样本，脚本级 `passed=true`，`workspace.CHAPTER_INPUT_BUNDLE` 在 immersive 每章前写入；但 drift=`needs_review`，review 为 warn/17 issues，且 1200 字低成本设置导致短章观测，不能据此扩大真实批量 |
 
 ## 已完成
 
@@ -87,7 +88,7 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 
 ## 下一步
 
-当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7 Longform Production Policy / Quality Gate / Reviewer Queue / Hard Gate 与 v1.8-0/v1.8-1/v1.8-2/v1.8-3 Genm 机制吸收已收口。v1.9-1 source audit、v1.9-2 schema / validator、v1.9-3 StateIO 项目/题材契约窄切片、v1.9-4 章节输入包已完成。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
+当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7 Longform Production Policy / Quality Gate / Reviewer Queue / Hard Gate 与 v1.8-0/v1.8-1/v1.8-2/v1.8-3 Genm 机制吸收已收口。v1.9-1 到 v1.9-5 Story Truth Template 已完成；v1.9-5 是小范围真实回归观察，不能据此扩大真实批量。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
 
 优先任务：
 
@@ -96,7 +97,7 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 - **Model topology 后续**：v1.8-0 只做 observation，不接管 runtime；若后续要做 provider router，必须先补 live probe 证据、失败降级策略、same-chapter-single-writer 边界和 agent harness 回归。
 - **Candidate Truth Gate 后续**：v1.8-1 只统一术语；若后续要做通用候选接受链，必须先选一个现有 candidate surface 做窄切片，不得一次性重写 `StateIO` 或 promote flow。
 - **Genm 可观测性后续**：v1.8-3 已把 jury evidence pack、workflow stage observation 和 migration audit 落为 report-only 工具；后续若要接入 CI 或 stage runner，只能先扩观察指标，不得接管 workflow 执行或自动迁移文件。
-- **Story Truth Template 后续**：v1.9-4 已完成 `workspace.CHAPTER_INPUT_BUNDLE`；下一步 v1.9-5 只做小范围回归和 report-only 证据，不得直接把拆书候选、review report、market report 或 jury 原文写入 truth。
+- **Story Truth Template 后续**：v1.9-5 已完成真实小样本回归并留下 observation；后续若要提高质量，先处理短章阈值、review 17 issues 和低频锚点持续性，不得直接把拆书候选、review report、market report 或 jury 原文写入 truth。
 
 ## 规划索引（不代表已完成）
 

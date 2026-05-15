@@ -24,7 +24,11 @@ from typing import Any, Callable, Dict, Optional
 
 from ginga_platform.skills.dark_fantasy_ultimate_engine.adapter import DarkFantasyAdapter
 from ginga_platform.orchestrator.runner.state_io import StateIO
-from ginga_platform.orchestrator.cli.demo_pipeline import MOCK_HARNESS_MODE, REAL_LLM_DEMO_MODE
+from ginga_platform.orchestrator.cli.demo_pipeline import (
+    MOCK_HARNESS_MODE,
+    REAL_LLM_DEMO_MODE,
+    build_chapter_input_bundle,
+)
 from ginga_platform.orchestrator.cli.longform_policy import DEFAULT_CHAPTER_BATCH_SIZE
 
 
@@ -139,6 +143,12 @@ class ImmersiveRunner:
             for i in range(chapters):
                 ch_no = start_chapter_no + i
                 state_view = self.state_io.state  # dict-of-dict 视图
+                chapter_input_bundle = build_chapter_input_bundle(state_view, word_target, chapter_no=ch_no)
+                self.state_io.apply(
+                    {"workspace.CHAPTER_INPUT_BUNDLE": chapter_input_bundle},
+                    source=f"immersive_runner.chapter_{ch_no}.input_bundle",
+                )
+                state_view = self.state_io.state
 
                 prompt = self.prompt_builder(state_view, word_target, ch_no)
                 chapter_text = self.llm_caller(prompt, llm_endpoint)

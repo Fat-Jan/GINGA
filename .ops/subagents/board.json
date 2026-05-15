@@ -3,7 +3,7 @@
   "project": "ginga-novel-distillation",
   "schema_note": "推荐状态机: queued -> assigned -> running -> validating -> done; 异常: stale/zombie/retry_wait/failed/blocked. done 只能由主 agent 复核后写入。底层派活规范见 .ops/subagents/dispatch-protocol.md。",
   "created_at": "2026-05-12T22:50:00+08:00",
-  "updated_at": "2026-05-16T01:38:03+08:00",
+  "updated_at": "2026-05-16T01:49:41+08:00",
   "tasks": [
     {
       "task_id": "scout-1-base",
@@ -1358,7 +1358,7 @@
     {
       "task_id": "v1.9-5-longform-regression",
       "title": "v1.9-5 Story Truth Template 长篇质量回归",
-      "status": "queued",
+      "status": "done",
       "owner": "main agent",
       "model_contract": {
         "provider": "OpenAI Codex main session plus configured ask-llm endpoint if run is authorized by existing project command",
@@ -1387,13 +1387,20 @@
       "expected_output": "small regression report using v1.7-3 4/5 chapter policy, with review evidence report-only",
       "verification": "longform command/report evidence plus validate_architecture_contracts and final verify_all when feasible",
       "created_at": "2026-05-16T01:14:49+08:00",
-      "updated_at": "2026-05-16T01:14:49+08:00",
+      "updated_at": "2026-05-16T01:49:41+08:00",
       "checkpoint_due_at": null,
-      "attempt_count": 0,
+      "attempt_count": 1,
       "max_attempts": 1,
-      "evidence": [],
+      "evidence": [
+        "dry-run: run_longform_llm_smoke planned 4 chapters with batch_schedule=4",
+        "real smoke: python3 scripts/run_longform_llm_smoke.py --run --chapters 4 --batch-schedule 4 --word-target 1200 completed 4/4 with passed=true",
+        "bug found and fixed: first real run showed immersive path lacked workspace.CHAPTER_INPUT_BUNDLE; added TDD test and wired build_chapter_input_bundle into ImmersiveRunner before each LLM call",
+        "re-run evidence: workspace.CHAPTER_INPUT_BUNDLE exists for chapter 4, truth_source=StateIO, forbidden_sources include .ops/book_analysis/**/.ops/reports/**/.ops/reviews/**/.ops/jury/**/.ops/market_research/**",
+        "review evidence: ginga review exported .ops/reviews/story-truth-v195-regression/v1-9-5-story-truth-review with status=warn and 17 issues",
+        "quality observation: drift_report.status=needs_review; short_chapters=[1,2,3,4] due low-cost 1200-word target, so this does not authorize larger production batches"
+      ],
       "blockers": [],
-      "handoff_note": "If credentials or endpoint fail, record blocked truthfully and do not mark quality regression as passed."
+      "handoff_note": "Completed as small real-LLM observation. Script-level pass proves execution boundary and input-bundle wiring; quality still needs review before any larger batch."
     }
   ]
 }

@@ -270,6 +270,35 @@ class ChapterInputBundleTest(unittest.TestCase):
         self.assertFalse(bundle["reads_report_only_sources"])
         self.assertIn(".ops/book_analysis/**", bundle["forbidden_sources"])
 
+    def test_immersive_runner_writes_chapter_input_bundle(self) -> None:
+        from ginga_platform.orchestrator.cli.demo_pipeline import init_book
+        from ginga_platform.orchestrator.cli.immersive_runner import ImmersiveRunner
+        from ginga_platform.orchestrator.runner.state_io import StateIO
+
+        with tempfile.TemporaryDirectory() as tmp:
+            state_root = Path(tmp) / "state"
+            init_book(
+                "chapter-bundle-immersive",
+                topic="玄幻黑暗",
+                premise="失忆刺客追索微粒真相",
+                word_target=500000,
+                state_root=state_root,
+            )
+
+            def fake_llm(_prompt: str, _endpoint: str) -> str:
+                return "第1章 · 测试\n\n无明握紧短刃，微粒在天堑边缘震动。\n<!-- foreshadow: id=fh-i planted_ch=1 expected_payoff=8 summary=immersive -->"
+
+            runner = ImmersiveRunner("chapter-bundle-immersive", state_root=state_root, llm_caller=fake_llm)
+            result = runner.run_block(chapters=2, word_target=200, execution_mode="mock_harness")
+            self.assertIsNone(result["last_error"])
+            sio = StateIO("chapter-bundle-immersive", state_root=state_root)
+
+        bundle = sio.read("workspace.CHAPTER_INPUT_BUNDLE")
+        self.assertEqual(bundle["chapter_no"], 2)
+        self.assertEqual(bundle["truth_source"], "StateIO")
+        self.assertFalse(bundle["reads_report_only_sources"])
+        self.assertIn(".ops/book_analysis/**", bundle["forbidden_sources"])
+
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
