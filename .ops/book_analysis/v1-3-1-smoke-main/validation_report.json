@@ -1,0 +1,11 @@
+{
+  "validator": "scripts/validate_reference_corpus.py",
+  "checked_at": "2026-05-15T10:28:27.524990+00:00",
+  "run_dir": ".ops/book_analysis/v1-3-1-smoke-main",
+  "manifest_path": ".ops/book_analysis/v1-3-1-smoke-main/source_manifest.json",
+  "passed": true,
+  "error_count": 0,
+  "warning_count": 0,
+  "errors": [],
+  "warnings": []
+}

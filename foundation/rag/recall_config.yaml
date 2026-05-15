@@ -158,6 +158,9 @@ enable_rerank_by_stage:
 # 召回禁忌（来源 ARCHITECTURE §5.3）
 # ---------------------------------------------------------------------------
 # 这些资产即便命中过滤条件也不进 LLM context
+# v1.3-0 污染隔离：拆书与外部采集原文默认不进入 RAG。
+# 未来新增外部源目录时，必须同步加入 recall_forbidden_paths 并由
+# scripts/validate_architecture_contracts.py 防误删。
 
 recall_forbidden_paths:
   - meta/guards/**                 # guard 不进 prompt（防污染下一轮 LLM）
@@ -165,6 +168,9 @@ recall_forbidden_paths:
   - meta/constitution.yaml         # 创作宪法不进上下文
   - foundation/raw_ideas/**        # 灵感暂存区保持原始形态
   - foundation/runtime_state/**    # runtime_state.locked 域防重写
+  - .ops/book_analysis/**          # 拆书/融梗分析产物是污染源 sidecar
+  - .ops/market_research/**        # 市场外部采集原文默认排除；新增外部源也必须进本清单
+  - .ops/external_sources/**       # 其他外部来源原文默认排除，避免污染创作 RAG
 
 recall_forbidden_asset_types:
   - guard

@@ -54,6 +54,69 @@ class ArchitectureContractsTest(unittest.TestCase):
             self.assertTrue(any(".ops/p7-prompts/README.md" in error for error in report["errors"]))
             self.assertTrue(any(".ops/p7-handoff/README.md" in error for error in report["errors"]))
 
+    def test_recall_config_requires_v13_pollution_exclusions(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo_root = Path(tmpdir)
+            config_path = repo_root / "foundation/rag/recall_config.yaml"
+            config_path.parent.mkdir(parents=True)
+            config_path.write_text(
+                "\n".join(
+                    [
+                        "recall_forbidden_paths:",
+                        "  - foundation/raw_ideas/**",
+                        "  - foundation/runtime_state/**",
+                        "  - meta/guards/**",
+                        "  - meta/checkers/**",
+                        "  - meta/constitution.yaml",
+                        "",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            report = {"checks": [], "warnings": [], "errors": []}
+            archlint.validate_recall_config(repo_root, report)
+
+            self.assertEqual(report["checks"][0]["name"], "recall forbidden paths")
+            self.assertEqual(report["checks"][0]["status"], "FAIL")
+            self.assertTrue(any(".ops/book_analysis/**" in error for error in report["errors"]))
+            self.assertTrue(any(".ops/market_research/**" in error for error in report["errors"]))
+            self.assertTrue(any(".ops/external_sources/**" in error for error in report["errors"]))
+
+    def test_book_analysis_boundaries_require_docs_and_manifest_schema(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo_root = Path(tmpdir)
+            (repo_root / ".ops/book_analysis").mkdir(parents=True)
+
+            (repo_root / ".ops/book_analysis/contamination_check_rules.md").write_text(
+                "\n".join(
+                    [
+                        ".ops/book_analysis/<run_id>/",
+                        "pollution_source: true",
+                        "[SOURCE_TROPE]",
+                        "StateIO",
+                        "raw_ideas",
+                        "默认 RAG",
+                        "scan / split / manifest / validator / report",
+                        "Sidecar RAG",
+                        "",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            (repo_root / ".ops/book_analysis/p0_mvp_boundary.md").write_text(
+                ".ops/book_analysis/<run_id>/\npollution_source: true\n[SOURCE_TROPE]\nStateIO\n",
+                encoding="utf-8",
+            )
+
+            report = {"checks": [], "warnings": [], "errors": []}
+            archlint.validate_book_analysis_boundaries(repo_root, report)
+
+            self.assertEqual(report["checks"][0]["name"], "v1.3-0 book_analysis boundaries")
+            self.assertEqual(report["checks"][0]["status"], "FAIL")
+            self.assertTrue(any("p0_mvp_boundary.md" in error for error in report["errors"]))
+            self.assertTrue(any("source_manifest.schema.yaml" in error for error in report["errors"]))
+
     def test_main_writes_json_report(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             json_path = Path(tmpdir) / "arch-report.json"

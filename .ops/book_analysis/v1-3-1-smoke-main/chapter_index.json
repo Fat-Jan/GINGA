@@ -1,0 +1,32 @@
+[
+  {
+    "chapter_id": "ch-0001",
+    "chapter_no": 1,
+    "title": "第1章 雾桥来信",
+    "start_offset": 0,
+    "end_offset": 42,
+    "char_count": 42,
+    "sha256": "75e378cafccdfddc248034b3c5315bf2db61967e5216720a575ce9e04d39c484",
+    "anomalies": []
+  },
+  {
+    "chapter_id": "ch-0002",
+    "chapter_no": 2,
+    "title": "第2章 旧塔灯火",
+    "start_offset": 42,
+    "end_offset": 64,
+    "char_count": 22,
+    "sha256": "ebad53cb2e7dc781da58d5ed398ff083a6864e2bd8b520eb84170d7c78a87457",
+    "anomalies": []
+  },
+  {
+    "chapter_id": "ch-0003",
+    "chapter_no": 3,
+    "title": "第3章 归潮",
+    "start_offset": 64,
+    "end_offset": 86,
+    "char_count": 22,
+    "sha256": "b32109b53c72ec0f7659c4b29164952bc803976334b96c67542ad7d462ce08a3",
+    "anomalies": []
+  }
+]

@@ -1,0 +1,91 @@
+{
+  "schema_version": "0.2.0",
+  "run_id": "v1-3-2-smoke-main",
+  "created_at": "2026-05-15T10:50:18.166567+00:00",
+  "source_run_id": "v1-3-1-smoke-main",
+  "pollution": {
+    "pollution_source": true,
+    "source_marker": "[SOURCE_TROPE]",
+    "default_rag_excluded": true,
+    "prompt_injection_allowed": false,
+    "runtime_state_write_allowed": false,
+    "raw_ideas_write_allowed": false,
+    "default_input_whitelist_allowed": false
+  },
+  "chapter_atoms": [
+    {
+      "atom_id": "atom-ch-0001-001",
+      "atom_type": "chapter_boundary",
+      "source_chapter_id": "ch-0001",
+      "source_chapter_no": 1,
+      "ordinal": 1,
+      "offset_range": {
+        "start": 0,
+        "end": 42
+      },
+      "char_count": 42,
+      "chapter_sha256": "75e378cafccdfddc248034b3c5315bf2db61967e5216720a575ce9e04d39c484",
+      "title_fingerprint": "99072e7cb1098c5e3307c8959e1212347294df46ea0763d87334eb10717a55fe",
+      "pollution": {
+        "pollution_source": true,
+        "source_marker": "[SOURCE_TROPE]",
+        "default_rag_excluded": true,
+        "prompt_injection_allowed": false,
+        "runtime_state_write_allowed": false,
+        "raw_ideas_write_allowed": false,
+        "default_input_whitelist_allowed": false
+      }
+    },
+    {
+      "atom_id": "atom-ch-0002-001",
+      "atom_type": "chapter_boundary",
+      "source_chapter_id": "ch-0002",
+      "source_chapter_no": 2,
+      "ordinal": 1,
+      "offset_range": {
+        "start": 42,
+        "end": 64
+      },
+      "char_count": 22,
+      "chapter_sha256": "ebad53cb2e7dc781da58d5ed398ff083a6864e2bd8b520eb84170d7c78a87457",
+      "title_fingerprint": "ba8a28d0022aa5f758262bfbe2a3c62c9276be2846d7499a70eb3d0f81d825b7",
+      "pollution": {
+        "pollution_source": true,
+        "source_marker": "[SOURCE_TROPE]",
+        "default_rag_excluded": true,
+        "prompt_injection_allowed": false,
+        "runtime_state_write_allowed": false,
+        "raw_ideas_write_allowed": false,
+        "default_input_whitelist_allowed": false
+      }
+    },
+    {
+      "atom_id": "atom-ch-0003-001",
+      "atom_type": "chapter_boundary",
+      "source_chapter_id": "ch-0003",
+      "source_chapter_no": 3,
+      "ordinal": 1,
+      "offset_range": {
+        "start": 64,
+        "end": 86
+      },
+      "char_count": 22,
+      "chapter_sha256": "b32109b53c72ec0f7659c4b29164952bc803976334b96c67542ad7d462ce08a3",
+      "title_fingerprint": "f371668c8e65b17eca1c13561985335189491e99b7dda92f8321b52fa2cd3e11",
+      "pollution": {
+        "pollution_source": true,
+        "source_marker": "[SOURCE_TROPE]",
+        "default_rag_excluded": true,
+        "prompt_injection_allowed": false,
+        "runtime_state_write_allowed": false,
+        "raw_ideas_write_allowed": false,
+        "default_input_whitelist_allowed": false
+      }
+    }
+  ],
+  "quality_gates": {
+    "status": "passed",
+    "errors": [],
+    "warnings": []
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": "0.2.0",
+  "run_id": "v1-3-2-smoke-main",
+  "created_at": "2026-05-15T10:50:18.166567+00:00",
+  "source_run_id": "v1-3-1-smoke-main",
+  "source_run_root": "/Users/arm/Desktop/ginga/.ops/book_analysis/v1-3-1-smoke-main",
+  "output_root": "/Users/arm/Desktop/ginga/.ops/book_analysis/v1-3-2-smoke-main",
+  "inputs": {
+    "chapter_index_path": "/Users/arm/Desktop/ginga/.ops/book_analysis/v1-3-1-smoke-main/chapter_index.json",
+    "source_manifest_path": "/Users/arm/Desktop/ginga/.ops/book_analysis/v1-3-1-smoke-main/source_manifest.json"
+  },
+  "outputs": {
+    "chapter_atoms_path": "/Users/arm/Desktop/ginga/.ops/book_analysis/v1-3-2-smoke-main/chapter_atoms.json",
+    "quality_gates_path": "/Users/arm/Desktop/ginga/.ops/book_analysis/v1-3-2-smoke-main/quality_gates.json",
+    "report_path": "/Users/arm/Desktop/ginga/.ops/book_analysis/v1-3-2-smoke-main/chapter_atom_report.md"
+  },
+  "pollution": {
+    "pollution_source": true,
+    "source_marker": "[SOURCE_TROPE]",
+    "default_rag_excluded": true,
+    "prompt_injection_allowed": false,
+    "runtime_state_write_allowed": false,
+    "raw_ideas_write_allowed": false,
+    "default_input_whitelist_allowed": false
+  }
+}

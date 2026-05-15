@@ -5,7 +5,7 @@
 - 定位：Ginga 是以 workflow DSL + skill adapters + StateIO 为真实运行主线的小说创作平台底座，STATUS.md 是当前状态真值。
 - 入口：先看 AGENTS.md、STATUS.md、notepad.md、ARCHITECTURE.md。
 - 验证：常用 python3 scripts/verify_all.py、python3 scripts/run_agent_harness.py、python3 scripts/evaluate_rag_recall.py。
-- 坑点：P2-7C 已收口但仍只证明单章 smoke 边界，不证明长篇生产质量；raw_ideas、book_analysis 与市场原文不得默认进入 StateIO 或 RAG。
+- 坑点：P2-7C 已收口但仍只证明单章 smoke 边界；v1.3-2 Chapter Atom + Quality Gates 已收口但只证明结构性 `chapter_boundary` atom 可检查、可拒绝、可报告，book_analysis 与市场原文仍不得默认进入 StateIO、RAG、prompt、raw_ideas、Foundation assets/schema 或 explorer/review 白名单。
 
 ## 项目定位
 
@@ -88,7 +88,7 @@ _原料/
 | 3 | Ark Jury Court 4 角法庭 | ✅ 完成 | `.ops/jury/jury-{1-4}-*.md`（4 票 revise） |
 | 4 | 综合判决与交付 | ✅ 完成 | `ARCHITECTURE.md` + `ROADMAP.md` |
 
-**下一步**：P2-7C provider 质量与真实 demo 已收口；真实 LLM smoke 报告已有 `context_snapshot`、`gap_report` 与 residual risk，但仍只证明单章边界。下一步主线可转 v1.3 Evidence Pipeline 的污染隔离文档与 P0 MVP（scan / split / manifest / validator / report）；RAG 残余 `candidate_k` / `asset_type` blocker 仅作为后续小修观察项；当前完成度以 `STATUS.md` 为准。
+**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 拆书融梗污染隔离底座、v1.3-1 Reference Corpus P0 MVP 与 v1.3-2 Chapter Atom + Quality Gates 已完成。v1.3-2 新增结构性 atom / quality gates / validator / report，并用 `test_book_analysis_corpus`、`.ops/book_analysis/v1-3-2-smoke-main` 和 `verify_all.py` 验收；下一步若继续 v1.3，应从 v1.3-3 Trope Recipe Candidate 开始。
 
 ## 验证
 
@@ -103,6 +103,7 @@ _原料/
 - **规划不能写混 STATUS**：`STATUS.md` 是当前真值，只写已验证完成状态；oh-story 参考路线这类 planned 内容主要进 `ROADMAP.md` / `notepad.md`。
 - **oh-story 要分层吸收**：hooks 有生命周期信号价值，references 有操作手册化价值，中文书目目录有人类可读价值；Ginga 要把它们改造成显式 context/gap report、Foundation asset 组织范式、BookView/import-export projection，而不是原样复制为隐式机制或主存储。
 - **拆书 / 市场 sidecar 是污染源域**：`.ops/book_analysis/`、外部榜单原文、市场采集原始数据默认不得进入 RAG 或 explorer/review 输入白名单；如要 promote 必须人工审核 + 污染检查。
+- **v1.3-0 已有底线文件**：污染检查看 `.ops/book_analysis/contamination_check_rules.md`，P0 边界看 `.ops/book_analysis/p0_mvp_boundary.md`，manifest 草案看 `.ops/book_analysis/schema/source_manifest.schema.yaml`；默认 `recall_config.yaml` 只维护排除清单，不把污染源加入 `recall_sources`。
 - **BookView 是 projection**：未来若做 `.ops/book_views/<book_id>/<run_id>/`，必须显著标注真值仍是 StateIO，不得建立第二状态真值。
 - **用户已有 skill 必须先识别**：思路 2/3 是完整 skill，蒸馏产物必须做差异分析（哪些已有/哪些是新增/哪些可增强）。
 - **1002 md 不能塞主上下文**：必须用 Scout 子代理隔离扫描，Scout 把详细报告 Write 到文件，只回主 agent 摘要。

@@ -1,0 +1,97 @@
+{
+  "run_id": "v1-3-1-smoke-main",
+  "schema_version": "0.1.0",
+  "created_at": "2026-05-15T10:28:26.984674+00:00",
+  "source": {
+    "path": "/Users/arm/Desktop/ginga/.ops/book_analysis/fixtures/reference_corpus_p0_smoke.txt",
+    "sha256": "360bfb04cf7715f1c97d70a08dc4177a6794d949174739d11aa3a1e18c2116d3",
+    "encoding": "utf-8",
+    "title": "reference-corpus-p0-smoke",
+    "input_size_bytes": 228,
+    "source_kind": "local_fixture",
+    "original_mtime": "2026-05-15T10:28:26.567338+00:00"
+  },
+  "output": {
+    "root": "/Users/arm/Desktop/ginga/.ops/book_analysis/v1-3-1-smoke-main",
+    "manifest_path": "/Users/arm/Desktop/ginga/.ops/book_analysis/v1-3-1-smoke-main/source_manifest.json",
+    "chapter_index_path": "/Users/arm/Desktop/ginga/.ops/book_analysis/v1-3-1-smoke-main/chapter_index.json",
+    "report_path": "/Users/arm/Desktop/ginga/.ops/book_analysis/v1-3-1-smoke-main/scan_report.md",
+    "private_evidence_path": null
+  },
+  "chapters": {
+    "count": 3,
+    "numbering_ok": true,
+    "anomalies": [],
+    "chapter_index_path": "/Users/arm/Desktop/ginga/.ops/book_analysis/v1-3-1-smoke-main/chapter_index.json",
+    "heading_pattern": "^[ \\t　]*(?P<title>第(?P<num>[0-9零〇一二两三四五六七八九十百千万]+)[章节卷回部集][^\\n\\r]*|(?P<special>序章|楔子|番外[^\\n\\r]{0,80}|后记|尾声|终章))[ \\t　]*$",
+    "index_fields": [
+      "chapter_id",
+      "chapter_no",
+      "title",
+      "start_offset",
+      "end_offset",
+      "char_count",
+      "sha256",
+      "anomalies"
+    ]
+  },
+  "resources": {
+    "input_size_bytes": 228,
+    "chapter_count": 3,
+    "elapsed_seconds": 0.0008312990103149787,
+    "excerpt_chars_saved": 0,
+    "private_cache_bytes": 0,
+    "degraded": false,
+    "stop_reason": "completed"
+  },
+  "keyword_sources": {
+    "active": false,
+    "allowed_source_types": [
+      "explicit_config",
+      "user_input",
+      "approved_pattern_seed"
+    ],
+    "entries": [],
+    "prohibited_sources": [
+      "hardcoded",
+      "unaudited_reference_text",
+      "proper_noun_auto_extract"
+    ]
+  },
+  "pollution": {
+    "pollution_source": true,
+    "source_marker": "[SOURCE_TROPE]",
+    "default_rag_excluded": true,
+    "prompt_injection_allowed": false,
+    "runtime_state_write_allowed": false,
+    "raw_ideas_write_allowed": false,
+    "default_input_whitelist_allowed": false
+  },
+  "validation": {
+    "validator": "ginga_platform.book_analysis.validation.validate_reference_corpus",
+    "status": "not_run",
+    "errors": [],
+    "warnings": []
+  },
+  "limits": {
+    "defaults": {
+      "max_input_size_bytes": 10485760,
+      "max_chapters": 500,
+      "max_elapsed_seconds": 120,
+      "max_chapter_title_chars": 120,
+      "max_excerpt_chars": 0,
+      "private_cache_enabled": false,
+      "max_private_cache_bytes": 0
+    },
+    "configured": {
+      "max_input_size_bytes": 10485760,
+      "max_chapters": 500,
+      "max_elapsed_seconds": 120,
+      "max_chapter_title_chars": 120,
+      "max_excerpt_chars": 0,
+      "private_cache_enabled": false,
+      "max_private_cache_bytes": 0
+    },
+    "override_source": "default"
+  }
+}

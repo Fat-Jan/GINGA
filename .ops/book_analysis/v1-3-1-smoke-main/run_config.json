@@ -1,0 +1,20 @@
+{
+  "run_id": "v1-3-1-smoke-main",
+  "source_path": "/Users/arm/Desktop/ginga/.ops/book_analysis/fixtures/reference_corpus_p0_smoke.txt",
+  "keyword_sources": {
+    "active": false,
+    "allowed_source_types": [
+      "explicit_config",
+      "user_input",
+      "approved_pattern_seed"
+    ],
+    "entries": []
+  },
+  "p0_scope": [
+    "scan",
+    "split",
+    "manifest",
+    "validator",
+    "report"
+  ]
+}

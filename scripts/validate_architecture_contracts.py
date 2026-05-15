@@ -60,13 +60,46 @@ REQUIRED_CONTRACT_FIELDS = {
     "adapter",
 }
 REQUIRED_RECALL_FORBIDDEN_PATHS = {
+    ".ops/book_analysis/**",
+    ".ops/external_sources/**",
+    ".ops/market_research/**",
     "foundation/raw_ideas/**",
     "meta/checkers/**",
+}
+BOOK_ANALYSIS_BOUNDARY_DOCS = (
+    Path(".ops/book_analysis/contamination_check_rules.md"),
+    Path(".ops/book_analysis/p0_mvp_boundary.md"),
+)
+BOOK_ANALYSIS_MANIFEST_SCHEMA_PATH = Path(".ops/book_analysis/schema/source_manifest.schema.yaml")
+REQUIRED_BOOK_ANALYSIS_TEXT_MARKERS = (
+    ".ops/book_analysis/<run_id>/",
+    "pollution_source: true",
+    "[SOURCE_TROPE]",
+    "StateIO",
+    "raw_ideas",
+    "默认 RAG",
+    "scan / split / manifest / validator / report",
+    "Sidecar RAG",
+)
+REQUIRED_SOURCE_MANIFEST_TOP_FIELDS = {
+    "run_id",
+    "schema_version",
+    "created_at",
+    "source",
+    "output",
+    "chapters",
+    "resources",
+    "keyword_sources",
+    "pollution",
+    "validation",
+    "limits",
 }
 REQUIRED_STATUS_SNIPPETS = (
     "P2-7",
     "Platform runner 收敛",
     "RAG 残余观察",
+    "v1.3-0",
+    "v1.3-1",
 )
 STALE_NEXT_STEP_PHRASES = (
     "下一步主线转入 agent harness 补强",
@@ -339,6 +372,115 @@ def validate_recall_config(repo_root: Path, report: dict[str, Any]) -> None:
     add_check(report, "recall forbidden paths", not missing, f"contains {len(forbidden_paths)} path(s)")
 
 
+def validate_book_analysis_boundaries(repo_root: Path, report: dict[str, Any]) -> None:
+    """Ensure v1.3-0 pollution isolation docs and manifest schema stay in place."""
+    error_count_before = len(report["errors"])
+
+    for rel_path in BOOK_ANALYSIS_BOUNDARY_DOCS:
+        path = repo_root / rel_path
+        try:
+            text = path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            add_error(report, rel_path, "v1.3-0 boundary", "required book_analysis boundary doc missing")
+            continue
+        missing = [marker for marker in REQUIRED_BOOK_ANALYSIS_TEXT_MARKERS if marker not in text]
+        if missing:
+            add_error(
+                report,
+                rel_path,
+                "v1.3-0 boundary",
+                f"missing required marker(s): {missing}",
+            )
+
+    schema_path = repo_root / BOOK_ANALYSIS_MANIFEST_SCHEMA_PATH
+    try:
+        schema = load_yaml(schema_path)
+    except FileNotFoundError:
+        add_error(
+            report,
+            BOOK_ANALYSIS_MANIFEST_SCHEMA_PATH,
+            "v1.3-0 manifest schema",
+            "required source manifest schema missing",
+        )
+        schema = None
+    except Exception as exc:  # noqa: BLE001
+        add_error(
+            report,
+            BOOK_ANALYSIS_MANIFEST_SCHEMA_PATH,
+            "v1.3-0 manifest schema",
+            f"cannot load schema YAML: {exc}",
+        )
+        schema = None
+
+    if schema is not None:
+        if not isinstance(schema, dict):
+            add_error(
+                report,
+                BOOK_ANALYSIS_MANIFEST_SCHEMA_PATH,
+                "v1.3-0 manifest schema",
+                "schema root must be a mapping",
+            )
+        else:
+            required_fields = schema.get("required_fields")
+            if not isinstance(required_fields, list):
+                add_error(
+                    report,
+                    BOOK_ANALYSIS_MANIFEST_SCHEMA_PATH,
+                    "required_fields",
+                    "must be a list",
+                )
+            else:
+                missing = sorted(REQUIRED_SOURCE_MANIFEST_TOP_FIELDS - set(required_fields))
+                if missing:
+                    add_error(
+                        report,
+                        BOOK_ANALYSIS_MANIFEST_SCHEMA_PATH,
+                        "required_fields",
+                        f"missing required source manifest field(s): {missing}",
+                    )
+
+            fields = schema.get("fields")
+            if not isinstance(fields, dict):
+                add_error(
+                    report,
+                    BOOK_ANALYSIS_MANIFEST_SCHEMA_PATH,
+                    "fields",
+                    "must be a mapping",
+                )
+            else:
+                pollution = fields.get("pollution")
+                pollution_fields = pollution.get("fields") if isinstance(pollution, dict) else None
+                if not isinstance(pollution_fields, dict):
+                    add_error(
+                        report,
+                        BOOK_ANALYSIS_MANIFEST_SCHEMA_PATH,
+                        "pollution",
+                        "must define pollution.fields",
+                    )
+                else:
+                    expected_consts = {
+                        "pollution_source": True,
+                        "source_marker": "[SOURCE_TROPE]",
+                        "default_rag_excluded": True,
+                    }
+                    for field, expected in expected_consts.items():
+                        spec = pollution_fields.get(field)
+                        if not isinstance(spec, dict) or spec.get("const") != expected:
+                            add_error(
+                                report,
+                                BOOK_ANALYSIS_MANIFEST_SCHEMA_PATH,
+                                f"pollution.{field}",
+                                f"must const to {expected!r}",
+                            )
+
+    add_check(
+        report,
+        "v1.3-0 book_analysis boundaries",
+        len(report["errors"]) == error_count_before,
+        "pollution docs and source manifest schema are present and constrained",
+    )
+
+
 def validate_state_write_boundaries(repo_root: Path, report: dict[str, Any]) -> None:
     """Ensure runtime_state YAML writes stay behind StateIO or locked patch flow."""
     suspicious: list[str] = []
@@ -485,6 +627,7 @@ def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     validate_workflow(root, report)
     validate_skill_contracts(root, report)
     validate_recall_config(root, report)
+    validate_book_analysis_boundaries(root, report)
     validate_state_write_boundaries(root, report)
     validate_current_planning_hygiene(root, report)
     validate_platform_runner_convergence(root, report)

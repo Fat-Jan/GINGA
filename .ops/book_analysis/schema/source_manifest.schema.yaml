@@ -1,0 +1,464 @@
+# .ops/book_analysis/schema/source_manifest.schema.yaml
+# v1.3-0 source manifest 实验 schema 草案
+#
+# 用途：描述 .ops/book_analysis/<run_id>/source_manifest.yaml 或 .json 的字段规范。
+# 范围：P0 只覆盖 scan / split / manifest / validator / report。
+# 注意：这是字段规范，不引入新依赖，不声明为 Foundation schema。
+
+$schema: ginga/ops/book_analysis/v0
+asset_type: source_manifest_schema
+schema_version: "0.1.0"
+description: 拆书融梗 Evidence Pipeline P0 来源 manifest 字段规范。
+
+required_fields:
+  - run_id
+  - schema_version
+  - created_at
+  - source
+  - output
+  - chapters
+  - resources
+  - keyword_sources
+  - pollution
+  - validation
+  - limits
+
+fields:
+  run_id:
+    type: string
+    required: true
+    description: 本轮扫描运行 ID，必须与 .ops/book_analysis/<run_id>/ 目录名一致。
+    example: book-analysis-20260515-001
+
+  schema_version:
+    type: string
+    required: true
+    description: manifest schema 版本；P0 草案建议固定为 0.1.0。
+    example: "0.1.0"
+
+  created_at:
+    type: datetime
+    required: true
+    description: 本轮 manifest 创建时间，使用 ISO 8601。
+    example: "2026-05-15T15:00:00+08:00"
+
+  source:
+    type: object
+    required: true
+    description: 输入参考文本的来源元数据；只记录来源，不赋予创作可用性。
+    required_fields:
+      - path
+      - sha256
+      - encoding
+      - title
+      - input_size_bytes
+    fields:
+      path:
+        type: string
+        required: true
+        description: 输入源文件路径；validator 必须确认源文件未被覆盖。
+        example: /abs/path/reference_novel.txt
+      sha256:
+        type: string
+        required: true
+        pattern: "^[0-9a-f]{64}$"
+        description: 输入源文件 sha256。
+      encoding:
+        type: string
+        required: true
+        description: 实际读取编码；无法识别时本轮应为 error。
+        example: utf-8
+      title:
+        type: string
+        required: true
+        description: 用户提供或从文件名归一化得到的参考作品标题；不得用于创作 prompt。
+        example: reference-novel
+      input_size_bytes:
+        type: integer
+        required: true
+        minimum: 0
+        description: 输入文件字节数。
+      source_kind:
+        type: enum
+        required: false
+        enum: [user_file, local_fixture, external_capture, unknown]
+        description: 来源类型；外部采集原文默认仍为污染源。
+      original_mtime:
+        type: datetime
+        required: false
+        description: 源文件修改时间，仅用于审计。
+
+  output:
+    type: object
+    required: true
+    description: 本轮输出路径；所有路径必须位于 .ops/book_analysis/<run_id>/。
+    required_fields:
+      - root
+      - manifest_path
+      - chapter_index_path
+      - report_path
+    fields:
+      root:
+        type: string
+        required: true
+        description: .ops/book_analysis/<run_id>/。
+        example: .ops/book_analysis/book-analysis-20260515-001/
+      manifest_path:
+        type: string
+        required: true
+        description: source_manifest.yaml 或 source_manifest.json。
+      chapter_index_path:
+        type: string
+        required: true
+        description: 章节索引文件路径，通常为 chapter_index.json。
+      report_path:
+        type: string
+        required: true
+        description: 扫描 / 切分 / 验证报告路径，不包含内容分析。
+      validation_report_path:
+        type: string
+        required: false
+        description: validator 结构化报告路径。
+      private_evidence_path:
+        type: "null"
+        required: false
+        description: P0 禁止创建私有原文 cache；如未来启用，必须另行提升 schema 版本。
+
+  chapters:
+    type: object
+    required: true
+    description: 章节切分摘要；P0 只记录结构，不记录情节分析。
+    required_fields:
+      - count
+      - numbering_ok
+      - anomalies
+      - chapter_index_path
+    fields:
+      count:
+        type: integer
+        required: true
+        minimum: 0
+        description: 识别出的章节数量；无章节标题时不得生成假章节。
+      numbering_ok:
+        type: boolean
+        required: true
+        description: 章节编号是否连续且符合预期。
+      anomalies:
+        type: array
+        required: true
+        item:
+          type: object
+          fields:
+            code:
+              type: enum
+              enum:
+                - duplicate_title
+                - missing_number
+                - out_of_order
+                - mixed_numbering
+                - empty_title
+                - long_title
+                - no_chapter_heading
+                - suspicious_preface
+                - suspicious_extra
+            severity:
+              type: enum
+              enum: [warning, error]
+            message:
+              type: string
+            chapter_ref:
+              type: string
+        description: 章节异常列表；warning / error 必须可追踪。
+      chapter_index_path:
+        type: string
+        required: true
+        description: 章节索引文件路径，必须与 output.chapter_index_path 一致。
+      heading_pattern:
+        type: string
+        required: false
+        description: 实际使用的章节标题识别模式。
+      index_fields:
+        type: array
+        required: false
+        item:
+          type: string
+        description: chapter_index.json 建议字段，如 chapter_id、title、start_offset、end_offset、sha256。
+
+  resources:
+    type: object
+    required: true
+    description: 本轮实际资源使用记录。
+    required_fields:
+      - input_size_bytes
+      - chapter_count
+      - elapsed_seconds
+      - excerpt_chars_saved
+      - private_cache_bytes
+    fields:
+      input_size_bytes:
+        type: integer
+        required: true
+        minimum: 0
+        description: 实际输入大小，应等于 source.input_size_bytes。
+      chapter_count:
+        type: integer
+        required: true
+        minimum: 0
+        description: 实际识别章节数，应等于 chapters.count。
+      elapsed_seconds:
+        type: number
+        required: true
+        minimum: 0
+        description: 本轮处理耗时。
+      excerpt_chars_saved:
+        type: integer
+        required: true
+        enum: [0]
+        description: P0 必须为 0，不保存原文摘录。
+      private_cache_bytes:
+        type: integer
+        required: true
+        enum: [0]
+        description: P0 必须为 0，不创建 .private_evidence/。
+      degraded:
+        type: boolean
+        required: false
+        description: 是否发生降级，例如只生成失败报告。
+      stop_reason:
+        type: enum
+        required: false
+        enum:
+          - completed
+          - input_too_large
+          - too_many_chapters
+          - timeout
+          - encoding_error
+          - no_chapter_heading
+          - output_boundary_violation
+          - validation_error
+        description: 终止原因。
+
+  keyword_sources:
+    type: object
+    required: true
+    description: evidence 关键词来源记录；P0 不抽 evidence，也必须保留此结构。
+    required_fields:
+      - active
+      - allowed_source_types
+      - entries
+    fields:
+      active:
+        type: boolean
+        required: true
+        description: P0 应为 false；Phase 2 evidence run 才能为 true。
+        example: false
+      allowed_source_types:
+        type: array
+        required: true
+        item:
+          type: enum
+          enum: [explicit_config, user_input, approved_pattern_seed]
+        description: 允许的关键词来源类型。
+      entries:
+        type: array
+        required: true
+        item:
+          type: object
+          required_fields:
+            - source_type
+            - review_status
+            - created_at
+          fields:
+            source_type:
+              type: enum
+              enum: [explicit_config, user_input, approved_pattern_seed]
+            value:
+              type: string
+              description: 关键词明文；如包含敏感或污染风险，可改存 value_hash。
+            value_hash:
+              type: string
+              pattern: "^[0-9a-f]{64}$"
+            review_status:
+              type: enum
+              enum: [not_required, pending, approved, rejected]
+            created_by:
+              type: string
+            created_at:
+              type: datetime
+            notes:
+              type: string
+        description: P0 可为空数组；Phase 2 每个关键词都必须有来源和审核状态。
+      prohibited_sources:
+        type: array
+        required: false
+        item:
+          type: string
+        description: 建议记录禁止来源，如 hardcoded、unaudited_reference_text、proper_noun_auto_extract。
+
+  pollution:
+    type: object
+    required: true
+    description: 污染源域标记；validator 必须强校验。
+    required_fields:
+      - pollution_source
+      - source_marker
+      - default_rag_excluded
+    fields:
+      pollution_source:
+        type: boolean
+        required: true
+        const: true
+        description: 必须为 true。
+      source_marker:
+        type: string
+        required: true
+        const: "[SOURCE_TROPE]"
+        description: 源自参考作品的文本类文件头标记。
+      default_rag_excluded:
+        type: boolean
+        required: true
+        const: true
+        description: 必须默认排除在 RAG 之外。
+      prompt_injection_allowed:
+        type: boolean
+        required: false
+        const: false
+        description: P0 必须为 false，不允许注入 prompt。
+      runtime_state_write_allowed:
+        type: boolean
+        required: false
+        const: false
+        description: P0 必须为 false，不允许写 runtime_state。
+      raw_ideas_write_allowed:
+        type: boolean
+        required: false
+        const: false
+        description: P0 必须为 false，不允许写 raw_ideas。
+      default_input_whitelist_allowed:
+        type: boolean
+        required: false
+        const: false
+        description: P0 必须为 false，不能进入 explorer / review / provider 默认输入白名单。
+
+  validation:
+    type: object
+    required: true
+    description: validator 结果摘要。
+    required_fields:
+      - validator
+      - status
+      - errors
+      - warnings
+    fields:
+      validator:
+        type: string
+        required: true
+        description: validator 名称或脚本路径。
+        example: scripts/validate_reference_corpus.py
+      status:
+        type: enum
+        required: true
+        enum: [not_run, passed, warning, failed, completed_with_errors]
+        description: 本轮验证状态；有 error 时不得为 passed。
+      errors:
+        type: array
+        required: true
+        item:
+          type: object
+          fields:
+            code:
+              type: string
+            message:
+              type: string
+            path:
+              type: string
+        description: 阻断性错误列表。
+      warnings:
+        type: array
+        required: true
+        item:
+          type: object
+          fields:
+            code:
+              type: string
+            message:
+              type: string
+            path:
+              type: string
+        description: 非阻断诊断列表。
+      command:
+        type: string
+        required: false
+        description: 实际执行的验证命令。
+        example: python3 scripts/validate_reference_corpus.py .ops/book_analysis/book-analysis-20260515-001
+      checked_at:
+        type: datetime
+        required: false
+        description: 最近一次验证时间。
+
+  limits:
+    type: object
+    required: true
+    description: P0 资源上限和可配置字段。
+    required_fields:
+      - defaults
+      - configured
+    fields:
+      defaults:
+        type: object
+        required: true
+        fields:
+          max_input_size_bytes:
+            type: integer
+            const: 10485760
+            description: 默认 10 MiB。
+          max_chapters:
+            type: integer
+            const: 500
+          max_elapsed_seconds:
+            type: integer
+            const: 120
+          max_chapter_title_chars:
+            type: integer
+            const: 120
+          max_excerpt_chars:
+            type: integer
+            const: 0
+            description: P0 不保存原文摘录。
+          private_cache_enabled:
+            type: boolean
+            const: false
+          max_private_cache_bytes:
+            type: integer
+            const: 0
+      configured:
+        type: object
+        required: true
+        description: 本轮实际配置值；未覆盖时应等于 defaults。
+        fields:
+          max_input_size_bytes:
+            type: integer
+            minimum: 1
+          max_chapters:
+            type: integer
+            minimum: 1
+          max_elapsed_seconds:
+            type: integer
+            minimum: 1
+          max_chapter_title_chars:
+            type: integer
+            minimum: 1
+          max_excerpt_chars:
+            type: integer
+            enum: [0]
+          private_cache_enabled:
+            type: boolean
+            const: false
+          max_private_cache_bytes:
+            type: integer
+            enum: [0]
+      override_source:
+        type: enum
+        required: false
+        enum: [default, explicit_config, cli_arg]
+        description: 配置来源；覆盖默认值时必须可审计。

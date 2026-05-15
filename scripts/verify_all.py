@@ -28,6 +28,8 @@ class CommandResult:
 
 BASELINE_COMMANDS: list[list[str]] = [
     ["python", "-m", "unittest", "discover", "-s", "ginga_platform", "-p", "test_*.py"],
+    ["python3", "scripts/validate_reference_corpus.py", ".ops/book_analysis/v1-3-1-smoke-main"],
+    ["python3", "scripts/validate_chapter_atoms.py", ".ops/book_analysis/v1-3-2-smoke-main"],
     ["python3", "scripts/validate_architecture_contracts.py"],
     ["python3", "scripts/validate_prompt_frontmatter.py", "--strict"],
     ["python3", "scripts/report_prompt_quality.py", "foundation/assets/prompts"],
