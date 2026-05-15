@@ -25,7 +25,8 @@ Ginga 正式真实 LLM 长篇生成采用 5 章批次；7 章为生产上限；1
 ## 后续缺口
 
 - v1.7-1 已把批后状态快照、回环检测、低频题材锚点检测和异常章 reviewer 队列接入 `ginga review` warn-only sidecar。
-- 剩余缺口是不自动修文；异常章 reviewer 目前只生成待审队列，不调用外部模型、不改正文。
+- v1.7-2 已把异常章 reviewer queue 先交外部模型评审，再生成供人工终审的 brief。
+- 剩余缺口是不自动修文；异常章 reviewer 已有外部意见与人工 brief，但仍不调用 LLM 改正文、不写 `runtime_state`。
 - 10 章压力测试结果保留为风险证据，不作为推荐生产路径。
 
 ## v1.7-1 正式 gate
@@ -45,6 +46,22 @@ Ginga 正式真实 LLM 长篇生成采用 5 章批次；7 章为生产上限；1
 
 v1.7-0 真实 30 章样本的 v1.7-1 gate 报告：`.ops/reviews/longform-jiujiu-combo-smoke/v1-7-1-longform-gate/`。
 
+## v1.7-2 Reviewer Queue Review
+
+已按“先外部模型评审，再人工终审”的流程处理 v1.7-1 `reviewer_queue`：
+
+- 完整 queue 评审包：`.ops/jury/longform_reviewer_queue_2026-05-15/reviewer_queue_packet.md`
+- 有效外部意见：`.ops/jury/longform_reviewer_queue_2026-05-15/ioll-grok__reviewer_queue_packet.md`
+- 人工终审 brief：`.ops/jury/longform_reviewer_queue_2026-05-15/human_review_brief.md`
+
+外部意见确认多章开头重复“痛觉 / 睁眼 / 灰白视野 / 天堑边缘 / 体内微粒 / 短刃”模板，P0/P1 优先聚焦第 19、24、25 章。该意见建议人工考虑把生产批量从“推荐 5 / 上限 7”临时收紧为“推荐 3-4 / 上限 5”，直到反回环 prompt、低频锚点覆盖和伏笔标记硬 gate 验证通过。
+
+模型配置备注：
+
+- 内容生成主端点仍是 `久久` / `qwen3.6-max-preview-nothinking`。
+- 已新增评审别名 `jiujiu-jury` / `qwen3.6-max-preview-thinking`，但 2026-05-15 对 132KB 完整包、22KB 核心包、5.5KB P0 包均返回 HTTP 504；只保留为短输入手动 juror，不进入默认 `ask-jury-safe` 主力。
+- `wzw` 本轮 wrapper 标 OK 但输出文件为空，不纳入有效共识。
+
 ## 证据文件
 
 - `.ops/validation/longform_jiujiu_smoke.json`
@@ -54,3 +71,6 @@ v1.7-0 真实 30 章样本的 v1.7-1 gate 报告：`.ops/reviews/longform-jiujiu
 - `.ops/jury/longform_jiujiu_30_review_2026-05-15/ioll-grok__longform_jiujiu_30_review_packet.md`
 - `.ops/jury/longform_jiujiu_30_review_2026-05-15/ioll-mix__longform_jiujiu_30_review_packet.md`
 - `.ops/reviews/longform-jiujiu-combo-smoke/v1-7-1-longform-gate/review_report.json`
+- `.ops/jury/longform_reviewer_queue_2026-05-15/reviewer_queue_packet.md`
+- `.ops/jury/longform_reviewer_queue_2026-05-15/ioll-grok__reviewer_queue_packet.md`
+- `.ops/jury/longform_reviewer_queue_2026-05-15/human_review_brief.md`
