@@ -5,7 +5,7 @@
 - 定位：Ginga 是以 workflow DSL + skill adapters + StateIO 为真实运行主线的小说创作平台底座，STATUS.md 是当前状态真值。
 - 入口：先看 AGENTS.md、STATUS.md、notepad.md、ARCHITECTURE.md。
 - 验证：常用 python3 scripts/verify_all.py、python3 scripts/run_agent_harness.py、python3 scripts/evaluate_rag_recall.py。
-- 坑点：P2-7C 已收口但仍只证明单章 smoke 边界；v1.7-0 已证明 `久久` 30 章真实 smoke，但只落地批量策略，不等于完整长篇生产自动质检完成；v1.3-5 Reference Sidecar RAG 只证明显式 opt-in 可召回 approved promoted methodology 资产，不证明它会自动进入创作 workflow、默认 RAG 或 prompt 注入；v1.5 Review / deslop 只写 `.ops/reviews/<book_id>/<run_id>/` warn-only sidecar，不自动改正文、不写 StateIO、不调用 LLM、rubric 不进入创作 prompt；v1.6 Market Research Sidecar 只在显式授权下读 offline fixture，剥离 raw_text，默认不进 RAG；book_analysis 与市场原文仍不得默认进入 StateIO、RAG、prompt、raw_ideas、Foundation assets/schema 或 explorer/review 白名单。
+- 坑点：P2-7C 已收口但仍只证明单章 smoke 边界；v1.7-0 已证明 `久久` 30 章真实 smoke 并落地批量策略；v1.7-1 已把批后状态快照、回环检测、低频题材锚点检测和异常章 reviewer queue 接入 `ginga review` warn-only sidecar，但仍不自动改正文、不调用 LLM；v1.3-5 Reference Sidecar RAG 只证明显式 opt-in 可召回 approved promoted methodology 资产，不证明它会自动进入创作 workflow、默认 RAG 或 prompt 注入；v1.5 Review / deslop 只写 `.ops/reviews/<book_id>/<run_id>/` warn-only sidecar，不自动改正文、不写 StateIO、不调用 LLM、rubric 不进入创作 prompt；v1.6 Market Research Sidecar 只在显式授权下读 offline fixture，剥离 raw_text，默认不进 RAG；book_analysis 与市场原文仍不得默认进入 StateIO、RAG、prompt、raw_ideas、Foundation assets/schema 或 explorer/review 白名单。
 - 模型：内容生成默认走 ask-llm 端点 `久久`（qwen3.6-max-preview-nothinking，key 在 macOS Keychain）；每章默认 4000 字；正式真实 LLM 批量生成推荐 5 章、上限 7 章，10 章及以上只作压力测试。v1.7-0 30 章 smoke 首个 drift 出现在 10 连发第 19 章。
 
 ## 项目定位
@@ -89,7 +89,7 @@ _原料/
 | 3 | Ark Jury Court 4 角法庭 | ✅ 完成 | `.ops/jury/jury-{1-4}-*.md`（4 票 revise） |
 | 4 | 综合判决与交付 | ✅ 完成 | `ARCHITECTURE.md` + `ROADMAP.md` |
 
-**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 到 v1.3-5 拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar 与 v1.7-0 Longform Production Policy 已完成。RAG 残余只观察；真实长篇生产化下一步是批后状态快照、回环检测、低频题材锚点检测和异常章 reviewer gate。
+**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 到 v1.3-5 拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy 与 v1.7-1 Longform Quality Gate 已完成。RAG 残余只观察；真实长篇生产化下一步是按 reviewer queue 做人工/外部模型复核，仍不自动改正文。
 
 ## 验证
 

@@ -24,9 +24,26 @@ Ginga 正式真实 LLM 长篇生成采用 5 章批次；7 章为生产上限；1
 
 ## 后续缺口
 
-- 批后状态快照仍需产品化为正式 artifact。
-- 回环检测、低频题材锚点检测和异常章 reviewer 还需接入正式 review gate。
+- v1.7-1 已把批后状态快照、回环检测、低频题材锚点检测和异常章 reviewer 队列接入 `ginga review` warn-only sidecar。
+- 剩余缺口是不自动修文；异常章 reviewer 目前只生成待审队列，不调用外部模型、不改正文。
 - 10 章压力测试结果保留为风险证据，不作为推荐生产路径。
+
+## v1.7-1 正式 gate
+
+- 入口: `ginga review <book_id>`
+- 输出: `.ops/reviews/<book_id>/<run_id>/review_report.json`
+- 固定边界: warn-only、`auto_edit=false`、不写 `runtime_state`、不调用 LLM
+- 新增字段: `longform_quality_gate`
+- 覆盖项:
+  - `batch_state_snapshots`: 每 5 章生成状态快照与质量快照
+  - `opening_loop_risk`: 检测疑似重新开篇 / 醒来模板回环
+  - `missing_low_frequency_anchor`: 检测血脉、末日、多子多福、繁衍契约稀释
+  - `short_chapter`: 检测短章
+  - `missing_foreshadow_marker`: 检测伏笔标记缺失
+  - `forbidden_style_hit`: 检测 `系统提示` / `叮` / `恭喜获得` 等禁词
+  - `reviewer_queue`: 汇总需要人工或外部 reviewer 复核的异常章
+
+v1.7-0 真实 30 章样本的 v1.7-1 gate 报告：`.ops/reviews/longform-jiujiu-combo-smoke/v1-7-1-longform-gate/`。
 
 ## 证据文件
 
@@ -36,3 +53,4 @@ Ginga 正式真实 LLM 长篇生成采用 5 章批次；7 章为生产上限；1
 - `.ops/jury/longform_jiujiu_30_review_2026-05-15/longform_jiujiu_30_review_packet.md`
 - `.ops/jury/longform_jiujiu_30_review_2026-05-15/ioll-grok__longform_jiujiu_30_review_packet.md`
 - `.ops/jury/longform_jiujiu_30_review_2026-05-15/ioll-mix__longform_jiujiu_30_review_packet.md`
+- `.ops/reviews/longform-jiujiu-combo-smoke/v1-7-1-longform-gate/review_report.json`
