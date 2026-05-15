@@ -5,6 +5,7 @@ Usage:
     python3 -m ginga_platform.orchestrator.cli run <book_id>
     python3 -m ginga_platform.orchestrator.cli status <book_id>
     python3 -m ginga_platform.orchestrator.cli review <book_id>
+    python3 -m ginga_platform.orchestrator.cli market <book_id> --fixture <path> --authorize
     python3 -m ginga_platform.orchestrator.cli idea add <title> [--body <text>] [--stdin]
 """
 from __future__ import annotations
@@ -135,6 +136,22 @@ def main(argv: list[str] | None = None) -> int:
         help="Review 输出根目录（默认 .ops/reviews）",
     )
 
+    p_market = sub.add_parser("market", help="导出显式授权的 Market Research sidecar 报告")
+    p_market.add_argument("book_id")
+    p_market.add_argument("--run-id", help="Market Research run id；默认 UTC 时间戳")
+    p_market.add_argument("--fixture", type=Path, required=True, help="离线市场 fixture JSON")
+    p_market.add_argument(
+        "--authorize",
+        action="store_true",
+        help="显式授权本次市场 sidecar 读取离线 fixture；未传则拒绝执行",
+    )
+    p_market.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path(".ops/market_research"),
+        help="Market Research 输出根目录（默认 .ops/market_research）",
+    )
+
     p_idea = sub.add_parser("idea", help="raw idea 暂存区：只落盘，不进 state/RAG")
     idea_sub = p_idea.add_subparsers(dest="idea_cmd", required=True)
     p_idea_add = idea_sub.add_parser("add", help="写入一条 raw idea")
@@ -260,6 +277,21 @@ def main(argv: list[str] | None = None) -> int:
         print(
             f"✅ Review report exported: {result['output_dir']} "
             f"(status={result['status']}, issues={result['issue_count']})"
+        )
+        return 0
+    elif args.cmd == "market":
+        from ginga_platform.orchestrator.market_research import export_market_research_report
+
+        result = export_market_research_report(
+            args.book_id,
+            run_id=args.run_id,
+            fixture_path=args.fixture,
+            output_root=args.output_root,
+            authorized=args.authorize,
+        )
+        print(
+            f"✅ Market report exported: {result['output_dir']} "
+            f"(signals={result['signal_count']})"
         )
         return 0
     elif args.cmd == "idea":

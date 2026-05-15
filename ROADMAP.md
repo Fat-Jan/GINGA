@@ -7,7 +7,7 @@
 **状态更新**：2026-05-15（依据 `STATUS.md`；本文件保留为历史规划 + 当前状态对照）
 **对应架构**：`ARCHITECTURE.md` v1
 
-> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A/P2-7B/P2-7C Platform runner 收敛。P2-7C 严格状态是 `done`：真实 LLM smoke 边界切片、provider 输出可读性、`context_snapshot`、`gap_report` 与 residual risk 报告均已收口；该证据仍只证明单章 smoke 边界，不证明长篇生产质量。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。新增规划路线只更新后续定位与版本索引，不改变当前生产完成度：拆书融梗 / `ReferenceTropeDistillation` 已完成 v1.3-0 到 v1.3-5，v1.4 BookView / explorer 与 v1.5 Review / deslop 已完成；下一步优先看 v1.6 market sidecar。
+> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A/P2-7B/P2-7C Platform runner 收敛。P2-7C 严格状态是 `done`：真实 LLM smoke 边界切片、provider 输出可读性、`context_snapshot`、`gap_report` 与 residual risk 报告均已收口；该证据仍只证明单章 smoke 边界，不证明长篇生产质量。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。新增规划路线只更新后续定位与版本索引，不改变当前生产完成度：拆书融梗 / `ReferenceTropeDistillation` 已完成 v1.3-0 到 v1.3-5，v1.4 BookView / explorer、v1.5 Review / deslop 与 v1.6 Market Research Sidecar 已完成；RAG 残余仅观察，真实长篇生产化另开任务。
 >
 > 若本文件与 `STATUS.md` 冲突，以 `STATUS.md` 为当前状态真值。
 
@@ -238,6 +238,7 @@ P-8/9/10 ──┘  (双 skill contract.yaml + adapter，最高风险段)
 - [x] **P2-7C-1**：provider 质量与真实 demo 收口：H/R/V provider 输出可读性已补强，真实 demo 报告已补 `context_snapshot`、`gap_report`、residual risk，并保持 mock harness 与真实 demo 边界清晰。
 - [x] **v1.4**：BookView / explorer 完成：从 `StateIO` / chapter artifacts 派生只读书目视图，输出限定 `.ops/book_views/<book_id>/<run_id>/`，并提供 `ginga inspect` / `ginga query`。
 - [x] **v1.5**：Review / deslop 完成：输出 `.ops/reviews/<book_id>/<run_id>/review_report.json` 与 `README.md`，只做 warn-only report，不自动改正文，rubric 不进入创作 prompt。
+- [x] **v1.6**：Market Research Sidecar 完成：`ginga market --fixture --authorize` 输出 `.ops/market_research/<book_id>/<run_id>/market_report.json` 与 `README.md`，保留来源 / 采集时间 / 数据质量状态，剥离外部原文，默认不进 RAG。
 
 ### 4.4 任务清单（按触发条件优先级，尚未触发）
 
@@ -332,7 +333,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 - [x] Jury 修订追踪表（jury 23 条建议全部归属到具体任务编号，§七）
 - [x] 8 决策落地到 ARCHITECTURE §七 + 本文件任务编号
 
-**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-15，P2-7C Platform runner 收敛、v1.3-0 到 v1.3-5 的拆书融梗支线、v1.4 BookView / explorer 与 v1.5 Review / deslop 均已收口。下一步优先进入 v1.6 Market Research Sidecar：扫榜 / 市场信号 / 外部资料报告；必须显式授权、支持 offline fixture、记录数据来源和采集时间，外部原文不进默认 RAG。RAG 残余 `candidate_k` / `asset_type` blocker 仅作为后续小修观察项。
+**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-15，P2-7C Platform runner 收敛、v1.3-0 到 v1.3-5 的拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop 与 v1.6 Market Research Sidecar 均已收口。RAG 残余 `candidate_k` / `asset_type` blocker 仅作为观察项，只有指标回退或新 gold query 暴露问题时再修；真实长篇生产化需要另开多章真实 LLM smoke、失败恢复、成本和质量报告。
 
 ---
 
@@ -350,7 +351,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 | **v1.3 / 拆书融梗 Evidence Pipeline** | `ReferenceTropeDistillation`：参考作品拆章、manifest、污染检查、章节原子事件、质量门、trope_recipe 候选、人工审核 promote、显式 opt-in sidecar 召回 | 🟢 v1.3-0 done；v1.3-1 done；v1.3-2 done；v1.3-3 done；v1.3-4 done；v1.3-5 done | 已完成污染隔离底座、Reference Corpus P0 MVP、结构性 Chapter Atom + Quality Gates、去来源 `trope_recipe` candidate sidecar、approved-only Promote Flow 与 Reference Sidecar RAG；默认 RAG 仍不读污染域 |
 | **v1.4 / Book Workspace View + Explorer** | 从 StateIO/artifacts 派生可读书目视图与只读查询，不产生第二状态真值 | ✅ done | 已完成 `BookView` projection、`ginga inspect` 与 `ginga query`；输出限定 `.ops/book_views/<book_id>/<run_id>/`，默认输入白名单不包含 `.ops/book_analysis/**` |
 | **v1.5 / Review + Anti-AI warn-only gate** | 审稿、去 AI 味、平台 rubric 报告化；只做审计/报告，不自动改正文 | ✅ done | 已完成 `ginga review` 与 `.ops/reviews/<book_id>/<run_id>/` sidecar；rubric 只用于 review report，不进入创作 prompt |
-| **v1.6 / Market Research Sidecar** | 扫榜、外部研究、市场信号报告，带采集时间、来源和数据质量状态 | ⏳ deferred | 外部依赖重，需 mock fixture 与显式授权 |
+| **v1.6 / Market Research Sidecar** | 扫榜、外部研究、市场信号报告，带采集时间、来源和数据质量状态 | ✅ done | 已完成显式授权 + offline fixture sidecar；外部原文剥离，默认不进 RAG |
 | **v2 / 完整创作运营线** | N/P/D/V 阶段、发布后数据分析、版本管理、第 3+ skill 接入、封面/发布包 | ⏳ 按触发条件推进 | 不抢 v1.2 / v1.3 前置 |
 
 ### 9.1 v1.3：拆书融梗 Evidence Pipeline
@@ -399,7 +400,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 - v1.3 可吸收：章节切分、manifest、章节原子事件、剧情聚合质量门、`completed_with_errors`，但全部放在污染源 sidecar。
 - v1.4 可吸收：`BookView` projection 与 read-only explorer；输出限定 `.ops/book_views/<book_id>/<run_id>/`，真值仍是 StateIO。
 - v1.5 已吸收：warn-only review sidecar、AI 味量化雏形与平台风格 rubric 报告；rubric 只用于报告，不进入创作 prompt。
-- v1.6 可吸收：扫榜数据质量头、`SKIP` / `partial`、采集时间与来源；外部采集必须显式授权。
+- v1.6 已吸收：扫榜数据质量头、采集时间与来源；当前只支持显式授权的 offline fixture，外部原文剥离且默认 RAG 禁入。
 
 分层吸收表：
 

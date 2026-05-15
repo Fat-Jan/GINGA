@@ -5,7 +5,7 @@
 - 定位：Ginga 是以 workflow DSL + skill adapters + StateIO 为真实运行主线的小说创作平台底座，STATUS.md 是当前状态真值。
 - 入口：先看 AGENTS.md、STATUS.md、notepad.md、ARCHITECTURE.md。
 - 验证：常用 python3 scripts/verify_all.py、python3 scripts/run_agent_harness.py、python3 scripts/evaluate_rag_recall.py。
-- 坑点：P2-7C 已收口但仍只证明单章 smoke 边界；v1.3-5 Reference Sidecar RAG 只证明显式 opt-in 可召回 approved promoted methodology 资产，不证明它会自动进入创作 workflow、默认 RAG 或 prompt 注入；v1.5 Review / deslop 只写 `.ops/reviews/<book_id>/<run_id>/` warn-only sidecar，不自动改正文、不写 StateIO、不调用 LLM、rubric 不进入创作 prompt；book_analysis 与市场原文仍不得默认进入 StateIO、RAG、prompt、raw_ideas、Foundation assets/schema 或 explorer/review 白名单。
+- 坑点：P2-7C 已收口但仍只证明单章 smoke 边界；v1.3-5 Reference Sidecar RAG 只证明显式 opt-in 可召回 approved promoted methodology 资产，不证明它会自动进入创作 workflow、默认 RAG 或 prompt 注入；v1.5 Review / deslop 只写 `.ops/reviews/<book_id>/<run_id>/` warn-only sidecar，不自动改正文、不写 StateIO、不调用 LLM、rubric 不进入创作 prompt；v1.6 Market Research Sidecar 只在显式授权下读 offline fixture，剥离 raw_text，默认不进 RAG；book_analysis 与市场原文仍不得默认进入 StateIO、RAG、prompt、raw_ideas、Foundation assets/schema 或 explorer/review 白名单。
 - 模型：内容生成默认走 ask-llm 端点 `久久`（qwen3.6-max-preview-nothinking，key 在 macOS Keychain）；每章默认 4000 字，4000 字 smoke 实测 3988 汉字、无 `<think>` / AI 解释 / 提纲化漂移。
 
 ## 项目定位
@@ -89,7 +89,7 @@ _原料/
 | 3 | Ark Jury Court 4 角法庭 | ✅ 完成 | `.ops/jury/jury-{1-4}-*.md`（4 票 revise） |
 | 4 | 综合判决与交付 | ✅ 完成 | `ARCHITECTURE.md` + `ROADMAP.md` |
 
-**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 到 v1.3-5 拆书融梗支线、v1.4 BookView / explorer 与 v1.5 Review / deslop 已完成。下一轮优先看 v1.6 Market Research Sidecar：扫榜 / 市场信号 / 外部资料报告；必须显式授权、支持 offline fixture、记录数据来源和采集时间，外部原文不进默认 RAG。
+**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 到 v1.3-5 拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop 与 v1.6 Market Research Sidecar 已完成。RAG 残余只观察，真实长篇生产化另开多章真实 LLM smoke、失败恢复、成本和质量报告。
 
 ## 验证
 
@@ -107,6 +107,7 @@ _原料/
 - **v1.3-0 已有底线文件**：污染检查看 `.ops/book_analysis/contamination_check_rules.md`，P0 边界看 `.ops/book_analysis/p0_mvp_boundary.md`，manifest 草案看 `.ops/book_analysis/schema/source_manifest.schema.yaml`；默认 `recall_config.yaml` 只维护排除清单，不把污染源加入 `recall_sources`。
 - **BookView 是 projection**：`ginga inspect` 只输出 `.ops/book_views/<book_id>/<run_id>/`，显著标注真值仍是 StateIO，不得建立第二状态真值。
 - **Review 是 warn-only sidecar**：`ginga review` 只输出 `.ops/reviews/<book_id>/<run_id>/review_report.json` 与 `README.md`，用于审稿、去 AI 味和平台 rubric 报告；不得自动改正文，不得写 `runtime_state`，rubric 不得进入创作 prompt。
+- **Market Research 是授权 sidecar**：`ginga market --fixture <json> --authorize` 只输出 `.ops/market_research/<book_id>/<run_id>/market_report.json` 与 `README.md`，保留来源、采集时间和数据质量状态；不得复制外部 raw_text，不得进入默认 RAG。
 - **用户已有 skill 必须先识别**：思路 2/3 是完整 skill，蒸馏产物必须做差异分析（哪些已有/哪些是新增/哪些可增强）。
 - **1002 md 不能塞主上下文**：必须用 Scout 子代理隔离扫描，Scout 把详细报告 Write 到文件，只回主 agent 摘要。
 - **基座 vs 提示词库参考有重叠**：必须做去重分析（同样的场景在两个地方都出现，用哪个？合并还是 drop？）。

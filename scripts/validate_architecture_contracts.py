@@ -157,6 +157,25 @@ REVIEW_FORBIDDEN_SNIPPETS = (
     "ask-llm",
     "_build_chapter_prompt",
 )
+MARKET_RESEARCH_PATH = Path("ginga_platform/orchestrator/market_research.py")
+MARKET_RESEARCH_REQUIRED_SNIPPETS = (
+    "DEFAULT_OUTPUT_ROOT = Path(\".ops/market_research\")",
+    "\"kind\": \"MarketResearchSidecarReport\"",
+    "\"collection_mode\": \"offline_fixture\"",
+    "\"explicit\": True",
+    "\"default_rag_eligible\": False",
+    "\".ops/market_research/**\"",
+    "\".ops/external_sources/**\"",
+    "\"writes_runtime_state\": False",
+)
+MARKET_RESEARCH_FORBIDDEN_SNIPPETS = (
+    ".apply(",
+    ".audit(",
+    ".write_artifact(",
+    "foundation/runtime_state",
+    "_call_llm",
+    "ask-llm",
+)
 
 
 def load_yaml(path: Path) -> Any:
@@ -690,6 +709,30 @@ def validate_review_boundary(repo_root: Path, report: dict[str, Any]) -> None:
     )
 
 
+def validate_market_research_boundary(repo_root: Path, report: dict[str, Any]) -> None:
+    """Ensure v1.6 Market Research remains an authorized offline sidecar."""
+    path = repo_root / MARKET_RESEARCH_PATH
+    try:
+        text = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        add_error(report, MARKET_RESEARCH_PATH, "Market Research boundary", "market_research module missing")
+        add_check(report, "v1.6 Market Research boundary", False, "market_research module missing")
+        return
+
+    missing = [snippet for snippet in MARKET_RESEARCH_REQUIRED_SNIPPETS if snippet not in text]
+    forbidden = [snippet for snippet in MARKET_RESEARCH_FORBIDDEN_SNIPPETS if snippet in text]
+    if missing:
+        add_error(report, MARKET_RESEARCH_PATH, "Market Research boundary", f"missing required snippet(s): {missing}")
+    if forbidden:
+        add_error(report, MARKET_RESEARCH_PATH, "Market Research boundary", f"forbidden runtime-state/LLM snippet(s): {forbidden}")
+    add_check(
+        report,
+        "v1.6 Market Research boundary",
+        not missing and not forbidden,
+        "Market Research is constrained to authorized offline .ops/market_research sidecar output",
+    )
+
+
 def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     root = (repo_root or Path.cwd()).resolve()
     root_text = str(root)
@@ -712,6 +755,7 @@ def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     validate_platform_runner_convergence(root, report)
     validate_book_view_boundary(root, report)
     validate_review_boundary(root, report)
+    validate_market_research_boundary(root, report)
     report["status"] = "FAIL" if report["errors"] else "PASS"
     return report
 

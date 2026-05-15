@@ -1,68 +1,68 @@
 {
-  "generated_at_epoch": 1778851304.796,
+  "generated_at_epoch": 1778851713.89,
   "repo_root": "/Users/arm/Desktop/ginga",
   "passed": true,
   "results": [
     {
       "command": "python -m unittest discover -s ginga_platform -p 'test_*.py'",
       "exit_code": 0,
-      "duration_seconds": 29.159,
-      "stdout_tail": "  ],\n  \"forbidden_default_sources\": [\n    \".ops/book_analysis/**\"\n  ],\n  \"match_count\": 2,\n  \"matches\": [\n    {\n      \"kind\": \"character\",\n      \"id\": \"protagonist\",\n      \"text\": \"{\\\"name\\\": \\\"\u65e0\u660e\\\", \\\"events\\\": [{\\\"ch\\\": 1, \\\"type\\\": \\\"awakening\\\", \\\"impact\\\": \\\"\u77ed\u5203\u541e\u5410\u5fae\u7c92\\\"}]}\"\n    },\n    {\n      \"kind\": \"chapter\",\n      \"id\": \"chapter_01.md\",\n      \"text\": \"\u7b2c\u4e00\u7ae0\\n# \u7b2c\u4e00\u7ae0 \u65e0\u660e\u5728\u96e8\u591c\u9192\u6765\uff0c\u77ed\u5203\u6b63\u5728\u541e\u5410\u5fae\u7c92\u3002\"\n    }\n  ]\n}\n\u2705 patch_id=P-8a5cde-patch applied=False patch_yaml=/var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmpp0y0jiev/patches/P-8a5cde-patch.patch.yaml\n\u2705 Review report exported: /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmpm_cv6t3q/.ops/reviews/review-book/cli-run (status=warn, issues=6)",
-      "stderr_tail": "\u2713 LLM \u8fd4\u56de 4027 \u5b57\u7b26 / 3378 \u4e2a\u6c49\u5b57\n.\ud83d\udcdd \u8c03\u7528 ask-llm windhub \u751f\u6210\u7b2c 1 \u7ae0 (\u76ee\u6807 3500 \u5b57)...\n\u2713 LLM \u8fd4\u56de 4 \u5b57\u7b26 / 4 \u4e2a\u6c49\u5b57\n\ud83d\udcdd \u8c03\u7528 ask-llm windhub \u751f\u6210\u7b2c 2 \u7ae0 (\u76ee\u6807 3500 \u5b57)...\n\u2713 LLM \u8fd4\u56de 4 \u5b57\u7b26 / 4 \u4e2a\u6c49\u5b57\n.\ud83d\udcdd mock_harness \u751f\u6210\u7b2c 1 \u7ae0 (\u76ee\u6807 800 \u5b57\uff0c\u4e0d\u8c03\u7528 ask-llm)...\n\u2713 LLM \u8fd4\u56de 1316 \u5b57\u7b26 / 485 \u4e2a\u6c49\u5b57\n.........................rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n......rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n..rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n..rag.layer1_filter: index /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmpehytc64y/no-index.sqlite missing (cold-start, empty result)\n.....................rag.layer2_vector: sqlite-vec load failed open: extension unavailable\nrag.layer2_vector: sqlite-vec load failed open: extension unavailable\n..rag.reranker: llm rerank failed open: slow\n..rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n.................................\n----------------------------------------------------------------------\nRan 222 tests in 28.810s\n\nOK"
+      "duration_seconds": 26.574,
+      "stdout_tail": "  \"forbidden_default_sources\": [\n    \".ops/book_analysis/**\"\n  ],\n  \"match_count\": 2,\n  \"matches\": [\n    {\n      \"kind\": \"character\",\n      \"id\": \"protagonist\",\n      \"text\": \"{\\\"name\\\": \\\"\u65e0\u660e\\\", \\\"events\\\": [{\\\"ch\\\": 1, \\\"type\\\": \\\"awakening\\\", \\\"impact\\\": \\\"\u77ed\u5203\u541e\u5410\u5fae\u7c92\\\"}]}\"\n    },\n    {\n      \"kind\": \"chapter\",\n      \"id\": \"chapter_01.md\",\n      \"text\": \"\u7b2c\u4e00\u7ae0\\n# \u7b2c\u4e00\u7ae0 \u65e0\u660e\u5728\u96e8\u591c\u9192\u6765\uff0c\u77ed\u5203\u6b63\u5728\u541e\u5410\u5fae\u7c92\u3002\"\n    }\n  ]\n}\n\u2705 patch_id=P-fe1c6d-patch applied=False patch_yaml=/var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmp75c8_0c2/patches/P-fe1c6d-patch.patch.yaml\n\u2705 Market report exported: /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmppcear7b8/.ops/market_research/market-book/cli-run (signals=6)\n\u2705 Review report exported: /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmp49ib44r5/.ops/reviews/review-book/cli-run (status=warn, issues=6)",
+      "stderr_tail": "\u2713 LLM \u8fd4\u56de 4027 \u5b57\u7b26 / 3378 \u4e2a\u6c49\u5b57\n.\ud83d\udcdd \u8c03\u7528 ask-llm windhub \u751f\u6210\u7b2c 1 \u7ae0 (\u76ee\u6807 3500 \u5b57)...\n\u2713 LLM \u8fd4\u56de 4 \u5b57\u7b26 / 4 \u4e2a\u6c49\u5b57\n\ud83d\udcdd \u8c03\u7528 ask-llm windhub \u751f\u6210\u7b2c 2 \u7ae0 (\u76ee\u6807 3500 \u5b57)...\n\u2713 LLM \u8fd4\u56de 4 \u5b57\u7b26 / 4 \u4e2a\u6c49\u5b57\n.\ud83d\udcdd mock_harness \u751f\u6210\u7b2c 1 \u7ae0 (\u76ee\u6807 800 \u5b57\uff0c\u4e0d\u8c03\u7528 ask-llm)...\n\u2713 LLM \u8fd4\u56de 1316 \u5b57\u7b26 / 485 \u4e2a\u6c49\u5b57\n.........................rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n......rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n..rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n..rag.layer1_filter: index /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmpo4z_96_g/no-index.sqlite missing (cold-start, empty result)\n.....................rag.layer2_vector: sqlite-vec load failed open: extension unavailable\nrag.layer2_vector: sqlite-vec load failed open: extension unavailable\n..rag.reranker: llm rerank failed open: slow\n..rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n.................................\n----------------------------------------------------------------------\nRan 225 tests in 26.274s\n\nOK"
     },
     {
       "command": "python3 scripts/validate_reference_corpus.py .ops/book_analysis/v1-3-1-smoke-main",
       "exit_code": 0,
-      "duration_seconds": 0.184,
+      "duration_seconds": 0.15,
       "stdout_tail": "PASS reference corpus validation: errors=0 warnings=0 run=.ops/book_analysis/v1-3-1-smoke-main",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/validate_chapter_atoms.py .ops/book_analysis/v1-3-2-smoke-main",
       "exit_code": 0,
-      "duration_seconds": 0.158,
+      "duration_seconds": 0.15,
       "stdout_tail": "PASS chapter atom validation: errors=0 warnings=0 run=.ops/book_analysis/v1-3-2-smoke-main",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/validate_trope_recipes.py .ops/book_analysis/v1-3-3-smoke-main",
       "exit_code": 0,
-      "duration_seconds": 0.143,
+      "duration_seconds": 0.158,
       "stdout_tail": "PASS trope recipe validation: errors=0 warnings=0 run=.ops/book_analysis/v1-3-3-smoke-main",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/build_reference_sidecar_index.py",
       "exit_code": 0,
-      "duration_seconds": 0.146,
+      "duration_seconds": 0.159,
       "stdout_tail": "PASS reference sidecar index: cards_indexed=0 files_seen=0 index=.ops/validation/reference_sidecar_rag.sqlite",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/validate_architecture_contracts.py",
       "exit_code": 0,
-      "duration_seconds": 1.215,
-      "stdout_tail": "PASS: architecture contracts\nPASS: workflow steps - loaded 12 step(s)\nPASS: capability registry - found 12 default capability id(s)\nPASS: foundation asset ids - found 486 frontmatter id(s)\nPASS: skill-router file - ginga_platform/orchestrator/router/skill_router.py\nPASS: skill contracts - found 2 contract(s)\nPASS: recall forbidden paths - contains 8 path(s)\nPASS: v1.3-0 book_analysis boundaries - pollution docs and source manifest schema are present and constrained\nPASS: StateIO write boundary - runtime_state YAML writes are limited to StateIO / locked patch flow\nPASS: current planning hygiene - STATUS.md next step, stale doc wording, and .ops/p7 history notices are aligned\nPASS: P2-7 runner convergence - single-run path keeps workflow DSL, skill-router, adapter, and StateIO dispatch wiring\nPASS: v1.4 BookView boundary - BookView is constrained to .ops/book_views and does not write StateIO\nPASS: v1.5 Review boundary - Review is constrained to warn-only .ops/reviews sidecar output",
+      "duration_seconds": 0.956,
+      "stdout_tail": "PASS: architecture contracts\nPASS: workflow steps - loaded 12 step(s)\nPASS: capability registry - found 12 default capability id(s)\nPASS: foundation asset ids - found 486 frontmatter id(s)\nPASS: skill-router file - ginga_platform/orchestrator/router/skill_router.py\nPASS: skill contracts - found 2 contract(s)\nPASS: recall forbidden paths - contains 8 path(s)\nPASS: v1.3-0 book_analysis boundaries - pollution docs and source manifest schema are present and constrained\nPASS: StateIO write boundary - runtime_state YAML writes are limited to StateIO / locked patch flow\nPASS: current planning hygiene - STATUS.md next step, stale doc wording, and .ops/p7 history notices are aligned\nPASS: P2-7 runner convergence - single-run path keeps workflow DSL, skill-router, adapter, and StateIO dispatch wiring\nPASS: v1.4 BookView boundary - BookView is constrained to .ops/book_views and does not write StateIO\nPASS: v1.5 Review boundary - Review is constrained to warn-only .ops/reviews sidecar output\nPASS: v1.6 Market Research boundary - Market Research is constrained to authorized offline .ops/market_research sidecar output",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/validate_prompt_frontmatter.py --strict",
       "exit_code": 0,
-      "duration_seconds": 0.826,
+      "duration_seconds": 0.784,
       "stdout_tail": "wrote .ops/validation/prompt_frontmatter_report.json: total=461 violations=0",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/report_prompt_quality.py foundation/assets/prompts",
       "exit_code": 0,
-      "duration_seconds": 1.001,
+      "duration_seconds": 0.749,
       "stdout_tail": "wrote .ops/validation/prompt_quality_report.json: total=461 weak_examples=0",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/validate_methodology_assets.py foundation/assets/methodology foundation/schema/methodology.yaml",
       "exit_code": 0,
-      "duration_seconds": 0.184,
+      "duration_seconds": 0.152,
       "stdout_tail": "OK: validated 12 asset(s) against foundation/schema/methodology.yaml",
       "stderr_tail": ""
     }
