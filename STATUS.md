@@ -51,6 +51,7 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 | v1.8-3 Genm Optional Observability | `done` | `ginga_platform/orchestrator/genm_observability.py`；`ginga observability workflow-stages/evidence-pack/migration-audit`；`test_genm_optional_observability`；`validate_architecture_contracts.py`；`.ops/workflow_observability/v1-8-3-main-workflow/`；`.ops/jury/evidence_packs/v1-8-3-longform-regression-pack/`；`.ops/migration_audit/v1-8-3-main-boundary-audit/` | 已吸收 Genm 可选项为三类 report-only 观察面：jury evidence pack 只做引用包、workflow stage observation 只读 12 step YAML、migration audit 只报边界风险；不跑 workflow、不迁移文件、不写 `StateIO`、不进默认 RAG |
 | v1.9-1 Story Truth Template Source Audit | `done` | `.ops/plans/v1-9-story-truth-template-plan.md`；`.ops/reports/story_truth_template_source_audit.md` | 已按原料抽样固定字段矩阵，明确 `core / genre_extension / candidate_only / report_only` 分类、拆书 / 长文 drift 反向校验、遗漏字段清单和禁止晋升红线；不写 schema、不写 `StateIO`、不改默认 RAG |
 | v1.9-2 Story Truth Template Schema Validator | `done` | `foundation/schema/story_truth_template.yaml`；`scripts/validate_story_truth_template.py`；`ginga_platform/orchestrator/runner/tests/test_story_truth_template.py`；`.ops/validation/story_truth_template_schema.json` | 已新增只读 schema / validator / tests，覆盖合法模板、缺层失败、genre extension、candidate/report 污染源拒绝和晋升门禁必填；不接 `StateIO` 写链、不改默认 RAG |
+| v1.9-3 Story Truth Template StateIO Slice | `done` | `ginga_platform/orchestrator/cli/demo_pipeline.py`；`ginga_platform/orchestrator/cli/__main__.py`；`test_story_truth_template`；`scripts/run_agent_harness.py` | 已在 `ginga init` 通过 `StateIO.apply` 写入 `locked.PROJECT_CONTRACT` 与 `locked.GENRE_CONTRACT`，并新增 CLI 参数 `--target-platform`、`--target-reader`、`--update-frequency`；不读取 `.ops/book_analysis/**`、不改默认 RAG |
 
 ## 已完成
 
@@ -85,7 +86,7 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 
 ## 下一步
 
-当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7 Longform Production Policy / Quality Gate / Reviewer Queue / Hard Gate 与 v1.8-0/v1.8-1/v1.8-2/v1.8-3 Genm 机制吸收已收口。v1.9-1 source audit 与 v1.9-2 schema / validator 已完成。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
+当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7 Longform Production Policy / Quality Gate / Reviewer Queue / Hard Gate 与 v1.8-0/v1.8-1/v1.8-2/v1.8-3 Genm 机制吸收已收口。v1.9-1 source audit、v1.9-2 schema / validator、v1.9-3 StateIO 项目/题材契约窄切片已完成。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
 
 优先任务：
 
@@ -94,7 +95,7 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 - **Model topology 后续**：v1.8-0 只做 observation，不接管 runtime；若后续要做 provider router，必须先补 live probe 证据、失败降级策略、same-chapter-single-writer 边界和 agent harness 回归。
 - **Candidate Truth Gate 后续**：v1.8-1 只统一术语；若后续要做通用候选接受链，必须先选一个现有 candidate surface 做窄切片，不得一次性重写 `StateIO` 或 promote flow。
 - **Genm 可观测性后续**：v1.8-3 已把 jury evidence pack、workflow stage observation 和 migration audit 落为 report-only 工具；后续若要接入 CI 或 stage runner，只能先扩观察指标，不得接管 workflow 执行或自动迁移文件。
-- **Story Truth Template 后续**：v1.9-2 已完成只读 schema / validator；下一步 v1.9-3 只选 `locked.PROJECT_CONTRACT` / `locked.GENRE_CONTRACT` 等安全窄落点经 `StateIO` 初始化，不得直接把拆书候选、review report、market report 或 jury 原文写入 truth。
+- **Story Truth Template 后续**：v1.9-3 已完成 `locked.PROJECT_CONTRACT` / `locked.GENRE_CONTRACT` 初始化窄切片；下一步 v1.9-4 构建 `workspace.CHAPTER_INPUT_BUNDLE`，仍不得直接把拆书候选、review report、market report 或 jury 原文写入 truth。
 
 ## 规划索引（不代表已完成）
 

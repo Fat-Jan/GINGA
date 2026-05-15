@@ -64,6 +64,21 @@ def main(argv: list[str] | None = None) -> int:
         help="字数目标（默认 500000）",
     )
     p_init.add_argument(
+        "--target-platform",
+        default="番茄",
+        help="v1.9 PROJECT_CONTRACT 目标平台（默认 番茄）",
+    )
+    p_init.add_argument(
+        "--target-reader",
+        default="男频长篇爽文读者",
+        help="v1.9 PROJECT_CONTRACT 目标读者（默认 男频长篇爽文读者）",
+    )
+    p_init.add_argument(
+        "--update-frequency",
+        default="daily",
+        help="v1.9 PROJECT_CONTRACT 更新频率（默认 daily）",
+    )
+    p_init.add_argument(
         "--state-root",
         type=Path,
         help="runtime_state 根目录；测试/harness 可传临时目录，默认 foundation/runtime_state",
@@ -255,6 +270,9 @@ def main(argv: list[str] | None = None) -> int:
             premise=args.premise,
             word_target=args.word_target,
             state_root=args.state_root,
+            target_platform=args.target_platform,
+            target_reader=args.target_reader,
+            update_frequency=args.update_frequency,
         )
         state_root = args.state_root or Path("foundation/runtime_state")
         print(f"✅ init done: {state_root / args.book_id}")

@@ -123,6 +123,9 @@ def init_book(
     word_target: int,
     *,
     state_root: Path | str | None = None,
+    target_platform: str = "番茄",
+    target_reader: str = "男频长篇爽文读者",
+    update_frequency: str = "daily",
 ) -> None:
     """初始化书：建空 state + 写入 locked + entity_runtime seed."""
     sio = StateIO(book_id, **_state_io_kwargs(state_root))
@@ -151,6 +154,45 @@ def init_book(
                 {"ch": 1, "type": "起", "beat": "失忆刺客醒来，发现被植入未知微粒"},
                 {"ch": 30, "type": "转", "beat": "首次跨越天堑边界"},
             ],
+            "locked.PROJECT_CONTRACT": {
+                "positioning": premise,
+                "target_platform": target_platform,
+                "target_reader": target_reader,
+                "total_word_count_goal": word_target,
+                "update_frequency": update_frequency,
+                "core_selling_points": [
+                    "失忆主角逐步觉醒",
+                    "微粒规则与天堑世界的持续揭示",
+                    "压抑后的反击和伏笔回收",
+                ],
+                "paid_conversion_points": ["首次跨越天堑边界", "核心身份反转"],
+                "retention_targets": {
+                    "chapter_1": "建立主角困境、核心异常和首个伏笔",
+                    "chapter_3": "形成稳定追读问题",
+                    "chapter_30": "完成第一幕大转折",
+                },
+                "source": "v1.9-story-truth-template",
+            },
+            "locked.GENRE_CONTRACT": {
+                "profile_ref": topic,
+                "core_payoffs": ["觉醒", "反击", "规则破解", "伏笔回收"],
+                "reader_expectations": [
+                    "核心爽点必须服务主角成长和世界规则揭示",
+                    "压抑段落需要有明确释放承诺",
+                    "章节结尾保留可追读的钩子或状态变化",
+                ],
+                "golden_three_chapters": {
+                    "chapter_1": "立住主角、异常和核心危机",
+                    "chapter_2": "扩大冲突并引入可验证规则",
+                    "chapter_3": "给出第一次小回报和更大问题",
+                },
+                "hook_strategy": {
+                    "chapter_end": "状态变化、代价暴露或伏笔推进",
+                    "avoid": ["单纯设定说明", "无承接的感官重启"],
+                },
+                "taboos": ["都市腔", "游戏系统播报腔", "无代价升级"],
+                "source": "v1.9-story-truth-template",
+            },
         },
         source="cli.init.A-E_setup",
     )

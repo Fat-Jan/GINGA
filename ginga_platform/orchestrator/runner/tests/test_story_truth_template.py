@@ -167,5 +167,72 @@ class StoryTruthTemplateValidatorTest(unittest.TestCase):
         self.assertEqual(code, 1)
 
 
+class StoryTruthTemplateStateSliceTest(unittest.TestCase):
+    def test_init_book_writes_project_and_genre_contracts_through_stateio(self) -> None:
+        from ginga_platform.orchestrator.cli.demo_pipeline import init_book
+        from ginga_platform.orchestrator.runner.state_io import StateIO
+
+        with tempfile.TemporaryDirectory() as tmp:
+            state_root = Path(tmp) / "state"
+            init_book(
+                "story-truth-state",
+                topic="玄幻黑暗",
+                premise="失忆刺客追索微粒真相",
+                word_target=500000,
+                state_root=state_root,
+                target_platform="番茄",
+                target_reader="男频长篇爽文读者",
+                update_frequency="daily",
+            )
+
+            sio = StateIO("story-truth-state", state_root=state_root)
+
+        project_contract = sio.read("locked.PROJECT_CONTRACT")
+        genre_contract = sio.read("locked.GENRE_CONTRACT")
+        self.assertEqual(project_contract["target_platform"], "番茄")
+        self.assertEqual(project_contract["target_reader"], "男频长篇爽文读者")
+        self.assertEqual(project_contract["total_word_count_goal"], 500000)
+        self.assertEqual(project_contract["update_frequency"], "daily")
+        self.assertIn("失忆刺客追索微粒真相", project_contract["positioning"])
+        self.assertEqual(project_contract["source"], "v1.9-story-truth-template")
+        self.assertEqual(genre_contract["profile_ref"], "玄幻黑暗")
+        self.assertIn("核心爽点", genre_contract["reader_expectations"][0])
+        self.assertEqual(genre_contract["source"], "v1.9-story-truth-template")
+
+    def test_cli_init_accepts_story_truth_contract_options(self) -> None:
+        from ginga_platform.orchestrator.cli.__main__ import main as cli_main
+        from ginga_platform.orchestrator.runner.state_io import StateIO
+
+        with tempfile.TemporaryDirectory() as tmp:
+            state_root = Path(tmp) / "state"
+            code = cli_main(
+                [
+                    "init",
+                    "story-truth-cli",
+                    "--topic",
+                    "规则怪谈",
+                    "--premise",
+                    "主角在规则副本中寻找真相",
+                    "--word-target",
+                    "300000",
+                    "--target-platform",
+                    "七猫",
+                    "--target-reader",
+                    "悬疑规则怪谈读者",
+                    "--update-frequency",
+                    "weekday",
+                    "--state-root",
+                    str(state_root),
+                ]
+            )
+            self.assertEqual(code, 0)
+            sio = StateIO("story-truth-cli", state_root=state_root)
+
+        self.assertEqual(sio.read("locked.PROJECT_CONTRACT.target_platform"), "七猫")
+        self.assertEqual(sio.read("locked.PROJECT_CONTRACT.target_reader"), "悬疑规则怪谈读者")
+        self.assertEqual(sio.read("locked.PROJECT_CONTRACT.update_frequency"), "weekday")
+        self.assertEqual(sio.read("locked.GENRE_CONTRACT.profile_ref"), "规则怪谈")
+
+
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
