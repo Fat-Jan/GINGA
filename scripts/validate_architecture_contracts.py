@@ -138,6 +138,25 @@ BOOK_VIEW_FORBIDDEN_SNIPPETS = (
     ".audit(",
     ".write_artifact(",
 )
+REVIEW_PATH = Path("ginga_platform/orchestrator/review.py")
+REVIEW_REQUIRED_SNIPPETS = (
+    "DEFAULT_OUTPUT_ROOT = Path(\".ops/reviews\")",
+    "\"kind\": \"ReviewDeslopReport\"",
+    "\"mode\": \"warn_only\"",
+    "\"auto_edit\": False",
+    "\"scope\": \"report_only\"",
+    "\"enters_creation_prompt\": False",
+    "\"writes_runtime_state\": False",
+    "\".ops/book_analysis/**\"",
+)
+REVIEW_FORBIDDEN_SNIPPETS = (
+    ".apply(",
+    ".audit(",
+    ".write_artifact(",
+    "_call_llm",
+    "ask-llm",
+    "_build_chapter_prompt",
+)
 
 
 def load_yaml(path: Path) -> Any:
@@ -647,6 +666,30 @@ def validate_book_view_boundary(repo_root: Path, report: dict[str, Any]) -> None
     )
 
 
+def validate_review_boundary(repo_root: Path, report: dict[str, Any]) -> None:
+    """Ensure v1.5 Review remains a warn-only sidecar."""
+    path = repo_root / REVIEW_PATH
+    try:
+        text = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        add_error(report, REVIEW_PATH, "Review boundary", "review module missing")
+        add_check(report, "v1.5 Review boundary", False, "review module missing")
+        return
+
+    missing = [snippet for snippet in REVIEW_REQUIRED_SNIPPETS if snippet not in text]
+    forbidden = [snippet for snippet in REVIEW_FORBIDDEN_SNIPPETS if snippet in text]
+    if missing:
+        add_error(report, REVIEW_PATH, "Review boundary", f"missing required snippet(s): {missing}")
+    if forbidden:
+        add_error(report, REVIEW_PATH, "Review boundary", f"forbidden prompt/runtime-state/LLM snippet(s): {forbidden}")
+    add_check(
+        report,
+        "v1.5 Review boundary",
+        not missing and not forbidden,
+        "Review is constrained to warn-only .ops/reviews sidecar output",
+    )
+
+
 def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     root = (repo_root or Path.cwd()).resolve()
     root_text = str(root)
@@ -668,6 +711,7 @@ def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     validate_current_planning_hygiene(root, report)
     validate_platform_runner_convergence(root, report)
     validate_book_view_boundary(root, report)
+    validate_review_boundary(root, report)
     report["status"] = "FAIL" if report["errors"] else "PASS"
     return report
 

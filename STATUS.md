@@ -38,8 +38,8 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 | v1.3-4 Promote Flow | `done` | `ginga_platform/book_analysis/promote.py`；`scripts/promote_trope_recipes.py`；`scripts/validate_promoted_trope_assets.py`；`test_book_analysis_corpus.TropeRecipePromoteFlowV134ContractTest`；`python3 scripts/verify_all.py --quick` | 已完成人工审核 + 污染检查通过后才允许 promote 到白名单 Foundation methodology 资产；仍不进默认 RAG、prompt、`raw_ideas` 或 `StateIO` |
 | v1.3-5 Reference Sidecar RAG | `done` | `rag/reference_sidecar.py`；`scripts/build_reference_sidecar_index.py`；`ReferenceSidecarRagTest`；`python3 scripts/verify_all.py --quick` | 已新增显式 opt-in 的 sidecar index / recall 入口；只索引 `foundation/assets/methodology/promoted-*.md` 中 approved + contamination pass + `default_rag_eligible=false` 的 methodology 资产；默认 RAG 仍按 `source_path=.ops/book_analysis/**` 排除 |
 | v1.4 BookView / explorer | `done` | `ginga_platform/orchestrator/book_view.py`；`ginga inspect` / `ginga query`；`test_book_view`；`validate_architecture_contracts.py` | 已完成从 `StateIO` / chapter artifacts 派生只读 projection，输出限定 `.ops/book_views/<book_id>/<run_id>/`；不写 `runtime_state`，不建立第二状态真值，不默认读 `.ops/book_analysis/**` |
-| v1.5 review / deslop | `deferred` | `.ops/reports/oh_story_inspiration_roadmap.md` | 只可作为 report sidecar，rubric 不进创作 prompt |
-| v1.6 market sidecar / v2 运营线 | `deferred` | `ROADMAP.md` §九 | 外部依赖重，需显式授权和 offline fixture |
+| v1.5 review / deslop | `done` | `ginga_platform/orchestrator/review.py`；`ginga review`；`test_review_deslop`；`validate_architecture_contracts.py` | 已完成审稿、去 AI 味、平台 rubric 的 warn-only report sidecar；不自动改正文，rubric 不进创作 prompt，默认不读 `.ops/book_analysis/**` |
+| v1.6 market sidecar / v2 运营线 | `deferred` | `ROADMAP.md` §九 | 下一步可做；外部依赖重，需显式授权、offline fixture、数据来源与采集时间字段 |
 
 ## 已完成
 
@@ -54,20 +54,21 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 - P2-7A Platform runner 收敛切片已完成：`novel_pipeline_mvp.yaml` 的 G 步可由 DSL 解析为 capability asset hint + `skill-router`，默认 `SkillRouter()` 可读取仓库 `ginga_platform/skills/registry.yaml`；单章 `ginga run --mock-llm` 进入 `step_dispatch:G_chapter_draft`，经 `dark-fantasy` adapter 写 `workspace.chapter_text`，并继续跑 H/R1/R2/R3/V1 的 workflow step 审计。
 - P2-7B Platform runner 收敛已完成：A-F/H/R1/R2/R3/V1 的默认 capability 已由固定 stub 收敛为 asset-backed deterministic provider；`CapabilityRegistry.from_defaults()` 注册 12 个 provider，输出 `provider=asset-backed` / `asset_ref`，并继续由 `step_dispatch` + `StateIO` 白名单写入 state；R2 provider 的结构化 `audit_intents` 已通过 `StateIO.audit()` 落审计，G 步仍优先经 `skill-router` + dark-fantasy adapter 写 `workspace.chapter_text`。
 - P2-7C provider 质量与真实 demo 收口已完成：`scripts/run_real_llm_smoke.py` 支持 dry-run、显式 `--run` 与 `--refresh-existing`；`.ops/validation/real_llm_demo_smoke.json` 记录 `passed=true`、`dry_run=false`、`refreshed_existing=true`、`execution_mode=real_llm_demo`、endpoint、`context_snapshot`、`gap_report` 与 residual risk；H/R/V provider 输出已补可读报告字段，且仍不绕过 `StateIO` 或把报告写入 runtime_state YAML。
-- 新增规划路线已完成定位梳理：oh-story 参考路线、拆书融梗 / `ReferenceTropeDistillation`、BookView / explorer、review / deslop、market sidecar 已有规划与 jury 查漏补缺；其中 v1.3-0 污染隔离底座、v1.3-1 Reference Corpus P0 MVP、v1.3-2 Chapter Atom + Quality Gates、v1.3-3 Trope Recipe Candidate、v1.3-4 Promote Flow、v1.3-5 Reference Sidecar RAG 与 v1.4 BookView / explorer 已完成。
+- 新增规划路线已完成定位梳理：oh-story 参考路线、拆书融梗 / `ReferenceTropeDistillation`、BookView / explorer、review / deslop、market sidecar 已有规划与 jury 查漏补缺；其中 v1.3-0 污染隔离底座、v1.3-1 Reference Corpus P0 MVP、v1.3-2 Chapter Atom + Quality Gates、v1.3-3 Trope Recipe Candidate、v1.3-4 Promote Flow、v1.3-5 Reference Sidecar RAG、v1.4 BookView / explorer 与 v1.5 Review / deslop 已完成。
 - v1.3-3 Trope Recipe Candidate 已完成：新增 `trope_recipes.py`、build / validate 脚本、validator 与固定 smoke run `.ops/book_analysis/v1-3-3-smoke-main`；候选只由结构性 chapter atoms 派生，包含 `trope_core`、`reader_payoff`、`trigger_conditions`、`variation_axes`、`forbidden_copy_elements` 与 safety / promotion 边界，状态保持 `not_promoted`。
 - 架构缝隙修复已完成：`step_dispatch` 缺 capability / skill / router 默认 fail-loud，仅 `execution_mode=dev/noop_allowed` 保留旧 noop；`planning-with-files` adapter 输出可经 `op_translator` 转为 `StateIO` updates / audit intents；`rag/index_builder.py` 已按 `recall_forbidden_paths` 过滤文件路径和 `source_path`，避免 `.ops/book_analysis/**` 误入默认索引。
 - v1.3-4 Promote Flow 已完成最小可验证实现：`promote_trope_recipes()` 只接受 `human_review_status=approved` 且 `source_contamination_check=pass` 的 candidate，并只写入 `foundation/assets/methodology/promoted-*.md`；`validate_promoted_trope_assets()` 校验白名单落点、审批字段、污染检查字段和默认 RAG 禁入标记。
 - v1.3-5 Reference Sidecar RAG 已完成最小可验证实现：`build_reference_sidecar_index()` 只从白名单 Foundation methodology promoted 资产构建独立 sqlite index，`recall_reference_sidecar()` 作为显式 opt-in 召回入口；默认 `build_index()` 仍过滤 `source_path=.ops/book_analysis/**`，默认 RAG / `evaluate_rag_recall.py` 不读污染域。
 - v1.4 BookView / explorer 已完成最小可验证实现：`export_book_view()` 从 `StateIO` 与 `chapter_*.md` 生成 `.ops/book_views/<book_id>/<run_id>/book_view.json`、`README.md` 与章节副本；`query_book_view()` / `ginga query` 只读洁净 state 与章节 artifact，不读 `.ops/book_analysis/**`，且架构契约禁止 BookView 调用 `StateIO.apply()` / `audit()` / `write_artifact()`。
+- v1.5 Review / deslop 已完成最小可验证实现：`export_review_report()` 从 `StateIO` 与 `chapter_*.md` 生成 `.ops/reviews/<book_id>/<run_id>/review_report.json` 与 `README.md`；报告覆盖 anti-AI style、平台风格风险和可读性提示，固定 `mode=warn_only` / `auto_edit=false`，不写 `runtime_state`，不调用 LLM，不读取 `.ops/book_analysis/**`。
 
 ## 下一步
 
-当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路与 v1.4 BookView / explorer 已收口。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
+当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer 与 v1.5 Review / deslop 已收口。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
 
 优先任务：
 
-- **v1.5 Review / deslop（deferred）**：下一步可做审稿、去 AI 味、平台 rubric 报告化；只做 warn-only report，不自动改正文，rubric 不进入创作 prompt。
+- **v1.6 Market Research Sidecar（deferred）**：下一步可做扫榜 / 市场信号 / 外部资料报告；必须显式授权，支持 offline fixture，报告带数据来源、采集时间与数据质量状态，外部原文不进默认 RAG。
 - **RAG 残余观察**：保留 `.ops/reports/rag_recall_quality_report.md` 的 `candidate_k` / `asset_type` blocker 作为后续小修观察项；守住 Layer 2 `recall@5 >= 0.500` 与 `expected_recall@5 >= 0.875`。
 
 ## 规划索引（不代表已完成）

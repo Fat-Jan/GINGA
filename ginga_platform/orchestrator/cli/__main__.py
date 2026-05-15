@@ -4,6 +4,7 @@ Usage:
     python3 -m ginga_platform.orchestrator.cli init <book_id> --topic <topic>
     python3 -m ginga_platform.orchestrator.cli run <book_id>
     python3 -m ginga_platform.orchestrator.cli status <book_id>
+    python3 -m ginga_platform.orchestrator.cli review <book_id>
     python3 -m ginga_platform.orchestrator.cli idea add <title> [--body <text>] [--stdin]
 """
 from __future__ import annotations
@@ -118,6 +119,22 @@ def main(argv: list[str] | None = None) -> int:
         help="runtime_state 根目录；测试/harness 可传临时目录，默认 foundation/runtime_state",
     )
 
+    p_review = sub.add_parser("review", help="导出 warn-only Review / deslop sidecar 报告")
+    p_review.add_argument("book_id")
+    p_review.add_argument("--run-id", help="Review run id；默认 UTC 时间戳")
+    p_review.add_argument("--rubric-profile", default="platform_cn_webnovel_v1")
+    p_review.add_argument(
+        "--state-root",
+        type=Path,
+        help="runtime_state 根目录；测试/harness 可传临时目录，默认 foundation/runtime_state",
+    )
+    p_review.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path(".ops/reviews"),
+        help="Review 输出根目录（默认 .ops/reviews）",
+    )
+
     p_idea = sub.add_parser("idea", help="raw idea 暂存区：只落盘，不进 state/RAG")
     idea_sub = p_idea.add_subparsers(dest="idea_cmd", required=True)
     p_idea_add = idea_sub.add_parser("add", help="写入一条 raw idea")
@@ -229,6 +246,21 @@ def main(argv: list[str] | None = None) -> int:
             limit=args.limit,
         )
         print(json.dumps(result, ensure_ascii=False, indent=2))
+        return 0
+    elif args.cmd == "review":
+        from ginga_platform.orchestrator.review import export_review_report
+
+        result = export_review_report(
+            args.book_id,
+            run_id=args.run_id,
+            state_root=args.state_root,
+            output_root=args.output_root,
+            rubric_profile=args.rubric_profile,
+        )
+        print(
+            f"✅ Review report exported: {result['output_dir']} "
+            f"(status={result['status']}, issues={result['issue_count']})"
+        )
         return 0
     elif args.cmd == "idea":
         if args.idea_cmd == "add":
