@@ -1,0 +1,40 @@
+<task>
+对 Ginga 的 oh-story 参考路线规划做独立 feasibility review。
+不要阅读 changelog 或改动说明，只基于输入规划文本判断。
+列出 高 / 中 / 低 三档发现，每条附具体章节路径或字段路径与建议。
+</task>
+
+<context>
+Ginga 当前边界：
+- 当前主线是 P2-7 Platform runner 收敛，真实路径继续向 workflow DSL + skill adapters + StateIO 收拢。
+- StateIO 是 foundation/runtime_state 的唯一写入口。
+- raw_ideas 不进入 state/RAG。
+- guard/checker 结果只做审计，不注入 prompt。
+- STATUS.md 是当前状态真值，ROADMAP.md 是历史/规划资料。
+- 拆书融梗支线当前是 planned，尚未实现；不得写 runtime_state，不进默认 RAG。
+</context>
+
+<dimensions>
+- 主线一致性：是否会抢 P2-7C 或改变当前真值。
+- 架构边界：StateIO、Meta/Foundation/Platform/RAG 分层是否被破坏。
+- 污染风险：参考原文、拆书结果、市场数据是否可能进入默认 RAG 或 prompt。
+- 可验证性：每条路线是否有可执行验收和 validator/harness 入口。
+- ROI：是否优先做低风险高收益功能，是否延后外部依赖重的功能。
+- 产物清晰度：版本线、P0/P1/P2、边界和不建议吸收项是否足够明确。
+</dimensions>
+
+<grounding_rules>
+- 每条发现必须指向具体章节标题、表格行或条目名。
+- 无依据的推断标 "假设:"。
+- 不要泛泛夸奖。
+</grounding_rules>
+
+<structured_output_contract>
+severity | field_path | issue | suggestion
+severity 只用 高/中/低
+</structured_output_contract>
+
+<input_path>{{INPUT_PATH}}</input_path>
+<input_content>
+{{INPUT_CONTENT}}
+</input_content>

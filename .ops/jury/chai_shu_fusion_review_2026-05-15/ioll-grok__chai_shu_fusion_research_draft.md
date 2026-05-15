@@ -1,0 +1,11 @@
+| severity | field_path | issue | suggestion |
+|----------|------------|-------|------------|
+| 高 | priority.P0 | 主线正处于 P2-7C provider 质量与真实 LLM demo 小范围验证，草案却将 ingest/schema/文风指纹列为 P0，存在主线资源被支线挤压的风险 | 将 P0 降为“实验支线 MVP”，仅在 P2-7C 收敛后并行；最小可落地任务限定为 1 个 provider 原型 + tempdir mock 测试，延迟其余能力 |
+| 高 | architecture.StateIO | 提出独立 StateIO(book_id="analysis-<source>") 写 artifact，但核心边界明确 StateIO 是 runtime_state 唯一写入口，未定义 analysis StateIO 是否引入新 contract 或与 main state 交叉污染 | 立即补充 StateIO 扩展规范：analysis 模式仅允许 write_artifact() + read-only，不得写入 runtime_state 任何域；Phase1 必须包含 cross-contamination 回归测试 |
+| 高 | architecture.RAG | sidecar index 提案未说明与现有 recall_config.yaml / RAG hook 的隔离机制、发现方式和版本管理，存在 sidecar 被意外纳入默认召回或 index 膨胀的风险 | 在 foundation/rag/ 新增 reference_sidecar_recall.yaml；扩展 step_dispatch 支持 workflow-level optional_sidecar 参数；Phase1 产出隔离 query 测试用例 |
+| 高 | risk.copyright | 虽提及版权/来源污染，但未给出“去来源污染、人工确认、可复用”的可执行判断标准（相似度阈值、证据链审计、技法 vs 桥段区分），主观风险高 | 在 D1-D12 schema 中强制新增字段：source_evidence_hash、human_audit_log、similarity_score<0.3；所有 promote 步骤必须先经过 Meta checker 初步筛查，再人工签批 |
+| 中 | implementation.dependencies | 拆书依赖 jieba、numpy，草案未审计 Ginga 当前环境是否支持，也未讨论中文 NLP 一致性、版本 pinning 或替换方案 | Phase0 末完成 dep audit 报告；若冲突则必须用 Ginga 已有 tokenizer/provider 替代，不得新增外部依赖；所有新 provider 必须包含 deterministic + 版本 pinned 测试 |
+| 中 | architecture.existing_capabilities | 未进行与 Ginga 已注册的 12 个 asset-backed deterministic provider 的 gap/overlap 分析，可能导致 stylometric/词频/scan 等能力重复开发 | Phase0 补充“现有 capability 对比矩阵”，优先扩展已有 provider 而非新建 book_analysis_providers.py；若无重叠才新建 |
+| 中 | risk.human_confirmation | 重度依赖“人工确认后 promote”，但完全未描述确认 workflow、audit-to-Foundation 流程、versioning 或回滚机制，Phase3 存在质量/合规断层 | 复用现有 Meta checker/guard 扩展为 analysis_audit step，输出必须包含 human_review_status 与 signed_audit_log；定义 promote_to_foundation CLI 作为唯一入口 |
+| 中 | phase_plan.Phase1 | Phase1 “复制算法思想、不直接复制脚本”正确，但未要求用真实非样例 corpus 做早期 PoC 验证，当前 reports 多为零值/样例，存在后续 effort 浪费风险 | Phase1 首周必须增加 quick PoC：用 1 本真实参考小说跑完整 pipeline，验证 schema 输出与 Foundation methodology 兼容性；若价值不足则提前终止融合 |
+| 低 | priority.skill_adapter | Phase4 才考虑 skill adapter 可能过度保守：若分析能力快速成熟为长期复杂 contract，延迟接入会错失 workflow DSL 原生编排优势 | 在 Phase2 结束时增加“skill contract 评估 checklist”；若满足独立 contract 条件，则提前在 Phase3 末作为第 3 个 skill 注册，而非等到 Phase4 |

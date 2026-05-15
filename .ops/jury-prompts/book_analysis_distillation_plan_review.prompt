@@ -1,0 +1,41 @@
+<task>
+你是 Ginga 项目的第三方架构评审。请只基于输入的“拆书逻辑蒸馏融合规划”做独立 review。
+不要阅读其它 changelog，不要复述计划。重点找：是否适合 Ginga 当前架构、是否遗漏关键边界、是否任务拆分不合理、是否有实施风险或优先级误判。
+</task>
+
+<project_context>
+- Ginga 当前核心架构：Meta / Foundation / Platform / RAG 四层。
+- 当前主线：P2-7C provider 质量与真实 LLM demo 小范围验证。
+- Platform 真实路径应继续收敛到 workflow DSL + capability providers / skill adapters + StateIO。
+- StateIO 是 runtime_state 唯一写入口；分析支线不能绕写 foundation/runtime_state。
+- raw_ideas 不是拆书暂存区，不进入 state/RAG。
+- Meta guard/checker 结果只做 audit，不注入 prompt。
+- 拆书来源目录当前是本地模板工具包，脚本硬编码本地目录且当前 reports 多为样例/零值。
+</project_context>
+
+<review_dimensions>
+1. 战略合理性：这是否值得作为 Ginga 支线推进，会不会偏离 P2-7C 主线。
+2. 架构边界：BookAnalysisLayer、Foundation、RAG sidecar、StateIO、raw_ideas、Meta checker 的边界是否够清楚。
+3. 数据流完整性：从 external novel 到 artifact、candidate、promote、Foundation、sidecar RAG 的路径是否缺步骤。
+4. 任务拆分：Phase 0-6 的顺序、优先级、文件落点和验收是否合理。
+5. 风险控制：版权/来源污染、默认 RAG 污染、prompt 注入、覆盖源文件、大文本性能、依赖缺失是否处理充分。
+6. 可测试性：是否有足够的测试入口、验证命令、失败条件和回归边界。
+</review_dimensions>
+
+<grounding_rules>
+- 每条发现必须指向输入计划中的具体章节或字段路径。
+- 不做空泛建议；建议必须能转化为计划改动。
+- 如果只是猜测，请以“假设:”开头。
+- 严重度分 高 / 中 / 低。
+</grounding_rules>
+
+<structured_output_contract>
+请输出表格：
+severity | field_path | issue | suggestion
+
+最后补一个“总体判断”：approve / revise / reject 三选一，并给一句理由。
+</structured_output_contract>
+
+<input>
+{{INPUT_CONTENT}}
+</input>

@@ -7,7 +7,7 @@
 **状态更新**：2026-05-15（依据 `STATUS.md`；本文件保留为历史规划 + 当前状态对照）
 **对应架构**：`ARCHITECTURE.md` v1
 
-> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A Platform runner 收敛切片。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。下一步主线是 P2-7B Platform runner 收敛，RAG 残余 blocker 仅作为观察项。
+> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A/P2-7B/P2-7C Platform runner 收敛。P2-7C 严格状态是 `done`：真实 LLM smoke 边界切片、provider 输出可读性、`context_snapshot`、`gap_report` 与 residual risk 报告均已收口；该证据仍只证明单章 smoke 边界，不证明长篇生产质量。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。新增规划路线只更新后续定位与版本索引，不改变当前生产完成度：拆书融梗 / `ReferenceTropeDistillation`、BookView / explorer、review / deslop、market sidecar 均为 planned / deferred，尚未实现。
 >
 > 若本文件与 `STATUS.md` 冲突，以 `STATUS.md` 为当前状态真值。
 
@@ -20,12 +20,15 @@
 
 ## 〇、总览
 
+状态枚举：`done` = 有实现与验证证据；`in_progress` = 已有切片但 DoD 未全过；`planned` = 只有规划 / 评审；`deferred` = 明确延后；`observation` = 达标后保留观察。
+
 | Sprint | 周期 | 核心交付 | 用户能力 | 状态 |
 |---|---|---|---|---|
 | **S1: MVP 跑通第一章** ⭐ critical path | 1-2 周 | Foundation schema 最小子集 + 双 skill contract + workflow 12 step + 端到端 CLI demo | "输入创意，得到第一章正文 + 状态文件" | ✅ 已完成 |
 | **S2: 多章连载 + 基础召回** | 1-2 周 | 完整 runtime_state + RAG Layer 1 + 461 prompts 标注（A/A- 优先） + immersive_mode | "写到第 N 章不崩 + 召回辅助卡片 + 沉浸写作模式" | ✅ 已完成 |
 | **S3: RAG 增强 + 标注扩展** | 1 周 | RAG Layer 2/3 + B/B+ 卡补示例 + scout-1 风险治理 | "向量召回 + LLM rerank + 召回质量提升" | ✅ 已完成 |
-| **S4: Phase 2 缺口 + 用户反馈循环** | 持续 | N/P/D/V 阶段 + 多技能扩展 + 4 scout 全部建议落地 + agent harness 补强 + Platform runner 收敛 | "完整 pipeline + 持续优化" | 🔄 持续；RAG 评估、质量小迭代、P2-5 harness 与 P2-7A 已完成，下一步 P2-7B |
+| **S4: Phase 2 缺口 + 用户反馈循环** | 持续 | N/P/D/V 阶段 + 多技能扩展 + 4 scout 全部建议落地 + agent harness 补强 + Platform runner 收敛 | "完整 pipeline + 持续优化" | 🔄 持续；RAG 评估、质量小迭代、P2-5 harness 与 P2-7A/P2-7B 已完成，下一步以 `STATUS.md` 为准 |
+| **S5: 拆书融梗支线** | 后续版本 | `ReferenceTropeDistillation`：参考作品拆章、梗核 / 爽点 / 桥段结构蒸馏、trope_recipe 候选、人工审核后 promote | "把参考网文拆成可变形的融梗配方，再安全接入 Ginga 创作链" | 🟡 planned；已完成调研、jury 评审与规划文档，尚未实现 |
 
 **总周期估计**：MVP 上线 3-5 周（S1+S2+S3）；Phase 2 持续。
 
@@ -230,7 +233,9 @@ P-8/9/10 ──┘  (双 skill contract.yaml + adapter，最高风险段)
 
 ### 4.3 当前下一步
 
-- [ ] **P2-7B**：Platform runner 收敛（后续主线）：以 P2-5 harness 为回归门，把 `demo_pipeline` 中剩余 A-F/H/R1/R2/R3/V1 stub capability 继续替换为 asset-backed capability provider，保持真实路径向 workflow DSL + skill adapters + `StateIO` 统一编排收拢。
+- [x] **P2-7B**：Platform runner 收敛完成：以 P2-5 harness 为回归门，把 `demo_pipeline` 中剩余 A-F/H/R1/R2/R3/V1 stub capability 替换为 asset-backed deterministic capability provider，provider 输出带 `asset_ref` / `provider=asset-backed`，真实路径继续向 workflow DSL + skill adapters + `StateIO` 收拢。
+- [x] **P2-7C-0**：真实 LLM smoke 边界切片完成：`scripts/run_real_llm_smoke.py` 可 dry-run 或显式 `--run`，`.ops/validation/real_llm_demo_smoke.json` 记录 `passed=true`、endpoint、输出路径与不会覆盖的文件；该切片不证明生产质量。
+- [x] **P2-7C-1**：provider 质量与真实 demo 收口：H/R/V provider 输出可读性已补强，真实 demo 报告已补 `context_snapshot`、`gap_report`、residual risk，并保持 mock harness 与真实 demo 边界清晰。
 
 ### 4.4 任务清单（按触发条件优先级，尚未触发）
 
@@ -239,6 +244,7 @@ P-8/9/10 ──┘  (双 skill contract.yaml + adapter，最高风险段)
 - [ ] **F2-3**：D1-D3 数据分析与复盘（触发：已有发布数据可分析）
 - [ ] **F2-4**：V2 版本管理（触发：项目 ≥10 部作品）
 - [ ] **F2-5**：第 3+ skill 接入（按用户需求）
+- [ ] **F2-6**：拆书融梗 / `ReferenceTropeDistillation` Phase 0 文档补强（触发：决定推进 S5 前，先补污染检查规则与 P0 MVP 边界）
 
 ### 4.5 用户反馈循环（持续）
 
@@ -324,7 +330,83 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 - [x] Jury 修订追踪表（jury 23 条建议全部归属到具体任务编号，§七）
 - [x] 8 决策落地到 ARCHITECTURE §七 + 本文件任务编号
 
-**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-15，下一步主线是 P2-7B Platform runner 收敛，RAG 残余 `candidate_k` / `asset_type` blocker 仅作为后续小修观察项。
+**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-15，P2-7C Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层。下一步主线可转入 v1.3-0 拆书融梗污染隔离文档与 P0 MVP；RAG 残余 `candidate_k` / `asset_type` blocker 仅作为后续小修观察项。
+
+---
+
+## 九、版本划分与后续路线
+
+本节用于把已完成主线和后续支线拆开，避免把历史 Sprint、当前真值和未来想法混在一起。
+
+项目定位随新增路线收敛为两层：当前主线是可回归的小说创作 runtime（`workflow DSL + skill adapters + StateIO`），后续路线是围绕它展开的 sidecar / projection / review / research 能力；后者只提供证据、视图或报告，不建立第二状态真值。
+
+| 版本线 | 范围 | 状态 | 当前判定 |
+|---|---|---|---|
+| **v1 / S1-S3** | Foundation / Meta / Platform / RAG MVP；第一章、多章、immersive、RAG Layer 1-3、prompt / methodology 治理 | ✅ 已完成 | 已达到可回归基础底座 |
+| **v1.1 / P2 质量线** | RAG 真实召回质量评估、RAG 小迭代、agent harness、StateIO artifact 边界、mock / real demo 标识 | ✅ 已完成 | 以 `STATUS.md` 和验证产物为准 |
+| **v1.2 / P2-7 Platform runner 收敛** | workflow DSL + skill adapters + `StateIO`，12 step asset-backed deterministic provider | ✅ P2-7A/P2-7B/P2-7C 已完成 | 已完成真实 LLM smoke 边界切片、provider 可读性、context/gap report 与 residual risk；仍不声明长篇生产质量 |
+| **v1.3 / 拆书融梗 Evidence Pipeline** | `ReferenceTropeDistillation`：参考作品拆章、manifest、污染检查、章节原子事件、质量门、trope_recipe 候选 | 🟡 planned | 已有规划和 jury 查漏补缺；下一步先做 v1.3-0 污染隔离文档与 P0 MVP |
+| **v1.4 / Book Workspace View + Explorer** | 从 StateIO/artifacts 派生可读书目视图与只读查询，不产生第二状态真值 | ⏳ deferred | 依赖 v1.3-0 污染隔离规则与 P2-7C 收口 |
+| **v1.5 / Review + Anti-AI warn-only gate** | 审稿、去 AI 味、平台 rubric 报告化；只做审计/报告，不自动改正文 | ⏳ deferred | rubric 只用于 review report，不进入创作 prompt |
+| **v1.6 / Market Research Sidecar** | 扫榜、外部研究、市场信号报告，带采集时间、来源和数据质量状态 | ⏳ deferred | 外部依赖重，需 mock fixture 与显式授权 |
+| **v2 / 完整创作运营线** | N/P/D/V 阶段、发布后数据分析、版本管理、第 3+ skill 接入、封面/发布包 | ⏳ 按触发条件推进 | 不抢 v1.2 / v1.3 前置 |
+
+### 9.1 v1.3：拆书融梗 Evidence Pipeline
+
+定位：
+
+`ReferenceTropeDistillation` 不是读书报告，也不是默认参考语料 RAG；它是把参考网文拆成可复用、可换皮、可审计的融梗配方。
+
+已完成规划产物：
+
+- `.ops/reports/chai_shu_fusion_research_draft.md`
+- `.ops/reports/chai_shu_fusion_decision_report.md`
+- `.ops/reports/book_analysis_distillation_fusion_plan.md`
+- `.ops/jury/book_analysis_distillation_plan_review_2026-05-15/`
+- `.ops/reports/oh_story_inspiration_roadmap.md`
+- `.ops/jury/oh_story_roadmap_review_2026-05-15/`
+- `.ops/jury/oh_story_roadmap_review_2026-05-15_reserve/`
+
+版本拆分：
+
+| 阶段 | 名称 | 目标 | 状态 |
+|---|---|---|---|
+| v1.3-0 | 文档补强 + 污染隔离前置 | 补 `contamination_check_rules.md`、P0 MVP 边界、manifest schema、RAG 排除规则、资源上限、关键词来源规则 | 🟡 planned；P2-7C 后启动 |
+| v1.3-1 | Reference Corpus P0 MVP | 纯函数化 scan / split / manifest / validator / report，输出 `.ops/book_analysis/<run_id>/`；不做内容分析 | 🟡 planned |
+| v1.3-2 | Chapter Atom + Quality Gates | 章节原子事件、动态密度、故事框架识别、覆盖率/重叠率/置信度质量门，所有产物标 `pollution_source: true` | ⏳ deferred |
+| v1.3-3 | Trope Recipe Candidate | D1-D12 转为 `trope_recipe` 候选：梗核、读者爽点、触发条件、变形参数、禁搬元素；不得自动进入创作 workflow | ⏳ deferred |
+| v1.3-4 | Promote Flow | 人工审核 + 污染检查后 promote 到 Foundation methodology / prompt example / reference pattern | ⏳ deferred |
+| v1.3-5 | Reference Sidecar RAG | 显式启用的 sidecar 召回；不污染默认 RAG | ⏳ deferred |
+
+关键红线：
+
+- 不写 `foundation/runtime_state/`。
+- 不进默认 RAG。
+- 不使用 `foundation/raw_ideas/` 暂存拆书结果。
+- 不把原文、人物、设定、桥段直接喂给生成 prompt。
+- `.ops/book_analysis/<run_id>/` 是污染源域，产物 manifest 必须标记 `pollution_source: true`，源自参考作品的文件头必须标 `[SOURCE_TROPE]`。
+- v1.4 explorer、v1.5 review、创作 provider 的默认输入白名单不得包含 `.ops/book_analysis/`。
+- 默认 RAG 索引流程必须主动排除 `.ops/book_analysis/` 与外部采集原文；未来扩展索引源时也要由 validator 复查。
+- 第一轮只做 scan / split / manifest / validator / report，不做 chapter atom、D1-D12 自动化、文风指纹、Promote、Sidecar RAG。
+
+### 9.2 oh-story 参考路线的分层吸收机制
+
+参考 `worldwonderer/oh-story-claudecode` v0.6.1 后，当前结论不是“hooks / references / 书目目录没有价值”，而是“吸收价值，改造成 Ginga 形态”：
+
+- v1.2C 可吸收：显式 `context_snapshot`、`gap_report`、provider 输出可读性，服务真实 demo 边界。
+- v1.3 可吸收：章节切分、manifest、章节原子事件、剧情聚合质量门、`completed_with_errors`，但全部放在污染源 sidecar。
+- v1.4 可吸收：`BookView` projection 与 read-only explorer；输出限定 `.ops/book_views/<book_id>/<run_id>/`，真值仍是 StateIO。
+- v1.5 可吸收：full / lean / solo review mode 与 AI 味量化；checker 默认 warn-only，rubric 只用于报告。
+- v1.6 可吸收：扫榜数据质量头、`SKIP` / `partial`、采集时间与来源；外部采集必须显式授权。
+
+分层吸收表：
+
+| oh-story 机制 | Ginga 吸收方式 | 红线 |
+|---|---|---|
+| hooks | 吸收生命周期信号，改造成显式 `ginga inspect` / scripts / `.ops/reports` | 不做隐式上下文注入 |
+| references | 吸收“操作手册化”组织方式、输出模板、质量清单和 validator | 不复制整套知识库，不制造口径冲突 |
+| `设定/大纲/正文/追踪` 书目目录 | 吸收为 `BookView`、import/export、发布包等人类可读 projection | 不替代 StateIO，不成为第二状态真值 |
+| 拆文库 / 市场原始数据 | 吸收为 sidecar 证据与报告 | 不进默认 RAG，不进 explorer/review 默认白名单 |
 
 ---
 

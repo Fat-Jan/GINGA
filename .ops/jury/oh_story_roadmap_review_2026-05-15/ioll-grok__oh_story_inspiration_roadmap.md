@@ -1,0 +1,8 @@
+| severity | field_path | issue | suggestion |
+|----------|------------|-------|------------|
+| 中 | 六、建议落地顺序 > 1. | 建议把本报告和 jury 结果同步到 `ROADMAP.md` / `STATUS.md` / `notepad.md`，但 context 明确 STATUS.md 是当前状态真值、ROADMAP.md 是历史/规划资料，将规划内容同步至 STATUS.md 可能模糊当前真值边界（主线一致性、产物清晰度） | 仅同步规划内容至 ROADMAP.md 和 notepad.md；STATUS.md 仅记录已验证完成的当前状态，不混入 planned 标记 |
+| 中 | 四、优先级排序 表格（v1.3 行） + 六、建议落地顺序 > 2. | v1.3 Evidence Pipeline 被标记为 P0，但六明确要求“P2-7C 完成后”才启动 v1.3-0，与 v1.2C“当前主线”及 context“主线是 P2-7 Platform runner 收敛”在优先级定义上存在不一致（主线一致性、ROI） | 在表格“原因”列或六中补充 v1.x 版本线与 P2-7C 阶段的精确映射（如 v1.2C = P2-7C，v1.3 = P2-7C 后 P1），避免执行时资源抢占 |
+| 中 | 三、未来路线建议 > v1.4：Book Workspace View 与只读 Explorer > BookView 导出 | BookView 仅描述“从 runtime_state 和 chapter artifacts 生成可读视图”，未明确导出产物的落盘位置和 RAG 处理，可能使 projection 被误作为默认 RAG source 或破坏 StateIO 分层（污染风险、架构边界） | 明确 BookView 只输出到 .ops/book_views/<book_id>/ 或 sidecar 路径，并在验收中增加“污染红线 validator”，确认不写入 foundation/runtime_state、不进默认 RAG |
+| 中 | 三、未来路线建议 > v1.4：Book Workspace View 与只读 Explorer > .active-book 等价能力 | “改为 CLI 参数或项目配置中的 active book 指针”中“项目配置”存储位置未定义，可能引入 StateIO 之外的第二状态真值或新持久化入口（架构边界） | 补充说明项目配置必须是纯运行时 CLI/env 参数或独立于 foundation/ 的只读 sidecar 文件，不得写入任何 state 域，确保 StateIO 仍是唯一写入口 |
+| 低 | 三、未来路线建议 > v1.5：Story Review 与 Anti-AI Style Gate > 边界（平台 rubric） | “平台 rubric：番茄、起点、晋江、知乎盐言等作为 methodology asset，不直接进入 prompt，按显式命令加载”中 methodology asset 的具体存储层级（Meta/Foundation/Platform）和加载路径未细化，产物清晰度不足（产物清晰度、污染风险） | 明确 rubric 置于 Meta/ 或 Platform/ assets 下，作为 asset provider 按需显式加载，并纳入现有污染检查规则 |
+| 低 | 三、未来路线建议 > v1.6：Market / Research Sidecar > 验收 | 验收仅提到“采集失败可标记 SKIP / partial，不阻断整体报告”，缺少 v1.3 那样具体的 validator/harness 入口和 mock 处理（可验证性、ROI） | 补充 deterministic tests 或 offline mock harness，尤其针对外部依赖波动大的场景，确保低风险高收益优先 |

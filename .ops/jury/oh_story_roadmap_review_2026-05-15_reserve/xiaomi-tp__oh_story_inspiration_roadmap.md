@@ -1,0 +1,5 @@
+| severity | field_path | issue | suggestion |
+| :--- | :--- | :--- | :--- |
+| 高 | 三、v1.3，验收 | 拆书融梗支线（Evidence Pipeline）的验收标准中，只提到不写`runtime_state/`、不进默认RAG，但**对提取产物（`chapter_atom`、`excerpt hash`）本身是否携带原文污染、是否允许被其他模块（如审稿v1.5）隐式引用缺乏明确红线**。当前上下文明确该支线“不得写runtime_state，不进默认RAG”，此处边界描述不够强硬。 | 1. 在“边界”段落或“验收”段落中，显式声明`chapter_atom`输出文件必须添加`[SOURCE_TROPE]`标签或在manifest中标记`pollution_source: true`。<br>2. 验收项应增加：所有下游模块（v1.4 explorer, v1.5 review）的输入白名单中不得包含`book_analysis/`下的文件。 |
+| 高 | 三、v1.4，边界 | `ginga query` / read-only explorer 支持查询“伏笔状态、设定出现位置”，这些信息可能间接暴露`book_analysis`中拆书提取的污染数据（如果实现时未做隔离）。**explorer作为读取层，可能无意中成为污染数据向创作状态渗透的桥梁**。 | 1. 明确声明explorer的数据源白名单，仅限`foundation/runtime_state/`、`chapter artifacts/`等“洁净”域。<br>2. 在“边界”段落中补充：若explorer需展示受污染数据（如伏笔来源），必须显式标注并提供“忽略此来源”的过滤选项。 |
+| 中 | 四、优先级排序 | `v1.3 Evidence Pipeline`被列为**P0**，但其本身是“planned”状态的支线升级，且存在较高的污染隔离技术风险。而`v1.4 explorer`（P1）的实现可能依赖于v1.3的部分产物（如干净的章节分析）。**将高风险支线提升到与当前主线v1.2C同等的P0优先级，可能分散收敛主线的精力，且两者存在前置依赖问题。** | 1. 将v1.3的优先级调整为P1，或明确拆分为“v1.3-0 P0文档/

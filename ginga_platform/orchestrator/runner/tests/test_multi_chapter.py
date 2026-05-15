@@ -230,6 +230,14 @@ class SingleChapterWorkflowConvergenceTest(unittest.TestCase):
                 any(source.startswith("step_dispatch:G_chapter_draft") for source in sources),
                 sources,
             )
+            self.assertFalse(
+                any(
+                    entry.get("source") == "step_dispatch:G_chapter_draft"
+                    and "state writes rejected" in str(entry.get("msg", ""))
+                    for entry in entries
+                ),
+                entries,
+            )
             self.assertTrue(
                 any(source.startswith("step_dispatch:H_chapter_settle") for source in sources),
                 sources,

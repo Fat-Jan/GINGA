@@ -74,7 +74,7 @@
       "expected_exit_code": 0,
       "exit_code": 0,
       "execution_mode": "mock_harness",
-      "stdout_tail": "✅ multi_chapter done: 2/2 chapters, DoD PASS, total_words=1420, foreshadow_pool=3\n",
+      "stdout_tail": "✅ multi_chapter done: 2/2 chapters, DoD PASS, total_words=6190, foreshadow_pool=3\n",
       "stderr_tail": "📝 mock_harness 生成第 1 章 (目标 1200 字，不调用 ask-llm)...\n✓ LLM 返回 1856 字符 / 710 个汉字\n📝 mock_harness 生成第 2 章 (目标 1200 字，不调用 ask-llm)...\n✓ LLM 返回 1856 字符 / 710 个汉字\n",
       "checks": {
         "state_domains": true,

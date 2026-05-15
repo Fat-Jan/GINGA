@@ -1,0 +1,34 @@
+<task>
+你是 Ginga 项目的第三方架构评审。请对下面这份“拆书 × Ginga 融合调研草案”做独立 review。
+不要复述草案，不要只给赞同意见。重点找草案中的盲点、过度保守、过度激进、架构边界遗漏、优先级误判、实施风险。
+</task>
+
+<project_context>
+- Ginga 当前主线是 P2-7C provider 质量与真实 LLM demo 小范围验证。
+- Ginga 的核心边界：workflow DSL + capability provider / skill adapter + StateIO；StateIO 是 runtime_state 唯一写入口。
+- Meta checker/guard 结果只进 audit，不注入 prompt。
+- raw_ideas 不是拆书暂存区，不进入 state/RAG。
+- 拆书目录当前更像本地模板工具包，已有 reports 多为样例/零值。
+</project_context>
+
+<review_dimensions>
+1. 融合定位是否正确：参考作品分析层 vs 生产生成主链。
+2. 架构落点是否安全：workflow、provider、skill adapter、StateIO、Foundation、RAG sidecar、Meta checker。
+3. 功能优先级是否合理：哪些能力应提前 / 延后 / 不做。
+4. 实施边界是否清晰：输出目录、覆盖风险、空输入、依赖、测试、验证。
+5. 创作与合规风险：来源污染、版权、桥段搬运、prompt 注入。
+6. 是否遗漏 Ginga 现有能力或拆书可复用能力。
+</review_dimensions>
+
+<structured_output_contract>
+请用表格输出：
+severity | field_path | issue | suggestion
+
+severity 只用 高 / 中 / 低。
+field_path 可用类似 conclusion, priority.P0, architecture.RAG, risk.copyright, phase_plan.Phase1 等路径。
+每条发现必须具体可执行；无依据的推断请标“假设:”。
+</structured_output_contract>
+
+<input>
+{{INPUT_CONTENT}}
+</input>

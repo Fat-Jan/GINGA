@@ -1,0 +1,142 @@
+{
+  "generated_from": "scripts/run_real_llm_smoke.py",
+  "execution_mode": "real_llm_demo",
+  "dry_run": false,
+  "refreshed_existing": true,
+  "passed": true,
+  "endpoint": "xiaomi-tp",
+  "book_id": "p2-7c-real-llm-smoke-20260515",
+  "topic": "玄幻黑暗",
+  "premise": "失忆刺客醒来后发现短刃会吞吐微粒，他必须在第一重天堑前判断追杀者来自谁。",
+  "word_target": 800,
+  "state_root": ".ops/real_llm_demo/p2-7c-smoke-state",
+  "output_path": ".ops/real_llm_demo/p2-7c-smoke-state/p2-7c-real-llm-smoke-20260515/chapter_01.md",
+  "artifact_execution_mode": "real_llm_demo",
+  "cost_risk": "1 ask-llm call, max_tokens=4096, timeout=300s; smoke quality only, not production readiness",
+  "will_not_overwrite": [
+    "foundation/runtime_state/demo-book",
+    "foundation/runtime_state/s2-demo",
+    "foundation/runtime_state/immersive-demo",
+    ".ops/reports/agent_harness_report.md"
+  ],
+  "commands": [
+    {
+      "name": "refresh_existing",
+      "argv": [
+        "refresh-existing",
+        "p2-7c-real-llm-smoke-20260515",
+        "--state-root",
+        ".ops/real_llm_demo/p2-7c-smoke-state"
+      ],
+      "exit_code": 0,
+      "stdout_tail": "",
+      "stderr_tail": ""
+    }
+  ],
+  "context_snapshot": {
+    "status": "captured",
+    "before_run": {
+      "status": "present",
+      "state_dir": ".ops/real_llm_demo/p2-7c-smoke-state/p2-7c-real-llm-smoke-20260515",
+      "state_domains": {
+        "locked": true,
+        "entity_runtime": true,
+        "workspace": true,
+        "retrieved": true,
+        "audit_log": true
+      },
+      "audit_entries": 61,
+      "locked_summary": {
+        "has_story_dna": true,
+        "has_world": true,
+        "has_plot_architecture": true
+      },
+      "runtime_summary": {
+        "total_words": 5793,
+        "foreshadow_pool_size": 1,
+        "particles": 0,
+        "character_events": 2
+      },
+      "chapter_artifact": {
+        "exists": true,
+        "path": ".ops/real_llm_demo/p2-7c-smoke-state/p2-7c-real-llm-smoke-20260515/chapter_01.md",
+        "execution_mode": "real_llm_demo",
+        "chars": 2553,
+        "foreshadow_markers": 2
+      }
+    },
+    "after_run": {
+      "status": "present",
+      "state_dir": ".ops/real_llm_demo/p2-7c-smoke-state/p2-7c-real-llm-smoke-20260515",
+      "state_domains": {
+        "locked": true,
+        "entity_runtime": true,
+        "workspace": true,
+        "retrieved": true,
+        "audit_log": true
+      },
+      "audit_entries": 61,
+      "locked_summary": {
+        "has_story_dna": true,
+        "has_world": true,
+        "has_plot_architecture": true
+      },
+      "runtime_summary": {
+        "total_words": 5793,
+        "foreshadow_pool_size": 1,
+        "particles": 0,
+        "character_events": 2
+      },
+      "chapter_artifact": {
+        "exists": true,
+        "path": ".ops/real_llm_demo/p2-7c-smoke-state/p2-7c-real-llm-smoke-20260515/chapter_01.md",
+        "execution_mode": "real_llm_demo",
+        "chars": 2553,
+        "foreshadow_markers": 2
+      }
+    },
+    "observed_delta": {
+      "chapter_created": false,
+      "audit_entries_added": 0,
+      "total_words_after": 5793,
+      "foreshadow_pool_after": 1
+    }
+  },
+  "gap_report": {
+    "status": "needs_review",
+    "open_gaps": [
+      {
+        "code": "production_quality_not_proven",
+        "severity": "warn",
+        "detail": "single smoke does not prove long-form production readiness."
+      },
+      {
+        "code": "single_chapter_scope",
+        "severity": "info",
+        "detail": "this gate covers one chapter only; multi-chapter continuity remains outside scope."
+      }
+    ]
+  },
+  "residual_risk": [
+    {
+      "code": "real_llm_variability",
+      "severity": "medium",
+      "mitigation": "record endpoint, prompt scope, artifact path, and rerun only with explicit approval."
+    },
+    {
+      "code": "single_chapter_scope",
+      "severity": "medium",
+      "mitigation": "treat this as smoke evidence, not a multi-chapter quality claim."
+    },
+    {
+      "code": "provider_quality_not_longform_proven",
+      "severity": "medium",
+      "mitigation": "keep mock harness as boundary regression and use real demo reports for quality review."
+    },
+    {
+      "code": "endpoint_cost_dependency",
+      "severity": "low",
+      "mitigation": "default to dry-run; real calls require explicit --run."
+    }
+  ]
+}

@@ -38,6 +38,7 @@ from typing import Any
 from ginga_platform.orchestrator.runner.op_translator import (
     adapter_ops_to_state_updates,
 )
+from ginga_platform.orchestrator.registry.capability_registry import CapabilityRegistry
 from ginga_platform.orchestrator.runner.dsl_parser import Step, parse_workflow
 from ginga_platform.orchestrator.runner.state_io import StateIO
 from ginga_platform.orchestrator.router.skill_router import SkillRouter
@@ -621,6 +622,7 @@ def _workflow_step_dispatch(
     dispatch_step(
         step,
         runtime_ctx,
+        capability_registry=CapabilityRegistry.from_defaults(),
         skill_registry=skill_registry,
         skill_router=skill_router,
     )

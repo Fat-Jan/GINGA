@@ -1,52 +1,20 @@
 # Ginga 小说系统蒸馏项目
 
-## Priority Context（开新会话先读这一段）
+## Priority Context
 
-- 项目目标：把 `_原料/` 蒸馏成一个**分层**的小说创作系统底座，不是堆成单一 RAG。
-- 四层目标：**Meta（用户宪法）→ Foundation（数据本体）→ Platform（agent + workflow）→ RAG（检索）**。
-- **当前阶段**：阶段 0..4 全部完成 ✅ + **Sprint 1 全部完成 ✅** + **Sprint 2 全部完成 ✅** + **Sprint 3 全部收口 ✅** + **S4/Phase 2 native sqlite-vec 接入 + RAG 真实召回质量评估完成 ✅** + **P2 可回归评估收口 ✅** + **RAG 质量小迭代完成 ✅** + **P2-5 agent harness 补强完成 ✅** + **P2-7A Platform runner 收敛切片完成 ✅**；当前 Layer 2 `recall@5=0.614`、`expected_recall@5=0.917`。下一步主线：P2-7B 继续把剩余 stub capability 收敛到 workflow DSL + skill adapter + StateIO 统一编排。
-- 最终架构：`ARCHITECTURE.md` v1（36.5KB / 8 章节 + Killer Use Case + 8 决策最终判决 + Jury 判决归属表 23 条）
-- 实施路线：`ROADMAP.md` v1（已补 2026-05-14 状态更新；历史规划 + 当前状态对照）
-- **Sprint 2 进度（2026-05-14 02:35 收口复核）**：
-  - ✅ ST-S2-PHASE0（capability_registry + op_translator + 12 step integration，33 tests PASS）
-  - ✅ ST-S2-R-RAG-LAYER1（RAG Layer 1，53 tests PASS）
-  - ✅ ST-S2-I-IMMERSIVE（I-1..I-5 + 真实 LLM 5 章沉浸 demo，16 tests + audit_log 全证据 PASS；产物 `foundation/runtime_state/immersive-demo/chapter_01..05.md` 13-19K bytes 每章）
-  - ✅ ST-S2-S-MULTI-CHAPTER（S-1..S-5 + 真实 LLM 5 章 demo PASS；产物 `foundation/runtime_state/s2-demo/chapter_01..05.md`，`total_words=15245`，`foreshadow_pool=5`）
-  - ✅ ST-S2-L-ANNOTATION（461/461 prompt cards 标注完成；`annotation-progress.jsonl` 中 `status=ok` = 461，`foundation/assets/prompts/prompts-card-*.md` = 461）
-- **Sprint 2 关键代码新增**：
-  - `ginga_platform/orchestrator/cli/multi_chapter.py`（266 行）：R1/R2/R3 + V1 DoD + run_multi_chapter runner
-  - `ginga_platform/orchestrator/cli/locked_patch.py` + `meta/patches/_template.patch.yaml`：locked 域 patch CLI
-  - `ginga_platform/orchestrator/cli/immersive_runner.py` + adapter 沉浸 enter/exit + checker_invoker silenced hook
-  - **重要 bug 修复（A3 防陷阱）**：`state_io.py` 把模块级常量 `_DEFAULT_STATE_ROOT` 改成函数 `_default_state_root()` + lazy lookup，杜绝"Python 默认参数绑定 + mock.patch 模块属性失效"陷阱；同步改了 2 处测试 mock 路径
-- **Sprint 3 收口完成（2026-05-14 复核）**：
-  - ✅ ST-S3-R-LAYER23：Layer 2 native sqlite-vec 向量召回 + Layer 3 rerank fail-open；`rag/layer2_vector.py` / `rag/reranker.py` / `rag/retriever.py`；`SQLiteVecBackend` native vec0 integration test 真跑通过（不再 skip）
-  - ✅ ST-S3-Q-PROMPT-AUDIT + ST-S3-Q-PROMPT-SCHEMA-FIX：461 prompt frontmatter strict 校验 `0 violations`
-  - ✅ ST-S3-M-METHODOLOGY-ASSETS：12 methodology assets + 1 schema-ref asset；validators PASS；`写作/平台审核.md` 暂按报告记录为 deferred ambiguity
-  - ✅ ST-S3-D-DEDUP-EVIDENCE：461 prompt cards / 541 base docs / 25 样本 dedup evidence；strict PASS
-  - ✅ ST-S3-Q-WEAK-EXAMPLES-A..D：202 个弱示例 prompt card 已补具体 `## 示例输入`；`report_prompt_quality.py` 复核 `weak_examples=0`
-  - ✅ ST-S3-P-PRESSURE-TEST：本地压力测试 `100% PASS (7/7)`；`immersive-demo` 章号标题序列已修复为 `[1,2,3,4,5]`
-- 主验证命令：`python3 scripts/verify_all.py`（quick gate）+ `python3 scripts/run_agent_harness.py`（mock_harness 离线覆盖 init / single run / multi_chapter / immersive / missing_state_error，并守住 P2-7A 单章 workflow/adapter 审计）+ `python3 scripts/evaluate_rag_recall.py`（473 cards / 473 vectors / sqlite-vec native / fallback=none；Layer 1/2 空召回均为 0；Layer 2 expected_recall@5=0.917 / recall@5=0.614）
-- 灵感逃逸通道：`ginga idea add` 已实现；`foundation/raw_ideas/` 只落盘，仍禁止进入 state/RAG。
-- 历史档案：`_distillation-plan.md`（阶段 2 草稿，47.6KB，保留）
-- 4 jury 评审：`.ops/jury/jury-{1-4}-*.md`（4 票 revise / ~32KB）→ 100% 吸收到 ARCHITECTURE
-- 4 scout 报告：`.ops/scout-reports/scout{1-4}-*.md`（~98KB）
-- 子代理底层规范：`.ops/subagents/dispatch-protocol.md`（executor 选择、模型分级、心跳、回包检测、zombie 判定、看板权限）
-- 关键约束：用户已有完整 skill 体系（思路 2 = `dark-fantasy-ultimate-engine`，思路 3 = `planning-with-files`），系统**兼容并增强**双 skill，**保留双 skill 一级公民地位，禁止揉合**；`immersive_mode` 保护 dark-fantasy 气质。
-- 用户偏好：不要省事的"简单方案"；多思考多花时间；自利偏差导致标准滑坡。
-- **Executor 教训（2026-05-13 双救火 + 续接）**：
-  - 阶段 1 scout-3：`Agent(subagent_type=codex:codex-rescue)` 是 Claude wrapper 仍走 Claude API/dzzzz 网关；真独立 codex 只有直接 Bash 调 `codex-companion task --background --write`。
-  - 阶段 3 jury：endpoint 大规模故障潮，2 族矩阵（xAI + DeepSeek）完成；jury 独立性靠 4 persona prompt 保住。
-  - Sprint 2 续接：P7 子代理断网后 handoff 心跳停滞 ≠ 工作没完成；必须 §M2 白盒回放跑测试 + 看产物文件 mtime/bytes 才能判断真实进度（P7-I 实际全 done 但 handoff 没汇报 I-5）。
-- **mock 陷阱预防**：测试要重定向默认 state_root **必须** mock 函数 `_default_state_root` 不能 mock 旧常量；旧常量已删除，复用旧 mock 模式会 fail-fast AttributeError。
+- 定位：Ginga 是以 workflow DSL + skill adapters + StateIO 为真实运行主线的小说创作平台底座，STATUS.md 是当前状态真值。
+- 入口：先看 AGENTS.md、STATUS.md、notepad.md、ARCHITECTURE.md。
+- 验证：常用 python3 scripts/verify_all.py、python3 scripts/run_agent_harness.py、python3 scripts/evaluate_rag_recall.py。
+- 坑点：P2-7C 已收口但仍只证明单章 smoke 边界，不证明长篇生产质量；raw_ideas、book_analysis 与市场原文不得默认进入 StateIO 或 RAG。
 
 ## 项目定位
 
-把 `_原料/` 里 **1002 个 md + 13 txt + 3 思路文件**（总约 6.94 MB）蒸馏成可复用的小说创作底座。
+把 `_原料/` 里 **1002 个 md + 13 txt + 3 思路文件**（总约 6.94 MB）蒸馏成可复用的小说创作底座，并继续收敛为以 `workflow DSL + skill adapters + StateIO` 为真实运行主线的创作平台。
 
 **核心判断**：
 - 这堆原料异质性极高：结构化模板（基座）+ 创作哲学（思路）+ 场景卡片（prompts）+ 流水线（阶段 A~M），不能用单一方法处理。
 - 简单做法 = 全部塞向量库做 RAG，会丢失结构、丢失依赖、丢失用户已有 skill 的兼容性。
-- 正确做法 = 先建数据本体（schema），再建 agent 平台（registry + workflow），最后才上 RAG。
+- 正确做法 = 先建数据本体（schema），再建 agent 平台（registry + workflow），最后才上 RAG；新增的 Evidence Pipeline、BookView / explorer、review / deslop、market sidecar 都是围绕主线的 sidecar / projection / report 能力，不替代 `StateIO` 真值，不默认进入 RAG。
 
 ## 原料地图
 
@@ -120,7 +88,7 @@ _原料/
 | 3 | Ark Jury Court 4 角法庭 | ✅ 完成 | `.ops/jury/jury-{1-4}-*.md`（4 票 revise） |
 | 4 | 综合判决与交付 | ✅ 完成 | `ARCHITECTURE.md` + `ROADMAP.md` |
 
-**下一步**：主线做 P2-7B Platform runner 收敛；RAG 残余 `candidate_k` / `asset_type` blocker 仅作为后续小修观察项；当前完成度以 `STATUS.md` 为准。
+**下一步**：P2-7C provider 质量与真实 demo 已收口；真实 LLM smoke 报告已有 `context_snapshot`、`gap_report` 与 residual risk，但仍只证明单章边界。下一步主线可转 v1.3 Evidence Pipeline 的污染隔离文档与 P0 MVP（scan / split / manifest / validator / report）；RAG 残余 `candidate_k` / `asset_type` blocker 仅作为后续小修观察项；当前完成度以 `STATUS.md` 为准。
 
 ## 验证
 
@@ -132,6 +100,10 @@ _原料/
 ## 坑点
 
 - **Ark Jury Court 不是 CLI**：需用 `ask-codex` + `ask-llm` 各扮 2 角色组装 4 角法庭。
+- **规划不能写混 STATUS**：`STATUS.md` 是当前真值，只写已验证完成状态；oh-story 参考路线这类 planned 内容主要进 `ROADMAP.md` / `notepad.md`。
+- **oh-story 要分层吸收**：hooks 有生命周期信号价值，references 有操作手册化价值，中文书目目录有人类可读价值；Ginga 要把它们改造成显式 context/gap report、Foundation asset 组织范式、BookView/import-export projection，而不是原样复制为隐式机制或主存储。
+- **拆书 / 市场 sidecar 是污染源域**：`.ops/book_analysis/`、外部榜单原文、市场采集原始数据默认不得进入 RAG 或 explorer/review 输入白名单；如要 promote 必须人工审核 + 污染检查。
+- **BookView 是 projection**：未来若做 `.ops/book_views/<book_id>/<run_id>/`，必须显著标注真值仍是 StateIO，不得建立第二状态真值。
 - **用户已有 skill 必须先识别**：思路 2/3 是完整 skill，蒸馏产物必须做差异分析（哪些已有/哪些是新增/哪些可增强）。
 - **1002 md 不能塞主上下文**：必须用 Scout 子代理隔离扫描，Scout 把详细报告 Write 到文件，只回主 agent 摘要。
 - **基座 vs 提示词库参考有重叠**：必须做去重分析（同样的场景在两个地方都出现，用哪个？合并还是 drop？）。

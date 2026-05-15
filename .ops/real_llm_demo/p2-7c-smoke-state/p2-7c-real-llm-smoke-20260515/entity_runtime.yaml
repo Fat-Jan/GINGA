@@ -1,0 +1,46 @@
+CHARACTER_STATE:
+  protagonist:
+    name: 未命名刺客
+    inventory:
+    - item: 刻有古老符文的短刃
+      count: 1
+    abilities:
+    - skill: 影迹潜行
+      level: 5
+      cooldown: 0
+    body:
+      hp: 100
+      mp: 80
+      status:
+      - 失忆
+      - 微粒残留
+    psyche:
+      mood: 警觉
+      beliefs:
+      - 不信任任何人
+      traumas:
+      - 记忆缺失带来的存在性恐惧
+    relations: []
+    events:
+    - ch: 1
+      type: draft
+      impact: 第1章草稿生成（1830字，新增0个伏笔）
+    - ch: 1
+      type: settle
+      impact: '--- 意识是从一片冰冷的铁锈味中捞出来的。 不是泥土，不是腐木，而是更为尖锐、更具侵略性的气味——铁与血凝固后，被漫长时光腌渍成的腥。他睁开眼，首先看见的不是'
+RESOURCE_LEDGER:
+  particles: 0
+  items: []
+FORESHADOW_STATE:
+  pool:
+  - id: fh-001
+    planted_ch: 1
+    expected_payoff: 30
+    status: open
+    summary: 短刃上的古老符文
+GLOBAL_SUMMARY:
+  total_words: 5793
+  arc_summaries:
+  - chapter: 1
+    summary: '--- 意识是从一片冰冷的铁锈味中捞出来的。 不是泥土，不是腐木，而是更为尖锐、更具侵略性的气味——铁与血凝固后，被漫长时光腌渍成的腥。他睁开眼，首先看见的不是'
+    words: 1861

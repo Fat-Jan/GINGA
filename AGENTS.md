@@ -1,6 +1,6 @@
 # Agent 入口说明
 
-给未来 agent 的短入口：先确认当前事实，再动代码。这个项目已经完成 agent harness 补强，当前主线是 P2-7 Platform runner 收敛：把真实路径继续收拢到 workflow DSL + skill adapters + `StateIO`。
+给未来 agent 的短入口：先确认当前事实，再动代码。这个项目已经完成 P2-7 Platform runner 收敛：真实路径已收拢到 workflow DSL + skill adapters + `StateIO`，并补齐 provider 可读性、真实 demo `context_snapshot` / `gap_report` / residual risk。当前下一步以 `STATUS.md` 为准。
 
 ## 先读顺序
 
@@ -14,6 +14,13 @@
 - `STATUS.md` 是当前状态真值。
 - `ROADMAP.md` 是历史/规划资料，不代表最新完成度；里面的待办状态可能已经过期。
 - `ARCHITECTURE.md` 是架构权威，但完成度与下一步以 `STATUS.md` 为准。
+
+## 阶段性备份规则
+
+- 每完成一个阶段性任务并通过对应验证后，优先把本阶段代码、报告、验证产物和真值文件提交并推送到 GitHub，形成可回滚备份点。
+- 提交前先同步 `STATUS.md` / `ROADMAP.md` / `notepad.md` / `ARCHITECTURE.md` 等真值文件；不要让提交只包含代码而遗漏状态更新。
+- Commit message 必须写明本阶段更新内容、验证命令和剩余风险；不要用“更新一下”这类不可追溯描述。
+- 若工作树里有与本阶段无关的用户改动，保持隔离，不要擅自回滚；只 stage 本阶段需要备份的文件。
 
 ## 核心架构边界
 

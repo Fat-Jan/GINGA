@@ -106,6 +106,7 @@ def dispatch_step(
 
     # 3. 把 state_updates 落到 StateIO（仅限 step.state_writes 内）.
     writes_applied = _apply_state_writes(step, output, state_io)
+    audit_intents_applied = _apply_audit_intents(step, output, state_io)
 
     # 4. postconditions: checkers (后置软审计).
     try:
@@ -123,6 +124,7 @@ def dispatch_step(
             "used": used,
             "guards_passed": guards_passed,
             "writes_applied": writes_applied,
+            "audit_intents_applied": audit_intents_applied,
             "checker_results": checker_results,
         },
     )
@@ -233,6 +235,28 @@ def _apply_state_writes(step: Step, output: Mapping[str, Any], state_io: StateIO
     if filtered:
         state_io.apply(filtered, source=f"step_dispatch:{step.id}")
     return list(filtered.keys())
+
+
+def _apply_audit_intents(step: Step, output: Mapping[str, Any], state_io: StateIO) -> int:
+    intents = output.get("audit_intents") or []
+    if not intents:
+        return 0
+    if not isinstance(intents, list):
+        raise StepFailed(step.id, f"audit_intents must be list, got {type(intents).__name__}")
+    applied = 0
+    for idx, intent in enumerate(intents):
+        if not isinstance(intent, Mapping):
+            raise StepFailed(step.id, f"audit_intents[{idx}] must be mapping, got {type(intent).__name__}")
+        payload = intent.get("payload") if isinstance(intent.get("payload"), Mapping) else {}
+        state_io.audit(
+            source=str(intent.get("source") or f"step_dispatch:{step.id}:audit_intent"),
+            severity=str(intent.get("severity") or "info"),
+            msg=str(intent.get("msg") or ""),
+            action=str(intent.get("action") or "log"),
+            payload=dict(payload),
+        )
+        applied += 1
+    return applied
 
 
 

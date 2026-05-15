@@ -105,6 +105,7 @@ steps:
       - retrieved.*
     state_writes:
       - workspace.chapter_text
+      - entity_runtime.GLOBAL_SUMMARY.total_words
 
   - id: H_chapter_settle
     description: 章节结算（更新 CHARACTER_STATE / RESOURCE_LEDGER / FORESHADOW_STATE / progress）
