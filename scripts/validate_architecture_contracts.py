@@ -29,6 +29,7 @@ P7_HISTORY_NOTICE_PATHS = (
     Path(".ops/p7-prompts/README.md"),
     Path(".ops/p7-handoff/README.md"),
 )
+CANDIDATE_TRUTH_GATE_PATH = Path(".ops/governance/candidate_truth_gate.md")
 CODE_STATE_WRITE_ALLOWLIST = {
     Path("ginga_platform/orchestrator/runner/state_io.py"),
     Path("ginga_platform/orchestrator/cli/locked_patch.py"),
@@ -145,6 +146,8 @@ REVIEW_REQUIRED_SNIPPETS = (
     "\"mode\": \"warn_only\"",
     "\"auto_edit\": False",
     "\"longform_quality_gate\"",
+    "\"style_fingerprint\"",
+    "_build_style_fingerprint",
     "\"reviewer_queue\"",
     "\"batch_state_snapshots\"",
     "opening_loop_risk",
@@ -180,6 +183,38 @@ MARKET_RESEARCH_FORBIDDEN_SNIPPETS = (
     "foundation/runtime_state",
     "_call_llm",
     "ask-llm",
+)
+MODEL_TOPOLOGY_PATH = Path("ginga_platform/orchestrator/model_topology.py")
+MODEL_TOPOLOGY_REQUIRED_SNIPPETS = (
+    "DEFAULT_OUTPUT_ROOT = Path(\".ops/model_topology\")",
+    "OUTPUT_BOUNDARY = \".ops/model_topology/<run_id>/\"",
+    "\"mode\": \"report_only\"",
+    "\"runtime_takeover\": False",
+    "\"stateio_mutation\": False",
+    "live probe disabled; pass --probe-live",
+)
+MODEL_TOPOLOGY_FORBIDDEN_SNIPPETS = (
+    "\"runtime_takeover\": True",
+    "\"stateio_mutation\": True",
+    ".apply(",
+    ".audit(",
+    ".write_artifact(",
+    "StateIO(",
+    "run_workflow(",
+    "dispatch_step(",
+)
+REQUIRED_CANDIDATE_TRUTH_GATE_MARKERS = (
+    "candidate-only",
+    "report-only",
+    "truth",
+    "operator_accept",
+    "schema_validation",
+    "source_contamination_check",
+    "StateIO",
+    "default RAG",
+    ".ops/model_topology/**",
+    ".ops/book_analysis/**",
+    "not enter default RAG",
 )
 
 
@@ -738,6 +773,51 @@ def validate_market_research_boundary(repo_root: Path, report: dict[str, Any]) -
     )
 
 
+def validate_model_topology_boundary(repo_root: Path, report: dict[str, Any]) -> None:
+    """Ensure v1.8-0 Model Topology remains report-only observation."""
+    path = repo_root / MODEL_TOPOLOGY_PATH
+    try:
+        text = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        add_error(report, MODEL_TOPOLOGY_PATH, "Model Topology boundary", "model_topology module missing")
+        add_check(report, "v1.8-0 Model Topology observation boundary", False, "model_topology module missing")
+        return
+
+    missing = [snippet for snippet in MODEL_TOPOLOGY_REQUIRED_SNIPPETS if snippet not in text]
+    forbidden = [snippet for snippet in MODEL_TOPOLOGY_FORBIDDEN_SNIPPETS if snippet in text]
+    if missing:
+        add_error(report, MODEL_TOPOLOGY_PATH, "Model Topology boundary", f"missing required snippet(s): {missing}")
+    if forbidden:
+        add_error(report, MODEL_TOPOLOGY_PATH, "Model Topology boundary", f"forbidden runtime takeover/state write snippet(s): {forbidden}")
+    add_check(
+        report,
+        "v1.8-0 Model Topology observation boundary",
+        not missing and not forbidden,
+        "Model Topology is constrained to report-only .ops/model_topology observation output",
+    )
+
+
+def validate_candidate_truth_gate(repo_root: Path, report: dict[str, Any]) -> None:
+    """Ensure v1.8-1 candidate/report/truth wording exists and is grep-stable."""
+    path = repo_root / CANDIDATE_TRUTH_GATE_PATH
+    try:
+        text = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        add_error(report, CANDIDATE_TRUTH_GATE_PATH, "Candidate Truth Gate", "governance doc missing")
+        add_check(report, "v1.8-1 Candidate Truth Gate wording", False, "governance doc missing")
+        return
+
+    missing = [marker for marker in REQUIRED_CANDIDATE_TRUTH_GATE_MARKERS if marker not in text]
+    if missing:
+        add_error(report, CANDIDATE_TRUTH_GATE_PATH, "Candidate Truth Gate", f"missing required marker(s): {missing}")
+    add_check(
+        report,
+        "v1.8-1 Candidate Truth Gate wording",
+        not missing,
+        "candidate-only / report-only / truth gate wording is present",
+    )
+
+
 def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     root = (repo_root or Path.cwd()).resolve()
     root_text = str(root)
@@ -761,6 +841,8 @@ def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     validate_book_view_boundary(root, report)
     validate_review_boundary(root, report)
     validate_market_research_boundary(root, report)
+    validate_model_topology_boundary(root, report)
+    validate_candidate_truth_gate(root, report)
     report["status"] = "FAIL" if report["errors"] else "PASS"
     return report
 

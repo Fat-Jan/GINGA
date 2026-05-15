@@ -88,6 +88,7 @@ def build_review_report(
     chapters = _load_chapters(state_dir)
     issues = _scan_chapters(chapters)
     longform_gate = _build_longform_quality_gate(state=state, chapters=chapters)
+    style_fingerprint = _build_style_fingerprint(state=state, chapters=chapters)
     issues.extend(longform_gate["issues"])
     status = "warn" if issues else "pass"
     return {
@@ -114,6 +115,7 @@ def build_review_report(
                 "anti_ai_style",
                 "platform_genre_fit",
                 "webnovel_readability",
+                "style_fingerprint",
             ],
         },
         "data_sources": {
@@ -130,7 +132,9 @@ def build_review_report(
             "error_count": 0,
             "longform_gate_issue_count": len(longform_gate["issues"]),
             "reviewer_queue_count": len(longform_gate["reviewer_queue"]),
+            "style_fingerprint_status": style_fingerprint["status"],
         },
+        "style_fingerprint": style_fingerprint,
         "longform_quality_gate": longform_gate,
         "issues": issues,
         "suggestions": _suggestions_from_issues(issues),
@@ -215,6 +219,73 @@ def _build_longform_quality_gate(*, state: dict[str, dict[str, Any]], chapters: 
         "issues": gate_issues,
         "reviewer_queue": list(queue.values()),
     }
+
+
+def _build_style_fingerprint(*, state: dict[str, dict[str, Any]], chapters: list[dict[str, Any]]) -> dict[str, Any]:
+    text = "\n".join(chapter.get("text", "") for chapter in chapters)
+    body_text = strip_html_comments(text)
+    sentences = _sentences(body_text)
+    sentence_lengths = [count_chinese(sentence) for sentence in sentences if count_chinese(sentence) > 0]
+    paragraphs = [paragraph for chapter in chapters for paragraph in _body_paragraphs(chapter.get("text", ""))]
+    lines = [line.strip() for line in body_text.splitlines() if line.strip()]
+    dialogue_lines = [line for line in lines if _is_dialogue_line(line)]
+    anchor_phrases = _context_summary(state)["anchor_phrases"]
+    style_pattern_hits = _style_pattern_hits(body_text)
+    return {
+        "scope": "report_only",
+        "auto_edit": False,
+        "writes_runtime_state": False,
+        "enters_creation_prompt": False,
+        "status": "measured" if chapters else "no_chapters",
+        "chapter_count": len(chapters),
+        "total_chinese_chars": count_chinese(body_text),
+        "paragraph_count": len(paragraphs),
+        "dialogue_line_count": len(dialogue_lines),
+        "dialogue_line_ratio": _ratio(len(dialogue_lines), len(lines)),
+        "avg_sentence_chars": _average(sentence_lengths),
+        "sentence_length_buckets": {
+            "short": sum(1 for value in sentence_lengths if value <= 12),
+            "medium": sum(1 for value in sentence_lengths if 13 <= value <= 35),
+            "long": sum(1 for value in sentence_lengths if value >= 36),
+        },
+        "anchor_phrase_hits": {phrase: body_text.count(phrase) for phrase in anchor_phrases},
+        "style_pattern_hits": style_pattern_hits,
+        "notes": [
+            "Style fingerprint is measured for review evidence only.",
+            "It must not auto-edit prose, write StateIO, or enter creation prompts.",
+        ],
+    }
+
+
+def _style_pattern_hits(text: str) -> dict[str, int]:
+    patterns = {
+        "generic_emotion": r"说不出的感觉|难以言喻|复杂的情绪",
+        "cliche_metaphor": r"命运的齿轮|内心深处|仿佛.*?命运",
+        "abrupt_transition": r"突然|猛然|下一秒",
+        "game_system_tone": r"系统提示|叮|恭喜获得|任务完成",
+        "light_novel_meta": r"吐槽|不会吧|这也太",
+    }
+    return {name: len(re.findall(pattern, text)) for name, pattern in patterns.items()}
+
+
+def _sentences(text: str) -> list[str]:
+    return [part.strip() for part in re.split(r"[。！？!?]+", text) if part.strip()]
+
+
+def _is_dialogue_line(line: str) -> bool:
+    return line.startswith(("“", "「", '"')) or "：“" in line or ": \"" in line
+
+
+def _ratio(numerator: int, denominator: int) -> float:
+    if denominator == 0:
+        return 0.0
+    return round(numerator / denominator, 3)
+
+
+def _average(values: list[int]) -> float:
+    if not values:
+        return 0.0
+    return round(sum(values) / len(values), 1)
 
 
 def _longform_chapter_issues(
@@ -441,6 +512,7 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         f"- issues: {payload['summary']['issue_count']}",
         f"- longform_gate_issues: {payload['summary'].get('longform_gate_issue_count', 0)}",
         f"- reviewer_queue: {payload['summary'].get('reviewer_queue_count', 0)}",
+        f"- style_fingerprint: `{payload['summary'].get('style_fingerprint_status', 'unknown')}`",
         "",
         "## Issues",
         "",
@@ -457,6 +529,19 @@ def _render_markdown(payload: dict[str, Any]) -> str:
         lines.append("- none")
     for suggestion in payload["suggestions"]:
         lines.append(f"- {suggestion}")
+    fingerprint = payload.get("style_fingerprint") or {}
+    if fingerprint:
+        lines.extend(["", "## Style Fingerprint", ""])
+        lines.append(f"- scope: `{fingerprint.get('scope', '')}`")
+        lines.append(f"- auto_edit: `{fingerprint.get('auto_edit', False)}`")
+        lines.append(f"- writes_runtime_state: `{fingerprint.get('writes_runtime_state', False)}`")
+        lines.append(f"- enters_creation_prompt: `{fingerprint.get('enters_creation_prompt', False)}`")
+        lines.append(f"- chapters: {fingerprint.get('chapter_count', 0)}")
+        lines.append(f"- chinese_chars: {fingerprint.get('total_chinese_chars', 0)}")
+        lines.append(f"- avg_sentence_chars: {fingerprint.get('avg_sentence_chars', 0)}")
+        lines.append(f"- dialogue_line_ratio: {fingerprint.get('dialogue_line_ratio', 0)}")
+        lines.append(f"- anchor_phrase_hits: {fingerprint.get('anchor_phrase_hits', {})}")
+        lines.append(f"- style_pattern_hits: {fingerprint.get('style_pattern_hits', {})}")
     gate = payload.get("longform_quality_gate") or {}
     if gate:
         lines.extend(["", "## Longform Quality Gate", ""])

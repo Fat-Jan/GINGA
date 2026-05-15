@@ -3,7 +3,7 @@
   "project": "ginga-novel-distillation",
   "schema_note": "推荐状态机: queued -> assigned -> running -> validating -> done; 异常: stale/zombie/retry_wait/failed/blocked. done 只能由主 agent 复核后写入。底层派活规范见 .ops/subagents/dispatch-protocol.md。",
   "created_at": "2026-05-12T22:50:00+08:00",
-  "updated_at": "2026-05-15T19:31:30+08:00",
+  "updated_at": "2026-05-16T00:34:30+08:00",
   "tasks": [
     {
       "task_id": "scout-1-base",
@@ -1091,6 +1091,86 @@
       ],
       "blockers": [],
       "handoff_note": "Completed by Confucius; main agent mapped redlines into v1.3-3 validator and tests."
+    },
+    {
+      "task_id": "genm-scan-1-feature-inventory",
+      "title": "Genm 功能资产扫描：可吸收能力清单",
+      "status": "done",
+      "owner": "spawn_agent explorer (low-cost / mini tier requested)",
+      "model_contract": {
+        "provider": "OpenAI via Codex spawn_agent",
+        "model_tier": "low-cost / mini explorer; tool may inherit parent if explicit mini unavailable",
+        "reason": "只读目录扫描和功能归纳，不需要强模型做架构定稿",
+        "fallback": "若模型参数不可用或扫描受限，返回已读文件、缺口和可继续的本地命令"
+      },
+      "owned_files": [
+        "/Users/arm/Desktop/genm/** (read-only)"
+      ],
+      "forbidden_files": [
+        "/Users/arm/Desktop/ginga/** writes",
+        "/Users/arm/Desktop/genm/** writes"
+      ],
+      "input_refs": [
+        "/Users/arm/Desktop/genm/AGENTS.md",
+        "/Users/arm/Desktop/genm/ROADMAP.md",
+        "/Users/arm/Desktop/genm/TASK_BOARD.md",
+        "/Users/arm/Desktop/genm/docs/**",
+        "/Users/arm/Desktop/genm/基座/**"
+      ],
+      "expected_output": "final callback: feature inventory with evidence paths and absorbability notes",
+      "verification": "main agent cross-checks cited files exist and samples at least 3 cited claims",
+      "created_at": "2026-05-16T00:22:23+08:00",
+      "updated_at": "2026-05-16T00:34:30+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 1,
+      "evidence": [
+        "spawn_agent explorer callback received: Genm feature inventory covered registry-as-reference, workflow stage runner, model topology, accept/refill, hard gates, report-only post_check, jury/evidence pack",
+        "main-agent cross-check: sampled Genm AGENTS.md, ROADMAP.md, TASK_BOARD.md, JURY_TRACKER.md, docs/architecture-overview.md, docs/model-topology.md",
+        "integrated report: .ops/reports/genm_absorption_jury_2026-05-16.md"
+      ],
+      "blockers": [],
+      "handoff_note": "Read-only scout completed and reviewed by main agent; recommendations consolidated into .ops/reports/genm_absorption_jury_2026-05-16.md."
+    },
+    {
+      "task_id": "genm-scan-2-ginga-fit-gap",
+      "title": "Ginga 承载面扫描：Genm 能力可落点与缺口",
+      "status": "done",
+      "owner": "spawn_agent explorer (low-cost / mini tier requested)",
+      "model_contract": {
+        "provider": "OpenAI via Codex spawn_agent",
+        "model_tier": "low-cost / mini explorer; tool may inherit parent if explicit mini unavailable",
+        "reason": "只读扫描 Ginga 状态、模块和规划索引，输出候选落点",
+        "fallback": "若模型参数不可用或扫描受限，返回已读文件、缺口和可继续的本地命令"
+      },
+      "owned_files": [
+        "/Users/arm/Desktop/ginga/** (read-only)"
+      ],
+      "forbidden_files": [
+        "/Users/arm/Desktop/ginga/** writes",
+        "/Users/arm/Desktop/genm/** writes"
+      ],
+      "input_refs": [
+        "/Users/arm/Desktop/ginga/STATUS.md",
+        "/Users/arm/Desktop/ginga/ARCHITECTURE.md",
+        "/Users/arm/Desktop/ginga/ROADMAP.md",
+        "/Users/arm/Desktop/ginga/ginga_platform/**",
+        "/Users/arm/Desktop/ginga/scripts/**"
+      ],
+      "expected_output": "final callback: fit/gap map with evidence paths and risk notes",
+      "verification": "main agent cross-checks cited files exist and samples at least 3 cited claims",
+      "created_at": "2026-05-16T00:22:23+08:00",
+      "updated_at": "2026-05-16T00:34:30+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 1,
+      "evidence": [
+        "spawn_agent explorer callback received: Ginga fit/gap map covered StateIO, workflow/skill/capability, Foundation, BookView, review, market, book_analysis, Reference Sidecar RAG",
+        "main-agent cross-check: sampled STATUS.md, ARCHITECTURE.md, ROADMAP.md, ginga_platform/orchestrator/**, rag/reference_sidecar.py, scripts/**",
+        "integrated report: .ops/reports/genm_absorption_jury_2026-05-16.md"
+      ],
+      "blockers": [],
+      "handoff_note": "Read-only scout completed and reviewed by main agent; recommendations consolidated into .ops/reports/genm_absorption_jury_2026-05-16.md."
     }
   ]
 }

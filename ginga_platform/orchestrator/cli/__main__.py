@@ -6,6 +6,7 @@ Usage:
     python3 -m ginga_platform.orchestrator.cli status <book_id>
     python3 -m ginga_platform.orchestrator.cli review <book_id>
     python3 -m ginga_platform.orchestrator.cli market <book_id> --fixture <path> --authorize
+    python3 -m ginga_platform.orchestrator.cli model-topology observe
     python3 -m ginga_platform.orchestrator.cli idea add <title> [--body <text>] [--stdin]
 """
 from __future__ import annotations
@@ -171,6 +172,25 @@ def main(argv: list[str] | None = None) -> int:
         help="Market Research 输出根目录（默认 .ops/market_research）",
     )
 
+    p_model_topology = sub.add_parser("model-topology", help="只读模型拓扑观察报告")
+    model_topology_sub = p_model_topology.add_subparsers(dest="model_topology_cmd", required=True)
+    p_model_topology_observe = model_topology_sub.add_parser(
+        "observe",
+        help="导出 role/stage/provider 观察报告；默认不跑 live probe",
+    )
+    p_model_topology_observe.add_argument("--run-id", help="model topology run id；默认 UTC 时间戳")
+    p_model_topology_observe.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path(".ops/model_topology"),
+        help="Model topology 输出根目录（默认 .ops/model_topology）",
+    )
+    p_model_topology_observe.add_argument(
+        "--probe-live",
+        action="store_true",
+        help="显式运行 ask-llm 最小探针；默认只写 not_run 观察报告",
+    )
+
     p_idea = sub.add_parser("idea", help="raw idea 暂存区：只落盘，不进 state/RAG")
     idea_sub = p_idea.add_subparsers(dest="idea_cmd", required=True)
     p_idea_add = idea_sub.add_parser("add", help="写入一条 raw idea")
@@ -324,6 +344,20 @@ def main(argv: list[str] | None = None) -> int:
             f"(signals={result['signal_count']})"
         )
         return 0
+    elif args.cmd == "model-topology":
+        if args.model_topology_cmd == "observe":
+            from ginga_platform.orchestrator.model_topology import export_model_topology_observation
+
+            result = export_model_topology_observation(
+                run_id=args.run_id,
+                output_root=args.output_root,
+                probe_live=args.probe_live,
+            )
+            print(
+                f"✅ Model topology observation exported: {result['output_dir']} "
+                f"(live_probe={result['probe_summary']['live_probe_enabled']})"
+            )
+            return 0
     elif args.cmd == "idea":
         if args.idea_cmd == "add":
             stdin_text = sys.stdin.read() if args.stdin else None

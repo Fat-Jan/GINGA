@@ -22,6 +22,8 @@ class ArchitectureContractsTest(unittest.TestCase):
         check_names = {check["name"] for check in report["checks"]}
         self.assertIn("current planning hygiene", check_names)
         self.assertIn("P2-7 runner convergence", check_names)
+        self.assertIn("v1.8-0 Model Topology observation boundary", check_names)
+        self.assertIn("v1.8-1 Candidate Truth Gate wording", check_names)
 
     def test_current_planning_hygiene_detects_stale_next_step_text(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -116,6 +118,59 @@ class ArchitectureContractsTest(unittest.TestCase):
             self.assertEqual(report["checks"][0]["status"], "FAIL")
             self.assertTrue(any("p0_mvp_boundary.md" in error for error in report["errors"]))
             self.assertTrue(any("source_manifest.schema.yaml" in error for error in report["errors"]))
+
+    def test_model_topology_boundary_rejects_runtime_takeover(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo_root = Path(tmpdir)
+            module = repo_root / "ginga_platform/orchestrator/model_topology.py"
+            module.parent.mkdir(parents=True)
+            module.write_text(
+                "\n".join(
+                    [
+                        'DEFAULT_OUTPUT_ROOT = Path(".ops/model_topology")',
+                        'OUTPUT_BOUNDARY = ".ops/model_topology/<run_id>/"',
+                        '"mode": "report_only"',
+                        '"runtime_takeover": True',
+                        '"stateio_mutation": False',
+                        '"live probe disabled; pass --probe-live"',
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            report = {"checks": [], "warnings": [], "errors": []}
+            archlint.validate_model_topology_boundary(repo_root, report)
+
+            self.assertEqual(report["checks"][0]["name"], "v1.8-0 Model Topology observation boundary")
+            self.assertEqual(report["checks"][0]["status"], "FAIL")
+            self.assertTrue(any("runtime_takeover" in error for error in report["errors"]))
+
+    def test_candidate_truth_gate_requires_core_terms(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo_root = Path(tmpdir)
+            doc = repo_root / ".ops/governance/candidate_truth_gate.md"
+            doc.parent.mkdir(parents=True)
+            doc.write_text(
+                "\n".join(
+                    [
+                        "# Candidate Truth Gate",
+                        "",
+                        "candidate-only",
+                        "report-only",
+                        "truth",
+                        "StateIO",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            report = {"checks": [], "warnings": [], "errors": []}
+            archlint.validate_candidate_truth_gate(repo_root, report)
+
+            self.assertEqual(report["checks"][0]["name"], "v1.8-1 Candidate Truth Gate wording")
+            self.assertEqual(report["checks"][0]["status"], "FAIL")
+            self.assertTrue(any("operator_accept" in error for error in report["errors"]))
+            self.assertTrue(any("default RAG" in error for error in report["errors"]))
 
     def test_main_writes_json_report(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:

@@ -1,0 +1,152 @@
+{
+  "schema_version": "v1.8-0",
+  "mode": "report_only",
+  "run_id": "v1-8-0-smoke-main",
+  "generated_at": "2026-05-15T16:38:21Z",
+  "runtime_takeover": false,
+  "stateio_mutation": false,
+  "output_boundary": ".ops/model_topology/<run_id>/",
+  "role_matrix": [
+    {
+      "role": "showrunner",
+      "stage_refs": [
+        "A_brainstorm",
+        "B_premise_lock",
+        "E_outline"
+      ],
+      "capability": "planning / story architecture / conflict arbitration",
+      "primary_tier": "strong reasoning",
+      "fallback_tier": "medium reasoning",
+      "output_boundary": "proposal_only",
+      "human_gate": true,
+      "probe_alias": "久久"
+    },
+    {
+      "role": "prose_writer",
+      "stage_refs": [
+        "G_chapter_draft"
+      ],
+      "capability": "chapter prose drafting with same-chapter-single-writer discipline",
+      "primary_tier": "cn prose anchor",
+      "fallback_tier": "same-family whole-chapter draft fallback",
+      "output_boundary": "chapter_text_artifact",
+      "human_gate": true,
+      "probe_alias": "久久"
+    },
+    {
+      "role": "state_settler",
+      "stage_refs": [
+        "H_chapter_settle",
+        "R2_consistency_check"
+      ],
+      "capability": "state delta audit and consistency review",
+      "primary_tier": "deterministic asset-backed provider",
+      "fallback_tier": "none without explicit operator review",
+      "output_boundary": "candidate_or_audit_intent",
+      "human_gate": true,
+      "probe_alias": null
+    },
+    {
+      "role": "style_reviewer",
+      "stage_refs": [
+        "R1_style_polish",
+        "review"
+      ],
+      "capability": "style, anti-AI, and readability review",
+      "primary_tier": "report-only reviewer",
+      "fallback_tier": "deterministic local checks",
+      "output_boundary": "report_only",
+      "human_gate": false,
+      "probe_alias": "久久"
+    },
+    {
+      "role": "longform_critic",
+      "stage_refs": [
+        "review",
+        "longform_quality_gate"
+      ],
+      "capability": "batch continuity and drift detection",
+      "primary_tier": "long-context critic",
+      "fallback_tier": "human reviewer brief",
+      "output_boundary": "report_only",
+      "human_gate": true,
+      "probe_alias": "久久"
+    }
+  ],
+  "runtime_surface": {
+    "capability_count": 12,
+    "capabilities": [
+      "base-card-chapter-draft",
+      "base-checker-dod-final",
+      "base-methodology-consistency-check",
+      "base-methodology-creative-brainstorm",
+      "base-methodology-final-pack",
+      "base-methodology-style-polish",
+      "base-template-chapter-settle",
+      "base-template-outline",
+      "base-template-protagonist",
+      "base-template-state-init",
+      "base-template-story-dna",
+      "base-template-worldview"
+    ],
+    "has_workflow_dsl": true,
+    "stateio_writer": "ginga_platform/orchestrator/runner/state_io.py",
+    "report_only_surfaces": [
+      ".ops/reviews/<book_id>/<run_id>/",
+      ".ops/market_research/<book_id>/<run_id>/",
+      ".ops/book_views/<book_id>/<run_id>/",
+      ".ops/model_topology/<run_id>/"
+    ]
+  },
+  "probe_summary": {
+    "live_probe_enabled": false,
+    "target_count": 4,
+    "ok_count": 0,
+    "failed_count": 0,
+    "not_run_count": 4
+  },
+  "probe_results": [
+    {
+      "role": "showrunner",
+      "alias": "久久",
+      "status": "not_run",
+      "ok": null,
+      "latency_ms": null,
+      "model": null,
+      "error": "live probe disabled; pass --probe-live to run ask-llm probe"
+    },
+    {
+      "role": "prose_writer",
+      "alias": "久久",
+      "status": "not_run",
+      "ok": null,
+      "latency_ms": null,
+      "model": null,
+      "error": "live probe disabled; pass --probe-live to run ask-llm probe"
+    },
+    {
+      "role": "style_reviewer",
+      "alias": "久久",
+      "status": "not_run",
+      "ok": null,
+      "latency_ms": null,
+      "model": null,
+      "error": "live probe disabled; pass --probe-live to run ask-llm probe"
+    },
+    {
+      "role": "longform_critic",
+      "alias": "久久",
+      "status": "not_run",
+      "ok": null,
+      "latency_ms": null,
+      "model": null,
+      "error": "live probe disabled; pass --probe-live to run ask-llm probe"
+    }
+  ],
+  "redlines": [
+    "observation report must not select runtime providers",
+    "probe results must not write StateIO or runtime_state",
+    "critic/reviewer roles remain report-only",
+    "provider snapshots are dated evidence, not long-term truth"
+  ]
+}

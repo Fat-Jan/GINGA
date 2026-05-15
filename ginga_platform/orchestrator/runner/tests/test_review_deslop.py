@@ -112,6 +112,43 @@ class ReviewDeslopContractTest(unittest.TestCase):
             self.assertNotIn("BOOK_ANALYSIS_SENTINEL", report_text)
             self.assertNotIn("BOOK_ANALYSIS_SENTINEL", readme_text)
 
+    def test_review_style_fingerprint_is_report_only_metrics(self) -> None:
+        from ginga_platform.orchestrator.review import export_review_report
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            state_root = root / "runtime_state"
+            output_root = root / ".ops" / "reviews"
+            self._seed_book(state_root)
+
+            export_review_report(
+                "review-book",
+                run_id="run-001",
+                state_root=state_root,
+                output_root=output_root,
+            )
+
+            out_dir = output_root / "review-book" / "run-001"
+            report = json.loads((out_dir / "review_report.json").read_text(encoding="utf-8"))
+            fingerprint = report["style_fingerprint"]
+            self.assertEqual(fingerprint["scope"], "report_only")
+            self.assertFalse(fingerprint["auto_edit"])
+            self.assertFalse(fingerprint["writes_runtime_state"])
+            self.assertFalse(fingerprint["enters_creation_prompt"])
+            self.assertEqual(fingerprint["status"], "measured")
+            self.assertEqual(fingerprint["chapter_count"], 1)
+            self.assertGreater(fingerprint["total_chinese_chars"], 0)
+            self.assertGreater(fingerprint["avg_sentence_chars"], 0)
+            self.assertIn("微粒", fingerprint["anchor_phrase_hits"])
+            self.assertIn("天堑", fingerprint["anchor_phrase_hits"])
+            self.assertGreaterEqual(fingerprint["style_pattern_hits"]["game_system_tone"], 1)
+            self.assertEqual(report["summary"]["style_fingerprint_status"], "measured")
+            self.assertIn("style_fingerprint", report["rubric"]["categories"])
+
+            readme_text = (out_dir / "README.md").read_text(encoding="utf-8")
+            self.assertIn("## Style Fingerprint", readme_text)
+            self.assertIn("report_only", readme_text)
+
     def test_cli_review_warn_only_exit_zero(self) -> None:
         from ginga_platform.orchestrator.cli.__main__ import main
 

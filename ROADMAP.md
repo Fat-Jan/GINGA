@@ -354,6 +354,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 | **v1.5 / Review + Anti-AI warn-only gate** | 审稿、去 AI 味、平台 rubric 报告化；只做审计/报告，不自动改正文 | ✅ done | 已完成 `ginga review` 与 `.ops/reviews/<book_id>/<run_id>/` sidecar；rubric 只用于 review report，不进入创作 prompt |
 | **v1.6 / Market Research Sidecar** | 扫榜、外部研究、市场信号报告，带采集时间、来源和数据质量状态 | ✅ done | 已完成显式授权 + offline fixture sidecar；外部原文剥离，默认不进 RAG |
 | **v1.7 / Longform Production Policy + Gate** | 真实 LLM 长篇批量策略、成本/质量 smoke、jury 评审、CLI 上限保护、正式质量 gate、queue 外部评审与人工终审 brief、生成前 hard gate | 🟢 v1.7-0 done；v1.7-1 done；v1.7-2 done；v1.7-3 done | `久久` 30 章真实 smoke 显示 10 连发开始 drift；当前正式批量生成推荐 4 章、上限 5 章，6 章及以上只作压力测试；`ginga review` 已输出批后状态快照、回环/锚点/短章/伏笔/禁词检测、reviewer queue 与 hard_gate；CLI 已在真实 LLM 调用前阻断连续回环、低频锚点缺失或伏笔标记缺失 |
+| **v1.8 / Genm 治理机制吸收** | 从 Genm 吸收 role/stage/provider 观察矩阵、candidate/report/truth 门禁语言和 style fingerprint 指标，先做报告和治理规则，不接管 runtime | 🟢 v1.8-0 done；v1.8-1 done；v1.8-2 done | 已完成 `ginga model-topology observe`、`.ops/governance/candidate_truth_gate.md` 与 `ginga review` 的 report-only style fingerprint；默认 `probe_live=false`，不写 `StateIO`，不改变 workflow/provider 路由；candidate 晋升 truth 必须先过人工接受、schema、污染检查、写入口和审计证据 |
 | **v2 / 完整创作运营线** | N/P/D/V 阶段、发布后数据分析、版本管理、第 3+ skill 接入、封面/发布包 | ⏳ 按触发条件推进 | 不抢 v1.2 / v1.3 前置 |
 
 ### 9.1 v1.3：拆书融梗 Evidence Pipeline
