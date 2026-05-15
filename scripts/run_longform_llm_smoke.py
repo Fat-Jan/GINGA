@@ -399,7 +399,7 @@ def run_longform_smoke(
     report_output: Path = DEFAULT_REPORT_OUTPUT,
     chapters: int = DEFAULT_TEST_CHAPTERS,
     word_target: int = 4000,
-    batch_schedule: str | Sequence[int] = "3,5,7,10",
+    batch_schedule: str | Sequence[int] = "3,4,5,6",
     topic: str = DEFAULT_TOPIC,
     premise: str = DEFAULT_PREMISE,
     anchors: Sequence[str] = DEFAULT_ANCHORS,
@@ -596,7 +596,7 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser.add_argument("--report-output", type=Path, default=DEFAULT_REPORT_OUTPUT)
     parser.add_argument("--chapters", type=int, default=DEFAULT_TEST_CHAPTERS)
     parser.add_argument("--word-target", type=int, default=4000)
-    parser.add_argument("--batch-schedule", default="3,5,7,10")
+    parser.add_argument("--batch-schedule", default="3,4,5,6")
     parser.add_argument("--topic", default=DEFAULT_TOPIC)
     parser.add_argument("--premise", default=DEFAULT_PREMISE)
     parser.add_argument("--anchor", action="append", dest="anchors")

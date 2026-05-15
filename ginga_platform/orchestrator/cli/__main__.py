@@ -25,8 +25,19 @@ from ginga_platform.orchestrator.cli.idea import add_idea
 from ginga_platform.orchestrator.cli.longform_policy import (
     DEFAULT_CHAPTER_BATCH_SIZE,
     MAX_REAL_LLM_CHAPTER_BATCH_SIZE,
+    load_chapter_artifacts,
+    validate_longform_hard_gate,
     validate_real_llm_batch_size,
 )
+from ginga_platform.orchestrator.runner.state_io import StateIO
+
+
+def _validate_real_llm_preflight(book_id: str, *, state_root: Path | None, mock_llm: bool) -> None:
+    if mock_llm:
+        return
+    sio = StateIO(book_id, state_root=state_root, autoload=True)
+    chapters = load_chapter_artifacts(sio.state_dir)
+    validate_longform_hard_gate(state=sio.state, chapters=chapters, mock_llm=mock_llm)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -80,7 +91,7 @@ def main(argv: list[str] | None = None) -> int:
         type=int,
         default=None,
         help=(
-            "章节数：>=2 触发 multi_chapter runner；--immersive 未指定时默认 5 章；"
+            f"章节数：>=2 触发 multi_chapter runner；--immersive 未指定时默认 {DEFAULT_CHAPTER_BATCH_SIZE} 章；"
             f"真实 LLM 生产上限 {MAX_REAL_LLM_CHAPTER_BATCH_SIZE} 章"
         ),
     )
@@ -188,6 +199,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         try:
             validate_real_llm_batch_size(requested_chapters, mock_llm=args.mock_llm)
+            _validate_real_llm_preflight(args.book_id, state_root=args.state_root, mock_llm=args.mock_llm)
         except ValueError as exc:
             print(f"❌ {exc}", file=sys.stderr)
             return 1

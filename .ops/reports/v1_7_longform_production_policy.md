@@ -2,7 +2,7 @@
 
 ## 结论
 
-Ginga 正式真实 LLM 长篇生成采用 5 章批次；7 章为生产上限；10 章及以上只允许作为压力测试。
+Ginga 正式真实 LLM 长篇生成采用 4 章批次；5 章为生产上限；6 章及以上只允许作为压力测试或显式研究。该口径来自 v1.7-2 reviewer queue 人工裁决收紧。
 
 ## v1.7-0 证据
 
@@ -17,10 +17,11 @@ Ginga 正式真实 LLM 长篇生成采用 5 章批次；7 章为生产上限；1
 
 ## 项目策略
 
-- CLI 真实 LLM 多章/沉浸生成超过 7 章时 fail-loud。
-- `ginga run --immersive` 未显式指定章节数时默认 5 章。
+- CLI 真实 LLM 多章/沉浸生成超过 5 章时 fail-loud。
+- `ginga run --immersive` 未显式指定章节数时默认 4 章。
+- 生成前 hard gate：最近窗口内连续 2 章命中 `opening_loop_risk`、任一章缺低频题材锚点、或任一章缺伏笔标记时，阻断下一批真实 LLM 生成；mock harness 不受影响。
 - mock harness 不受生产上限限制，用于边界和压力测试。
-- 长篇 smoke 脚本默认 30 章，报告写入 production_policy 字段。
+- 长篇 smoke 脚本默认 30 章，默认批次为 3 / 4 / 5 / 6，报告写入 production_policy 字段。
 
 ## 后续缺口
 
@@ -36,7 +37,7 @@ Ginga 正式真实 LLM 长篇生成采用 5 章批次；7 章为生产上限；1
 - 固定边界: warn-only、`auto_edit=false`、不写 `runtime_state`、不调用 LLM
 - 新增字段: `longform_quality_gate`
 - 覆盖项:
-  - `batch_state_snapshots`: 每 5 章生成状态快照与质量快照
+  - `batch_state_snapshots`: 每 4 章生成状态快照与质量快照
   - `opening_loop_risk`: 检测疑似重新开篇 / 醒来模板回环
   - `missing_low_frequency_anchor`: 检测血脉、末日、多子多福、繁衍契约稀释
   - `short_chapter`: 检测短章
@@ -54,13 +55,29 @@ v1.7-0 真实 30 章样本的 v1.7-1 gate 报告：`.ops/reviews/longform-jiujiu
 - 有效外部意见：`.ops/jury/longform_reviewer_queue_2026-05-15/ioll-grok__reviewer_queue_packet.md`
 - 人工终审 brief：`.ops/jury/longform_reviewer_queue_2026-05-15/human_review_brief.md`
 
-外部意见确认多章开头重复“痛觉 / 睁眼 / 灰白视野 / 天堑边缘 / 体内微粒 / 短刃”模板，P0/P1 优先聚焦第 19、24、25 章。该意见建议人工考虑把生产批量从“推荐 5 / 上限 7”临时收紧为“推荐 3-4 / 上限 5”，直到反回环 prompt、低频锚点覆盖和伏笔标记硬 gate 验证通过。
+外部意见确认多章开头重复“痛觉 / 睁眼 / 灰白视野 / 天堑边缘 / 体内微粒 / 短刃”模板，P0/P1 优先聚焦第 19、24、25 章。该意见已在 v1.7-3 转为当前生产口径：推荐 4 章、上限 5 章，6 章及以上只作压力测试；连续回环、低频锚点缺失和伏笔标记缺失已进入生成前 hard gate。
 
 模型配置备注：
 
 - 内容生成主端点仍是 `久久` / `qwen3.6-max-preview-nothinking`。
 - 已新增评审别名 `jiujiu-jury` / `qwen3.6-max-preview-thinking`，但 2026-05-15 对 132KB 完整包、22KB 核心包、5.5KB P0 包均返回 HTTP 504；只保留为短输入手动 juror，不进入默认 `ask-jury-safe` 主力。
 - `wzw` 本轮 wrapper 标 OK 但输出文件为空，不纳入有效共识。
+
+## v1.7-3 Hard Gate
+
+已采纳 v1.7-2 人工裁决项并落到代码：
+
+- `DEFAULT_CHAPTER_BATCH_SIZE = 4`
+- `MAX_REAL_LLM_CHAPTER_BATCH_SIZE = 5`
+- `PRESSURE_TEST_BATCH_SIZE = 6`
+- CLI 在真实 LLM 调用前执行 `validate_longform_hard_gate()`，命中后 fail-loud，不调用 ask-llm。
+- `ginga review` 的 `longform_quality_gate.hard_gate` 使用同一套检测逻辑，避免 review 口径和生成前阻断口径分裂。
+
+硬 gate 当前阻断条件：
+
+- 最近窗口内连续 2 章命中 `opening_loop_risk`
+- 最近窗口内任一章缺低频题材锚点
+- 最近窗口内任一章缺 `<!-- foreshadow: ... -->`
 
 ## 证据文件
 
@@ -74,3 +91,6 @@ v1.7-0 真实 30 章样本的 v1.7-1 gate 报告：`.ops/reviews/longform-jiujiu
 - `.ops/jury/longform_reviewer_queue_2026-05-15/reviewer_queue_packet.md`
 - `.ops/jury/longform_reviewer_queue_2026-05-15/ioll-grok__reviewer_queue_packet.md`
 - `.ops/jury/longform_reviewer_queue_2026-05-15/human_review_brief.md`
+- `ginga_platform/orchestrator/cli/longform_policy.py`
+- `ginga_platform/orchestrator/runner/tests/test_agent_harness.py`
+- `ginga_platform/orchestrator/runner/tests/test_longform_quality_gate.py`

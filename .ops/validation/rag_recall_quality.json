@@ -22,7 +22,8 @@
     "cards_indexed": 473,
     "skipped_no_frontmatter": 0,
     "skipped_invalid_yaml": 0,
-    "skipped_missing_id": 0
+    "skipped_missing_id": 0,
+    "skipped_forbidden_path": 0
   },
   "vector_build": {
     "cards_seen": 473,

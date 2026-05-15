@@ -1,0 +1,2084 @@
+{
+  "kind": "ReviewDeslopReport",
+  "book_id": "longform-jiujiu-combo-smoke",
+  "run_id": "v1-7-3-hard-gate",
+  "generated_at": "2026-05-15T16:39:27+00:00",
+  "status": "warn",
+  "passed": false,
+  "mode": "warn_only",
+  "auto_edit": false,
+  "projection": {
+    "kind": "ReviewDeslop",
+    "truth_source": "StateIO",
+    "is_state_truth": false,
+    "writes_runtime_state": false,
+    "output_boundary": ".ops/reviews/<book_id>/<run_id>/"
+  },
+  "rubric": {
+    "id": "platform_cn_webnovel_v1",
+    "scope": "report_only",
+    "enters_creation_prompt": false,
+    "categories": [
+      "anti_ai_style",
+      "platform_genre_fit",
+      "webnovel_readability"
+    ]
+  },
+  "data_sources": {
+    "state_dir": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke",
+    "state_domains": [
+      "locked",
+      "entity_runtime",
+      "workspace",
+      "retrieved",
+      "audit_log"
+    ],
+    "chapter_artifacts": [
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_01.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_02.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_03.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_04.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_05.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_06.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_07.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_08.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_09.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_10.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_11.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_12.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_13.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_14.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_15.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_16.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_17.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_18.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_19.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_20.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_21.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_22.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_23.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_24.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_25.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_26.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_27.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_28.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_29.md",
+      ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_30.md"
+    ],
+    "forbidden_default_sources": [
+      ".ops/book_analysis/**",
+      ".ops/market_research/**",
+      ".ops/external_sources/**"
+    ]
+  },
+  "context": {
+    "topic": [
+      "玄幻黑暗 + 规则怪谈 + 末日多子多福"
+    ],
+    "forbidden_styles": [
+      "都市腔",
+      "科幻腔",
+      "游戏系统播报腔",
+      "轻小说吐槽腔"
+    ],
+    "anchor_phrases": [
+      "微粒",
+      "天堑",
+      "内宇宙"
+    ],
+    "premise_present": true
+  },
+  "summary": {
+    "chapter_count": 30,
+    "issue_count": 116,
+    "warn_count": 116,
+    "error_count": 0,
+    "longform_gate_issue_count": 44,
+    "reviewer_queue_count": 23
+  },
+  "longform_quality_gate": {
+    "enabled": true,
+    "mode": "warn_only",
+    "auto_edit": false,
+    "hard_gate": {
+      "enabled": true,
+      "mode": "block_next_real_llm_batch",
+      "window_size": 4,
+      "inspected_chapters": [
+        "chapter_27.md",
+        "chapter_28.md",
+        "chapter_29.md",
+        "chapter_30.md"
+      ],
+      "low_frequency_anchors": [
+        "血脉",
+        "末日",
+        "多子多福",
+        "繁衍契约"
+      ],
+      "block_reasons": [
+        "consecutive_opening_loop_risk",
+        "missing_low_frequency_anchor"
+      ],
+      "should_block_next_real_llm_batch": true,
+      "chapter_checks": [
+        {
+          "chapter": "chapter_27.md",
+          "opening_loop_risk": true,
+          "missing_low_frequency_anchor": false,
+          "missing_foreshadow_marker": false,
+          "short_chapter": false,
+          "forbidden_hits": {}
+        },
+        {
+          "chapter": "chapter_28.md",
+          "opening_loop_risk": false,
+          "missing_low_frequency_anchor": false,
+          "missing_foreshadow_marker": false,
+          "short_chapter": false,
+          "forbidden_hits": {}
+        },
+        {
+          "chapter": "chapter_29.md",
+          "opening_loop_risk": true,
+          "missing_low_frequency_anchor": true,
+          "missing_foreshadow_marker": false,
+          "short_chapter": false,
+          "forbidden_hits": {}
+        },
+        {
+          "chapter": "chapter_30.md",
+          "opening_loop_risk": true,
+          "missing_low_frequency_anchor": false,
+          "missing_foreshadow_marker": false,
+          "short_chapter": false,
+          "forbidden_hits": {}
+        }
+      ]
+    },
+    "policy": {
+      "recommended_batch_size": 4,
+      "upper_bound": 5,
+      "pressure_test_only_at_or_above": 6
+    },
+    "low_frequency_anchors": [
+      "血脉",
+      "末日",
+      "多子多福",
+      "繁衍契约"
+    ],
+    "batch_state_snapshots": [
+      {
+        "batch_no": 1,
+        "chapter_range": "1-4",
+        "chapter_count": 4,
+        "state_snapshot": {
+          "protagonist": "未命名刺客",
+          "particles": 0,
+          "foreshadow_pool_size": 1,
+          "total_words": 115328,
+          "recent_events": [],
+          "anchors_present": [
+            "多子多福",
+            "末日",
+            "血脉"
+          ]
+        },
+        "quality_snapshot": {
+          "opening_loop_chapters": [
+            "chapter_01.md",
+            "chapter_02.md",
+            "chapter_03.md"
+          ],
+          "missing_low_frequency_anchor_chapters": [
+            "chapter_02.md",
+            "chapter_04.md"
+          ],
+          "short_chapters": [],
+          "forbidden_hit_chapters": [],
+          "missing_foreshadow_chapters": []
+        }
+      },
+      {
+        "batch_no": 2,
+        "chapter_range": "5-8",
+        "chapter_count": 4,
+        "state_snapshot": {
+          "protagonist": "未命名刺客",
+          "particles": 0,
+          "foreshadow_pool_size": 1,
+          "total_words": 115328,
+          "recent_events": [],
+          "anchors_present": [
+            "多子多福",
+            "血脉"
+          ]
+        },
+        "quality_snapshot": {
+          "opening_loop_chapters": [
+            "chapter_05.md",
+            "chapter_06.md",
+            "chapter_07.md",
+            "chapter_08.md"
+          ],
+          "missing_low_frequency_anchor_chapters": [
+            "chapter_05.md",
+            "chapter_06.md",
+            "chapter_07.md"
+          ],
+          "short_chapters": [],
+          "forbidden_hit_chapters": [],
+          "missing_foreshadow_chapters": []
+        }
+      },
+      {
+        "batch_no": 3,
+        "chapter_range": "9-12",
+        "chapter_count": 4,
+        "state_snapshot": {
+          "protagonist": "未命名刺客",
+          "particles": 0,
+          "foreshadow_pool_size": 1,
+          "total_words": 115328,
+          "recent_events": [],
+          "anchors_present": [
+            "繁衍契约",
+            "血脉"
+          ]
+        },
+        "quality_snapshot": {
+          "opening_loop_chapters": [
+            "chapter_09.md",
+            "chapter_10.md",
+            "chapter_11.md"
+          ],
+          "missing_low_frequency_anchor_chapters": [
+            "chapter_09.md",
+            "chapter_11.md"
+          ],
+          "short_chapters": [],
+          "forbidden_hit_chapters": [],
+          "missing_foreshadow_chapters": []
+        }
+      },
+      {
+        "batch_no": 4,
+        "chapter_range": "13-16",
+        "chapter_count": 4,
+        "state_snapshot": {
+          "protagonist": "未命名刺客",
+          "particles": 0,
+          "foreshadow_pool_size": 1,
+          "total_words": 115328,
+          "recent_events": [],
+          "anchors_present": [
+            "末日",
+            "血脉"
+          ]
+        },
+        "quality_snapshot": {
+          "opening_loop_chapters": [
+            "chapter_13.md",
+            "chapter_14.md",
+            "chapter_15.md",
+            "chapter_16.md"
+          ],
+          "missing_low_frequency_anchor_chapters": [
+            "chapter_13.md",
+            "chapter_15.md"
+          ],
+          "short_chapters": [],
+          "forbidden_hit_chapters": [],
+          "missing_foreshadow_chapters": []
+        }
+      },
+      {
+        "batch_no": 5,
+        "chapter_range": "17-20",
+        "chapter_count": 4,
+        "state_snapshot": {
+          "protagonist": "未命名刺客",
+          "particles": 0,
+          "foreshadow_pool_size": 1,
+          "total_words": 115328,
+          "recent_events": [],
+          "anchors_present": [
+            "末日",
+            "血脉"
+          ]
+        },
+        "quality_snapshot": {
+          "opening_loop_chapters": [
+            "chapter_17.md",
+            "chapter_18.md",
+            "chapter_19.md",
+            "chapter_20.md"
+          ],
+          "missing_low_frequency_anchor_chapters": [
+            "chapter_18.md",
+            "chapter_19.md",
+            "chapter_20.md"
+          ],
+          "short_chapters": [
+            "chapter_19.md"
+          ],
+          "forbidden_hit_chapters": [],
+          "missing_foreshadow_chapters": []
+        }
+      },
+      {
+        "batch_no": 6,
+        "chapter_range": "21-24",
+        "chapter_count": 4,
+        "state_snapshot": {
+          "protagonist": "未命名刺客",
+          "particles": 0,
+          "foreshadow_pool_size": 1,
+          "total_words": 115328,
+          "recent_events": [],
+          "anchors_present": [
+            "末日",
+            "繁衍契约",
+            "血脉"
+          ]
+        },
+        "quality_snapshot": {
+          "opening_loop_chapters": [
+            "chapter_21.md",
+            "chapter_22.md",
+            "chapter_23.md",
+            "chapter_24.md"
+          ],
+          "missing_low_frequency_anchor_chapters": [],
+          "short_chapters": [],
+          "forbidden_hit_chapters": [],
+          "missing_foreshadow_chapters": [
+            "chapter_24.md"
+          ]
+        }
+      },
+      {
+        "batch_no": 7,
+        "chapter_range": "25-28",
+        "chapter_count": 4,
+        "state_snapshot": {
+          "protagonist": "未命名刺客",
+          "particles": 0,
+          "foreshadow_pool_size": 1,
+          "total_words": 115328,
+          "recent_events": [],
+          "anchors_present": [
+            "末日",
+            "繁衍契约",
+            "血脉"
+          ]
+        },
+        "quality_snapshot": {
+          "opening_loop_chapters": [
+            "chapter_25.md",
+            "chapter_26.md",
+            "chapter_27.md"
+          ],
+          "missing_low_frequency_anchor_chapters": [
+            "chapter_25.md"
+          ],
+          "short_chapters": [],
+          "forbidden_hit_chapters": [
+            "chapter_25.md"
+          ],
+          "missing_foreshadow_chapters": []
+        }
+      },
+      {
+        "batch_no": 8,
+        "chapter_range": "29-30",
+        "chapter_count": 2,
+        "state_snapshot": {
+          "protagonist": "未命名刺客",
+          "particles": 0,
+          "foreshadow_pool_size": 1,
+          "total_words": 115328,
+          "recent_events": [],
+          "anchors_present": [
+            "末日",
+            "繁衍契约",
+            "血脉"
+          ]
+        },
+        "quality_snapshot": {
+          "opening_loop_chapters": [
+            "chapter_29.md",
+            "chapter_30.md"
+          ],
+          "missing_low_frequency_anchor_chapters": [
+            "chapter_29.md"
+          ],
+          "short_chapters": [],
+          "forbidden_hit_chapters": [],
+          "missing_foreshadow_chapters": []
+        }
+      }
+    ],
+    "issues": [
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_01.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉是第一个回归的感官。 它不像潮水般温柔地漫过堤岸，而是像生锈的铁钉，一根接一根，粗暴地楔入神经末梢。无明睁开眼时，视野被一片浑浊的灰白占据。那不是天空，也不是云层，而是一种粘稠、停滞的雾霭，仿佛整个世界都被浸泡在陈年的骨灰缸里。空气沉重得令人窒息，每一次吸气都像是在吞咽碎玻璃，肺叶扩张时发出细微的撕裂声，提醒着他这",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_02.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "寒冷不是从皮肤渗入的，而是从骨髓深处炸开的。 无明睁开眼时，世界是一片灰败的混沌。没有天空，只有层层叠叠、如同腐烂脏器般垂落的铅云，遮蔽了所有的光源。空气里弥漫着硫磺、铁锈和某种陈旧血液混合后的腥甜气味，每一次呼吸都像是在吞咽砂纸，粗糙地刮擦着肺叶内壁。他试图坐起，但身体的每一块肌肉都在尖叫，仿佛被拆解后重新拼凑，接缝",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "missing_low_frequency_anchor",
+        "chapter": "chapter_02.md",
+        "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+        "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_03.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "寒冷不是从皮肤渗入的，而是从骨髓深处炸开的。 无明睁开眼时，视野是一片浑浊的灰白。没有天空，没有大地，只有浓稠得如同凝固油脂般的雾气，在四周缓慢蠕动。每一次呼吸，肺部都像被砂纸打磨过一般刺痛，吸入的不是空气，而是带着铁锈味和腐烂甜腥气的尘埃。他试图坐起，肌肉却像断裂的琴弦般僵硬，剧烈的痉挛让他不得不重新跌回冰冷的地面。",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "missing_low_frequency_anchor",
+        "chapter": "chapter_04.md",
+        "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+        "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_05.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉并非如潮水般涌来，而是像生锈的铁钉，一颗一颗被强行楔入颅骨的缝隙。 无明睁开眼时，视野是一片浑浊的灰白。没有天空，没有大地，只有悬浮在空气中的、细密如雾的灰色颗粒。它们静止不动，却又仿佛在某种不可见的律动中微微震颤，像是无数双窥视的眼睛。他试图呼吸，肺部却传来撕裂般的灼烧感，每一次吸气都像是在吞咽碎玻璃。喉咙里堵着",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "missing_low_frequency_anchor",
+        "chapter": "chapter_05.md",
+        "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+        "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_06.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "寒冷不是从皮肤渗入的，而是从骨髓深处炸开的。 无明睁开眼时，视野是一片浑浊的灰白。天空像是一块被反复揉搓后丢弃的脏抹布，云层厚重得仿佛随时会坍塌下来，压碎这片位于第四重天堑边缘的荒原。风在这里没有声音，只有触感——像无数根冰冷的细针，密密麻麻地扎进他裸露在外的每一寸肌肤。 他试图坐起，但脊椎发出一声令人牙酸的脆响，剧痛",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "missing_low_frequency_anchor",
+        "chapter": "chapter_06.md",
+        "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+        "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_07.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉并非如潮水般涌来，而是像无数根烧红的铁针，从骨髓深处向外穿刺。无明睁开眼时，视野是一片浑浊的灰白，仿佛眼球表面蒙了一层洗不净的尸油。他试图抬起手臂，却发现肢体沉重得如同灌满了铅汞，每一次肌肉的收缩都伴随着骨骼摩擦发出的令人牙酸的咯吱声。 这里不是天堑边缘那充满硫磺味的荒原，而是一处封闭、潮湿且散发着腐烂甜腥气的地下",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "missing_low_frequency_anchor",
+        "chapter": "chapter_07.md",
+        "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+        "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_08.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉不是从皮肤表面传来的，而是从骨髓深处炸开的。 无明睁开眼时，视野是一片浑浊的灰白。没有天空，没有地面，只有无数悬浮在空气中的尘埃，像死去的星屑一样缓慢旋转。他试图呼吸，肺部却像是被灌入了滚烫的铁水，每一次吸气都伴随着尖锐的撕裂感。他低下头，看见自己的胸膛微微起伏，但那节奏并不属于他自己——那是一种诡异的、同步的搏动",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_09.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "寒冷不是从皮肤表面渗入的，而是从骨髓深处炸开的。 无明睁开眼时，视野是一片浑浊的灰白。没有天空，没有大地，只有无数悬浮在空气中的、细密如沙砾般的灰色颗粒。它们像是有生命一般，缓慢地蠕动、碰撞，发出令人牙酸的细微摩擦声。这里是天堑的边缘，是现实与虚无撕扯出的伤口，也是被遗弃者的坟墓。 他试图动弹手指，却发现身体沉重得如同",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "missing_low_frequency_anchor",
+        "chapter": "chapter_09.md",
+        "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+        "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_10.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "黑暗并非虚无，而是某种粘稠、带有重量的实体。它像冷却后的沥青，紧紧包裹着无明的每一寸肌肤，试图渗入毛孔，将他的意识拖入永恒的静默深渊。 无明睁开眼时，首先感受到的不是光，而是痛。 那种疼痛并不来自体表，而是源自骨骼深处，仿佛有无数细小的冰棱在骨髓腔内生长、刺穿神经末梢。他躺在一片废墟之中，四周是断裂的石柱和扭曲的金属骨",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_11.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "黑暗不是静止的，它在蠕动。 无明睁开眼时，首先感知到的不是光，而是痛。那种痛楚并非来自皮肉撕裂或骨骼断裂，而是源自更深层、更本质的地方——仿佛有无数细小的沙砾被强行灌入骨髓，随着血液的每一次泵动，在血管壁上刮擦出尖锐的噪音。他躺在一片潮湿的苔藓地上，头顶是扭曲如枯爪般的黑铁树枝，遮蔽了那轮永远呈现病态暗红色的天空。空气",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "missing_low_frequency_anchor",
+        "chapter": "chapter_11.md",
+        "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+        "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_13.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉并非如潮水般涌来，而是像无数根烧红的细针，沿着脊椎的每一节骨缝精准地刺入。无明在黑暗中睁开眼，瞳孔尚未适应光线，视野中只有一片浑浊的灰白。这不是天空的颜色，也不是泥土的色泽，而是一种介于腐烂与新生之间的病态苍白。他试图抬起手臂，却发现肌肉纤维如同生锈的铁链，每一次收缩都伴随着令人牙酸的摩擦声和撕裂感。 他躺在一片碎",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "missing_low_frequency_anchor",
+        "chapter": "chapter_13.md",
+        "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+        "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_14.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "黑暗不是空的。 黑暗是有重量的，像湿透的裹尸布，一层层缠在肺叶上，挤压出最后一丝带着铁锈味的空气。无明睁开眼时，视网膜上并没有光，只有一片浑浊的灰白，仿佛眼球本身已经腐烂，透过坏死的晶状体看到的不再是世界，而是某种粘稠的、正在缓慢蠕动的介质。 他试图动弹手指，指尖传来的触感并非粗糙的石板或冰冷的金属，而是一种滑腻的、温",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_15.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "黑暗并非空无一物，而是充满了粘稠的、带有铁锈味的重量。 无明睁开眼时，首先感知到的不是光线，而是骨骼深处传来的细微碎裂声。那声音像极了枯枝在暴雪中折断的脆响，却源自他自身的胸腔内部。他躺在一片由黑色淤泥和破碎石板构成的废墟之上，四周弥漫着一种令人作呕的甜腥气，那是陈旧血液与某种腐烂真菌混合后的味道。天空呈现出一种病态的",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "missing_low_frequency_anchor",
+        "chapter": "chapter_15.md",
+        "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+        "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_16.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "寒冷不是从皮肤渗入的，而是从骨髓深处炸开的。 无明睁开眼时，世界是一片浑浊的灰白。没有天空，只有厚重如铅块的云层压在天堑的边缘，仿佛随时会坍塌下来，将这片荒芜之地碾成粉末。他躺在一片黑色的碎石滩上，身下是早已干涸的血迹，呈现出一种诡异的暗褐色，像是某种古老生物褪下的皮屑。 记忆是一片空白，像被利刃剜去了一块血肉，只剩下",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_17.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉是第一个回归的感官。 它不像潮水般漫上来，而是像无数根烧红的铁针，沿着脊椎的每一节缝隙强行楔入。无明猛地睁开眼，瞳孔在黑暗中剧烈收缩，随即又因适应昏暗而扩张。视野中没有光，只有灰败的尘埃在空气中悬浮、翻滚，如同某种死去的微生物群落。他试图移动手指，关节发出干涩的摩擦声，仿佛生锈的铁铰链被暴力掰开。 记忆是一片空白。",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_18.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉并非如潮水般涌来，而是像无数根烧红的铁针，从骨髓深处向外穿刺。 无明睁开眼时，视野中是一片灰败的混沌。没有天空，只有厚重得令人窒息的铅云，低垂得仿佛触手可及，云层间偶尔闪过暗红色的电光，那是天堑边缘特有的“静默雷暴”。空气里弥漫着腐烂苔藓、陈旧血腥和一种难以名状的金属锈蚀味。他试图动弹手指，却发现肢体沉重得如同灌满",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "missing_low_frequency_anchor",
+        "chapter": "chapter_18.md",
+        "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+        "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_19.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "寒冷并非来自外界的风雪，而是从骨髓深处渗出的冰渣。 无明睁开眼时，视野是一片浑浊的灰白。没有天空，没有大地，只有无数悬浮在空气中的尘埃，像死去的星辰碎片，缓慢地旋转、碰撞、湮灭。他试图起身，但身体沉重得如同灌满了铅汞，每一块肌肉都在发出细微的撕裂声。他低头看向自己的双手，皮肤呈现出一种病态的苍白，皮下隐约可见青黑色的血",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "missing_low_frequency_anchor",
+        "chapter": "chapter_19.md",
+        "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+        "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_quality",
+        "code": "short_chapter",
+        "chapter": "chapter_19.md",
+        "message": "章节中文正文低于 v1.7 gate 阈值，可能是批量生成后段质量下滑。",
+        "evidence": "chinese_chars=2325 < 2400",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_20.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉并非来自皮肤，而是源自骨髓深处。那种感觉像是有无数根烧红的铁针，正沿着脊椎的每一节缝隙缓缓刺入，将某种冰冷、粘稠且带有强烈侵略性的物质强行灌注进他的生命核心。 无明猛地睁开双眼，瞳孔在黑暗中剧烈收缩。没有光，只有浓稠得化不开的墨色。他试图起身，但四肢沉重如灌铅，每一次肌肉的牵动都伴随着撕裂般的剧痛。他低下头，看向自",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "missing_low_frequency_anchor",
+        "chapter": "chapter_20.md",
+        "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+        "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_21.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉是唯一的坐标。 它像一根烧红的铁钎，从后颈的椎骨缝隙里硬生生撬进去，搅动着早已凝固的血块和破碎的记忆碎片。无明猛地睁开眼，视野中没有光，只有无数细密、浑浊的灰色尘埃在空气中悬浮、翻滚。这些尘埃并非静止，它们像是在呼吸，随着某种看不见的律动收缩又膨胀，发出令人牙酸的细微摩擦声——那是微粒流动的声音，是这个世界最底层的",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_22.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "黑暗不是空的，它是粘稠的。 无明睁开眼时，首先感知到的不是光，而是重量。一种湿冷、沉重、带着铁锈腥味的重量压在他的胸腔上，仿佛整个天堑的废墟都坍塌在他一人身上。他试图呼吸，但肺叶像是被砂纸打磨过，每一次扩张都伴随着尖锐的刺痛和细微的碎裂声。喉咙里堵着一团干涸的血块，那是他在昏迷前最后一口吞咽下的绝望。 他动了动手指。指",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_23.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "黑暗并非空无一物，而是充满了粘稠的、带有铁锈味的重量。 无明睁开眼时，首先感受到的不是光，而是痛。那种痛楚不来自皮肉，而是源自骨髓深处，仿佛有一根烧红的细针正沿着脊椎的每一节缝隙缓慢穿行，试图将某种不属于他的东西强行楔入这具躯壳。他躺在一片冰冷的黑曜石地面上，四周弥漫着陈腐的血腥气与一种难以名状的霉烂味道——那是旧时代",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_24.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉并非如潮水般涌来，而是像无数根烧红的铁针，从骨髓深处向外穿刺。无明睁开眼时，视野中是一片浑浊的灰白，仿佛眼球表面覆盖了一层陈年的尸蜡。他试图抬起手臂，却发现肢体沉重得如同灌满了铅汞，每一寸肌肉都在痉挛中发出无声的哀鸣。这不是普通的疲惫，这是生命力被强行抽离后的空虚回响。 他躺在一片碎石堆上，周围是断裂的石柱和扭曲的",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "missing_foreshadow_marker",
+        "chapter": "chapter_24.md",
+        "message": "章节缺少伏笔标记，后续状态快照难以追踪铺垫与回收。",
+        "evidence": "missing <!-- foreshadow: marker",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_25.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "黑暗不是空的。 对于无明而言，黑暗是一种粘稠的、带有铁锈味的流体。它灌入鼻腔，堵塞耳道，压迫着早已停止跳动却仍在痉挛的心脏。他睁开眼时，并没有看到光，而是看到了无数细小的、灰白色的尘埃在虚空中悬浮、碰撞、碎裂。这些尘埃并非静止，它们像是有生命的浮游生物，遵循着某种不可见的引力场，缓慢地旋转、聚合。 这里是天堑的边缘。 ",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "missing_low_frequency_anchor",
+        "chapter": "chapter_25.md",
+        "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+        "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "forbidden_style_hit",
+        "chapter": "chapter_25.md",
+        "message": "章节命中长篇正式 gate 禁词，需进入异常章 reviewer。",
+        "evidence": "叮=1",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_26.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "寒冷不是从皮肤表面渗入的，而是像无数根冰冷的铁针，直接从骨髓深处向外穿刺。 无明睁开眼时，视野是一片浑浊的灰白。没有天空，没有大地，只有悬浮在空中的尘埃，每一粒都闪烁着微弱而病态的光晕。他试图抬起手，却发现四肢沉重得如同灌满了铅汞。身体不再是那个熟悉且精密的杀戮机器，而是一具正在缓慢崩解的容器。 他躺在一片黑色的岩石上",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_27.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉并非如潮水般涌来，而是像无数根烧红的铁针，从骨髓深处向外穿刺。 无明睁开眼时，视野是一片浑浊的灰白。没有天空，没有大地，只有悬浮在空气中的尘埃，每一粒都闪烁着微弱而病态的光晕。他试图起身，脊椎却发出令人牙酸的摩擦声，仿佛这具躯壳已经生锈了百年。他低头看向自己的双手，皮肤苍白如纸，皮下隐约可见青黑色的血管在搏动，但那",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_29.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉不是从皮肤表面传来的，而是从骨髓深处炸开。 无明睁开眼时，世界是一片浑浊的灰白。没有天空，没有大地，只有悬浮在空气中的尘埃，像无数死去的星屑，缓慢地旋转、沉降。他躺在一片由破碎石板堆砌的废墟之上，身下是早已干涸成黑褐色硬壳的血迹。空气里弥漫着一股铁锈与腐烂苔藓混合的腥甜气味，这是天堑边缘特有的味道——死亡发酵后的余",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_topic_lock",
+        "code": "missing_low_frequency_anchor",
+        "chapter": "chapter_29.md",
+        "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+        "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_30.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "风不是吹过来的，是刮过来的。带着铁锈味、腐烂内脏的腥气，以及某种难以名状的、仿佛无数细碎骨骼摩擦产生的尖啸。 无明站在悬崖的边缘。脚下并非岩石，而是一层灰白色的、类似凝固油脂的物质，踩上去会有轻微的凹陷感，随即又迅速回弹，像是在呼吸。这里是“第四重天堑”的边界，也是这座名为“枯骨城”的绝对禁区。在他身后，城市的轮廓在浓",
+        "action": "review_manually"
+      }
+    ],
+    "reviewer_queue": [
+      {
+        "chapter": "chapter_06.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_06.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_07.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_07.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_08.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_08.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_09.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_09.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_10.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_10.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_11.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_11.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_13.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_13.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_14.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_14.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_15.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_15.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_16.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_16.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_17.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_17.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_18.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_18.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_19.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_19.md",
+        "reason_codes": [
+          "opening_loop_risk",
+          "short_chapter"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_20.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_20.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_21.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_21.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_22.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_22.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_23.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_23.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_24.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_24.md",
+        "reason_codes": [
+          "opening_loop_risk",
+          "missing_foreshadow_marker"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_25.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_25.md",
+        "reason_codes": [
+          "opening_loop_risk",
+          "forbidden_style_hit"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_26.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_26.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_27.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_27.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_29.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_29.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_30.md",
+        "path": ".ops/longform_smoke/state/longform-jiujiu-combo-smoke/chapter_30.md",
+        "reason_codes": [
+          "opening_loop_risk"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      }
+    ]
+  },
+  "issues": [
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_01.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "在耳边呼啸，像是无数冤魂在低语。 突然，左侧传来一声轻微的咔嚓声。 无明",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_02.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "，形成了一股无形的吸力。持弩者的脚步突然踉跄了一下，整个人像是被一只无形的大",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "generic_emotion",
+      "chapter": "chapter_03.md",
+      "message": "抽象情绪替代具体动作。",
+      "evidence": "看着手中恢复平静的短刃，心中涌起一股复杂的情绪。既有对力量的渴望，也有对这种掠夺行",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_03.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "。当无明的目光触及那些符文时，脑海中突然闪过一阵尖锐的耳鸣，紧接着是一幅破碎",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_03.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "来补充。 “那边！”其中一个清道夫突然指向无明藏身的岩石，“有血迹！”",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_03.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "他的手指触碰到最后一个字的瞬间，石碑突然震动起来，表面的灰尘纷纷脱落，露出了",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_03.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "备离开。然而，就在他转身的瞬间，女孩突然尖叫起来：“小心后面！” 无明猛地",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "generic_emotion",
+      "chapter": "chapter_04.md",
+      "message": "抽象情绪替代具体动作。",
+      "evidence": "。那些蓝色光点涌入他的伤口，带来一阵难以言喻的快感。他的力量在恢复，感官变得更加",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "cliche_metaphor",
+      "chapter": "chapter_04.md",
+      "message": "常见套话削弱场景质感。",
+      "evidence": "更加残酷，但他已做好准备。因为在他的内心深处，有一股凶性正在苏醒，那是属于刺客的",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_04.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "在他的体内达成了某种暂时的妥协。 突然，一阵细微的脚步声从洞穴入口传来。",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_04.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "就在这时，无明感到体内的蓝色晶体突然剧烈震动起来。一股强大的吸力从他手腕",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_05.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "吞噬着这些微粒。 微粒。 这个词突然跳入他的脑海，带来一阵短暂的清明。他",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "cliche_metaphor",
+      "chapter": "chapter_06.md",
+      "message": "常见套话削弱场景质感。",
+      "evidence": "么，但他能感觉到，这股力量正在唤醒他内心深处沉睡的东西。那是属于刺客的本能，也是",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_06.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "动起体内仅存的一点本能。短刃上的符文突然亮起，发出一阵幽蓝的光芒。光芒并不耀",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_06.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "液体。 当他拿起那枚戒指时，脑海中突然闪过一个画面：一座宏伟的城堡，高耸入",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "generic_emotion",
+      "chapter": "chapter_07.md",
+      "message": "抽象情绪替代具体动作。",
+      "evidence": "源不断地涌入无明的体内。 这是一种难以言喻的快感，也是一种极致的痛苦。微粒进入",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_07.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "流动的轨迹。 “他们在找你。”男人突然压低声音，脸上的笑容消失殆尽，“掠夺",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_07.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "挑衅。” 话音未落，头顶上方的石板突然传来一声闷响。灰尘簌簌落下，紧接着，",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_08.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "形的波动扩散开来，无明感到体内的吸力突然减弱了一瞬。 他喘着粗气，靠在墙壁",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "generic_emotion",
+      "chapter": "chapter_09.md",
+      "message": "抽象情绪替代具体动作。",
+      "evidence": "气，看着地上的两具尸体，眼中闪过一丝复杂的情绪。杀戮对他来说并不陌生，甚至有一种熟",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_09.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "排出体外。 就在这时，短刃上的符文突然亮起了一抹幽蓝的光芒。光芒微弱，却在",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_09.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "味着什么？ 就在这时，短刃上的符文突然剧烈闪烁起来，一股强大的吸力从刀身传",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_10.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "道纹路上。 随着他的注视，那道纹路突然搏动了一下。紧接着，一股冰冷的能量顺",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_10.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "而，就在他即将穿过一片乱石堆时，脚下突然踩到了什么柔软的东西。 “噗嗤。”",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_10.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "明反应极快，身形一闪，向后跃出数米。下一秒，一根尖锐的黑刺从地下射出，擦着他的",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_10.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "，正在向你逼近。” 话音未落，远处突然传来一阵密集的破空声。数十道黑影从天",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_10.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "没时间闲聊了。”黑袍人叹了口气，身形突然消散，化作一团黑雾融入地下。 无明",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_11.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "”，属于某个早已灭亡的家族领地。 突然，左侧的风向变了。 一股极淡的铁锈",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_11.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "距离内，依然足以让敌人失去目标。 下一秒，他出现在那名逃跑者的身后。短刃轻轻",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "generic_emotion",
+      "chapter": "chapter_12.md",
+      "message": "抽象情绪替代具体动作。",
+      "evidence": "中依旧闪烁着红光的短刃，心中涌起一股复杂的情绪。既有解脱，也有深深的厌恶。 他站",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_12.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "下，那种来自体内的侵蚀就会加速。 突然，一阵细微的沙沙声从左侧传来。 无",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_12.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "”无明淡淡地说道。 “撒谎！”老人突然暴怒，身形一闪，速度快得惊人。一只枯",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_12.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "的、冰冷的毁灭欲望。 他手中的短刃突然震动起来，那些古老的符文爆发出耀眼的",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_13.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "说道，手中的铁棍在地上敲击着，“怎么突然没了？” “闭嘴，蠢货。”首领斥责",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_15.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "就在他的意识即将崩溃之际，腰间的虚空突然泛起一阵涟漪。 一把刻有古老符文的",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_15.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "当他握住短刃的那一刻，体内肆虐的黑点突然安静了下来，它们不再四处乱窜，而是汇",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_16.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "但在靠近胸口鼓包时，刀身上的古老符文突然亮了起来。那些符文并非雕刻上去的，而",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_16.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "绽，引诱另一人进攻。当那人逼近时，他突然转身，短刃反向刺出，精准地插入了对方",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_18.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "域。然而，就在他即将走出森林时，脚下突然一空，整个人掉进了一个隐蔽的陷阱坑中",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_19.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "活物的不信任，对阴影的本能依赖。 突然，一阵细微的嗡鸣声从他体内传来。",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "cliche_metaphor",
+      "chapter": "chapter_20.md",
+      "message": "常见套话削弱场景质感。",
+      "evidence": "天空。在那里，隐约可见几颗星辰闪烁，仿佛是命运的眼睛，注视着他的一举一动。 他不",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_20.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "躁动。当他握住刀柄时，掌心的幽蓝流体突然加速流动，竟顺着手指渗入刀柄上的符文",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_20.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "被掠夺的契约。 就在这时，石室的门突然发出一声沉闷的响声。 无明立刻警觉",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_20.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "灰袍人的弯刀即将砍中他的肩膀时，无明突然感到脑海中一阵刺痛。那段破碎的记忆再",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "generic_emotion",
+      "chapter": "chapter_21.md",
+      "message": "抽象情绪替代具体动作。",
+      "evidence": "看了看倒在地上的守门人，心中涌起一股复杂的情绪。 这把刀，还有他体内的微粒，究竟",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_21.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "全收敛，连心跳都似乎停止了跳动。 下一秒，他出现在左侧的一块巨石后方。那里躲",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_21.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "就在他即将失去平衡的瞬间，手中的短刃突然发出一声清脆的鸣响，刃口上的古老符文",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_21.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "麻。 “愚蠢。” 一个阴冷的声音突然在身后响起。 无明猛地回头，只见黑",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_21.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "样。” 话音未落，守门人手中的法杖突然亮起红光，一道炽热的火焰光束直射无明",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_21.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "双方即将再次交手之际，无明胸口的伤口突然剧烈疼痛起来，那些黑色的颗粒仿佛受到",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_21.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "就在这千钧一发之际，他体内的黑色颗粒突然爆发出一股强大的吸力，竟然将周围的火",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "cliche_metaphor",
+      "chapter": "chapter_22.md",
+      "message": "常见套话削弱场景质感。",
+      "evidence": "热的液体让他感到一阵恶心，但也激发出内心深处某种沉睡的凶性。 那只食尘者抽搐了",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_22.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "触到那颗黑色晶体的瞬间，刀身上的符文突然亮起了一瞬幽蓝的光芒。 嗡——",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_22.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "上层世界的漏光，也是危险的信号。 突然，前方传来了一声轻微的咔嚓声。 无",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_22.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "无尽。 就在这时，左臂上的黑色晶体突然剧烈震动了一下。一股冰冷的能量顺着手",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_23.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "他的手触碰到石门的那一刻，门上的符文突然亮起，发出一阵耀眼的白光。与此同时，",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "generic_emotion",
+      "chapter": "chapter_24.md",
+      "message": "抽象情绪替代具体动作。",
+      "evidence": "顺着血管蔓延至全身，随之而来的是一种难以言喻的渴望——对能量的渴望，对某种被称为",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_24.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "消散无踪。 与此同时，短刃上的符文突然亮起，发出低沉的嗡鸣声。那声音并不通",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_25.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "逆转局势。当弯刀即将触及他的瞬间，他猛然挥动短刃，迎了上去。 叮！ 一声",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_25.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "。 然而，就在他准备离开时，脑海中突然响起了一阵尖锐的耳鸣。紧接着，一段陌",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "platform_genre_fit",
+      "code": "game_system_tone",
+      "chapter": "chapter_25.md",
+      "message": "游戏系统播报腔与当前风格锁冲突。",
+      "evidence": "瞬间，他猛然挥动短刃，迎了上去。 叮！ 一声巨响，弯刀竟然被短刃轻易斩",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_26.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "尖触碰到皮肤的瞬间，一股强烈的排斥力猛然爆发。无明感到一阵眩晕，眼前的景象开",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_26.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "在刀尖即将触及核心的一瞬间，那个凸起突然停止了搏动。 紧接着，一个声音在他",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_26.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "自己的脚步声和心跳声在耳边回荡。 突然，一阵细微的沙沙声从左侧传来。 无",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_27.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "磨过。 就在这时，他体内的黑色漩涡突然剧烈跳动了一下。一股寒意顺着脊椎直冲",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_27.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "形一闪，整个人如同鬼魅般消失在原地。下一秒，他已经出现在巨石之后，短刃抵在了对",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_27.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "是污垢，双眼惊恐地瞪大，看着眼前这个突然出现的男人。她的脖子上挂着一串由微粒",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_27.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "都不会让你得逞。” 话音刚落，地面突然震动起来。 远处的噬魂塔顶端，一道",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_27.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "“内宇宙……”无明喃喃自语。 他突然明白了一切。这枚种子，是有人故意植入",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_28.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "丝淡淡的甜味——那是陷阱的味道。 突然，前方的迷雾中传来一阵沉重的脚步声。",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "cliche_metaphor",
+      "chapter": "chapter_29.md",
+      "message": "常见套话削弱场景质感。",
+      "evidence": "意味着要与整个世界为敌。 而在他的内心深处，那个神秘的声音再次响起，这次带着一",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_30.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "正在消散的微粒。 短刃上的古老符文突然亮起，发出暗红色的光芒。那些原本飘散",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_01.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉是第一个回归的感官。 它不像潮水般温柔地漫过堤岸，而是像生锈的铁钉，一根接一根，粗暴地楔入神经末梢。无明睁开眼时，视野被一片浑浊的灰白占据。那不是天空，也不是云层，而是一种粘稠、停滞的雾霭，仿佛整个世界都被浸泡在陈年的骨灰缸里。空气沉重得令人窒息，每一次吸气都像是在吞咽碎玻璃，肺叶扩张时发出细微的撕裂声，提醒着他这",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_02.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "寒冷不是从皮肤渗入的，而是从骨髓深处炸开的。 无明睁开眼时，世界是一片灰败的混沌。没有天空，只有层层叠叠、如同腐烂脏器般垂落的铅云，遮蔽了所有的光源。空气里弥漫着硫磺、铁锈和某种陈旧血液混合后的腥甜气味，每一次呼吸都像是在吞咽砂纸，粗糙地刮擦着肺叶内壁。他试图坐起，但身体的每一块肌肉都在尖叫，仿佛被拆解后重新拼凑，接缝",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "missing_low_frequency_anchor",
+      "chapter": "chapter_02.md",
+      "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+      "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_03.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "寒冷不是从皮肤渗入的，而是从骨髓深处炸开的。 无明睁开眼时，视野是一片浑浊的灰白。没有天空，没有大地，只有浓稠得如同凝固油脂般的雾气，在四周缓慢蠕动。每一次呼吸，肺部都像被砂纸打磨过一般刺痛，吸入的不是空气，而是带着铁锈味和腐烂甜腥气的尘埃。他试图坐起，肌肉却像断裂的琴弦般僵硬，剧烈的痉挛让他不得不重新跌回冰冷的地面。",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "missing_low_frequency_anchor",
+      "chapter": "chapter_04.md",
+      "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+      "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_05.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉并非如潮水般涌来，而是像生锈的铁钉，一颗一颗被强行楔入颅骨的缝隙。 无明睁开眼时，视野是一片浑浊的灰白。没有天空，没有大地，只有悬浮在空气中的、细密如雾的灰色颗粒。它们静止不动，却又仿佛在某种不可见的律动中微微震颤，像是无数双窥视的眼睛。他试图呼吸，肺部却传来撕裂般的灼烧感，每一次吸气都像是在吞咽碎玻璃。喉咙里堵着",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "missing_low_frequency_anchor",
+      "chapter": "chapter_05.md",
+      "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+      "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_06.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "寒冷不是从皮肤渗入的，而是从骨髓深处炸开的。 无明睁开眼时，视野是一片浑浊的灰白。天空像是一块被反复揉搓后丢弃的脏抹布，云层厚重得仿佛随时会坍塌下来，压碎这片位于第四重天堑边缘的荒原。风在这里没有声音，只有触感——像无数根冰冷的细针，密密麻麻地扎进他裸露在外的每一寸肌肤。 他试图坐起，但脊椎发出一声令人牙酸的脆响，剧痛",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "missing_low_frequency_anchor",
+      "chapter": "chapter_06.md",
+      "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+      "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_07.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉并非如潮水般涌来，而是像无数根烧红的铁针，从骨髓深处向外穿刺。无明睁开眼时，视野是一片浑浊的灰白，仿佛眼球表面蒙了一层洗不净的尸油。他试图抬起手臂，却发现肢体沉重得如同灌满了铅汞，每一次肌肉的收缩都伴随着骨骼摩擦发出的令人牙酸的咯吱声。 这里不是天堑边缘那充满硫磺味的荒原，而是一处封闭、潮湿且散发着腐烂甜腥气的地下",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "missing_low_frequency_anchor",
+      "chapter": "chapter_07.md",
+      "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+      "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_08.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉不是从皮肤表面传来的，而是从骨髓深处炸开的。 无明睁开眼时，视野是一片浑浊的灰白。没有天空，没有地面，只有无数悬浮在空气中的尘埃，像死去的星屑一样缓慢旋转。他试图呼吸，肺部却像是被灌入了滚烫的铁水，每一次吸气都伴随着尖锐的撕裂感。他低下头，看见自己的胸膛微微起伏，但那节奏并不属于他自己——那是一种诡异的、同步的搏动",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_09.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "寒冷不是从皮肤表面渗入的，而是从骨髓深处炸开的。 无明睁开眼时，视野是一片浑浊的灰白。没有天空，没有大地，只有无数悬浮在空气中的、细密如沙砾般的灰色颗粒。它们像是有生命一般，缓慢地蠕动、碰撞，发出令人牙酸的细微摩擦声。这里是天堑的边缘，是现实与虚无撕扯出的伤口，也是被遗弃者的坟墓。 他试图动弹手指，却发现身体沉重得如同",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "missing_low_frequency_anchor",
+      "chapter": "chapter_09.md",
+      "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+      "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_10.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "黑暗并非虚无，而是某种粘稠、带有重量的实体。它像冷却后的沥青，紧紧包裹着无明的每一寸肌肤，试图渗入毛孔，将他的意识拖入永恒的静默深渊。 无明睁开眼时，首先感受到的不是光，而是痛。 那种疼痛并不来自体表，而是源自骨骼深处，仿佛有无数细小的冰棱在骨髓腔内生长、刺穿神经末梢。他躺在一片废墟之中，四周是断裂的石柱和扭曲的金属骨",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_11.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "黑暗不是静止的，它在蠕动。 无明睁开眼时，首先感知到的不是光，而是痛。那种痛楚并非来自皮肉撕裂或骨骼断裂，而是源自更深层、更本质的地方——仿佛有无数细小的沙砾被强行灌入骨髓，随着血液的每一次泵动，在血管壁上刮擦出尖锐的噪音。他躺在一片潮湿的苔藓地上，头顶是扭曲如枯爪般的黑铁树枝，遮蔽了那轮永远呈现病态暗红色的天空。空气",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "missing_low_frequency_anchor",
+      "chapter": "chapter_11.md",
+      "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+      "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_13.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉并非如潮水般涌来，而是像无数根烧红的细针，沿着脊椎的每一节骨缝精准地刺入。无明在黑暗中睁开眼，瞳孔尚未适应光线，视野中只有一片浑浊的灰白。这不是天空的颜色，也不是泥土的色泽，而是一种介于腐烂与新生之间的病态苍白。他试图抬起手臂，却发现肌肉纤维如同生锈的铁链，每一次收缩都伴随着令人牙酸的摩擦声和撕裂感。 他躺在一片碎",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "missing_low_frequency_anchor",
+      "chapter": "chapter_13.md",
+      "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+      "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_14.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "黑暗不是空的。 黑暗是有重量的，像湿透的裹尸布，一层层缠在肺叶上，挤压出最后一丝带着铁锈味的空气。无明睁开眼时，视网膜上并没有光，只有一片浑浊的灰白，仿佛眼球本身已经腐烂，透过坏死的晶状体看到的不再是世界，而是某种粘稠的、正在缓慢蠕动的介质。 他试图动弹手指，指尖传来的触感并非粗糙的石板或冰冷的金属，而是一种滑腻的、温",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_15.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "黑暗并非空无一物，而是充满了粘稠的、带有铁锈味的重量。 无明睁开眼时，首先感知到的不是光线，而是骨骼深处传来的细微碎裂声。那声音像极了枯枝在暴雪中折断的脆响，却源自他自身的胸腔内部。他躺在一片由黑色淤泥和破碎石板构成的废墟之上，四周弥漫着一种令人作呕的甜腥气，那是陈旧血液与某种腐烂真菌混合后的味道。天空呈现出一种病态的",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "missing_low_frequency_anchor",
+      "chapter": "chapter_15.md",
+      "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+      "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_16.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "寒冷不是从皮肤渗入的，而是从骨髓深处炸开的。 无明睁开眼时，世界是一片浑浊的灰白。没有天空，只有厚重如铅块的云层压在天堑的边缘，仿佛随时会坍塌下来，将这片荒芜之地碾成粉末。他躺在一片黑色的碎石滩上，身下是早已干涸的血迹，呈现出一种诡异的暗褐色，像是某种古老生物褪下的皮屑。 记忆是一片空白，像被利刃剜去了一块血肉，只剩下",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_17.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉是第一个回归的感官。 它不像潮水般漫上来，而是像无数根烧红的铁针，沿着脊椎的每一节缝隙强行楔入。无明猛地睁开眼，瞳孔在黑暗中剧烈收缩，随即又因适应昏暗而扩张。视野中没有光，只有灰败的尘埃在空气中悬浮、翻滚，如同某种死去的微生物群落。他试图移动手指，关节发出干涩的摩擦声，仿佛生锈的铁铰链被暴力掰开。 记忆是一片空白。",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_18.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉并非如潮水般涌来，而是像无数根烧红的铁针，从骨髓深处向外穿刺。 无明睁开眼时，视野中是一片灰败的混沌。没有天空，只有厚重得令人窒息的铅云，低垂得仿佛触手可及，云层间偶尔闪过暗红色的电光，那是天堑边缘特有的“静默雷暴”。空气里弥漫着腐烂苔藓、陈旧血腥和一种难以名状的金属锈蚀味。他试图动弹手指，却发现肢体沉重得如同灌满",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "missing_low_frequency_anchor",
+      "chapter": "chapter_18.md",
+      "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+      "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_19.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "寒冷并非来自外界的风雪，而是从骨髓深处渗出的冰渣。 无明睁开眼时，视野是一片浑浊的灰白。没有天空，没有大地，只有无数悬浮在空气中的尘埃，像死去的星辰碎片，缓慢地旋转、碰撞、湮灭。他试图起身，但身体沉重得如同灌满了铅汞，每一块肌肉都在发出细微的撕裂声。他低头看向自己的双手，皮肤呈现出一种病态的苍白，皮下隐约可见青黑色的血",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "missing_low_frequency_anchor",
+      "chapter": "chapter_19.md",
+      "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+      "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_quality",
+      "code": "short_chapter",
+      "chapter": "chapter_19.md",
+      "message": "章节中文正文低于 v1.7 gate 阈值，可能是批量生成后段质量下滑。",
+      "evidence": "chinese_chars=2325 < 2400",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_20.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉并非来自皮肤，而是源自骨髓深处。那种感觉像是有无数根烧红的铁针，正沿着脊椎的每一节缝隙缓缓刺入，将某种冰冷、粘稠且带有强烈侵略性的物质强行灌注进他的生命核心。 无明猛地睁开双眼，瞳孔在黑暗中剧烈收缩。没有光，只有浓稠得化不开的墨色。他试图起身，但四肢沉重如灌铅，每一次肌肉的牵动都伴随着撕裂般的剧痛。他低下头，看向自",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "missing_low_frequency_anchor",
+      "chapter": "chapter_20.md",
+      "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+      "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_21.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉是唯一的坐标。 它像一根烧红的铁钎，从后颈的椎骨缝隙里硬生生撬进去，搅动着早已凝固的血块和破碎的记忆碎片。无明猛地睁开眼，视野中没有光，只有无数细密、浑浊的灰色尘埃在空气中悬浮、翻滚。这些尘埃并非静止，它们像是在呼吸，随着某种看不见的律动收缩又膨胀，发出令人牙酸的细微摩擦声——那是微粒流动的声音，是这个世界最底层的",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_22.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "黑暗不是空的，它是粘稠的。 无明睁开眼时，首先感知到的不是光，而是重量。一种湿冷、沉重、带着铁锈腥味的重量压在他的胸腔上，仿佛整个天堑的废墟都坍塌在他一人身上。他试图呼吸，但肺叶像是被砂纸打磨过，每一次扩张都伴随着尖锐的刺痛和细微的碎裂声。喉咙里堵着一团干涸的血块，那是他在昏迷前最后一口吞咽下的绝望。 他动了动手指。指",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_23.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "黑暗并非空无一物，而是充满了粘稠的、带有铁锈味的重量。 无明睁开眼时，首先感受到的不是光，而是痛。那种痛楚不来自皮肉，而是源自骨髓深处，仿佛有一根烧红的细针正沿着脊椎的每一节缝隙缓慢穿行，试图将某种不属于他的东西强行楔入这具躯壳。他躺在一片冰冷的黑曜石地面上，四周弥漫着陈腐的血腥气与一种难以名状的霉烂味道——那是旧时代",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_24.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉并非如潮水般涌来，而是像无数根烧红的铁针，从骨髓深处向外穿刺。无明睁开眼时，视野中是一片浑浊的灰白，仿佛眼球表面覆盖了一层陈年的尸蜡。他试图抬起手臂，却发现肢体沉重得如同灌满了铅汞，每一寸肌肉都在痉挛中发出无声的哀鸣。这不是普通的疲惫，这是生命力被强行抽离后的空虚回响。 他躺在一片碎石堆上，周围是断裂的石柱和扭曲的",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "missing_foreshadow_marker",
+      "chapter": "chapter_24.md",
+      "message": "章节缺少伏笔标记，后续状态快照难以追踪铺垫与回收。",
+      "evidence": "missing <!-- foreshadow: marker",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_25.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "黑暗不是空的。 对于无明而言，黑暗是一种粘稠的、带有铁锈味的流体。它灌入鼻腔，堵塞耳道，压迫着早已停止跳动却仍在痉挛的心脏。他睁开眼时，并没有看到光，而是看到了无数细小的、灰白色的尘埃在虚空中悬浮、碰撞、碎裂。这些尘埃并非静止，它们像是有生命的浮游生物，遵循着某种不可见的引力场，缓慢地旋转、聚合。 这里是天堑的边缘。 ",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "missing_low_frequency_anchor",
+      "chapter": "chapter_25.md",
+      "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+      "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "forbidden_style_hit",
+      "chapter": "chapter_25.md",
+      "message": "章节命中长篇正式 gate 禁词，需进入异常章 reviewer。",
+      "evidence": "叮=1",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_26.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "寒冷不是从皮肤表面渗入的，而是像无数根冰冷的铁针，直接从骨髓深处向外穿刺。 无明睁开眼时，视野是一片浑浊的灰白。没有天空，没有大地，只有悬浮在空中的尘埃，每一粒都闪烁着微弱而病态的光晕。他试图抬起手，却发现四肢沉重得如同灌满了铅汞。身体不再是那个熟悉且精密的杀戮机器，而是一具正在缓慢崩解的容器。 他躺在一片黑色的岩石上",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_27.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉并非如潮水般涌来，而是像无数根烧红的铁针，从骨髓深处向外穿刺。 无明睁开眼时，视野是一片浑浊的灰白。没有天空，没有大地，只有悬浮在空气中的尘埃，每一粒都闪烁着微弱而病态的光晕。他试图起身，脊椎却发出令人牙酸的摩擦声，仿佛这具躯壳已经生锈了百年。他低头看向自己的双手，皮肤苍白如纸，皮下隐约可见青黑色的血管在搏动，但那",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_29.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉不是从皮肤表面传来的，而是从骨髓深处炸开。 无明睁开眼时，世界是一片浑浊的灰白。没有天空，没有大地，只有悬浮在空气中的尘埃，像无数死去的星屑，缓慢地旋转、沉降。他躺在一片由破碎石板堆砌的废墟之上，身下是早已干涸成黑褐色硬壳的血迹。空气里弥漫着一股铁锈与腐烂苔藓混合的腥甜气味，这是天堑边缘特有的味道——死亡发酵后的余",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_topic_lock",
+      "code": "missing_low_frequency_anchor",
+      "chapter": "chapter_29.md",
+      "message": "低频题材锚点缺失，组合题材可能被玄幻黑暗主轴稀释。",
+      "evidence": "missing any of: 血脉, 末日, 多子多福, 繁衍契约",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_30.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "风不是吹过来的，是刮过来的。带着铁锈味、腐烂内脏的腥气，以及某种难以名状的、仿佛无数细碎骨骼摩擦产生的尖啸。 无明站在悬崖的边缘。脚下并非岩石，而是一层灰白色的、类似凝固油脂的物质，踩上去会有轻微的凹陷感，随即又迅速回弹，像是在呼吸。这里是“第四重天堑”的边界，也是这座名为“枯骨城”的绝对禁区。在他身后，城市的轮廓在浓",
+      "action": "review_manually"
+    }
+  ],
+  "suggestions": [
+    "把抽象心理和套话改成可观察动作、身体代价、环境反馈或对手反应。",
+    "平台风格冲突只做人工复核提示；如需改文，另开编辑流程，不由 review 自动写回。",
+    "按 v1.7 gate 复核异常章：先看批后状态快照，再处理回环、低频题材锚点和伏笔缺失。"
+  ]
+}

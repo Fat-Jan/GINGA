@@ -1,6 +1,6 @@
 # Ginga 当前状态
 
-更新时间：2026-05-15
+更新时间：2026-05-16
 
 本文件是当前状态真值。`ROADMAP.md` 保留为历史/规划资料，不代表最新完成度。
 
@@ -40,9 +40,10 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 | v1.4 BookView / explorer | `done` | `ginga_platform/orchestrator/book_view.py`；`ginga inspect` / `ginga query`；`test_book_view`；`validate_architecture_contracts.py` | 已完成从 `StateIO` / chapter artifacts 派生只读 projection，输出限定 `.ops/book_views/<book_id>/<run_id>/`；不写 `runtime_state`，不建立第二状态真值，不默认读 `.ops/book_analysis/**` |
 | v1.5 review / deslop | `done` | `ginga_platform/orchestrator/review.py`；`ginga review`；`test_review_deslop`；`validate_architecture_contracts.py` | 已完成审稿、去 AI 味、平台 rubric 的 warn-only report sidecar；不自动改正文，rubric 不进创作 prompt，默认不读 `.ops/book_analysis/**` |
 | v1.6 market sidecar / v2 运营线 | `done` | `ginga_platform/orchestrator/market_research.py`；`ginga market --fixture --authorize`；`test_market_research_sidecar`；`validate_architecture_contracts.py` | 已完成显式授权 + offline fixture 的市场报告 sidecar；报告带数据来源、采集时间、数据质量状态，剥离外部原文，默认不进 RAG |
-| v1.7-0 Longform Production Policy | `done` | `scripts/run_longform_llm_smoke.py`；`ginga_platform/orchestrator/cli/longform_policy.py`；`.ops/validation/longform_jiujiu_smoke.json`；`.ops/reports/v1_7_longform_production_policy.md`；`.ops/reports/longform_jiujiu_30_quality_summary.md`；`.ops/jury/longform_jiujiu_30_review_2026-05-15/`；`test_longform_llm_smoke` / `test_agent_harness` | 已用 `久久` 完成 30 章真实长篇 smoke 与 jury 评审；正式真实 LLM 批量生成推荐 5 章、上限 7 章，10 章及以上仅作压力测试；CLI 已对真实 LLM 超 7 章 fail-loud，`--immersive` 默认 5 章 |
-| v1.7-1 Longform Quality Gate | `done` | `ginga_platform/orchestrator/review.py`；`test_longform_quality_gate`；`test_review_deslop`；`validate_architecture_contracts.py`；`.ops/reviews/longform-jiujiu-combo-smoke/v1-7-1-longform-gate/review_report.json` | 已把批后状态快照、回环检测、低频题材锚点检测、短章/伏笔/禁词检测与异常章 reviewer 队列接入 `ginga review` warn-only sidecar；不自动改正文、不写 `runtime_state`、不调用 LLM |
+| v1.7-0 Longform Production Policy | `done` | `scripts/run_longform_llm_smoke.py`；`ginga_platform/orchestrator/cli/longform_policy.py`；`.ops/validation/longform_jiujiu_smoke.json`；`.ops/reports/v1_7_longform_production_policy.md`；`.ops/reports/longform_jiujiu_30_quality_summary.md`；`.ops/jury/longform_jiujiu_30_review_2026-05-15/`；`test_longform_llm_smoke` / `test_agent_harness` | 已用 `久久` 完成 30 章真实长篇 smoke 与 jury 评审；原始证据显示 10 连发开始 drift；当前正式批量口径已由 v1.7-3 收紧 |
+| v1.7-1 Longform Quality Gate | `done` | `ginga_platform/orchestrator/review.py`；`test_longform_quality_gate`；`test_review_deslop`；`validate_architecture_contracts.py`；`.ops/reviews/longform-jiujiu-combo-smoke/v1-7-1-longform-gate/review_report.json` | 已把批后状态快照、回环检测、低频题材锚点检测、短章/伏笔/禁词检测与异常章 reviewer 队列接入 `ginga review` sidecar；v1.7-3 已让 review 与生成前 hard gate 共享检测口径 |
 | v1.7-2 Longform Reviewer Queue Review | `done` | `.ops/jury/longform_reviewer_queue_2026-05-15/reviewer_queue_packet.md`；`.ops/jury/longform_reviewer_queue_2026-05-15/ioll-grok__reviewer_queue_packet.md`；`.ops/jury/longform_reviewer_queue_2026-05-15/human_review_brief.md`；`ask-llm list jiujiu-jury`；`ask-jury-safe --help` | 已按“先外部、再人工”把 21 个异常章交给外部模型评审并生成人工终审 brief；`jiujiu-jury` 已注册为久久评审 alias，但多章包连续 504，本轮不作为有效 jury 结论；`wzw` 输出为空，未纳入共识 |
+| v1.7-3 Longform Hard Gate | `done` | `ginga_platform/orchestrator/cli/longform_policy.py`；`ginga_platform/orchestrator/cli/__main__.py`；`ginga_platform/orchestrator/review.py`；`scripts/run_longform_llm_smoke.py`；`test_agent_harness` / `test_longform_quality_gate` / `test_longform_llm_smoke`；`.ops/reports/v1_7_longform_production_policy.md` | 已采纳人工裁决：正式真实 LLM 批量推荐 4 章、上限 5 章，6 章及以上只作压力测试；CLI 在真实 LLM 调用前 hard gate 阻断连续回环、低频锚点缺失或伏笔标记缺失，mock harness 不受影响；仍不自动改正文 |
 
 ## 已完成
 
@@ -65,18 +66,19 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 - v1.4 BookView / explorer 已完成最小可验证实现：`export_book_view()` 从 `StateIO` 与 `chapter_*.md` 生成 `.ops/book_views/<book_id>/<run_id>/book_view.json`、`README.md` 与章节副本；`query_book_view()` / `ginga query` 只读洁净 state 与章节 artifact，不读 `.ops/book_analysis/**`，且架构契约禁止 BookView 调用 `StateIO.apply()` / `audit()` / `write_artifact()`。
 - v1.5 Review / deslop 已完成最小可验证实现：`export_review_report()` 从 `StateIO` 与 `chapter_*.md` 生成 `.ops/reviews/<book_id>/<run_id>/review_report.json` 与 `README.md`；报告覆盖 anti-AI style、平台风格风险和可读性提示，固定 `mode=warn_only` / `auto_edit=false`，不写 `runtime_state`，不调用 LLM，不读取 `.ops/book_analysis/**`。
 - v1.6 Market Research Sidecar 已完成最小可验证实现：`export_market_research_report()` 只在显式 `authorized=True` / `ginga market --authorize` 后读取 offline fixture，生成 `.ops/market_research/<book_id>/<run_id>/market_report.json` 与 `README.md`；报告保留 source_id / platform / url / collected_at / data_quality，剥离 `raw_text`，标记 `default_rag_eligible=false`，不写 `runtime_state`。
-- v1.7-0 Longform Production Policy 已完成：`久久` 30 章真实 smoke 覆盖 3 / 5 / 7 / 10 / 5 批次，生成耗时约 48 分 40 秒；首个 drift 出现在 10 连发第 19 章，并在第 24 / 25 章暴露伏笔缺失和禁词命中；有效 jury 共识为 recommended_batch_size=5、upper_bound=7。代码层新增 `longform_policy.py`，正式真实 LLM 多章/沉浸生成超过 7 章会 fail-loud，`ginga run --immersive` 未指定章节数时默认 5 章。
-- v1.7-1 Longform Quality Gate 已完成：`build_review_report()` 现在输出 `longform_quality_gate`，包含每 5 章 `batch_state_snapshots`、`quality_snapshot`、回环风险、低频题材锚点缺失、短章、伏笔标记缺失、禁词命中与 `reviewer_queue`；已对 v1.7-0 真实 30 章样本生成 `.ops/reviews/longform-jiujiu-combo-smoke/v1-7-1-longform-gate/review_report.json`。
+- v1.7-0 Longform Production Policy 已完成：`久久` 30 章真实 smoke 覆盖 3 / 5 / 7 / 10 / 5 批次，生成耗时约 48 分 40 秒；首个 drift 出现在 10 连发第 19 章，并在第 24 / 25 章暴露伏笔缺失和禁词命中；原始 jury 共识为 recommended_batch_size=5、upper_bound=7，后续 v1.7-3 已按人工裁决收紧。
+- v1.7-1 Longform Quality Gate 已完成：`build_review_report()` 现在输出 `longform_quality_gate`，包含每 4 章 `batch_state_snapshots`、`quality_snapshot`、回环风险、低频题材锚点缺失、短章、伏笔标记缺失、禁词命中、`reviewer_queue` 与 `hard_gate`；已对 v1.7-0 真实 30 章样本生成 `.ops/reviews/longform-jiujiu-combo-smoke/v1-7-1-longform-gate/review_report.json`。
 - v1.7-2 Longform Reviewer Queue Review 已完成：`.ops/jury/longform_reviewer_queue_2026-05-15/` 保留完整 queue 评审包、外部模型意见和人工终审 brief。有效外部意见确认多章开头回到“痛觉 / 睁眼 / 灰白视野 / 天堑边缘 / 体内微粒 / 短刃”模板，P0/P1 聚焦第 19、24、25 章；`jiujiu-jury` 已接入 ask-llm 但对 132KB / 22KB / 5.5KB 包均 504，保留为短输入手动 juror，不进入默认 jury 主力。
+- v1.7-3 Longform Hard Gate 已完成：正式真实 LLM 批量生成推荐 4 章、上限 5 章，6 章及以上只作压力测试；`ginga run` 在真实 LLM 调用前检查最近窗口，若连续 2 章命中 `opening_loop_risk`、任一章缺低频题材锚点、或任一章缺伏笔标记，则 fail-loud 阻断下一批真实生成；`ginga review` 的 `longform_quality_gate.hard_gate` 使用同一套检测函数。
 
 ## 下一步
 
-当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy 与 v1.7-1 Longform Quality Gate 已收口。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
+当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 到 v1.7-3 Longform Production Policy / Quality Gate / Reviewer Queue / Hard Gate 已收口。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
 
 优先任务：
 
-- **RAG 残余观察**：保留 `.ops/reports/rag_recall_quality_report.md` 的 `candidate_k` / `asset_type` blocker 作为观察项；只有指标回退或新 gold query 暴露问题时再修，守住 Layer 2 `recall@5 >= 0.500` 与 `expected_recall@5 >= 0.875`。
-- **真实长篇生产化后续**：v1.7-2 已先跑外部模型评审并生成人工终审 brief；下一步是人工裁决是否把生产批量从“推荐 5 / 上限 7”临时收紧为“推荐 3-4 / 上限 5”，以及是否把连续 `opening_loop_risk`、低频锚点缺失、伏笔标记缺失提升为下一批生成前的硬 gate；仍不得自动改正文。
+- **RAG 残余观察**：2026-05-16 已刷新 `.ops/reports/rag_recall_quality_report.md` 与 `.ops/validation/rag_recall_quality.json`；473 cards / 473 vectors，native sqlite-vec used，fallback=none，Layer 1/2 空召回均为 0，Layer 2 `expected_recall@5=0.917` / `recall@5=0.614`。保留 `candidate_k` / `asset_type` blocker 作为观察项；只有指标回退或新 gold query 暴露问题时再修。
+- **真实长篇生产化后续**：v1.7-3 已完成批量收紧与生成前 hard gate；下一步若继续长篇验证，应基于新口径跑小规模真实 LLM 回归，优先验证 4 章默认批次与 5 章上限下的 drift 延迟效果；仍不得自动改正文。
 
 ## 规划索引（不代表已完成）
 
@@ -125,7 +127,7 @@ python3 scripts/evaluate_rag_recall.py
 - Prompt frontmatter：461 cards，violations=0。
 - Prompt quality：weak_examples=0。
 - Methodology assets：12 methodology OK。
-- RAG recall eval：473 cards / 473 vectors，native sqlite-vec used，fallback=none；Layer 1/2 空召回均为 0；Layer 2 `expected_recall@5=0.917` / `recall@5=0.614`。
+- RAG recall eval：2026-05-16 刷新，473 cards / 473 vectors，native sqlite-vec used，fallback=none；Layer 1/2 空召回均为 0；Layer 2 `expected_recall@5=0.917` / `recall@5=0.614`；`candidate_k` / `asset_type` blocker 继续作为 observation。
 - 当前代码观察：`StateIO` 是 YAML state 域的唯一写入口；单章、多章、immersive CLI 的 `chapter_NN.md` 通过 `StateIO.write_artifact()` 标注为 `chapter_text` artifact，不再伪装成 YAML state 域。
 - v1.3-0 污染隔离底座：已新增 `.ops/book_analysis/contamination_check_rules.md`、`.ops/book_analysis/p0_mvp_boundary.md`、`.ops/book_analysis/schema/source_manifest.schema.yaml`，并在 `foundation/rag/recall_config.yaml` / 架构契约检查中要求 `.ops/book_analysis/**`、`.ops/market_research/**`、`.ops/external_sources/**` 默认排除。
 - v1.3-1 Reference Corpus P0 MVP：已新增 `ginga_platform/book_analysis/` 纯函数核心、`scripts/build_reference_corpus.py`、`scripts/validate_reference_corpus.py`、`test_book_analysis_corpus` 和固定 smoke run `.ops/book_analysis/v1-3-1-smoke-main`；`validate_reference_corpus.py .ops/book_analysis/v1-3-1-smoke-main` 已纳入 `verify_all.py`，仍只覆盖 P0 结构扫描边界，不证明拆书分析或创作可用性。

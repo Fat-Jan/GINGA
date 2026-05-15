@@ -69,7 +69,7 @@ class AgentHarnessTest(unittest.TestCase):
             self.assertIn("mock_harness", report_text)
             self.assertIn("does not prove production readiness", report_text)
 
-    def test_cli_rejects_real_llm_batches_above_v17_upper_bound(self) -> None:
+    def test_cli_rejects_real_llm_batches_above_v17_3_upper_bound(self) -> None:
         from ginga_platform.orchestrator.cli.__main__ import main as cli_main
 
         with tempfile.TemporaryDirectory() as d:
@@ -94,7 +94,7 @@ class AgentHarnessTest(unittest.TestCase):
                     "run",
                     "policy-book",
                     "--chapters",
-                    "8",
+                    "6",
                     "--state-root",
                     str(state_root),
                 ]
@@ -102,7 +102,7 @@ class AgentHarnessTest(unittest.TestCase):
             self.assertEqual(run_code, 1)
             self.assertEqual(list((state_root / "policy-book").glob("chapter_*.md")), [])
 
-    def test_cli_immersive_defaults_to_recommended_five_chapter_batch(self) -> None:
+    def test_cli_immersive_defaults_to_recommended_four_chapter_batch(self) -> None:
         from ginga_platform.orchestrator.cli.__main__ import main as cli_main
 
         with tempfile.TemporaryDirectory() as d:
@@ -140,7 +140,70 @@ class AgentHarnessTest(unittest.TestCase):
                 0,
             )
             chapters = sorted((state_root / "default-immersive-book").glob("chapter_*.md"))
-            self.assertEqual([path.name for path in chapters], [f"chapter_{idx:02d}.md" for idx in range(1, 6)])
+            self.assertEqual([path.name for path in chapters], [f"chapter_{idx:02d}.md" for idx in range(1, 5)])
+
+    def test_cli_blocks_real_llm_when_existing_longform_hard_gate_fails(self) -> None:
+        from ginga_platform.orchestrator.cli.__main__ import main as cli_main
+        from ginga_platform.orchestrator.runner.state_io import StateIO
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            state_root = root / "runtime_state"
+            self.assertEqual(
+                cli_main(
+                    [
+                        "init",
+                        "hard-gate-book",
+                        "--topic",
+                        "玄幻黑暗",
+                        "--premise",
+                        "无明在末日天堑追索血脉繁衍契约",
+                        "--state-root",
+                        str(state_root),
+                    ]
+                ),
+                0,
+            )
+            sio = StateIO("hard-gate-book", state_root=state_root, autoload=True)
+            sio.apply(
+                {
+                    "locked.STORY_DNA": {
+                        "premise": "无明在末日天堑追索血脉繁衍契约",
+                        "conflict_engine": "血脉繁衍契约 vs 末日城邦",
+                    },
+                    "locked.GENRE_LOCKED": {
+                        "topic": ["玄幻黑暗", "末日多子多福"],
+                        "style_lock": {"anchor_phrases": ["血脉", "末日", "繁衍契约"]},
+                    },
+                },
+                source="test.seed_hard_gate",
+            )
+            loop_opening = (
+                "无明睁开眼，发现自己又在天堑边缘，体内微粒正在短刃旁蠕动。"
+                "失忆像灰白雾气一样覆盖记忆。"
+            )
+            for chapter_no in (1, 2):
+                sio.write_artifact(
+                    f"chapter_{chapter_no:02d}.md",
+                    f"# 第{chapter_no}章\n\n{loop_opening * 40}",
+                    source=f"test.seed_loop.{chapter_no}",
+                    artifact_type="chapter_text",
+                    payload={"chapter_no": chapter_no},
+                )
+
+            run_code = cli_main(
+                [
+                    "run",
+                    "hard-gate-book",
+                    "--chapters",
+                    "1",
+                    "--state-root",
+                    str(state_root),
+                ]
+            )
+
+            self.assertEqual(run_code, 1)
+            self.assertFalse((state_root / "hard-gate-book" / "chapter_03.md").exists())
 
 
 if __name__ == "__main__":  # pragma: no cover

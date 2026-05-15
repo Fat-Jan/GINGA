@@ -4,10 +4,10 @@
 **取代**：`_distillation-plan.md` §八（保留作历史档案）
 **作者**：主 agent 综合
 **完成日期**：2026-05-13
-**状态更新**：2026-05-15（依据 `STATUS.md`；本文件保留为历史规划 + 当前状态对照）
+**状态更新**：2026-05-16（依据 `STATUS.md`；本文件保留为历史规划 + 当前状态对照）
 **对应架构**：`ARCHITECTURE.md` v1
 
-> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A/P2-7B/P2-7C Platform runner 收敛。P2-7C 严格状态是 `done`：真实 LLM smoke 边界切片、provider 输出可读性、`context_snapshot`、`gap_report` 与 residual risk 报告均已收口；该证据仍只证明单章 smoke 边界，不证明长篇生产质量。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。新增规划路线只更新后续定位与版本索引，不改变当前生产完成度：拆书融梗 / `ReferenceTropeDistillation` 已完成 v1.3-0 到 v1.3-5，v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate 与 v1.7-2 Reviewer Queue Review 已完成；RAG 残余仅观察，真实长篇生产化后续转向人工裁决批量上限与硬 gate 调整，不自动改正文。
+> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A/P2-7B/P2-7C Platform runner 收敛。P2-7C 严格状态是 `done`：真实 LLM smoke 边界切片、provider 输出可读性、`context_snapshot`、`gap_report` 与 residual risk 报告均已收口；该证据仍只证明单章 smoke 边界，不证明长篇生产质量。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。新增规划路线只更新后续定位与版本索引，不改变当前生产完成度：拆书融梗 / `ReferenceTropeDistillation` 已完成 v1.3-0 到 v1.3-5，v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review 与 v1.7-3 Longform Hard Gate 已完成；RAG 残余仅观察，真实长篇生产化下一步是按 4 章推荐批次 / 5 章上限做新口径真实回归，不自动改正文。
 >
 > 若本文件与 `STATUS.md` 冲突，以 `STATUS.md` 为当前状态真值。
 
@@ -239,6 +239,7 @@ P-8/9/10 ──┘  (双 skill contract.yaml + adapter，最高风险段)
 - [x] **v1.4**：BookView / explorer 完成：从 `StateIO` / chapter artifacts 派生只读书目视图，输出限定 `.ops/book_views/<book_id>/<run_id>/`，并提供 `ginga inspect` / `ginga query`。
 - [x] **v1.5**：Review / deslop 完成：输出 `.ops/reviews/<book_id>/<run_id>/review_report.json` 与 `README.md`，只做 warn-only report，不自动改正文，rubric 不进入创作 prompt。
 - [x] **v1.6**：Market Research Sidecar 完成：`ginga market --fixture --authorize` 输出 `.ops/market_research/<book_id>/<run_id>/market_report.json` 与 `README.md`，保留来源 / 采集时间 / 数据质量状态，剥离外部原文，默认不进 RAG。
+- [x] **v1.7-3**：Longform Hard Gate 完成：正式真实 LLM 批量推荐 4 章、上限 5 章，6 章及以上只作压力测试；CLI 在真实 LLM 调用前阻断连续开篇回环、低频锚点缺失或伏笔标记缺失；`ginga review` 同步输出 `longform_quality_gate.hard_gate`。
 
 ### 4.4 任务清单（按触发条件优先级，尚未触发）
 
@@ -333,7 +334,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 - [x] Jury 修订追踪表（jury 23 条建议全部归属到具体任务编号，§七）
 - [x] 8 决策落地到 ARCHITECTURE §七 + 本文件任务编号
 
-**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-15，P2-7C Platform runner 收敛、v1.3-0 到 v1.3-5 的拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate 与 v1.7-2 Reviewer Queue Review 均已收口。RAG 残余 `candidate_k` / `asset_type` blocker 仅作为观察项，只有指标回退或新 gold query 暴露问题时再修；真实长篇生产化下一步是人工裁决是否临时收紧批量上限，并把连续回环、低频锚点缺失、伏笔标记缺失提升为下一批生成前硬 gate。
+**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-16，P2-7C Platform runner 收敛、v1.3-0 到 v1.3-5 的拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review 与 v1.7-3 Longform Hard Gate 均已收口。RAG 残余 `candidate_k` / `asset_type` blocker 仅作为观察项，只有指标回退或新 gold query 暴露问题时再修；真实长篇生产化下一步是按新口径跑 4 / 5 章真实回归，验证 drift 是否后移。
 
 ---
 
@@ -352,7 +353,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 | **v1.4 / Book Workspace View + Explorer** | 从 StateIO/artifacts 派生可读书目视图与只读查询，不产生第二状态真值 | ✅ done | 已完成 `BookView` projection、`ginga inspect` 与 `ginga query`；输出限定 `.ops/book_views/<book_id>/<run_id>/`，默认输入白名单不包含 `.ops/book_analysis/**` |
 | **v1.5 / Review + Anti-AI warn-only gate** | 审稿、去 AI 味、平台 rubric 报告化；只做审计/报告，不自动改正文 | ✅ done | 已完成 `ginga review` 与 `.ops/reviews/<book_id>/<run_id>/` sidecar；rubric 只用于 review report，不进入创作 prompt |
 | **v1.6 / Market Research Sidecar** | 扫榜、外部研究、市场信号报告，带采集时间、来源和数据质量状态 | ✅ done | 已完成显式授权 + offline fixture sidecar；外部原文剥离，默认不进 RAG |
-| **v1.7 / Longform Production Policy + Gate** | 真实 LLM 长篇批量策略、成本/质量 smoke、jury 评审、CLI 上限保护、正式 warn-only 质量 gate、queue 外部评审与人工终审 brief | 🟢 v1.7-0 done；v1.7-1 done；v1.7-2 done | `久久` 30 章真实 smoke 显示 10 连发开始 drift；正式批量生成推荐 5 章、上限 7 章；`ginga review` 已输出批后状态快照、回环/锚点/短章/伏笔/禁词检测与 reviewer queue；v1.7-2 外部意见建议人工考虑临时收紧到推荐 3-4 / 上限 5 |
+| **v1.7 / Longform Production Policy + Gate** | 真实 LLM 长篇批量策略、成本/质量 smoke、jury 评审、CLI 上限保护、正式质量 gate、queue 外部评审与人工终审 brief、生成前 hard gate | 🟢 v1.7-0 done；v1.7-1 done；v1.7-2 done；v1.7-3 done | `久久` 30 章真实 smoke 显示 10 连发开始 drift；当前正式批量生成推荐 4 章、上限 5 章，6 章及以上只作压力测试；`ginga review` 已输出批后状态快照、回环/锚点/短章/伏笔/禁词检测、reviewer queue 与 hard_gate；CLI 已在真实 LLM 调用前阻断连续回环、低频锚点缺失或伏笔标记缺失 |
 | **v2 / 完整创作运营线** | N/P/D/V 阶段、发布后数据分析、版本管理、第 3+ skill 接入、封面/发布包 | ⏳ 按触发条件推进 | 不抢 v1.2 / v1.3 前置 |
 
 ### 9.1 v1.3：拆书融梗 Evidence Pipeline

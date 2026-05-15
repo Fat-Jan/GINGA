@@ -17,6 +17,15 @@ from ginga_platform.orchestrator.cli.longform_policy import (
     DEFAULT_CHAPTER_BATCH_SIZE,
     MAX_REAL_LLM_CHAPTER_BATCH_SIZE,
     PRESSURE_TEST_BATCH_SIZE,
+    count_chinese,
+    evaluate_longform_hard_gate,
+    first_body_excerpt,
+    load_chapter_artifacts,
+    longform_chapter_gate_check,
+    longform_forbidden_hits,
+    low_frequency_anchors,
+    opening_loop_score,
+    strip_html_comments,
 )
 from ginga_platform.orchestrator.runner.state_io import StateIO
 
@@ -129,18 +138,9 @@ def build_review_report(
 
 
 def _load_chapters(state_dir: Path) -> list[dict[str, Any]]:
-    chapters: list[dict[str, Any]] = []
-    for path in sorted(state_dir.glob("chapter_*.md")):
-        text = path.read_text(encoding="utf-8")
-        chapters.append(
-            {
-                "name": path.name,
-                "path": str(path),
-                "title": _extract_title(text) or path.stem,
-                "chars": len(text),
-                "text": text,
-            }
-        )
+    chapters = load_chapter_artifacts(state_dir)
+    for chapter in chapters:
+        chapter["title"] = _extract_title(chapter["text"]) or Path(chapter["path"]).stem
     return chapters
 
 
@@ -188,51 +188,33 @@ def _scan_patterns(chapter: dict[str, Any], text: str) -> list[dict[str, Any]]:
 def _build_longform_quality_gate(*, state: dict[str, dict[str, Any]], chapters: list[dict[str, Any]]) -> dict[str, Any]:
     gate_issues: list[dict[str, Any]] = []
     queue: dict[str, dict[str, Any]] = {}
-    low_frequency_anchors = _low_frequency_anchors(state)
+    anchor_terms = low_frequency_anchors(state)
     batch_size = DEFAULT_CHAPTER_BATCH_SIZE
     for batch_start in range(0, len(chapters), batch_size):
         batch = chapters[batch_start : batch_start + batch_size]
         for chapter in batch:
             text = chapter.get("text", "")
-            chapter_issues = _longform_chapter_issues(chapter, text, low_frequency_anchors)
+            chapter_issues = _longform_chapter_issues(chapter, text, anchor_terms)
             gate_issues.extend(chapter_issues)
             for issue in chapter_issues:
                 if _requires_reviewer(issue):
                     _queue_reviewer(queue, chapter, issue)
+    hard_gate = evaluate_longform_hard_gate(state=state, chapters=chapters, window_size=batch_size)
     return {
         "enabled": True,
         "mode": "warn_only",
         "auto_edit": False,
+        "hard_gate": hard_gate,
         "policy": {
             "recommended_batch_size": DEFAULT_CHAPTER_BATCH_SIZE,
             "upper_bound": MAX_REAL_LLM_CHAPTER_BATCH_SIZE,
             "pressure_test_only_at_or_above": PRESSURE_TEST_BATCH_SIZE,
         },
-        "low_frequency_anchors": low_frequency_anchors,
+        "low_frequency_anchors": anchor_terms,
         "batch_state_snapshots": _batch_state_snapshots(state=state, chapters=chapters, batch_size=batch_size),
         "issues": gate_issues,
         "reviewer_queue": list(queue.values()),
     }
-
-
-def _low_frequency_anchors(state: dict[str, dict[str, Any]]) -> list[str]:
-    state_anchors = (
-        ((state.get("locked", {}).get("GENRE_LOCKED") or {}).get("style_lock") or {}).get("anchor_phrases")
-        or []
-    )
-    locked = state.get("locked", {}) or {}
-    genre = locked.get("GENRE_LOCKED") or {}
-    story = locked.get("STORY_DNA") or {}
-    source_text = " ".join(
-        [
-            " ".join(str(item) for item in genre.get("topic", [])),
-            str(story.get("premise", "")),
-            str(story.get("conflict_engine", "")),
-        ]
-    )
-    candidates = ("血脉", "末日", "多子多福", "繁衍契约")
-    anchors = [anchor for anchor in candidates if anchor in state_anchors or anchor in source_text]
-    return anchors or [anchor for anchor in state_anchors if anchor in {"血脉", "末日"}]
 
 
 def _longform_chapter_issues(
@@ -241,18 +223,19 @@ def _longform_chapter_issues(
     low_frequency_anchors: list[str],
 ) -> list[dict[str, Any]]:
     issues: list[dict[str, Any]] = []
-    body_text = _strip_html_comments(text)
-    if _opening_loop_score(body_text) >= 3:
+    body_text = strip_html_comments(text)
+    check = longform_chapter_gate_check(chapter=chapter, low_frequency_anchors=low_frequency_anchors)
+    if check["opening_loop_risk"]:
         issues.append(
             _issue(
                 chapter,
                 code="opening_loop_risk",
                 category="longform_continuity",
                 message="章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
-                evidence=_first_body_excerpt(text),
+                evidence=first_body_excerpt(text),
             )
         )
-    if low_frequency_anchors and not any(anchor in body_text for anchor in low_frequency_anchors):
+    if check["missing_low_frequency_anchor"]:
         issues.append(
             _issue(
                 chapter,
@@ -262,7 +245,7 @@ def _longform_chapter_issues(
                 evidence="missing any of: " + ", ".join(low_frequency_anchors),
             )
         )
-    if "<!-- foreshadow:" not in text:
+    if check["missing_foreshadow_marker"]:
         issues.append(
             _issue(
                 chapter,
@@ -272,17 +255,17 @@ def _longform_chapter_issues(
                 evidence="missing <!-- foreshadow: marker",
             )
         )
-    if _count_chinese(body_text) < 2400:
+    if check["short_chapter"]:
         issues.append(
             _issue(
                 chapter,
                 code="short_chapter",
                 category="longform_quality",
                 message="章节中文正文低于 v1.7 gate 阈值，可能是批量生成后段质量下滑。",
-                evidence=f"chinese_chars={_count_chinese(body_text)} < 2400",
+                evidence=f"chinese_chars={count_chinese(body_text)} < 2400",
             )
         )
-    forbidden_hits = _longform_forbidden_hits(body_text)
+    forbidden_hits = check["forbidden_hits"]
     if forbidden_hits:
         issues.append(
             _issue(
@@ -294,40 +277,6 @@ def _longform_chapter_issues(
             )
         )
     return issues
-
-
-def _strip_html_comments(text: str) -> str:
-    return re.sub(r"<!--.*?-->", "", text, flags=re.DOTALL)
-
-
-def _count_chinese(text: str) -> int:
-    return sum(1 for ch in text if "\u4e00" <= ch <= "\u9fff")
-
-
-def _longform_forbidden_hits(text: str) -> dict[str, int]:
-    terms = ("系统提示", "叮", "恭喜获得", "都市腔", "轻小说吐槽")
-    return {term: text.count(term) for term in terms if text.count(term)}
-
-
-def _opening_loop_score(text: str) -> int:
-    opening = _first_body_excerpt(text, limit=900)
-    signal_patterns = (
-        r"醒来|睁开眼",
-        r"天堑边缘|废墟|灰白",
-        r"体内.{0,12}微粒|微粒.{0,12}体内",
-        r"失忆|记忆.{0,8}空白|不记得",
-        r"短刃",
-    )
-    return sum(1 for pattern in signal_patterns if re.search(pattern, opening))
-
-
-def _first_body_excerpt(text: str, *, limit: int = 160) -> str:
-    lines = [
-        line.strip()
-        for line in text.splitlines()
-        if line.strip() and not line.strip().startswith("|") and not line.strip().startswith("#")
-    ]
-    return (" ".join(lines) or text.strip())[:limit]
 
 
 def _batch_state_snapshots(
@@ -347,7 +296,7 @@ def _batch_state_snapshots(
                 "chapter_range": _chapter_range_label(batch),
                 "chapter_count": len(batch),
                 "state_snapshot": _state_snapshot(state, batch),
-                "quality_snapshot": _batch_quality_snapshot(batch, _low_frequency_anchors(state)),
+                "quality_snapshot": _batch_quality_snapshot(batch, low_frequency_anchors(state)),
             }
         )
     return snapshots
@@ -380,7 +329,7 @@ def _state_snapshot(state: dict[str, dict[str, Any]], batch: list[dict[str, Any]
         "foreshadow_pool_size": len(foreshadow.get("pool") or []),
         "total_words": global_summary.get("total_words", 0),
         "recent_events": recent_events[-3:],
-        "anchors_present": sorted({anchor for anchor in _low_frequency_anchors(state) if anchor in batch_text}),
+        "anchors_present": sorted({anchor for anchor in low_frequency_anchors(state) if anchor in batch_text}),
     }
 
 
@@ -392,14 +341,14 @@ def _batch_quality_snapshot(batch: list[dict[str, Any]], low_frequency_anchors: 
     missing_foreshadow_chapters: list[str] = []
     for chapter in batch:
         text = chapter.get("text", "")
-        body = _strip_html_comments(text)
-        if _opening_loop_score(body) >= 3:
+        body = strip_html_comments(text)
+        if opening_loop_score(body) >= 3:
             opening_loop_chapters.append(chapter.get("name", ""))
         if low_frequency_anchors and not any(anchor in body for anchor in low_frequency_anchors):
             missing_low_frequency_anchor_chapters.append(chapter.get("name", ""))
-        if _count_chinese(body) < 2400:
+        if count_chinese(body) < 2400:
             short_chapters.append(chapter.get("name", ""))
-        if _longform_forbidden_hits(body):
+        if longform_forbidden_hits(body):
             forbidden_hit_chapters.append(chapter.get("name", ""))
         if "<!-- foreshadow:" not in text:
             missing_foreshadow_chapters.append(chapter.get("name", ""))

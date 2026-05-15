@@ -2,13 +2,18 @@
 
 from __future__ import annotations
 
-DEFAULT_CHAPTER_BATCH_SIZE = 5
-MAX_REAL_LLM_CHAPTER_BATCH_SIZE = 7
-PRESSURE_TEST_BATCH_SIZE = 10
+import re
+from pathlib import Path
+from typing import Any
+
+DEFAULT_CHAPTER_BATCH_SIZE = 4
+MAX_REAL_LLM_CHAPTER_BATCH_SIZE = 5
+PRESSURE_TEST_BATCH_SIZE = 6
+LONGFORM_HARD_GATE_MODE = "block_next_real_llm_batch"
 
 
 def validate_real_llm_batch_size(chapters: int, *, mock_llm: bool = False) -> None:
-    """Fail real LLM longform batches that exceed the v1.7 measured upper bound."""
+    """Fail real LLM longform batches that exceed the v1.7-3 human-reviewed upper bound."""
 
     if mock_llm or chapters <= MAX_REAL_LLM_CHAPTER_BATCH_SIZE:
         return
@@ -20,9 +25,171 @@ def validate_real_llm_batch_size(chapters: int, *, mock_llm: bool = False) -> No
     )
 
 
+def evaluate_longform_hard_gate(
+    *,
+    state: dict[str, dict[str, Any]],
+    chapters: list[dict[str, Any]],
+    window_size: int = DEFAULT_CHAPTER_BATCH_SIZE,
+) -> dict[str, Any]:
+    """Evaluate whether the next real LLM batch should be blocked.
+
+    The gate is intentionally conservative after the v1.7-2 reviewer queue
+    review: recent repeated opening loops, missing low-frequency anchors, or
+    missing foreshadow markers require human/policy repair before another real
+    generation batch.
+    """
+
+    recent = chapters[-window_size:] if window_size > 0 else list(chapters)
+    anchors = low_frequency_anchors(state)
+    chapter_checks = [
+        longform_chapter_gate_check(chapter=chapter, low_frequency_anchors=anchors)
+        for chapter in recent
+    ]
+    block_reasons: list[str] = []
+    consecutive_opening_loop = 0
+    max_consecutive_opening_loop = 0
+    for check in chapter_checks:
+        if check["opening_loop_risk"]:
+            consecutive_opening_loop += 1
+            max_consecutive_opening_loop = max(max_consecutive_opening_loop, consecutive_opening_loop)
+        else:
+            consecutive_opening_loop = 0
+    if max_consecutive_opening_loop >= 2:
+        block_reasons.append("consecutive_opening_loop_risk")
+    if any(check["missing_low_frequency_anchor"] for check in chapter_checks):
+        block_reasons.append("missing_low_frequency_anchor")
+    if any(check["missing_foreshadow_marker"] for check in chapter_checks):
+        block_reasons.append("missing_foreshadow_marker")
+    return {
+        "enabled": True,
+        "mode": LONGFORM_HARD_GATE_MODE,
+        "window_size": window_size,
+        "inspected_chapters": [check["chapter"] for check in chapter_checks],
+        "low_frequency_anchors": anchors,
+        "block_reasons": block_reasons,
+        "should_block_next_real_llm_batch": bool(block_reasons),
+        "chapter_checks": chapter_checks,
+    }
+
+
+def validate_longform_hard_gate(
+    *,
+    state: dict[str, dict[str, Any]],
+    chapters: list[dict[str, Any]],
+    mock_llm: bool = False,
+) -> None:
+    """Fail before a real LLM call if recent chapter evidence violates the hard gate."""
+
+    if mock_llm or not chapters:
+        return
+    gate = evaluate_longform_hard_gate(state=state, chapters=chapters)
+    if not gate["should_block_next_real_llm_batch"]:
+        return
+    inspected = ", ".join(gate["inspected_chapters"])
+    reasons = ", ".join(gate["block_reasons"])
+    raise ValueError(
+        "longform hard gate blocks next real LLM batch: "
+        f"{reasons}; inspected={inspected}. "
+        "Review/fix recent chapters or rerun with mock/test mode only."
+    )
+
+
+def load_chapter_artifacts(state_dir: Path) -> list[dict[str, Any]]:
+    """Load chapter artifacts in the lightweight shape used by review/policy gates."""
+
+    chapters: list[dict[str, Any]] = []
+    for path in sorted(state_dir.glob("chapter_*.md")):
+        text = path.read_text(encoding="utf-8")
+        chapters.append({"name": path.name, "path": str(path), "text": text, "chars": len(text)})
+    return chapters
+
+
+def low_frequency_anchors(state: dict[str, dict[str, Any]]) -> list[str]:
+    state_anchors = (
+        ((state.get("locked", {}).get("GENRE_LOCKED") or {}).get("style_lock") or {}).get("anchor_phrases")
+        or []
+    )
+    locked = state.get("locked", {}) or {}
+    genre = locked.get("GENRE_LOCKED") or {}
+    story = locked.get("STORY_DNA") or {}
+    source_text = " ".join(
+        [
+            " ".join(str(item) for item in genre.get("topic", [])),
+            str(story.get("premise", "")),
+            str(story.get("conflict_engine", "")),
+        ]
+    )
+    candidates = ("血脉", "末日", "多子多福", "繁衍契约")
+    anchors = [anchor for anchor in candidates if anchor in state_anchors or anchor in source_text]
+    return anchors or [anchor for anchor in state_anchors if anchor in {"血脉", "末日"}]
+
+
+def longform_chapter_gate_check(
+    *,
+    chapter: dict[str, Any],
+    low_frequency_anchors: list[str],
+) -> dict[str, Any]:
+    text = chapter.get("text", "")
+    body_text = strip_html_comments(text)
+    return {
+        "chapter": chapter.get("name", ""),
+        "opening_loop_risk": opening_loop_score(body_text) >= 3,
+        "missing_low_frequency_anchor": bool(low_frequency_anchors)
+        and not any(anchor in body_text for anchor in low_frequency_anchors),
+        "missing_foreshadow_marker": "<!-- foreshadow:" not in text,
+        "short_chapter": count_chinese(body_text) < 2400,
+        "forbidden_hits": longform_forbidden_hits(body_text),
+    }
+
+
+def strip_html_comments(text: str) -> str:
+    return re.sub(r"<!--.*?-->", "", text, flags=re.DOTALL)
+
+
+def count_chinese(text: str) -> int:
+    return sum(1 for ch in text if "\u4e00" <= ch <= "\u9fff")
+
+
+def longform_forbidden_hits(text: str) -> dict[str, int]:
+    terms = ("系统提示", "叮", "恭喜获得", "都市腔", "轻小说吐槽")
+    return {term: text.count(term) for term in terms if text.count(term)}
+
+
+def opening_loop_score(text: str) -> int:
+    opening = first_body_excerpt(text, limit=900)
+    signal_patterns = (
+        r"醒来|睁开眼",
+        r"天堑边缘|废墟|灰白",
+        r"体内.{0,12}微粒|微粒.{0,12}体内",
+        r"失忆|记忆.{0,8}空白|不记得",
+        r"短刃",
+    )
+    return sum(1 for pattern in signal_patterns if re.search(pattern, opening))
+
+
+def first_body_excerpt(text: str, *, limit: int = 160) -> str:
+    lines = [
+        line.strip()
+        for line in text.splitlines()
+        if line.strip() and not line.strip().startswith("|") and not line.strip().startswith("#")
+    ]
+    return (" ".join(lines) or text.strip())[:limit]
+
+
 __all__ = [
     "DEFAULT_CHAPTER_BATCH_SIZE",
+    "LONGFORM_HARD_GATE_MODE",
     "MAX_REAL_LLM_CHAPTER_BATCH_SIZE",
     "PRESSURE_TEST_BATCH_SIZE",
+    "count_chinese",
+    "evaluate_longform_hard_gate",
+    "first_body_excerpt",
+    "load_chapter_artifacts",
+    "longform_chapter_gate_check",
+    "longform_forbidden_hits",
+    "low_frequency_anchors",
+    "opening_loop_score",
+    "strip_html_comments",
+    "validate_longform_hard_gate",
     "validate_real_llm_batch_size",
 ]

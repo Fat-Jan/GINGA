@@ -54,7 +54,7 @@ class LongformQualityGateTest(unittest.TestCase):
             if chapter_no in {6, 7}:
                 body = (repeated_opening + "血脉契约和末日禁令只在远处闪回。") * 80
             elif chapter_no == 8:
-                body = "无明握紧短刃，在黑暗废墟里追杀敌人。" * 4
+                body = (repeated_opening + "黑暗废墟里只剩敌人的脚步声。") * 4
             elif chapter_no == 9:
                 body = stable * 80 + "系统提示：叮，恭喜获得新规则。"
             else:
@@ -94,12 +94,17 @@ class LongformQualityGateTest(unittest.TestCase):
             gate = report["longform_quality_gate"]
 
             self.assertTrue(gate["enabled"])
-            self.assertEqual(gate["policy"]["recommended_batch_size"], 5)
-            self.assertEqual(gate["policy"]["upper_bound"], 7)
+            self.assertEqual(gate["policy"]["recommended_batch_size"], 4)
+            self.assertEqual(gate["policy"]["upper_bound"], 5)
             self.assertEqual(
                 [item["chapter_range"] for item in gate["batch_state_snapshots"]],
-                ["1-5", "6-10"],
+                ["1-4", "5-8", "9-10"],
             )
+            self.assertEqual(gate["hard_gate"]["enabled"], True)
+            self.assertEqual(gate["hard_gate"]["mode"], "block_next_real_llm_batch")
+            self.assertIn("consecutive_opening_loop_risk", gate["hard_gate"]["block_reasons"])
+            self.assertIn("missing_low_frequency_anchor", gate["hard_gate"]["block_reasons"])
+            self.assertIn("missing_foreshadow_marker", gate["hard_gate"]["block_reasons"])
             self.assertEqual(gate["batch_state_snapshots"][0]["state_snapshot"]["protagonist"], "无明")
             self.assertEqual(gate["batch_state_snapshots"][0]["state_snapshot"]["particles"], 120)
             self.assertIn(
@@ -113,10 +118,11 @@ class LongformQualityGateTest(unittest.TestCase):
             self.assertIn("missing_foreshadow_marker", gate_codes)
 
             queued = {item["chapter"] for item in gate["reviewer_queue"]}
+            self.assertIn("chapter_06.md", queued)
+            self.assertIn("chapter_07.md", queued)
             self.assertIn("chapter_08.md", queued)
             self.assertIn("chapter_09.md", queued)
             self.assertIn("chapter_10.md", queued)
-            self.assertNotIn("chapter_06.md", queued)
             self.assertNotIn("chapter_01.md", queued)
             self.assertFalse(report["auto_edit"])
             self.assertEqual(report["mode"], "warn_only")

@@ -521,25 +521,27 @@ steps:
 
 **用途**：dark-fantasy 长篇连续作业的「窄通道」气质保护。
 
-### 4.6 长篇真实 LLM 批量策略（v1.7-0）
+### 4.6 长篇真实 LLM 批量策略（v1.7）
 
-`久久` 30 章真实 smoke 与 jury 评审给出当前生产上限：
+`久久` 30 章真实 smoke、queue 外部评审与人工裁决给出当前生产上限：
 
-- 正式真实 LLM 长篇生成推荐一次 5 章。
-- 真实 LLM 生产上限为 7 章。
-- 10 章及以上只作为压力测试，不进入正式创作链默认路径。
-- `ginga run --immersive` 未显式指定章节数时默认 5 章。
-- CLI 对真实 LLM 多章 / 沉浸生成超过 7 章 fail-loud；mock harness 不受此限制。
+- 正式真实 LLM 长篇生成推荐一次 4 章。
+- 真实 LLM 生产上限为 5 章。
+- 6 章及以上只作为压力测试，不进入正式创作链默认路径。
+- `ginga run --immersive` 未显式指定章节数时默认 4 章。
+- CLI 对真实 LLM 多章 / 沉浸生成超过 5 章 fail-loud；mock harness 不受此限制。
+- CLI 在真实 LLM 调用前执行 hard gate：最近窗口连续 2 章 `opening_loop_risk`、任一章缺低频题材锚点、或任一章缺伏笔标记时，阻断下一批真实生成。
 
 证据：`.ops/reports/v1_7_longform_production_policy.md`、`.ops/validation/longform_jiujiu_smoke.json`、`.ops/jury/longform_jiujiu_30_review_2026-05-15/`。
 
-v1.7-1 gate 已接入 `ginga review` warn-only sidecar：
+v1.7 gate 已接入 `ginga review` sidecar：
 
-- `batch_state_snapshots`：每 5 章生成状态快照与质量快照。
+- `batch_state_snapshots`：每 4 章生成状态快照与质量快照。
 - `opening_loop_risk`：检测疑似重新开篇 / 醒来模板回环。
 - `missing_low_frequency_anchor`：检测血脉、末日、多子多福、繁衍契约稀释。
 - `short_chapter` / `missing_foreshadow_marker` / `forbidden_style_hit`：检测短章、伏笔缺失和禁词命中。
 - `reviewer_queue`：汇总需要人工或外部 reviewer 复核的异常章。
+- `hard_gate`：与生成前阻断共享检测逻辑，避免 review 口径和 CLI 口径分裂。
 
 边界：只写 `.ops/reviews/<book_id>/<run_id>/`，warn-only，`auto_edit=false`，不写 `runtime_state`，不调用 LLM。
 
@@ -788,4 +790,4 @@ ginga/
 - [x] workflow deferred / Phase 2 对照清单明示（§八）
 - [x] Killer Use Case 集中陈述（§〇）
 
-**当前实施状态**：S1/S2/S3 已完成；S4/Phase 2 native `sqlite-vec` + RAG 真实召回质量评估 + P2 可回归评估 + P2-5 agent harness + P2-7A/P2-7B/P2-7C Platform runner 收敛已完成。当前 12 step capability provider 契约、provider 可读报告、真实 demo `context_snapshot` / `gap_report` / residual risk 已落地；v1.3-0 拆书融梗污染隔离底座已补规则、P0 边界、manifest schema 与 RAG 排除验证。v1.3-1 Reference Corpus P0 MVP 的架构边界是纯函数化 scan / split / manifest / validator / report；v1.3-2 Chapter Atom + Quality Gates 只生成结构性 `chapter_boundary` atom、quality gates 与 report，污染源输出只落 `.ops/book_analysis/<run_id>/`，不得保存标题/原文摘录，不得进入 `StateIO`、默认 RAG、prompt、`raw_ideas` 或 Foundation assets/schema；v1.7-0 已证明 `久久` 30 章真实 smoke 的批量上限策略，正式真实 LLM 批量推荐 5 章、上限 7 章、10 章仅压力测试；v1.7-1 已把长篇质量 gate 接入 `ginga review` warn-only sidecar；完成度与验收状态以 `STATUS.md` 为准。mock harness 与单章 real LLM smoke 仍不等同于完整长篇 production readiness。
+**当前实施状态**：S1/S2/S3 已完成；S4/Phase 2 native `sqlite-vec` + RAG 真实召回质量评估 + P2 可回归评估 + P2-5 agent harness + P2-7A/P2-7B/P2-7C Platform runner 收敛已完成。当前 12 step capability provider 契约、provider 可读报告、真实 demo `context_snapshot` / `gap_report` / residual risk 已落地；v1.3-0 拆书融梗污染隔离底座已补规则、P0 边界、manifest schema 与 RAG 排除验证。v1.3-1 Reference Corpus P0 MVP 的架构边界是纯函数化 scan / split / manifest / validator / report；v1.3-2 Chapter Atom + Quality Gates 只生成结构性 `chapter_boundary` atom、quality gates 与 report，污染源输出只落 `.ops/book_analysis/<run_id>/`，不得保存标题/原文摘录，不得进入 `StateIO`、默认 RAG、prompt、`raw_ideas` 或 Foundation assets/schema；v1.7 已证明 `久久` 30 章真实 smoke 的 drift 边界，并完成批量收紧、review gate、queue 外部评审与生成前 hard gate；当前正式真实 LLM 批量推荐 4 章、上限 5 章、6 章及以上仅压力测试；完成度与验收状态以 `STATUS.md` 为准。mock harness 与单章 real LLM smoke 仍不等同于完整长篇 production readiness。

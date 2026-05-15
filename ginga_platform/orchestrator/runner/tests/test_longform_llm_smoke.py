@@ -22,25 +22,25 @@ class LongformLLMSmokeTest(unittest.TestCase):
                 json_output=root / "longform.json",
                 report_output=root / "longform.md",
                 chapters=30,
-                batch_schedule=[3, 5, 7, 10],
+                batch_schedule=[3, 4, 5, 6],
                 dry_run=True,
             )
 
             self.assertTrue(payload["dry_run"])
             self.assertEqual(payload["requested_chapters"], 30)
             self.assertEqual(payload["completed_chapters"], 0)
-            self.assertEqual(payload["batch_schedule"], [3, 5, 7, 10])
-            self.assertEqual(payload["production_policy"]["recommended_batch_size"], 5)
-            self.assertEqual(payload["production_policy"]["upper_bound"], 7)
-            self.assertEqual(payload["production_policy"]["pressure_test_only_at_or_above"], 10)
+            self.assertEqual(payload["batch_schedule"], [3, 4, 5, 6])
+            self.assertEqual(payload["production_policy"]["recommended_batch_size"], 4)
+            self.assertEqual(payload["production_policy"]["upper_bound"], 5)
+            self.assertEqual(payload["production_policy"]["pressure_test_only_at_or_above"], 6)
             self.assertEqual(len(payload["chapter_runs"]), 30)
-            self.assertEqual([item["requested_size"] for item in payload["batch_runs"]], [3, 5, 7, 10, 5])
+            self.assertEqual([item["requested_size"] for item in payload["batch_runs"]], [3, 4, 5, 6, 6, 6])
             self.assertFalse((root / "state" / "longform-test").exists())
             self.assertTrue((root / "longform.json").exists())
             report = (root / "longform.md").read_text(encoding="utf-8")
             self.assertIn("Longform Jiujiu Smoke Report", report)
             self.assertIn("requested_chapters: `30`", report)
-            self.assertIn("recommended_batch_size: `5`", report)
+            self.assertIn("recommended_batch_size: `4`", report)
 
     def test_real_mode_uses_sequential_chapter_numbers_and_reports_drift(self) -> None:
         import scripts.run_longform_llm_smoke as smoke
@@ -105,7 +105,7 @@ class LongformLLMSmokeTest(unittest.TestCase):
                     json_output=root / "longform.json",
                     report_output=root / "longform.md",
                     chapters=15,
-                    batch_schedule=[3, 5, 7, 10],
+                    batch_schedule=[3, 4, 5, 6],
                     word_target=4000,
                     dry_run=False,
                     resume=True,
@@ -116,7 +116,7 @@ class LongformLLMSmokeTest(unittest.TestCase):
             self.assertEqual(calls, list(range(1, 16)))
             self.assertTrue(payload["passed"], payload)
             self.assertEqual(payload["completed_chapters"], 15)
-            self.assertEqual([item["requested_size"] for item in payload["batch_runs"]], [3, 5, 7])
+            self.assertEqual([item["requested_size"] for item in payload["batch_runs"]], [3, 4, 5, 3])
             self.assertEqual(payload["drift_report"]["status"], "stable")
             self.assertEqual(payload["drift_report"]["forbidden_hit_chapters"], [])
             self.assertTrue((root / "state" / "longform-real-test" / "chapter_15.md").exists())
