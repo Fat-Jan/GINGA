@@ -64,6 +64,8 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 - **v1.3-4 Promote Flow（deferred）**：只有在人工审核 + 污染检查规则明确后，才允许把已批准候选转为 Foundation 可治理资产；不得把 v1.3-3 的 `pending` candidate 自动写入 Foundation、默认 RAG、prompt、`raw_ideas` 或 `StateIO`。
 - **RAG 残余观察**：保留 `.ops/reports/rag_recall_quality_report.md` 的 `candidate_k` / `asset_type` blocker 作为后续小修观察项；守住 Layer 2 `recall@5 >= 0.500` 与 `expected_recall@5 >= 0.875`。
 
+当前 v1.3-4 只新增规格计划：`.ops/plans/v1-3-4-promote-flow-spec.md`。下一轮若开工，应先做 Promotion Candidate schema + 只读 validator fixture，不应直接实现 promote CLI 或写 Foundation。
+
 ## 规划索引（不代表已完成）
 
 - **oh-story 参考路线**：详见 `.ops/reports/oh_story_inspiration_roadmap.md` 与 `ROADMAP.md` §九；当前判定是分层吸收而非原样复制。

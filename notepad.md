@@ -88,7 +88,7 @@ _原料/
 | 3 | Ark Jury Court 4 角法庭 | ✅ 完成 | `.ops/jury/jury-{1-4}-*.md`（4 票 revise） |
 | 4 | 综合判决与交付 | ✅ 完成 | `ARCHITECTURE.md` + `ROADMAP.md` |
 
-**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 拆书融梗污染隔离底座、v1.3-1 Reference Corpus P0 MVP、v1.3-2 Chapter Atom + Quality Gates 与 v1.3-3 Trope Recipe Candidate 已完成。v1.3-3 新增 `trope_recipe_candidate` sidecar / quality gates / validator / report，并用 `test_book_analysis_corpus`、`.ops/book_analysis/v1-3-3-smoke-main` 和 `verify_all.py` 验收；下一步若继续 v1.3，应从 v1.3-4 Promote Flow 的人工审核 + 污染检查开始。
+**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 拆书融梗污染隔离底座、v1.3-1 Reference Corpus P0 MVP、v1.3-2 Chapter Atom + Quality Gates 与 v1.3-3 Trope Recipe Candidate 已完成。v1.3-4 当前只新增规格计划 `.ops/plans/v1-3-4-promote-flow-spec.md`；下一轮若继续 v1.3，应先做 Promotion Candidate schema + 只读 validator fixture，不应直接实现 promote CLI 或写 Foundation。
 
 ## 验证
 

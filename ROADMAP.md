@@ -375,7 +375,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 | v1.3-1 | Reference Corpus P0 MVP | 纯函数化 scan / split / manifest / validator / report，输出 `.ops/book_analysis/<run_id>/`；不做内容分析，不进 `StateIO`、默认 RAG、prompt、`raw_ideas`、Foundation assets/schema | ✅ done；证据见 `test_book_analysis_corpus`、`.ops/book_analysis/v1-3-1-smoke-main/validation_report.json` 与 `verify_all.py` |
 | v1.3-2 | Chapter Atom + Quality Gates | 结构性 `chapter_boundary` atom、可拒绝 quality gates、validator / report，所有产物标 `pollution_source: true`，不保存标题或原文摘录 | ✅ done；证据见 `test_book_analysis_corpus`、`.ops/book_analysis/v1-3-2-smoke-main/validation_report.json` 与 `verify_all.py` |
 | v1.3-3 | Trope Recipe Candidate | D1-D12 转为 `trope_recipe` 候选：梗核、读者爽点、触发条件、变形参数、禁搬元素；不得自动进入创作 workflow | ✅ done；证据见 `trope_recipes.py`、`validate_trope_recipes.py`、`.ops/book_analysis/v1-3-3-smoke-main/validation_report.json` 与 `verify_all.py` |
-| v1.3-4 | Promote Flow | 人工审核 + 污染检查后 promote 到 Foundation methodology / prompt example / reference pattern | ⏳ deferred |
+| v1.3-4 | Promote Flow | 人工审核 + 污染检查后 promote 到 Foundation methodology / prompt example / reference pattern | ⏳ deferred；规格计划见 `.ops/plans/v1-3-4-promote-flow-spec.md`，下一步先做 schema + 只读 validator fixture |
 | v1.3-5 | Reference Sidecar RAG | 显式启用的 sidecar 召回；不污染默认 RAG | ⏳ deferred |
 
 关键红线：
