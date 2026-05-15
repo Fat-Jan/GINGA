@@ -1,0 +1,209 @@
+# foundation/schema/story_truth_template.yaml
+# Story Truth Template schema draft.
+#
+# Purpose: define the layered truth surfaces for a single longform story without
+# promoting candidate-only or report-only materials into truth.
+
+$schema: ginga/foundation/v1
+asset_type: story_truth_template
+description: 分层小说真值模板草案，定义项目、题材、架构、角色、世界、账本、章节输入、运行状态、风格锁和候选晋升门禁。
+
+required_layers:
+  - project_contract
+  - genre_contract
+  - plot_architecture
+  - cast_contract
+  - world_contract
+  - system_contracts
+  - payoff_ledger
+  - hook_ledger
+  - foreshadow_ledger
+  - chapter_input_bundle
+  - runtime_state_projection
+  - style_contract
+  - candidate_promotion_gate
+
+truth_source_policy:
+  allowed_truth_roots:
+    - foundation/assets/**
+    - foundation/runtime_state/**
+    - foundation/schema/**
+  forbidden_truth_sources:
+    - candidate-only
+    - report-only
+    - .ops/book_analysis/**
+    - .ops/market_research/**
+    - .ops/reviews/**
+    - .ops/jury/**
+    - .ops/reports/**
+    - raw_text
+    - source_text
+  rule: candidate/report/raw materials can provide evidence only; they cannot be direct truth_source values.
+
+project_contract:
+  truth_source: foundation/assets/story/<book_id>/project_contract.yaml
+  truth_domain: locked.PROJECT_CONTRACT
+  fields:
+    positioning: string
+    target_platform: string
+    target_reader: object
+    total_word_count_goal: integer
+    update_frequency: string
+    core_selling_points: string[]
+    paid_conversion_points: string[]
+    retention_targets: object
+
+genre_contract:
+  truth_source: foundation/assets/story/<book_id>/genre_contract.yaml
+  truth_domain: locked.GENRE_CONTRACT
+  fields:
+    core_payoffs: string[]
+    reader_expectations: string[]
+    golden_three_chapters: object
+    emotion_curve: string[]
+    hook_strategy: object
+    chapter_structure: object
+    platform_strategy: object
+    taboos: string[]
+  extension_slots:
+    rule_horror:
+      fields: [rules, violation_costs, instances, loopholes, truth_layers, deduction_chain]
+    xianxia_fantasy:
+      fields: [realm_ladder, resources, breakthrough_costs, power_gap, forbidden_power, sects_or_clans]
+    court_historical:
+      fields: [official_ranks, etiquette_law, kinship, clan_resources, evidence_chain, institutional_thresholds]
+    urban_esports_live:
+      fields: [platform_metrics, fans, teams, matches, commercial_resources, public_opinion]
+    romance_melodrama:
+      fields: [mistaken_identity, emotional_debt, reveal_nodes, regret_arc, reversal_nodes]
+    farming_realist:
+      fields: [living_resources, neighbors, industries, era_constraints, detail_materials]
+
+plot_architecture:
+  truth_source: foundation/assets/story/<book_id>/plot_architecture.yaml
+  truth_domain: locked.PLOT_ARCHITECTURE
+  fields:
+    premise: string
+    volume_outline: object[]
+    chapter_outline: object[]
+    act_structure: object
+    pivot_points: object[]
+    conflict_escalation: object[]
+    theme_carriers: object[]
+
+cast_contract:
+  truth_source: foundation/assets/story/<book_id>/cast_contract.yaml
+  truth_domain: locked.CAST_CONTRACT
+  fields:
+    protagonist: object
+    supporting_cast: object[]
+    antagonists: object[]
+    factions: object[]
+    faction_resources: object[]
+    relationship_network: object[]
+    behavior_patterns: object[]
+    growth_arcs: object[]
+
+world_contract:
+  truth_source: foundation/assets/story/<book_id>/world_contract.yaml
+  truth_domain: locked.WORLD
+  fields:
+    world_type: string
+    geography: object
+    history: object
+    culture: object
+    laws: object
+    economy: object
+    institutions: object[]
+
+system_contracts:
+  truth_source: foundation/assets/story/<book_id>/system_contracts.yaml
+  truth_domain: locked.SYSTEM_CONTRACTS
+  fields:
+    power_system: object
+    rank_or_office_system: object
+    resource_rules: object
+    cheat_or_golden_finger: object
+    forbidden_changes: string[]
+
+payoff_ledger:
+  truth_source: foundation/runtime_state/<book_id>/entity_runtime.yaml
+  truth_domain: entity_runtime.PAYOFF_LEDGER
+  fields:
+    payoff_id: string
+    payoff_type: string
+    reader_reward: string
+    suppression_release_pair: object
+    density_target: string
+    repetition_risk: string
+    reserve_payoffs: string[]
+
+hook_ledger:
+  truth_source: foundation/runtime_state/<book_id>/entity_runtime.yaml
+  truth_domain: entity_runtime.HOOK_LEDGER
+  fields:
+    hook_id: string
+    chapter: integer
+    hook_type: string
+    promise: string
+    status: enum
+    followup_target: string
+
+foreshadow_ledger:
+  truth_source: foundation/runtime_state/<book_id>/entity_runtime.yaml
+  truth_domain: entity_runtime.FORESHADOW_STATE
+  fields:
+    foreshadow_id: string
+    plant_chapter: integer
+    reveal_chapter: integer
+    status: enum
+    interpretations: string[]
+    forgetting_risk: string
+
+chapter_input_bundle:
+  truth_source: foundation/runtime_state/<book_id>/workspace.yaml
+  truth_domain: workspace.CHAPTER_INPUT_BUNDLE
+  fields:
+    chapter_goal: string
+    scene_outline: object[]
+    paragraph_blueprint: object[]
+    key_sentences: string[]
+    active_character_state: object[]
+    relevant_world_rules: object[]
+    payoff_targets: object[]
+    hook_or_foreshadow_ops: object[]
+    risk_notes: string[]
+
+runtime_state_projection:
+  truth_source: foundation/runtime_state/<book_id>/
+  truth_domain: runtime_state_projection
+  projection_only: true
+  fields:
+    locked: object
+    entity_runtime: object
+    workspace: object
+    retrieved: object
+    audit_log: object
+  rule: BookView/projection is not a second truth source; runtime mutation still goes through StateIO.
+
+style_contract:
+  truth_source: foundation/assets/story/<book_id>/style_contract.yaml
+  truth_domain: locked.STYLE_CONTRACT
+  fields:
+    narrative_pov: string
+    prose_style: object
+    dialogue_style: object
+    sentence_density: string
+    forbidden_tone: string[]
+    low_frequency_genre_anchors: string[]
+    anti_ai_markers: string[]
+
+candidate_promotion_gate:
+  truth_source: .ops/governance/candidate_truth_gate.md
+  required_evidence:
+    - operator_acceptance
+    - schema_validation
+    - source_contamination_check
+    - StateIO_or_validator_entrypoint
+    - audit_evidence
+  rule: Any candidate-only material remains candidate-only until all required evidence is present.

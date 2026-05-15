@@ -3,7 +3,7 @@
   "project": "ginga-novel-distillation",
   "schema_note": "推荐状态机: queued -> assigned -> running -> validating -> done; 异常: stale/zombie/retry_wait/failed/blocked. done 只能由主 agent 复核后写入。底层派活规范见 .ops/subagents/dispatch-protocol.md。",
   "created_at": "2026-05-12T22:50:00+08:00",
-  "updated_at": "2026-05-16T01:20:47+08:00",
+  "updated_at": "2026-05-16T01:28:32+08:00",
   "tasks": [
     {
       "task_id": "scout-1-base",
@@ -1220,8 +1220,8 @@
     {
       "task_id": "v1.9-2-schema-validator",
       "title": "v1.9-2 Story Truth Template schema 草案与 validator",
-      "status": "assigned",
-      "owner": "spawn_agent worker (inherited/default tier requested)",
+      "status": "done",
+      "owner": "Pasteur (spawn_agent worker 019e2ca3-cf3e-7253-8571-2023be744043)",
       "model_contract": {
         "provider": "OpenAI via Codex spawn_agent",
         "model_tier": "inherited/default worker tier",
@@ -1249,13 +1249,18 @@
       "expected_output": "schema file, validator CLI, focused tests proving required fields, genre extension slots, and candidate/report rejection",
       "verification": "python -m unittest ginga_platform.orchestrator.runner.tests.test_story_truth_template && python3 scripts/validate_story_truth_template.py foundation/schema/story_truth_template.yaml",
       "created_at": "2026-05-16T01:14:49+08:00",
-      "updated_at": "2026-05-16T01:14:49+08:00",
+      "updated_at": "2026-05-16T01:28:32+08:00",
       "checkpoint_due_at": null,
       "attempt_count": 1,
       "max_attempts": 2,
-      "evidence": [],
+      "evidence": [
+        "spawn_agent worker callback received: schema, validator CLI, and focused tests written",
+        "verification: python3 -m unittest ginga_platform.orchestrator.runner.tests.test_story_truth_template passed 6 tests",
+        "verification: python3 scripts/validate_story_truth_template.py foundation/schema/story_truth_template.yaml --json .ops/validation/story_truth_template_schema.json returned PASS",
+        "verification: python3 scripts/validate_architecture_contracts.py returned PASS"
+      ],
       "blockers": [],
-      "handoff_note": "Worker must keep candidate/report evidence outside truth and list changed paths in final answer."
+      "handoff_note": "Completed by Pasteur and reviewed by main agent; validator remains read-only and does not connect to StateIO writes."
     },
     {
       "task_id": "v1.9-3-stateio-contract",

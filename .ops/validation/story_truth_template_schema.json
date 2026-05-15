@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "path": "foundation/schema/story_truth_template.yaml",
+  "checks": [
+    {
+      "name": "story truth template required layers",
+      "status": "PASS",
+      "required_layers": [
+        "project_contract",
+        "genre_contract",
+        "plot_architecture",
+        "cast_contract",
+        "world_contract",
+        "system_contracts",
+        "payoff_ledger",
+        "hook_ledger",
+        "foreshadow_ledger",
+        "chapter_input_bundle",
+        "runtime_state_projection",
+        "style_contract",
+        "candidate_promotion_gate"
+      ]
+    },
+    {
+      "name": "candidate promotion gate evidence",
+      "status": "PASS",
+      "required_evidence": [
+        "StateIO_or_validator_entrypoint",
+        "audit_evidence",
+        "operator_acceptance",
+        "schema_validation",
+        "source_contamination_check"
+      ]
+    }
+  ],
+  "warnings": [],
+  "errors": []
+}
