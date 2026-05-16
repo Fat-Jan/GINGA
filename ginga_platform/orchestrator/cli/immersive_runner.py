@@ -30,6 +30,11 @@ from ginga_platform.orchestrator.cli.demo_pipeline import (
     build_chapter_input_bundle,
 )
 from ginga_platform.orchestrator.cli.longform_policy import DEFAULT_CHAPTER_BATCH_SIZE
+from ginga_platform.orchestrator.cli.longform_policy import (
+    MIN_SUBMISSION_CHINESE_CHARS,
+    count_chinese,
+    opening_loop_score,
+)
 
 
 # 默认 LLM 调用器（subprocess ask-llm）——延迟 import 避免 demo_pipeline 依赖闭环
@@ -75,10 +80,63 @@ def _chapter_excerpt_for_bridge(chapter_text: str, *, limit: int = 220) -> str:
     lines = [
         line.strip()
         for line in chapter_text.splitlines()
-        if line.strip() and not line.strip().startswith("|") and not line.strip().startswith("<!--")
+        if line.strip()
+        and not line.strip().startswith("|")
+        and not line.strip().startswith("#")
+        and not line.strip().startswith("<!--")
     ]
-    excerpt = " ".join(lines)
+    excerpt = " ".join(lines[-4:])
     return excerpt[:limit]
+
+
+def _repair_prompt(
+    original_prompt: str,
+    chapter_text: str,
+    word_target: int,
+    chapter_no: int,
+    *,
+    attempt: int = 1,
+    failure: str | None = None,
+) -> str:
+    minimum_body_chars = max(MIN_SUBMISSION_CHINESE_CHARS, int(word_target * 0.9))
+    return "\n".join(
+        [
+            original_prompt,
+            "",
+            f"## 质量修复第 {attempt} 次",
+            f"上一版第 {chapter_no} 章未通过真实长篇 gate，请重写完整章节正文。",
+            f"- 上一版失败原因：{failure or 'short_chapter/opening_loop_risk'}",
+            f"- 正文不得低于 {minimum_body_chars} 个中文汉字，且不得低于 {MIN_SUBMISSION_CHINESE_CHARS} 个中文汉字。",
+            f"- 必须新增至少 {max(600, minimum_body_chars // 5)} 个中文汉字的动作推进、对手反应、身体代价和规则后果，不得只改标题或局部润色。",
+            "- 首段必须承接上一章收束动作或当前场面压力，禁止重新醒来、睁眼、灰白环境、体内微粒、短刃等重启模板。",
+            "- 删除“说不出的感觉”“难以言喻”“复杂的情绪”，用动作、代价、对手反应替代。",
+            "- 少用或不用“突然”“猛然”“下一秒”；转折必须有明确动作因果。",
+            "- 保留低频题材锚点：血脉、末日、多子多福、繁衍契约中至少一个。",
+            "",
+            "## 上一版问题稿",
+            chapter_text[:1800],
+        ]
+    )
+
+
+def _needs_quality_repair(chapter_text: str, word_target: int, chapter_no: int) -> bool:
+    if word_target < MIN_SUBMISSION_CHINESE_CHARS:
+        return False
+    opening_failed = chapter_no > 1 and opening_loop_score(chapter_text) >= 3
+    return count_chinese(chapter_text) < MIN_SUBMISSION_CHINESE_CHARS or opening_failed
+
+
+def _quality_gate_failure(chapter_text: str, word_target: int, chapter_no: int) -> str | None:
+    if word_target < MIN_SUBMISSION_CHINESE_CHARS:
+        return None
+    failures: list[str] = []
+    chinese_chars = count_chinese(chapter_text)
+    opening_score = opening_loop_score(chapter_text)
+    if chinese_chars < MIN_SUBMISSION_CHINESE_CHARS:
+        failures.append(f"short_chapter chinese_chars={chinese_chars} < {MIN_SUBMISSION_CHINESE_CHARS}")
+    if chapter_no > 1 and opening_score >= 3:
+        failures.append(f"opening_loop_risk score={opening_score}")
+    return "; ".join(failures) if failures else None
 
 
 class ImmersiveRunner:
@@ -149,6 +207,7 @@ class ImmersiveRunner:
 
         chapter_paths: list[str] = []
         previous_chapter_bridge: str | None = None
+        run_error: str | None = None
         try:
             # Step 2-3: 顺序跑 N 章
             for i in range(chapters):
@@ -169,6 +228,24 @@ class ImmersiveRunner:
                 prompt = self.prompt_builder(state_view, word_target, ch_no)
                 chapter_text = self.llm_caller(prompt, llm_endpoint)
                 chapter_text = _normalize_chapter_heading(chapter_text, ch_no)
+                if _needs_quality_repair(chapter_text, word_target, ch_no):
+                    repair_failure = _quality_gate_failure(chapter_text, word_target, ch_no)
+                    for attempt in (1, 2):
+                        repair_prompt = _repair_prompt(
+                            prompt,
+                            chapter_text,
+                            word_target,
+                            ch_no,
+                            attempt=attempt,
+                            failure=repair_failure,
+                        )
+                        chapter_text = self.llm_caller(repair_prompt, llm_endpoint)
+                        chapter_text = _normalize_chapter_heading(chapter_text, ch_no)
+                        repair_failure = _quality_gate_failure(chapter_text, word_target, ch_no)
+                        if not repair_failure:
+                            break
+                    if repair_failure:
+                        raise RuntimeError(f"chapter {ch_no} failed quality gate after repair: {repair_failure}")
                 previous_chapter_bridge = (
                     f"上一章生成摘要：{_chapter_excerpt_for_bridge(chapter_text)}"
                     if chapter_text.strip()
@@ -209,16 +286,26 @@ class ImmersiveRunner:
                     action="log",
                     payload={"chapter_no": ch_no, "word_count": wc, "file": str(fp)},
                 )
+        except RuntimeError as exc:
+            run_error = str(exc)
+            self.state_io.audit(
+                source="immersive_runner",
+                severity="error",
+                msg=run_error,
+                action="block",
+                payload={"chapter_paths": chapter_paths},
+            )
         finally:
             # Step 4-5: chapter_block_end 自动触发 → exit
             summary = self.adapter.exit_immersive_mode()
+        last_error = run_error or summary.get("last_error")
 
         return {
-            "chapter_count": chapters,
+            "chapter_count": len(chapter_paths),
             "chapter_paths": chapter_paths,
             "applied_count": summary.get("applied_count", 0),
-            "failed_count": summary.get("failed_count", 0),
-            "last_error": summary.get("last_error"),
+            "failed_count": summary.get("failed_count", 0) + (1 if run_error else 0),
+            "last_error": last_error,
             "batch_chapter_count": summary.get("chapter_count", 0),
         }
 

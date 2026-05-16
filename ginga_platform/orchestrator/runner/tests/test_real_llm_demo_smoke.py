@@ -210,7 +210,9 @@ class RealLLMDemoSmokeTest(unittest.TestCase):
             self.assertEqual(payload["preflight"]["status"], "PASS")
             self.assertEqual(payload["postflight"]["status"], "planned")
             self.assertEqual(payload["review_gate"]["status"], "planned")
-            self.assertEqual(payload["cost_boundary"]["max_real_llm_calls"], 4)
+            self.assertEqual(payload["cost_boundary"]["estimated_real_llm_calls"], 12)
+            self.assertEqual(payload["cost_boundary"]["max_real_llm_calls"], 12)
+            self.assertEqual(payload["cost_boundary"]["max_generation_attempts_per_chapter"], 3)
             self.assertEqual(payload["cost_boundary"]["max_chapters"], 5)
             self.assertEqual(payload["cost_boundary"]["min_longform_word_target"], 3500)
             self.assertTrue(payload["isolation"]["state_root_under_ops"])
@@ -248,6 +250,67 @@ class RealLLMDemoSmokeTest(unittest.TestCase):
             self.assertIn("state_root_not_isolated_ops_path", error_codes)
             self.assertIn("word_target_below_short_chapter_threshold", error_codes)
             self.assertFalse(payload["real_llm_executed"])
+
+    def test_v23_real_llm_harness_postflight_summarizes_fail_fast_chapter(self) -> None:
+        from scripts import run_real_llm_harness
+        from scripts.run_real_llm_harness import run_harness
+
+        def fake_longform_smoke(**_kwargs):
+            return {
+                "passed": False,
+                "requested_chapters": 4,
+                "completed_chapters": 0,
+                "batch_runs": [
+                    {
+                        "batch_no": 1,
+                        "status": "failed",
+                        "error": "RuntimeError: chapter 1 failed quality gate after repair: short_chapter chinese_chars=3313 < 3500",
+                    }
+                ],
+                "chapter_runs": [
+                    {
+                        "chapter_no": 1,
+                        "status": "failed",
+                        "error": "RuntimeError: chapter 1 failed quality gate after repair: short_chapter chinese_chars=3313 < 3500",
+                    }
+                ],
+                "drift_report": {
+                    "status": "stable",
+                    "short_chapters": [],
+                    "missing_foreshadow_chapters": [],
+                },
+            }
+
+        original = run_real_llm_harness.run_longform_smoke
+        run_real_llm_harness.run_longform_smoke = fake_longform_smoke
+        try:
+            with tempfile.TemporaryDirectory() as d:
+                root = Path(d)
+                payload = run_harness(
+                    profile="longform-small-batch",
+                    book_id="v23-failfast",
+                    endpoint="久久",
+                    state_root=root / ".ops" / "real_llm_harness" / "state",
+                    json_output=root / ".ops" / "validation" / "real_llm_harness.json",
+                    report_output=root / ".ops" / "reports" / "real_llm_harness_report.md",
+                    review_output_root=root / ".ops" / "reviews",
+                    chapters=4,
+                    word_target=4000,
+                    batch_schedule="4",
+                    dry_run=False,
+                    review_gate=False,
+                )
+                report = (root / ".ops" / "reports" / "real_llm_harness_report.md").read_text(encoding="utf-8")
+        finally:
+            run_real_llm_harness.run_longform_smoke = original
+
+        self.assertFalse(payload["passed"])
+        summary = payload["postflight"]["generation_summary"]
+        self.assertEqual(summary["failed_chapter"], 1)
+        self.assertIn("short_chapter", summary["failure_reason"])
+        self.assertEqual(summary["failed_batches"], [1])
+        self.assertIn("failed_chapter", report)
+        self.assertIn("short_chapter", report)
 
 
 if __name__ == "__main__":  # pragma: no cover

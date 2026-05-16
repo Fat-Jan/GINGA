@@ -40,6 +40,7 @@ DEFAULT_JSON_OUTPUT = REPO_ROOT / ".ops" / "validation" / "real_llm_harness.json
 DEFAULT_REPORT_OUTPUT = REPO_ROOT / ".ops" / "reports" / "real_llm_harness_report.md"
 DEFAULT_REVIEW_OUTPUT_ROOT = REPO_ROOT / ".ops" / "reviews"
 MIN_LONGFORM_WORD_TARGET = MIN_SUBMISSION_CHINESE_CHARS
+MAX_GENERATION_ATTEMPTS_PER_CHAPTER = 3
 SUPPORTED_PROFILES = ("single-chapter-smoke", "longform-small-batch")
 WILL_NOT_OVERWRITE = (
     "foundation/runtime_state/**",
@@ -103,16 +104,19 @@ def _cost_boundary(*, profile: str, chapters: int, word_target: int, batch_sched
         estimated_calls = 1
         max_chapters = 1
         max_calls = 1
+        max_attempts = 1
     else:
-        estimated_calls = chapters
+        max_attempts = MAX_GENERATION_ATTEMPTS_PER_CHAPTER
+        estimated_calls = chapters * max_attempts
         max_chapters = MAX_REAL_LLM_CHAPTER_BATCH_SIZE
-        max_calls = chapters
+        max_calls = chapters * max_attempts
     return {
         "profile": profile,
         "dry_run_default": True,
         "run_requires_explicit_flag": True,
         "estimated_real_llm_calls": estimated_calls,
         "max_real_llm_calls": max_calls,
+        "max_generation_attempts_per_chapter": max_attempts,
         "requested_chapters": chapters,
         "max_chapters": max_chapters,
         "recommended_batch_size": DEFAULT_CHAPTER_BATCH_SIZE,
@@ -214,12 +218,27 @@ def _postflight_from_generation(profile: str, generation: dict[str, Any], *, dry
         errors.append(GateIssue("generation_not_passed", "error", "underlying real LLM smoke did not pass"))
     if profile == "longform-small-batch":
         drift = generation.get("drift_report") or {}
+        failed_chapters = [
+            run
+            for run in generation.get("chapter_runs", [])
+            if isinstance(run, dict) and run.get("status") == "failed"
+        ]
+        failed_batches = [
+            run
+            for run in generation.get("batch_runs", [])
+            if isinstance(run, dict) and run.get("status") == "failed"
+        ]
+        first_failed_chapter = failed_chapters[0] if failed_chapters else {}
+        first_failed_batch = failed_batches[0] if failed_batches else {}
         if drift.get("status") != "stable":
             warnings.append(GateIssue("drift_needs_review", "warn", f"drift_status={drift.get('status')}"))
         summary = {
             "requested_chapters": generation.get("requested_chapters"),
             "completed_chapters": generation.get("completed_chapters"),
             "drift_status": drift.get("status"),
+            "failed_chapter": first_failed_chapter.get("chapter_no"),
+            "failure_reason": first_failed_chapter.get("error") or first_failed_batch.get("error") or "",
+            "failed_batches": [run.get("batch_no") for run in failed_batches if run.get("batch_no") is not None],
             "short_chapters": drift.get("short_chapters", []),
             "missing_foreshadow_chapters": drift.get("missing_foreshadow_chapters", []),
         }

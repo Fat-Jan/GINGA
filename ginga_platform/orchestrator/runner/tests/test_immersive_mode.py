@@ -354,9 +354,158 @@ class ImmersiveRunnerRunBlockTest(unittest.TestCase):
         self.assertEqual(len(captured_prompts), 2)
         second_prompt = captured_prompts[1]
         self.assertIn("上一章生成摘要", second_prompt)
-        self.assertIn("血契索债", second_prompt)
         self.assertIn("短刃把血脉契约刻进掌心", second_prompt)
         self.assertNotIn("缺少前章事件摘要", second_prompt)
+
+    def test_run_block_uses_previous_chapter_ending_not_repeated_opening_as_bridge(self) -> None:
+        captured_prompts: list[str] = []
+        repeated_opening = (
+            "痛觉并未因意识的回归而消退，无明睁开眼，看见灰白雾气。"
+            "他重新确认体内微粒和短刃。"
+        )
+        ending = (
+            "无明把清道夫的骨牌按进城门血槽，血脉契约在门缝里亮起。"
+            "末日城邦的守夜人抬灯，要求他立刻交出下一轮微粒收益。"
+        )
+
+        def mock_llm(prompt: str, endpoint: str, **kw) -> str:
+            captured_prompts.append(prompt)
+            if len(captured_prompts) == 1:
+                return f"# 第一章 · 坏开头\n\n{repeated_opening}\n\n{ending}"
+            if "质量修复" in prompt:
+                return "# 第一章 · 血门索债\n\n" + (ending * 90)
+            return "# 第2章 · 接债入城\n\n" + ("血脉契约压在城门上。" * 80)
+
+        runner = ImmersiveRunner(
+            "runner-book",
+            state_root=self.state_root,
+            llm_caller=mock_llm,
+        )
+        result = runner.run_block(chapters=2, word_target=4000)
+
+        self.assertIsNone(result["last_error"])
+        second_prompt = captured_prompts[-1]
+        self.assertIn("第2章", second_prompt)
+        self.assertIn("上一章生成摘要", second_prompt)
+        self.assertIn("守夜人抬灯", second_prompt)
+        self.assertNotIn(repeated_opening, second_prompt)
+
+    def test_run_block_repairs_short_or_opening_loop_chapter_before_writing(self) -> None:
+        calls: list[str] = []
+        bad_chapter = (
+            "# 第一章 · 重启模板\n\n"
+            "痛觉并未因意识的回归而消退，无明睁开眼，看见灰白雾气。"
+            "他重新确认体内微粒和短刃。"
+        )
+        repaired_chapter = (
+            "# 第一章 · 血门索债\n\n"
+            + ("无明把清道夫骨牌按进城门血槽，血脉契约逼着守夜人交出末日账册。" * 180)
+            + "\n\n<!-- foreshadow: id=fh-repair planted_ch=1 expected_payoff=5 summary=血门索债 -->"
+        )
+
+        def mock_llm(prompt: str, endpoint: str, **kw) -> str:
+            calls.append(prompt)
+            return bad_chapter if len(calls) == 1 else repaired_chapter
+
+        runner = ImmersiveRunner(
+            "runner-book",
+            state_root=self.state_root,
+            llm_caller=mock_llm,
+        )
+        result = runner.run_block(chapters=1, word_target=4000)
+
+        self.assertIsNone(result["last_error"])
+        self.assertEqual(len(calls), 2)
+        self.assertIn("质量修复", calls[1])
+        self.assertIn("不得低于 3500 个中文汉字", calls[1])
+        chapter_text = (self.state_root / "runner-book" / "chapter_01.md").read_text(encoding="utf-8")
+        self.assertIn("血门索债", chapter_text)
+        self.assertNotIn("痛觉并未因意识的回归而消退", chapter_text)
+
+    def test_run_block_allows_second_repair_before_failing_fast(self) -> None:
+        calls: list[str] = []
+        bad_chapter = (
+            "# 第一章 · 重启模板\n\n"
+            "痛觉并未因意识的回归而消退，无明睁开眼，看见灰白雾气。"
+            "他重新确认体内微粒和短刃。"
+        )
+        still_short = "# 第一章 · 仍短\n\n" + ("无明把血脉契约按进末日城门。" * 120)
+        second_repair_ok = (
+            "# 第一章 · 血门索债\n\n"
+            + ("无明把清道夫骨牌按进城门血槽，守夜人抬灯逼他交出下一轮微粒收益。" * 190)
+            + "\n\n<!-- foreshadow: id=fh-repair-2 planted_ch=1 expected_payoff=5 summary=血门索债 -->"
+        )
+
+        def mock_llm(prompt: str, endpoint: str, **kw) -> str:
+            calls.append(prompt)
+            if len(calls) == 1:
+                return bad_chapter
+            if len(calls) == 2:
+                return still_short
+            return second_repair_ok
+
+        runner = ImmersiveRunner(
+            "runner-book",
+            state_root=self.state_root,
+            llm_caller=mock_llm,
+        )
+        result = runner.run_block(chapters=1, word_target=4000)
+
+        self.assertIsNone(result["last_error"])
+        self.assertEqual(len(calls), 3)
+        self.assertIn("质量修复第 2 次", calls[2])
+        chapter_text = (self.state_root / "runner-book" / "chapter_01.md").read_text(encoding="utf-8")
+        self.assertIn("血门索债", chapter_text)
+
+    def test_run_block_fails_fast_when_repair_still_misses_submission_gate(self) -> None:
+        calls: list[str] = []
+        bad_chapter = (
+            "# 第一章 · 仍然短\n\n"
+            "痛觉并未因意识的回归而消退，无明睁开眼，看见灰白雾气。"
+            "他重新确认体内微粒和短刃。"
+        )
+
+        def mock_llm(prompt: str, endpoint: str, **kw) -> str:
+            calls.append(prompt)
+            return bad_chapter
+
+        runner = ImmersiveRunner(
+            "runner-book",
+            state_root=self.state_root,
+            llm_caller=mock_llm,
+        )
+        result = runner.run_block(chapters=4, word_target=4000)
+
+        self.assertIsNotNone(result["last_error"])
+        self.assertIn("chapter 1 failed quality gate after repair", result["last_error"])
+        self.assertEqual(len(calls), 3)
+        self.assertEqual(result["chapter_count"], 0)
+        self.assertFalse((self.state_root / "runner-book" / "chapter_01.md").exists())
+        self.assertFalse((self.state_root / "runner-book" / "chapter_02.md").exists())
+
+    def test_first_chapter_quality_gate_allows_origin_opening_if_length_passes(self) -> None:
+        calls: list[str] = []
+        origin_opening = (
+            "# 第一章 · 天堑初醒\n\n"
+            + ("痛觉并未因意识的回归而消退，无明睁开眼，看见灰白雾气和天堑边缘。"
+               "体内微粒撞击短刃，血脉契约在末日城门上索债。" * 190)
+            + "\n\n<!-- foreshadow: id=fh-origin planted_ch=1 expected_payoff=5 summary=首章起源 -->"
+        )
+
+        def mock_llm(prompt: str, endpoint: str, **kw) -> str:
+            calls.append(prompt)
+            return origin_opening
+
+        runner = ImmersiveRunner(
+            "runner-book",
+            state_root=self.state_root,
+            llm_caller=mock_llm,
+        )
+        result = runner.run_block(chapters=1, word_target=4000)
+
+        self.assertIsNone(result["last_error"])
+        self.assertEqual(len(calls), 1)
+        self.assertTrue((self.state_root / "runner-book" / "chapter_01.md").exists())
 
 
 if __name__ == "__main__":  # pragma: no cover
