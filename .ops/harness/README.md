@@ -32,9 +32,15 @@ v2.1 Harness self-check 必须确认：
 - `scripts/validate_harness_contracts.py` 存在，并被 `scripts/verify_all.py` 的 baseline 命令调用。
 - 本文件明确 `.ops/validation/**`、`.ops/reports/**`、`candidate-only`、`report-only` 与 `truth` 的证据 / 晋升边界。
 
+v2.2 CLI Harness Matrix 已确认：
+
+- `scripts/run_agent_harness.py` 离线覆盖 `init`、单章 `run`、多章 `run`、`immersive`、错误退出、`review`、`inspect`、`query`、`market`、`observability workflow-stages`、`observability evidence-pack`、`observability migration-audit`、`model-topology observe`。
+- 新增 sidecar / projection / observability case 均使用临时 `state_root` 同级 `.ops` 输出根，只写最终 `.ops/validation/agent_harness.json` 与 `.ops/reports/agent_harness_report.md` 作为汇总证据。
+- `review`、`inspect`、`query` 必须证明只读 / report-only 边界；`market` 必须证明显式授权、offline fixture 和 raw_text 剥离；`observability` 必须证明不跑 workflow、不迁移文件、不写 `StateIO`；`model-topology` 默认不得 live probe。
+- v2.2 仍是 `mock_harness` / `cli_report_only` 验证，不证明真实 LLM 生产质量。
+
 ## 后续扩展边界
 
-- v2.2 再扩 CLI harness matrix，不在 v2.0 / v2.1 里一次性做完。
 - v2.3 再统一真实 LLM preflight / postflight。
 - v2.4 再做多 agent board / task contract 自动检查。
 - v2.5 再做阶段收口模板与 commit message 机械检查。

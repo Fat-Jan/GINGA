@@ -1401,6 +1401,68 @@
       ],
       "blockers": [],
       "handoff_note": "Completed as small real-LLM observation. Script-level pass proves execution boundary and input-bundle wiring; quality still needs review before any larger batch."
+    },
+    {
+      "task_id": "v2.2-cli-harness-matrix",
+      "title": "v2.2 CLI Harness Matrix",
+      "status": "done",
+      "owner": "main agent plus Codex explorer/worker subagents",
+      "model_contract": {
+        "provider": "OpenAI Codex main session and Codex subagent runtime",
+        "model_tier": "current session model tier",
+        "reason": "需要先由 explorer 梳理 CLI 覆盖缺口，再由 worker 在独立写范围内扩展 harness，最后由主控复核验收",
+        "fallback": "若 CLI 入口行为冲突，停止修改 CLI 并把冲突回报主控"
+      },
+      "owned_files": [
+        "scripts/run_agent_harness.py",
+        "ginga_platform/orchestrator/runner/tests/test_agent_harness.py",
+        ".ops/harness/README.md",
+        ".ops/validation/agent_harness.json",
+        ".ops/reports/agent_harness_report.md",
+        "STATUS.md",
+        "ROADMAP.md",
+        "notepad.md",
+        ".ops/subagents/board.json"
+      ],
+      "forbidden_files": [
+        "ginga_platform/orchestrator/cli/__main__.py",
+        "ginga_platform/orchestrator/book_view.py",
+        "ginga_platform/orchestrator/review.py",
+        "ginga_platform/orchestrator/market_research.py",
+        "ginga_platform/orchestrator/genm_observability.py",
+        "ginga_platform/orchestrator/model_topology.py",
+        "foundation/runtime_state/**",
+        "default .ops sidecar outputs except validation/report summary"
+      ],
+      "input_refs": [
+        ".ops/harness/README.md",
+        "scripts/run_agent_harness.py",
+        "ginga_platform/orchestrator/cli/__main__.py",
+        "ginga_platform/orchestrator/runner/tests/test_book_view.py",
+        "ginga_platform/orchestrator/runner/tests/test_review_deslop.py",
+        "ginga_platform/orchestrator/runner/tests/test_market_research_sidecar.py",
+        "ginga_platform/orchestrator/runner/tests/test_genm_optional_observability.py",
+        "ginga_platform/orchestrator/runner/tests/test_model_topology_observation.py"
+      ],
+      "expected_output": "run_agent_harness.py covers review / inspect / query / market / observability / model-topology with temporary report-only outputs",
+      "verification": "test_agent_harness, run_agent_harness, validate_harness_contracts, validate_architecture_contracts, verify_all --quick",
+      "created_at": "2026-05-16T12:36:51+08:00",
+      "updated_at": "2026-05-16T12:36:51+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 1,
+      "evidence": [
+        "explorer Kant mapped existing harness cases and minimal CLI commands for review/inspect/query/market/observability/model-topology",
+        "TDD red: test_agent_harness expected v2.2 case set and failed because eight new CLI cases were missing",
+        "worker Hilbert implemented scripts/run_agent_harness.py only; main agent reviewed diff and reran verification",
+        "implementation: matrix_version=v2.2 and 13 cases; new CLI sidecar cases use execution_mode=cli_report_only",
+        "boundary: market/evidence fixtures contain raw sentinels but generated reports do not copy them",
+        "boundary: observability workflow-stages/evidence-pack/migration-audit and model-topology observe are report-only and do not write StateIO",
+        "verification: python -m unittest ginga_platform.orchestrator.runner.tests.test_agent_harness -v passed 4 tests",
+        "verification: python3 scripts/run_agent_harness.py wrote .ops/validation/agent_harness.json and .ops/reports/agent_harness_report.md with passed=True"
+      ],
+      "blockers": [],
+      "handoff_note": "Completed by main agent after subagent exploration and worker patch. v2.2 proves CLI matrix boundaries only; v2.3 real LLM preflight/postflight remains planned."
     }
   ]
 }

@@ -2,6 +2,7 @@
   "generated_from": "scripts/run_agent_harness.py",
   "execution_mode": "mock_harness",
   "disclaimer": "mock_harness does not prove production readiness or real LLM demo completion",
+  "matrix_version": "v2.2",
   "state_root": "<temporary mock harness state_root>",
   "passed": true,
   "cases": [
@@ -129,6 +130,209 @@
         "exit_code_nonzero": true,
         "error_message": true,
         "no_chapter_artifact": true
+      },
+      "passed": true
+    },
+    {
+      "name": "inspect_book_view",
+      "argv": [
+        "inspect",
+        "harness-sidecar",
+        "--run-id",
+        "harness-inspect",
+        "--state-root",
+        "<temporary mock harness state_root>",
+        "--output-root",
+        "<temporary mock harness root>/.ops/book_views"
+      ],
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "execution_mode": "cli_report_only",
+      "stdout_tail": "✅ BookView exported: <temporary mock harness root>/.ops/book_views/harness-sidecar/harness-inspect\n",
+      "stderr_tail": "",
+      "checks": {
+        "book_view_report": true,
+        "state_root_not_nested_ops": true,
+        "projection_read_only": true
+      },
+      "passed": true
+    },
+    {
+      "name": "query_book_view",
+      "argv": [
+        "query",
+        "harness-sidecar",
+        "mock_harness",
+        "--limit",
+        "5",
+        "--state-root",
+        "<temporary mock harness state_root>"
+      ],
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "execution_mode": "cli_report_only",
+      "stdout_tail": "{\n  \"book_id\": \"harness-sidecar\",\n  \"mode\": \"read_only\",\n  \"query\": \"mock_harness\",\n  \"data_sources\": [\n    \"StateIO\",\n    \"chapter_artifacts\"\n  ],\n  \"forbidden_default_sources\": [\n    \".ops/book_analysis/**\"\n  ],\n  \"match_count\": 1,\n  \"matches\": [\n    {\n      \"kind\": \"chapter\",\n      \"id\": \"chapter_01.md\",\n      \"text\": \"第1章 · 离线演练\\n| 写作自检 | 内容 | |---|---| | 当前锚定 | mock_harness / 微粒 / 天堑 | | 当前微粒 | 10 | | 预计微粒变化 | 10 | | 主要冲突 | 离线 harness 验证 CLI 与 StateIO 边界 | # 第1章 · 离线演练 这是一段 mock harness 章节正文，只用于验证 CLI、StateIO、audit_log 和 artifact 边界。它不调用真实 LLM，也不代表真实创作质量或生产链路完成。# 第1章 · 离线演练 这是一段 mock \"\n    }\n  ]\n}\n",
+      "stderr_tail": "",
+      "checks": {
+        "stdout_json": true,
+        "matches": true,
+        "no_book_analysis_sentinel": true
+      },
+      "passed": true
+    },
+    {
+      "name": "review_sidecar",
+      "argv": [
+        "review",
+        "harness-sidecar",
+        "--run-id",
+        "harness-review",
+        "--state-root",
+        "<temporary mock harness state_root>",
+        "--output-root",
+        "<temporary mock harness root>/.ops/reviews"
+      ],
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "execution_mode": "cli_report_only",
+      "stdout_tail": "✅ Review report exported: <temporary mock harness root>/.ops/reviews/harness-sidecar/harness-review (status=warn, issues=1)\n",
+      "stderr_tail": "",
+      "checks": {
+        "review_report": true,
+        "warn_only": true,
+        "no_auto_edit": true,
+        "projection_read_only": true
+      },
+      "passed": true
+    },
+    {
+      "name": "market_sidecar",
+      "argv": [
+        "market",
+        "harness-market",
+        "--run-id",
+        "harness-market",
+        "--fixture",
+        "<temporary mock harness root>/fixtures/harness_market_fixture.json",
+        "--authorize",
+        "--output-root",
+        "<temporary mock harness root>/.ops/market_research"
+      ],
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "execution_mode": "cli_report_only",
+      "stdout_tail": "✅ Market report exported: <temporary mock harness root>/.ops/market_research/harness-market/harness-market (signals=4)\n",
+      "stderr_tail": "",
+      "checks": {
+        "market_report": true,
+        "offline_fixture": true,
+        "authorized": true,
+        "projection_read_only": true,
+        "rag_ineligible": true,
+        "raw_text_stripped": true
+      },
+      "passed": true
+    },
+    {
+      "name": "observability_workflow_stages",
+      "argv": [
+        "observability",
+        "workflow-stages",
+        "--run-id",
+        "harness-workflow",
+        "--output-root",
+        "<temporary mock harness root>/.ops/workflow_observability"
+      ],
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "execution_mode": "cli_report_only",
+      "stdout_tail": "✅ Workflow stage observation exported: <temporary mock harness root>/.ops/workflow_observability/harness-workflow\n",
+      "stderr_tail": "",
+      "checks": {
+        "workflow_report": true,
+        "report_only": true,
+        "does_not_run": true,
+        "does_not_write_state": true,
+        "has_stages": true
+      },
+      "passed": true
+    },
+    {
+      "name": "observability_evidence_pack",
+      "argv": [
+        "observability",
+        "evidence-pack",
+        "--run-id",
+        "harness-evidence",
+        "--evidence",
+        "<temporary mock harness root>/fixtures/harness_evidence.json",
+        "--output-root",
+        "<temporary mock harness root>/.ops/jury/evidence_packs"
+      ],
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "execution_mode": "cli_report_only",
+      "stdout_tail": "✅ Jury evidence pack exported: <temporary mock harness root>/.ops/jury/evidence_packs/harness-evidence (evidence=1)\n",
+      "stderr_tail": "",
+      "checks": {
+        "evidence_pack": true,
+        "report_only": true,
+        "one_evidence": true,
+        "does_not_write_state": true,
+        "body_not_copied": true
+      },
+      "passed": true
+    },
+    {
+      "name": "observability_migration_audit",
+      "argv": [
+        "observability",
+        "migration-audit",
+        "--run-id",
+        "harness-migration",
+        "--scan-root",
+        "<temporary mock harness root>/foundation",
+        "--scan-root",
+        "<temporary mock harness root>/.ops/book_analysis",
+        "--output-root",
+        "<temporary mock harness root>/.ops/migration_audit"
+      ],
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "execution_mode": "cli_report_only",
+      "stdout_tail": "✅ Migration audit exported: <temporary mock harness root>/.ops/migration_audit/harness-migration (status=needs_review, forbidden_hits=1)\n",
+      "stderr_tail": "",
+      "checks": {
+        "migration_report": true,
+        "report_only": true,
+        "no_auto_migrate": true,
+        "does_not_write_state": true,
+        "forbidden_hit": true
+      },
+      "passed": true
+    },
+    {
+      "name": "model_topology_observe",
+      "argv": [
+        "model-topology",
+        "observe",
+        "--run-id",
+        "harness-topology",
+        "--output-root",
+        "<temporary mock harness root>/.ops/model_topology"
+      ],
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "execution_mode": "cli_report_only",
+      "stdout_tail": "✅ Model topology observation exported: <temporary mock harness root>/.ops/model_topology/harness-topology (live_probe=False)\n",
+      "stderr_tail": "",
+      "checks": {
+        "topology_report": true,
+        "report_only": true,
+        "no_runtime_takeover": true,
+        "live_probe_disabled": true,
+        "role_matrix": true,
+        "probes_not_run": true
       },
       "passed": true
     }

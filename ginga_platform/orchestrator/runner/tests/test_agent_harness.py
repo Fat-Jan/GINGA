@@ -1,11 +1,12 @@
-"""Offline agent harness tests for P2-5.
+"""Offline agent harness tests.
 
 The harness must exercise the public CLI shape without calling ask-llm:
-init, single run, multi-chapter run, immersive run, and one failing path.
+runtime mock paths, one failing path, and v2.2 report-only/read-only sidecars.
 """
 
 from __future__ import annotations
 
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -33,17 +34,41 @@ class AgentHarnessTest(unittest.TestCase):
             cases = {case["name"]: case for case in result["cases"]}
             self.assertEqual(
                 set(cases),
-                {"init", "single_run", "multi_chapter", "immersive", "missing_state_error"},
+                {
+                    "init",
+                    "single_run",
+                    "multi_chapter",
+                    "immersive",
+                    "missing_state_error",
+                    "inspect_book_view",
+                    "query_book_view",
+                    "review_sidecar",
+                    "market_sidecar",
+                    "observability_workflow_stages",
+                    "observability_evidence_pack",
+                    "observability_migration_audit",
+                    "model_topology_observe",
+                },
             )
 
-            self.assertEqual(cases["init"]["exit_code"], 0)
-            self.assertEqual(cases["single_run"]["exit_code"], 0)
-            self.assertEqual(cases["multi_chapter"]["exit_code"], 0)
-            self.assertEqual(cases["immersive"]["exit_code"], 0)
+            for name, case in cases.items():
+                self.assertEqual(case["exit_code"], case["expected_exit_code"], name)
+                self.assertTrue(case["passed"], case)
             self.assertEqual(cases["missing_state_error"]["exit_code"], 1)
 
             for name in ("single_run", "multi_chapter", "immersive"):
                 self.assertEqual(cases[name]["execution_mode"], "mock_harness")
+            for name in (
+                "inspect_book_view",
+                "query_book_view",
+                "review_sidecar",
+                "market_sidecar",
+                "observability_workflow_stages",
+                "observability_evidence_pack",
+                "observability_migration_audit",
+                "model_topology_observe",
+            ):
+                self.assertEqual(cases[name]["execution_mode"], "cli_report_only")
 
             init_state = state_root / "harness-init"
             for domain in ("locked", "entity_runtime", "workspace", "retrieved", "audit_log"):
@@ -64,9 +89,72 @@ class AgentHarnessTest(unittest.TestCase):
             immersive_chapters = sorted((state_root / "harness-immersive").glob("chapter_*.md"))
             self.assertEqual([path.name for path in immersive_chapters], ["chapter_01.md", "chapter_02.md"])
 
+            ops_root = root / ".ops"
+            book_view = ops_root / "book_views" / "harness-sidecar" / "harness-inspect" / "book_view.json"
+            review = ops_root / "reviews" / "harness-sidecar" / "harness-review" / "review_report.json"
+            market = ops_root / "market_research" / "harness-market" / "harness-market" / "market_report.json"
+            workflow = ops_root / "workflow_observability" / "harness-workflow" / "workflow_stage_report.json"
+            evidence = ops_root / "jury" / "evidence_packs" / "harness-evidence" / "evidence_pack.json"
+            migration = ops_root / "migration_audit" / "harness-migration" / "migration_audit.json"
+            topology = ops_root / "model_topology" / "harness-topology" / "model_topology_report.json"
+
+            for path in (book_view, review, market, workflow, evidence, migration, topology):
+                self.assertTrue(path.exists(), path)
+
+            self.assertFalse((state_root / "harness-sidecar" / ".ops").exists())
+            book_view_payload = json.loads(book_view.read_text(encoding="utf-8"))
+            self.assertEqual(book_view_payload["projection"]["truth_source"], "StateIO")
+            self.assertFalse(book_view_payload["projection"]["is_state_truth"])
+
+            query_stdout = cases["query_book_view"]["stdout_tail"]
+            query_payload = json.loads(query_stdout)
+            self.assertEqual(query_payload["mode"], "read_only")
+            self.assertIn("match_count", query_payload)
+            self.assertNotIn("BOOK_ANALYSIS_SENTINEL", query_stdout)
+
+            review_payload = json.loads(review.read_text(encoding="utf-8"))
+            self.assertEqual(review_payload["kind"], "ReviewDeslopReport")
+            self.assertEqual(review_payload["mode"], "warn_only")
+            self.assertFalse(review_payload["auto_edit"])
+            self.assertFalse(review_payload["projection"]["writes_runtime_state"])
+
+            market_payload = json.loads(market.read_text(encoding="utf-8"))
+            self.assertEqual(market_payload["kind"], "MarketResearchSidecarReport")
+            self.assertEqual(market_payload["collection_mode"], "offline_fixture")
+            self.assertTrue(market_payload["authorization"]["explicit"])
+            self.assertFalse(market_payload["projection"]["writes_runtime_state"])
+            self.assertFalse(market_payload["rag_policy"]["default_rag_eligible"])
+            self.assertNotIn("EXTERNAL_RAW_SENTINEL_SHOULD_NOT_LEAK", market.read_text(encoding="utf-8"))
+
+            workflow_payload = json.loads(workflow.read_text(encoding="utf-8"))
+            self.assertEqual(workflow_payload["mode"], "report_only")
+            self.assertFalse(workflow_payload["runs_workflow"])
+            self.assertFalse(workflow_payload["writes_runtime_state"])
+            self.assertGreater(workflow_payload["stage_count"], 0)
+
+            evidence_payload = json.loads(evidence.read_text(encoding="utf-8"))
+            self.assertEqual(evidence_payload["mode"], "report_only")
+            self.assertEqual(evidence_payload["evidence_count"], 1)
+            self.assertFalse(evidence_payload["writes_runtime_state"])
+            self.assertNotIn("SENTINEL_FULL_TEXT_SHOULD_NOT_COPY", evidence.read_text(encoding="utf-8"))
+
+            migration_payload = json.loads(migration.read_text(encoding="utf-8"))
+            self.assertEqual(migration_payload["mode"], "report_only")
+            self.assertFalse(migration_payload["auto_migrate"])
+            self.assertFalse(migration_payload["writes_runtime_state"])
+            self.assertIn(".ops/book_analysis/run-1/source.md", migration_payload["forbidden_source_hits"])
+
+            topology_payload = json.loads(topology.read_text(encoding="utf-8"))
+            self.assertEqual(topology_payload["mode"], "report_only")
+            self.assertFalse(topology_payload["runtime_takeover"])
+            self.assertFalse(topology_payload["probe_summary"]["live_probe_enabled"])
+            self.assertTrue(topology_payload["role_matrix"])
+            self.assertTrue(all(item["status"] == "not_run" for item in topology_payload["probe_results"]))
+
             self.assertTrue(json_output.exists())
             report_text = report_output.read_text(encoding="utf-8")
             self.assertIn("mock_harness", report_text)
+            self.assertIn("v2.2", report_text)
             self.assertIn("does not prove production readiness", report_text)
 
     def test_cli_rejects_real_llm_batches_above_v17_3_upper_bound(self) -> None:
