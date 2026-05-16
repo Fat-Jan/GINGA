@@ -15,6 +15,152 @@ import yaml
 
 
 class AgentHarnessTest(unittest.TestCase):
+    def test_multi_agent_harness_accepts_main_validated_write_task(self) -> None:
+        from scripts.validate_multi_agent_harness import validate_board
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            board = root / "board.json"
+            board.write_text(
+                json.dumps(
+                    {
+                        "updated_at": "2026-05-16T13:00:00+08:00",
+                        "tasks": [
+                            {
+                                "task_id": "v2.4-worker",
+                                "title": "Multi-agent harness validator",
+                                "status": "done",
+                                "owner": "main-agent validation after Codex subagent callback",
+                                "mode": "write-capable",
+                                "owned_files": ["scripts/validate_multi_agent_harness.py"],
+                                "forbidden_files": ["STATUS.md", "scripts/run_real_llm_harness.py"],
+                                "expected_output": ".ops/validation/multi_agent_harness.json",
+                                "verification": "python3 scripts/validate_multi_agent_harness.py",
+                                "created_at": "2026-05-16T12:00:00+08:00",
+                                "updated_at": "2026-05-16T13:00:00+08:00",
+                                "evidence": ["unit test PASS", "validator report written"],
+                                "blockers": [],
+                                "handoff_note": "main-agent validated evidence and marked done",
+                                "model_contract": {
+                                    "provider": "OpenAI Codex subagent runtime",
+                                    "model_tier": "coding worker",
+                                    "reason": "bounded validator implementation",
+                                    "fallback": "return BLOCKED with exact fields",
+                                },
+                            }
+                        ],
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+
+            result = validate_board(board)
+
+            self.assertEqual(result["status"], "PASS", result)
+            self.assertEqual(result["errors"], [])
+            self.assertTrue(all(check["status"] == "PASS" for check in result["checks"]), result)
+
+    def test_multi_agent_harness_rejects_subagent_done_and_weak_contracts(self) -> None:
+        from scripts.validate_multi_agent_harness import validate_board
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            board = root / "board.json"
+            board.write_text(
+                json.dumps(
+                    {
+                        "updated_at": "2026-05-16T13:00:00+08:00",
+                        "tasks": [
+                            {
+                                "task_id": "bad-status",
+                                "title": "Bad status",
+                                "status": "complete",
+                                "owner": "worker",
+                                "owned_files": ["*"],
+                                "expected_output": ".ops/validation/out.json",
+                                "verification": "python3 scripts/example.py",
+                                "created_at": "2026-05-16T12:00:00+08:00",
+                                "updated_at": "2026-05-16T13:00:00+08:00",
+                                "evidence": [],
+                                "blockers": [],
+                            },
+                            {
+                                "task_id": "subagent-done",
+                                "title": "Subagent sole done authority near real LLM",
+                                "status": "done",
+                                "owner": "Codex subagent runtime",
+                                "mode": "write-capable",
+                                "owned_files": ["scripts/run_real_llm_harness.py"],
+                                "expected_output": ".ops/reports/out.md",
+                                "verification": "python3 scripts/run_real_llm_harness.py",
+                                "created_at": "2026-05-16T12:00:00+08:00",
+                                "updated_at": "2026-05-16T13:00:00+08:00",
+                                "evidence": [],
+                                "blockers": [],
+                                "model_contract": {
+                                    "provider": "OpenAI Codex subagent runtime",
+                                    "model": "inherited",
+                                    "reason": "test",
+                                },
+                            },
+                        ],
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+
+            result = validate_board(board)
+
+            self.assertEqual(result["status"], "FAIL", result)
+            errors = "\n".join(result["errors"])
+            self.assertIn("bad-status: status 'complete' is not allowed", errors)
+            self.assertIn("bad-status: write-capable-looking task is missing model_contract", errors)
+            self.assertIn("bad-status: write-capable task owned_files may not use repo root wildcard", errors)
+            self.assertIn("subagent-done: done requires non-empty evidence", errors)
+            self.assertIn("subagent-done: done requires main-agent validation", errors)
+            self.assertIn("subagent-done: model_contract missing fallback", errors)
+            self.assertIn("subagent-done: forbidden_files required for harness/agent/real LLM boundary tasks", errors)
+
+    def test_multi_agent_harness_summarizes_legacy_done_gaps_without_warning_noise(self) -> None:
+        from scripts.validate_multi_agent_harness import validate_board
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            board = root / "board.json"
+            board.write_text(
+                json.dumps(
+                    {
+                        "updated_at": "2026-05-16T13:00:00+08:00",
+                        "tasks": [
+                            {
+                                "task_id": "legacy-done",
+                                "title": "Legacy done before v2.4",
+                                "status": "done",
+                                "owner": "old worker",
+                                "owned_files": ["scripts/old.py"],
+                                "expected_output": ".ops/reports/old.md",
+                                "verification": "old check",
+                                "created_at": "2026-05-13T12:00:00+08:00",
+                                "updated_at": "2026-05-13T13:00:00+08:00",
+                                "evidence": [],
+                                "blockers": [],
+                            }
+                        ],
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+
+            result = validate_board(board)
+
+            self.assertEqual(result["status"], "PASS", result)
+            self.assertEqual(result["errors"], [])
+            self.assertEqual(result["warnings"], [])
+            self.assertEqual(len(result["legacy_warnings"]), 3)
+
     def test_offline_harness_covers_cli_paths_and_error_exit_codes(self) -> None:
         from scripts.run_agent_harness import run_harness
 

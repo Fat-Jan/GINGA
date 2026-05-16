@@ -1,0 +1,109 @@
+{
+  "harness_version": "v2.3",
+  "generated_from": "scripts/run_real_llm_harness.py",
+  "generated_at": "2026-05-16T06:24:56+00:00",
+  "profile": "longform-small-batch",
+  "dry_run": true,
+  "passed": true,
+  "real_llm_executed": false,
+  "endpoint": "久久",
+  "book_id": "v2-3-real-llm-harness",
+  "state_root": "/Users/arm/Desktop/ginga/.ops/real_llm_harness/state",
+  "json_output": "/Users/arm/Desktop/ginga/.ops/validation/real_llm_harness.json",
+  "report_output": "/Users/arm/Desktop/ginga/.ops/reports/real_llm_harness_report.md",
+  "review_output_root": "/Users/arm/Desktop/ginga/.ops/reviews",
+  "cost_boundary": {
+    "profile": "longform-small-batch",
+    "dry_run_default": true,
+    "run_requires_explicit_flag": true,
+    "estimated_real_llm_calls": 4,
+    "max_real_llm_calls": 4,
+    "requested_chapters": 4,
+    "max_chapters": 5,
+    "recommended_batch_size": 4,
+    "upper_bound": 5,
+    "pressure_test_only_at_or_above": 6,
+    "word_target": 4000,
+    "min_longform_word_target": 3500,
+    "batch_schedule": [
+      4
+    ],
+    "actual_cost_incurred": false
+  },
+  "isolation": {
+    "state_root": ".ops/real_llm_harness/state",
+    "json_output": ".ops/validation/real_llm_harness.json",
+    "report_output": ".ops/reports/real_llm_harness_report.md",
+    "review_output_root": ".ops/reviews",
+    "state_root_under_ops": true,
+    "json_under_validation": true,
+    "report_under_reports": true,
+    "review_under_ops_reviews": true,
+    "will_not_overwrite": [
+      "foundation/runtime_state/**",
+      ".ops/longform_smoke/**",
+      ".ops/real_llm_demo/**",
+      ".ops/reviews/** except selected review_output_root"
+    ]
+  },
+  "preflight": {
+    "status": "PASS",
+    "errors": [],
+    "warnings": [],
+    "checks": [
+      "explicit_dry_run_or_run_mode",
+      "real_llm_call_budget",
+      "isolated_state_root",
+      "isolated_validation_outputs",
+      "longform_batch_upper_bound",
+      "review_gate_configured"
+    ]
+  },
+  "postflight": {
+    "status": "planned",
+    "errors": [],
+    "warnings": [],
+    "generation_summary": {}
+  },
+  "review_gate": {
+    "status": "planned",
+    "errors": [],
+    "warnings": [],
+    "report": null
+  },
+  "generation": {},
+  "residual_risk": [
+    {
+      "code": "dry_run_has_no_quality_evidence",
+      "severity": "high",
+      "mitigation": "run with --run only after preflight is PASS and the operator accepts the cost boundary."
+    },
+    {
+      "code": "real_llm_variability",
+      "severity": "medium",
+      "mitigation": "record endpoint, isolated state_root, generated artifacts, and review gate output for each run."
+    },
+    {
+      "code": "review_gate_is_report_only",
+      "severity": "medium",
+      "mitigation": "treat review hard-gate blocks as stop signals; do not auto-edit story text or write truth from reports."
+    },
+    {
+      "code": "longform_quality_not_proven_by_harness",
+      "severity": "medium",
+      "mitigation": "use small isolated batches and compare review output before widening any production run."
+    },
+    {
+      "code": "v1_7_5_followup_still_required",
+      "severity": "medium",
+      "mitigation": "after prompt continuity repair, only run isolated small-batch validation and rerun review; do not expand batch size directly."
+    }
+  ],
+  "gates": [
+    "preflight",
+    "cost_boundary",
+    "isolated_output",
+    "postflight",
+    "review_gate"
+  ]
+}

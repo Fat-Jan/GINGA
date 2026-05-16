@@ -9,6 +9,7 @@ from typing import Any
 DEFAULT_CHAPTER_BATCH_SIZE = 4
 MAX_REAL_LLM_CHAPTER_BATCH_SIZE = 5
 PRESSURE_TEST_BATCH_SIZE = 6
+MIN_SUBMISSION_CHINESE_CHARS = 3500
 LONGFORM_HARD_GATE_MODE = "block_next_real_llm_batch"
 
 
@@ -137,7 +138,7 @@ def longform_chapter_gate_check(
         "missing_low_frequency_anchor": bool(low_frequency_anchors)
         and not any(anchor in body_text for anchor in low_frequency_anchors),
         "missing_foreshadow_marker": "<!-- foreshadow:" not in text,
-        "short_chapter": count_chinese(body_text) < 2400,
+        "short_chapter": count_chinese(body_text) < MIN_SUBMISSION_CHINESE_CHARS,
         "forbidden_hits": longform_forbidden_hits(body_text),
     }
 

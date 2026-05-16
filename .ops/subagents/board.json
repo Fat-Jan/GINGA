@@ -1550,6 +1550,157 @@
       ],
       "blockers": [],
       "handoff_note": "Ready for local commit after main-agent whitelist staging and final diff/status check."
+    },
+    {
+      "task_id": "v2.3-real-llm-harness",
+      "title": "v2.3 Real LLM Harness",
+      "status": "done",
+      "owner": "main agent",
+      "model_contract": {
+        "provider": "OpenAI Codex main session",
+        "model_tier": "current session model",
+        "reason": "真实 LLM preflight/postflight、成本边界、隔离输出和 review gate 涉及外部成本与质量边界，主控保留执行权和验收权",
+        "fallback": "若真实端点不可用或成本边界不满足，只生成 blocked/preflight 报告，不伪造 postflight 或质量结论"
+      },
+      "owned_files": [
+        "scripts/run_real_llm_harness.py",
+        "ginga_platform/orchestrator/runner/tests/test_real_llm_demo_smoke.py",
+        ".ops/harness/README.md",
+        ".ops/validation/real_llm_harness.json",
+        ".ops/reports/real_llm_harness_report.md",
+        "STATUS.md",
+        "ROADMAP.md",
+        "notepad.md",
+        ".ops/subagents/board.json"
+      ],
+      "forbidden_files": [
+        "foundation/runtime_state/**",
+        "default RAG expansion",
+        "automatic story text edits from review",
+        "real LLM run without explicit preflight cost boundary"
+      ],
+      "input_refs": [
+        "scripts/run_real_llm_smoke.py",
+        "scripts/run_longform_llm_smoke.py",
+        "ginga_platform/orchestrator/review.py",
+        "STATUS.md v1.7/v1.9 observations",
+        ".ops/harness/README.md"
+      ],
+      "expected_output": "repeatable real LLM harness with dry-run preflight, isolated outputs, postflight summary, review gate wiring, and explicit residual-risk report",
+      "verification": "focused unit test, dry-run harness JSON/report, validate_harness_contracts, validate_architecture_contracts",
+      "created_at": "2026-05-16T13:43:26+08:00",
+      "updated_at": "2026-05-16T14:16:20+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 1,
+      "evidence": [
+        "main-agent validation: scripts/run_real_llm_harness.py added with dry-run default, explicit --run boundary, preflight/postflight/cost/isolation/review-gate output",
+        "focused verification: python3 -m unittest ginga_platform.orchestrator.runner.tests.test_real_llm_demo_smoke -v passed",
+        "focused verification: python3 -m unittest ginga_platform.orchestrator.runner.tests.test_longform_llm_smoke -v passed after 3500+ submission threshold update",
+        "dry-run evidence: .ops/validation/real_llm_harness.json status passed=true, preflight=PASS, word_target=4000, min_longform_word_target=3500, no real cost incurred",
+        "real small-batch observation: .ops/validation/v1_7_5_post_repair_4000_real_llm_harness.json generated 4/4 with passed=false; review blocked by consecutive_opening_loop_risk and short chapters [2,3,4]; low-frequency anchors were not missing",
+        "baseline wiring: scripts/verify_all.py now runs real_llm_harness dry-run, multi_agent_harness, and stage_closeout_harness"
+      ],
+      "blockers": [],
+      "handoff_note": "v2.3 harness is complete; the post-repair real longform sample remains an observation and blocks batch expansion until opening-loop and length-control issues are repaired."
+    },
+    {
+      "task_id": "v2.4-multi-agent-harness",
+      "title": "v2.4 Multi-Agent Harness",
+      "status": "done",
+      "owner": "Poincare worker; main agent validated",
+      "model_contract": {
+        "provider": "OpenAI Codex subagent runtime",
+        "supports_explicit_model_param": true,
+        "model_tier": "inherited current session model; coding worker",
+        "reason": "board/task contract/provider model/write scope/done ownership 是边界清晰的 validator 小切片，适合并行实现",
+        "fallback": "若子代理不可用，主控按同一写范围本地实现；若发现 board schema 冲突，停止并回报"
+      },
+      "owned_files": [
+        "scripts/validate_multi_agent_harness.py",
+        "ginga_platform/orchestrator/runner/tests/test_agent_harness.py",
+        ".ops/harness/README.md",
+        ".ops/validation/multi_agent_harness.json",
+        ".ops/reports/multi_agent_harness_report.md"
+      ],
+      "forbidden_files": [
+        "STATUS.md",
+        "ROADMAP.md",
+        "notepad.md",
+        "scripts/run_real_llm_harness.py",
+        "scripts/validate_stage_closeout.py",
+        "foundation/runtime_state/**"
+      ],
+      "input_refs": [
+        ".ops/subagents/dispatch-protocol.md",
+        ".ops/subagents/board.json",
+        ".ops/harness/README.md",
+        "scripts/validate_harness_contracts.py"
+      ],
+      "expected_output": "validator/report checking board entries, task contract fields, provider/model contract, disjoint write scope signals, and that done has main-agent evidence",
+      "verification": "focused unit test and python3 scripts/validate_multi_agent_harness.py",
+      "created_at": "2026-05-16T13:43:26+08:00",
+      "updated_at": "2026-05-16T14:16:20+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 2,
+      "evidence": [
+        "worker callback status=validating; changed scripts/validate_multi_agent_harness.py, test_agent_harness, .ops/harness/README.md, validation JSON, and report",
+        "main-agent validation: python3 -m unittest ginga_platform.orchestrator.runner.tests.test_agent_harness -v passed",
+        "main-agent validation: python3 scripts/validate_multi_agent_harness.py --json .ops/validation/multi_agent_harness.json --report .ops/reports/multi_agent_harness_report.md passed with task_count=45, errors=0, warnings=0",
+        "stdout noise fixed: legacy done-task gaps are recorded as legacy_warnings in JSON/report and no longer pollute baseline output"
+      ],
+      "blockers": [],
+      "handoff_note": "Main agent reviewed worker output and accepted v2.4 as done; legacy warnings remain report-only governance debt."
+    },
+    {
+      "task_id": "v2.5-stage-closeout-harness",
+      "title": "v2.5 Stage Closeout Harness",
+      "status": "done",
+      "owner": "Ohm worker; main agent validated",
+      "model_contract": {
+        "provider": "OpenAI Codex subagent runtime",
+        "supports_explicit_model_param": true,
+        "model_tier": "inherited current session model; coding worker",
+        "reason": "阶段收口模板、truth sync、验证摘要和 commit message 检查可做成独立 validator，不依赖 v2.4 写范围",
+        "fallback": "若子代理不可用，主控按同一写范围本地实现；若 commit 状态不可判断，输出 warn 而不是误判 pass"
+      },
+      "owned_files": [
+        "scripts/validate_stage_closeout.py",
+        "ginga_platform/orchestrator/runner/tests/test_architecture_contracts.py",
+        ".ops/harness/stage_closeout_template.md",
+        ".ops/validation/stage_closeout_harness.json",
+        ".ops/reports/stage_closeout_harness_report.md"
+      ],
+      "forbidden_files": [
+        "STATUS.md",
+        "ROADMAP.md",
+        "notepad.md",
+        "scripts/run_real_llm_harness.py",
+        "scripts/validate_multi_agent_harness.py",
+        "foundation/runtime_state/**"
+      ],
+      "input_refs": [
+        "AGENTS.md 阶段性备份规则",
+        "STATUS.md 主验证命令",
+        ".ops/harness/README.md",
+        "scripts/verify_all.py"
+      ],
+      "expected_output": "stage closeout template plus validator/report checking truth sync markers, verification summary, residual risks, and commit-message content rules",
+      "verification": "focused unit test and python3 scripts/validate_stage_closeout.py",
+      "created_at": "2026-05-16T13:43:26+08:00",
+      "updated_at": "2026-05-16T14:16:20+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 2,
+      "evidence": [
+        "worker callback status=validating; changed scripts/validate_stage_closeout.py, test_architecture_contracts, stage_closeout_template, validation JSON, and report",
+        "main-agent validation: python3 -m unittest ginga_platform.orchestrator.runner.tests.test_architecture_contracts -v passed",
+        "main-agent validation: python3 scripts/validate_stage_closeout.py --json .ops/validation/stage_closeout_harness.json --report .ops/reports/stage_closeout_harness_report.md --commit-message <v2.5 sample> passed",
+        "scope confirmed: stage closeout harness validates template/truth-sync/verification/residual-risk/commit-message fields but does not auto commit or push"
+      ],
+      "blockers": [],
+      "handoff_note": "Main agent reviewed worker output and accepted v2.5 as done; live commit/push remains a separate closeout action."
     }
   ]
 }

@@ -184,6 +184,71 @@ class RealLLMDemoSmokeTest(unittest.TestCase):
             self.assertEqual(payload["context_snapshot"]["status"], "captured")
             self.assertIn("Context Snapshot", (root / "existing.md").read_text(encoding="utf-8"))
 
+    def test_v23_real_llm_harness_dry_run_records_preflight_postflight_and_review_gate(self) -> None:
+        from scripts.run_real_llm_harness import run_harness
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            payload = run_harness(
+                profile="longform-small-batch",
+                book_id="v23-dry-run",
+                endpoint="久久",
+                state_root=root / ".ops" / "real_llm_harness" / "state",
+                json_output=root / ".ops" / "validation" / "real_llm_harness.json",
+                report_output=root / ".ops" / "reports" / "real_llm_harness_report.md",
+                review_output_root=root / ".ops" / "reviews",
+                chapters=4,
+                word_target=4000,
+                batch_schedule="4",
+                dry_run=True,
+                review_gate=True,
+            )
+
+            self.assertEqual(payload["harness_version"], "v2.3")
+            self.assertTrue(payload["dry_run"])
+            self.assertEqual(payload["profile"], "longform-small-batch")
+            self.assertEqual(payload["preflight"]["status"], "PASS")
+            self.assertEqual(payload["postflight"]["status"], "planned")
+            self.assertEqual(payload["review_gate"]["status"], "planned")
+            self.assertEqual(payload["cost_boundary"]["max_real_llm_calls"], 4)
+            self.assertEqual(payload["cost_boundary"]["max_chapters"], 5)
+            self.assertEqual(payload["cost_boundary"]["min_longform_word_target"], 3500)
+            self.assertTrue(payload["isolation"]["state_root_under_ops"])
+            self.assertIn(".ops/real_llm_harness", payload["isolation"]["state_root"])
+            self.assertIn("review_gate", payload["gates"])
+            self.assertTrue((root / ".ops" / "validation" / "real_llm_harness.json").exists())
+            report = (root / ".ops" / "reports" / "real_llm_harness_report.md").read_text(encoding="utf-8")
+            self.assertIn("v2.3 Real LLM Harness Report", report)
+            self.assertIn("Preflight", report)
+            self.assertIn("Review Gate", report)
+
+    def test_v23_real_llm_harness_preflight_rejects_unsafe_real_run(self) -> None:
+        from scripts.run_real_llm_harness import run_harness
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            payload = run_harness(
+                profile="longform-small-batch",
+                book_id="v23-unsafe-run",
+                endpoint="久久",
+                state_root=root / "foundation" / "runtime_state",
+                json_output=root / ".ops" / "validation" / "real_llm_harness.json",
+                report_output=root / ".ops" / "reports" / "real_llm_harness_report.md",
+                review_output_root=root / ".ops" / "reviews",
+                chapters=6,
+                word_target=1200,
+                batch_schedule="6",
+                dry_run=False,
+                review_gate=True,
+            )
+
+            self.assertEqual(payload["preflight"]["status"], "FAIL")
+            error_codes = {item["code"] for item in payload["preflight"]["errors"]}
+            self.assertIn("longform_batch_exceeds_upper_bound", error_codes)
+            self.assertIn("state_root_not_isolated_ops_path", error_codes)
+            self.assertIn("word_target_below_short_chapter_threshold", error_codes)
+            self.assertFalse(payload["real_llm_executed"])
+
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()

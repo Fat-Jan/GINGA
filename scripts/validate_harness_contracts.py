@@ -14,6 +14,9 @@ HARNESS_MAP_PATH = Path(".ops/harness/README.md")
 AGENTS_PATH = Path("AGENTS.md")
 VERIFY_ALL_PATH = Path("scripts/verify_all.py")
 SELF_PATH = Path("scripts/validate_harness_contracts.py")
+REAL_LLM_HARNESS_PATH = Path("scripts/run_real_llm_harness.py")
+MULTI_AGENT_HARNESS_PATH = Path("scripts/validate_multi_agent_harness.py")
+STAGE_CLOSEOUT_HARNESS_PATH = Path("scripts/validate_stage_closeout.py")
 
 REQUIRED_AGENTS_MARKERS = (
     "Harness Engineering",
@@ -43,10 +46,16 @@ REQUIRED_HARNESS_MARKERS = (
     "truth",
     "StateIO",
     "真实 LLM",
+    "scripts/run_real_llm_harness.py",
+    "scripts/validate_multi_agent_harness.py",
+    "scripts/validate_stage_closeout.py",
 )
 
 REQUIRED_VERIFY_ALL_MARKERS = (
     "scripts/validate_harness_contracts.py",
+    "scripts/run_real_llm_harness.py",
+    "scripts/validate_multi_agent_harness.py",
+    "scripts/validate_stage_closeout.py",
 )
 
 
@@ -74,6 +83,12 @@ def validate_repo(repo_root: Path | None = None) -> dict[str, object]:
 
     if not (root / SELF_PATH).exists():
         errors.append(f"{SELF_PATH}: missing v2.1 self-check script")
+    if not (root / REAL_LLM_HARNESS_PATH).exists():
+        errors.append(f"{REAL_LLM_HARNESS_PATH}: missing v2.3 Real LLM harness script")
+    if not (root / MULTI_AGENT_HARNESS_PATH).exists():
+        errors.append(f"{MULTI_AGENT_HARNESS_PATH}: missing v2.4 multi-agent harness script")
+    if not (root / STAGE_CLOSEOUT_HARNESS_PATH).exists():
+        errors.append(f"{STAGE_CLOSEOUT_HARNESS_PATH}: missing v2.5 stage closeout harness script")
 
     agents_missing = _missing_markers(agents_text, REQUIRED_AGENTS_MARKERS)
     if agents_missing:

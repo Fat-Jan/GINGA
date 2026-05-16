@@ -27,6 +27,7 @@ if str(REPO_ROOT) not in sys.path:
 from ginga_platform.orchestrator.cli.longform_policy import (
     DEFAULT_CHAPTER_BATCH_SIZE,
     MAX_REAL_LLM_CHAPTER_BATCH_SIZE,
+    MIN_SUBMISSION_CHINESE_CHARS,
     PRESSURE_TEST_BATCH_SIZE,
 )
 
@@ -254,7 +255,7 @@ def _drift_report(chapter_runs: list[ChapterRun], anchors: Sequence[str]) -> dic
         if sum(1 for value in run.anchor_hits.values() if value > 0) < max(2, min(4, len(anchors) // 2))
     ]
     forbidden = [run.chapter_no for run in completed if run.forbidden_hits]
-    short = [run.chapter_no for run in completed if run.chinese_chars < 2400]
+    short = [run.chapter_no for run in completed if run.chinese_chars < MIN_SUBMISSION_CHINESE_CHARS]
     missing_foreshadow = [run.chapter_no for run in completed if run.foreshadow_markers == 0]
     return {
         "status": "needs_review" if (low_anchor or forbidden or short) else "stable",
@@ -298,7 +299,7 @@ def _batch_drift_summary(chapter_runs: list[ChapterRun]) -> list[dict[str, Any]]
                     if sum(1 for value in run.anchor_hits.values() if value > 0) < max(2, min(4, len(run.anchor_hits) // 2))
                 ],
                 "forbidden_hit_chapters": [run.chapter_no for run in completed if run.forbidden_hits],
-                "short_chapters": [run.chapter_no for run in completed if run.chinese_chars < 2400],
+                "short_chapters": [run.chapter_no for run in completed if run.chinese_chars < MIN_SUBMISSION_CHINESE_CHARS],
             }
         )
     return summary
@@ -534,6 +535,7 @@ def run_longform_smoke(
             "recommended_batch_size": DEFAULT_CHAPTER_BATCH_SIZE,
             "upper_bound": MAX_REAL_LLM_CHAPTER_BATCH_SIZE,
             "pressure_test_only_at_or_above": PRESSURE_TEST_BATCH_SIZE,
+            "min_submission_chinese_chars": MIN_SUBMISSION_CHINESE_CHARS,
         },
         "state_summary": _state_summary(state_root, book_id),
         "chapter_runs": [asdict(run) for run in chapter_runs],

@@ -74,7 +74,7 @@ class LongformLLMSmokeTest(unittest.TestCase):
                     )
                     text = (
                         f"# 第{chapter_no}章 · 天堑规则\n\n"
-                        + "\n\n".join(paragraph for _ in range(55))
+                        + "\n\n".join(paragraph for _ in range(75))
                         + f"\n<!-- foreshadow: id=fh-long-{chapter_no:03d} planted_ch={chapter_no} "
                         f"expected_payoff={chapter_no + 10} summary=天堑规则 -->\n"
                     )
@@ -120,6 +120,43 @@ class LongformLLMSmokeTest(unittest.TestCase):
             self.assertEqual(payload["drift_report"]["status"], "stable")
             self.assertEqual(payload["drift_report"]["forbidden_hit_chapters"], [])
             self.assertTrue((root / "state" / "longform-real-test" / "chapter_15.md").exists())
+
+    def test_drift_short_chapter_threshold_matches_submission_length_floor(self) -> None:
+        from scripts.run_longform_llm_smoke import ChapterRun, _drift_report
+
+        short_run = ChapterRun(
+            chapter_no=1,
+            batch_no=1,
+            batch_size=2,
+            status="ok",
+            path="chapter_01.md",
+            chars=3200,
+            chinese_chars=3200,
+            anchor_hits={"血脉": 1, "末日": 1, "规则": 1, "天堑": 1},
+            forbidden_hits={},
+            foreshadow_markers=1,
+            stdout_tail="",
+            stderr_tail="",
+        )
+        long_enough_run = ChapterRun(
+            chapter_no=2,
+            batch_no=1,
+            batch_size=2,
+            status="ok",
+            path="chapter_02.md",
+            chars=3600,
+            chinese_chars=3600,
+            anchor_hits={"血脉": 1, "末日": 1, "规则": 1, "天堑": 1},
+            forbidden_hits={},
+            foreshadow_markers=1,
+            stdout_tail="",
+            stderr_tail="",
+        )
+
+        report = _drift_report([short_run, long_enough_run], ["血脉", "末日", "规则", "天堑"])
+
+        self.assertEqual(report["short_chapters"], [1])
+        self.assertEqual(report["status"], "needs_review")
 
 
 if __name__ == "__main__":  # pragma: no cover

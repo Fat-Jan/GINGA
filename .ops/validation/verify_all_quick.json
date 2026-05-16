@@ -1,75 +1,96 @@
 {
-  "generated_at_epoch": 1778907658.453,
+  "generated_at_epoch": 1778912699.985,
   "repo_root": "/Users/arm/Desktop/ginga",
   "passed": true,
   "results": [
     {
       "command": "python -m unittest discover -s ginga_platform -p 'test_*.py'",
       "exit_code": 0,
-      "duration_seconds": 39.752,
-      "stdout_tail": "\u2705 Workflow stage observation exported: /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmpkvnfbpvg/.ops/workflow_observability/cli-stage\n\u2705 patch_id=P-7a2b32-patch applied=False patch_yaml=/var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmpazqjk_o2/patches/P-7a2b32-patch.patch.yaml\n\u2705 Market report exported: /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmpt6coazrc/.ops/market_research/market-book/cli-run (signals=6)\n\u2705 Model topology observation exported: /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmpal1vpvtx/model_topology/cli-smoke (live_probe=False)\n\u2705 Review report exported: /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmpamney4ke/.ops/reviews/review-book/cli-run (status=warn, issues=9)\n\u2705 init done: /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmpt15syesk/state/story-truth-cli\nFAIL story truth template: errors=13 warnings=0 path=/var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmp0h9v1dxc/story_truth_template.yaml\nERROR project_contract: missing required layer\nERROR genre_contract: missing required layer\nERROR plot_architecture: missing required layer\nERROR cast_contract: missing required layer\nERROR world_contract: missing required layer\nERROR system_contracts: missing required layer\nERROR payoff_ledger: missing required layer\nERROR hook_ledger: missing required layer\nERROR foreshadow_ledger: missing required layer\nERROR chapter_input_bundle: missing required layer\nERROR runtime_state_projection: missing required layer\nERROR style_contract: missing required layer\nERROR candidate_promotion_gate: missing required layer",
-      "stderr_tail": "\u2713 LLM \u8fd4\u56de 4 \u5b57\u7b26 / 4 \u4e2a\u6c49\u5b57\n\ud83d\udcdd \u8c03\u7528 ask-llm windhub \u751f\u6210\u7b2c 2 \u7ae0 (\u76ee\u6807 3500 \u5b57)...\n\u2713 LLM \u8fd4\u56de 4 \u5b57\u7b26 / 4 \u4e2a\u6c49\u5b57\n.\ud83d\udcdd mock_harness \u751f\u6210\u7b2c 1 \u7ae0 (\u76ee\u6807 800 \u5b57\uff0c\u4e0d\u8c03\u7528 ask-llm)...\n\u2713 LLM \u8fd4\u56de 1316 \u5b57\u7b26 / 485 \u4e2a\u6c49\u5b57\n.........................rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n......rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n..rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n..rag.layer1_filter: index /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmp6ovv2e17/no-index.sqlite missing (cold-start, empty result)\n.....................rag.layer2_vector: sqlite-vec load failed open: extension unavailable\nrag.layer2_vector: sqlite-vec load failed open: extension unavailable\n..rag.reranker: llm rerank failed open: slow\n..rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n.....................................\ud83d\udcdd mock_harness \u751f\u6210\u7b2c 1 \u7ae0 (\u76ee\u6807 800 \u5b57\uff0c\u4e0d\u8c03\u7528 ask-llm)...\n\u2713 LLM \u8fd4\u56de 1316 \u5b57\u7b26 / 485 \u4e2a\u6c49\u5b57\n.........\n----------------------------------------------------------------------\nRan 256 tests in 39.405s\n\nOK"
+      "duration_seconds": 29.684,
+      "stdout_tail": "\u2705 Workflow stage observation exported: /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmp5drgof7i/.ops/workflow_observability/cli-stage\n\u2705 patch_id=P-ab6fb2-patch applied=False patch_yaml=/var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmp1a_qxs3k/patches/P-ab6fb2-patch.patch.yaml\n\u2705 Market report exported: /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmpo5ys47xs/.ops/market_research/market-book/cli-run (signals=6)\n\u2705 Model topology observation exported: /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmpuj3s7ar4/model_topology/cli-smoke (live_probe=False)\n\u2705 Review report exported: /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmpt4c1tn7g/.ops/reviews/review-book/cli-run (status=warn, issues=9)\n\u2705 init done: /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmp71f2g1_3/state/story-truth-cli\nFAIL story truth template: errors=13 warnings=0 path=/var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmps5k1oemt/story_truth_template.yaml\nERROR project_contract: missing required layer\nERROR genre_contract: missing required layer\nERROR plot_architecture: missing required layer\nERROR cast_contract: missing required layer\nERROR world_contract: missing required layer\nERROR system_contracts: missing required layer\nERROR payoff_ledger: missing required layer\nERROR hook_ledger: missing required layer\nERROR foreshadow_ledger: missing required layer\nERROR chapter_input_bundle: missing required layer\nERROR runtime_state_projection: missing required layer\nERROR style_contract: missing required layer\nERROR candidate_promotion_gate: missing required layer",
+      "stderr_tail": "\u2713 LLM \u8fd4\u56de 4 \u5b57\u7b26 / 4 \u4e2a\u6c49\u5b57\n\ud83d\udcdd \u8c03\u7528 ask-llm windhub \u751f\u6210\u7b2c 2 \u7ae0 (\u76ee\u6807 3500 \u5b57)...\n\u2713 LLM \u8fd4\u56de 4 \u5b57\u7b26 / 4 \u4e2a\u6c49\u5b57\n.\ud83d\udcdd mock_harness \u751f\u6210\u7b2c 1 \u7ae0 (\u76ee\u6807 800 \u5b57\uff0c\u4e0d\u8c03\u7528 ask-llm)...\n\u2713 LLM \u8fd4\u56de 1316 \u5b57\u7b26 / 485 \u4e2a\u6c49\u5b57\n.........................rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n......rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n..rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n..rag.layer1_filter: index /var/folders/k0/gnymqrbj4sv2f9p9hdtt354h0000gn/T/tmp4z2b20cb/no-index.sqlite missing (cold-start, empty result)\n.....................rag.layer2_vector: sqlite-vec load failed open: extension unavailable\nrag.layer2_vector: sqlite-vec load failed open: extension unavailable\n..rag.reranker: llm rerank failed open: slow\n..rag.layer1_filter: rag cold-start, empty result (index has 0 rows or no match)\n.......................................\ud83d\udcdd mock_harness \u751f\u6210\u7b2c 1 \u7ae0 (\u76ee\u6807 800 \u5b57\uff0c\u4e0d\u8c03\u7528 ask-llm)...\n\u2713 LLM \u8fd4\u56de 1316 \u5b57\u7b26 / 485 \u4e2a\u6c49\u5b57\n.........\n----------------------------------------------------------------------\nRan 265 tests in 29.408s\n\nOK"
     },
     {
       "command": "python3 scripts/validate_reference_corpus.py .ops/book_analysis/v1-3-1-smoke-main",
       "exit_code": 0,
-      "duration_seconds": 0.2,
+      "duration_seconds": 0.139,
       "stdout_tail": "PASS reference corpus validation: errors=0 warnings=0 run=.ops/book_analysis/v1-3-1-smoke-main",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/validate_chapter_atoms.py .ops/book_analysis/v1-3-2-smoke-main",
       "exit_code": 0,
-      "duration_seconds": 0.254,
+      "duration_seconds": 0.127,
       "stdout_tail": "PASS chapter atom validation: errors=0 warnings=0 run=.ops/book_analysis/v1-3-2-smoke-main",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/validate_trope_recipes.py .ops/book_analysis/v1-3-3-smoke-main",
       "exit_code": 0,
-      "duration_seconds": 0.239,
+      "duration_seconds": 0.13,
       "stdout_tail": "PASS trope recipe validation: errors=0 warnings=0 run=.ops/book_analysis/v1-3-3-smoke-main",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/build_reference_sidecar_index.py",
       "exit_code": 0,
-      "duration_seconds": 0.26,
+      "duration_seconds": 0.139,
       "stdout_tail": "PASS reference sidecar index: cards_indexed=0 files_seen=0 index=.ops/validation/reference_sidecar_rag.sqlite",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/validate_harness_contracts.py",
       "exit_code": 0,
-      "duration_seconds": 0.1,
+      "duration_seconds": 0.066,
       "stdout_tail": "PASS: harness contracts\nPASS: AGENTS.md Harness Engineering entry - all required markers present\nPASS: v2.0 Harness Map - all required markers present\nPASS: v2.1 Harness self-check wiring - all required markers present",
+      "stderr_tail": ""
+    },
+    {
+      "command": "python3 scripts/run_real_llm_harness.py --dry-run",
+      "exit_code": 0,
+      "duration_seconds": 0.126,
+      "stdout_tail": "wrote /Users/arm/Desktop/ginga/.ops/validation/real_llm_harness.json and /Users/arm/Desktop/ginga/.ops/reports/real_llm_harness_report.md; profile=longform-small-batch dry_run=True preflight=PASS passed=True",
+      "stderr_tail": ""
+    },
+    {
+      "command": "python3 scripts/validate_multi_agent_harness.py",
+      "exit_code": 0,
+      "duration_seconds": 0.073,
+      "stdout_tail": "PASS: multi-agent harness board\nboard: .ops/subagents/board.json\ntasks: 45\nPASS: board shape\nPASS: task governance invariants\nlegacy_warnings: 78 (see markdown/JSON report)",
+      "stderr_tail": ""
+    },
+    {
+      "command": "python3 scripts/validate_stage_closeout.py --commit-message 'v2.5 stage closeout harness: update template and validator; verification: verify_all baseline; residual risk: live commit and push still require operator review'",
+      "exit_code": 0,
+      "duration_seconds": 0.078,
+      "stdout_tail": "PASS: stage closeout harness\nPASS: stage closeout template exists - /Users/arm/Desktop/ginga/.ops/harness/stage_closeout_template.md\nPASS: stage closeout template sections - all required sections present\nPASS: stage closeout template markers - all required markers present\nPASS: commit message discipline - stage/update, verification, and residual risk wording present",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/validate_architecture_contracts.py",
       "exit_code": 0,
-      "duration_seconds": 1.609,
+      "duration_seconds": 0.904,
       "stdout_tail": "PASS: architecture contracts\nPASS: workflow steps - loaded 12 step(s)\nPASS: capability registry - found 12 default capability id(s)\nPASS: foundation asset ids - found 486 frontmatter id(s)\nPASS: skill-router file - ginga_platform/orchestrator/router/skill_router.py\nPASS: skill contracts - found 2 contract(s)\nPASS: recall forbidden paths - contains 8 path(s)\nPASS: v1.3-0 book_analysis boundaries - pollution docs and source manifest schema are present and constrained\nPASS: StateIO write boundary - runtime_state YAML writes are limited to StateIO / locked patch flow\nPASS: current planning hygiene - STATUS.md next step, stale doc wording, and .ops/p7 history notices are aligned\nPASS: P2-7 runner convergence - single-run path keeps workflow DSL, skill-router, adapter, and StateIO dispatch wiring\nPASS: v1.4 BookView boundary - BookView is constrained to .ops/book_views and does not write StateIO\nPASS: v1.5 Review boundary - Review is constrained to warn-only .ops/reviews sidecar output\nPASS: v1.6 Market Research boundary - Market Research is constrained to authorized offline .ops/market_research sidecar output\nPASS: v1.8-0 Model Topology observation boundary - Model Topology is constrained to report-only .ops/model_topology observation output\nPASS: v1.8-1 Candidate Truth Gate wording - candidate-only / report-only / truth gate wording is present\nPASS: v2.0 Harness Map and v2.1 Harness self-check - Harness Map, self-check script, and verify_all wiring are present\nPASS: v1.8-3 Genm optional observability boundary - Genm optional observability is constrained to report-only evidence/workflow/migration reports",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/validate_prompt_frontmatter.py --strict",
       "exit_code": 0,
-      "duration_seconds": 1.058,
+      "duration_seconds": 0.798,
       "stdout_tail": "wrote .ops/validation/prompt_frontmatter_report.json: total=461 violations=0",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/report_prompt_quality.py foundation/assets/prompts",
       "exit_code": 0,
-      "duration_seconds": 1.12,
+      "duration_seconds": 1.036,
       "stdout_tail": "wrote .ops/validation/prompt_quality_report.json: total=461 weak_examples=0",
       "stderr_tail": ""
     },
     {
       "command": "python3 scripts/validate_methodology_assets.py foundation/assets/methodology foundation/schema/methodology.yaml",
       "exit_code": 0,
-      "duration_seconds": 0.224,
+      "duration_seconds": 0.217,
       "stdout_tail": "OK: validated 12 asset(s) against foundation/schema/methodology.yaml",
       "stderr_tail": ""
     }

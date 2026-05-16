@@ -38,7 +38,10 @@ from typing import Any
 from ginga_platform.orchestrator.runner.op_translator import (
     adapter_ops_to_state_updates,
 )
-from ginga_platform.orchestrator.cli.longform_policy import low_frequency_anchors as hard_gate_low_frequency_anchors
+from ginga_platform.orchestrator.cli.longform_policy import (
+    MIN_SUBMISSION_CHINESE_CHARS,
+    low_frequency_anchors as hard_gate_low_frequency_anchors,
+)
 from ginga_platform.orchestrator.registry.capability_registry import CapabilityRegistry
 from ginga_platform.orchestrator.runner.dsl_parser import Step, parse_workflow
 from ginga_platform.orchestrator.runner.state_io import StateIO
@@ -322,6 +325,8 @@ def _build_chapter_prompt(state: dict, word_target: int, chapter_no: int = 1) ->
     particles = (entity.get("RESOURCE_LEDGER", {}) or {}).get("particles", 0)
     bundle_block = _render_chapter_input_bundle_prompt(chapter_input_bundle)
 
+    minimum_body_chars = max(MIN_SUBMISSION_CHINESE_CHARS, int(word_target * 0.9))
+
     prompt = f"""你是「dark-fantasy-ultimate-engine」窄通道生产引擎，按下方设定写第{chapter_no}章。
 
 ## 题材与风格锁
@@ -363,12 +368,15 @@ def _build_chapter_prompt(state: dict, word_target: int, chapter_no: int = 1) ->
 ## 输出要求
 1. 必须先输出一个 markdown 表格《写作自检》（4 行：当前锚定 / 当前微粒 / 预计微粒变化 / 主要冲突）
 2. 然后输出章节正文，目标字数 {word_target} 字（中文计算），章节标题用「{chapter_label}」
-   - 正文章节不得低于 {max(800, int(word_target * 0.9))} 个中文汉字；接近结尾但未达到字数时，继续推进场景，不要用总结段提前收束
+   - 正式投稿质量下限：正文章节不得低于 {minimum_body_chars} 个中文汉字，且任何真实长篇小批不得低于 {MIN_SUBMISSION_CHINESE_CHARS} 个中文汉字；接近结尾但未达到字数时，继续推进场景，不要用总结段提前收束
    - 用 5-8 个连续场景段落扩展动作、环境压迫、身体代价、对手反应和伏笔推进；不要用设定说明替代正文推进
    - 禁止输出提纲、说明、创作分析或“以下是正文”之类包装语
 3. 章节正文要求：
    - 暗黑、压抑、凶性显化、暴力美学
    - {embed_hint}
+   - 第 2 章以后首段必须从「上一章承接」里的最近事件推进当前动作，不得把醒来、睁眼、灰白环境、体内微粒或天堑边缘当作新开场
+   - 用具体动作、感官压迫和身体代价替代抽象情绪；禁止写“说不出的感觉”“难以言喻”“复杂的情绪”
+   - 转折必须有动作因果支撑；少用或不用“突然”“猛然”“下一秒”
    - 禁止出现：都市腔 / 科幻腔 / 游戏系统播报腔 / 轻小说吐槽 / 散文抒情
    - 不准写"系统提示""叮""恭喜获得"等游戏腔表达
 4. 章节正文末尾如果发生微粒结算，输出《章节结算》表格（可选）
@@ -478,6 +486,8 @@ def build_chapter_input_bundle(
     return {
         "chapter_no": chapter_no,
         "word_target": word_target,
+        "minimum_body_chars": max(MIN_SUBMISSION_CHINESE_CHARS, int(word_target * 0.9)),
+        "min_submission_chinese_chars": MIN_SUBMISSION_CHINESE_CHARS,
         "truth_source": "StateIO",
         "reads_report_only_sources": False,
         "forbidden_sources": [
@@ -542,6 +552,7 @@ def build_chapter_input_bundle(
         "low_frequency_anchors": low_frequency_anchors,
         "recent_arc_summaries": recent_arcs,
         "risk_notes": [
+            f"正式投稿质量下限为 {MIN_SUBMISSION_CHINESE_CHARS}+ 中文字；不得用低成本短章观测替代生产质量。",
             "不得读取 candidate-only/report-only 外部来源。",
             "不得把 review/jury/market 结论自动写入 truth。",
             "不得绕过 StateIO 修改 runtime_state。",

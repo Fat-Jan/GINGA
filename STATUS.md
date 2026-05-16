@@ -58,6 +58,10 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 | v2.0 Harness Map | `done` | `.ops/harness/README.md`；`scripts/validate_harness_contracts.py`；`python3 scripts/validate_harness_contracts.py` | 已把任务类型映射到先读文件、禁区、最短反馈命令和证据落点；只做规则地图，不扩 CLI matrix、不跑真实 LLM、不接管多 agent 调度 |
 | v2.1 Harness Self-check | `done` | `scripts/validate_harness_contracts.py`；`scripts/verify_all.py`；`test_architecture_contracts.test_harness_contracts_require_map_and_self_check_markers`；`.ops/validation/harness_contracts.json`；`.ops/validation/architecture_contracts.json` | 已检查 `AGENTS.md`、`.ops/harness/README.md` 和 `verify_all.py` wiring；架构契约新增 `v2.0 Harness Map and v2.1 Harness self-check` 检查 |
 | v2.2 CLI Harness Matrix | `done` | `scripts/run_agent_harness.py`；`test_agent_harness.test_offline_harness_covers_cli_paths_and_error_exit_codes`；`.ops/validation/agent_harness.json`；`.ops/reports/agent_harness_report.md` | 已把离线 harness 扩到 13 个 case：runtime mock 路径、错误退出、review / inspect / query / market / observability 三子命令 / model-topology；新增项均为 `cli_report_only`，只写临时 sidecar 汇总证据，不证明真实 LLM 生产质量 |
+| v2.3 Real LLM Harness | `done` | `scripts/run_real_llm_harness.py`；`test_real_llm_demo_smoke`；`test_longform_llm_smoke`；`.ops/validation/real_llm_harness.json`；`.ops/reports/real_llm_harness_report.md`；`scripts/verify_all.py` wiring | 已固定真实 LLM preflight / postflight、成本边界、隔离输出和 warn-only review gate；默认 dry-run，真实调用必须显式 `--run`；长篇小批默认 4 章、上限 5 章，正式投稿质量阈值按 3500+ 中文字判断 |
+| v1.7-5 后真实长篇小批隔离验证 | `observation` | `.ops/validation/v1_7_5_post_repair_4000_real_llm_harness.json`；`.ops/reports/v1_7_5_post_repair_4000_real_llm_harness.md`；`.ops/reviews/v1-7-5-post-repair-v23-4000-small-batch/v2-3-real-llm-review-gate/review_report.json` | 2026-05-16 用 v2.3 harness 以 4 章 / 4000 字目标 / 独立 state_root 真实验证：生成 4/4 且低频锚点未缺失，但 `passed=false`；第 2-4 章低于 3500 字，review warn/16 issues，hard gate 因 `consecutive_opening_loop_risk` 阻断下一批；不能扩大批量或自动改正文 |
+| v2.4 Multi-Agent Harness | `done` | `scripts/validate_multi_agent_harness.py`；`test_agent_harness`；`.ops/validation/multi_agent_harness.json`；`.ops/reports/multi_agent_harness_report.md` | 已自动检查 board / task contract / provider model / 写范围 / done 归属；当前 board PASS，历史旧任务治理缺口降为 `legacy_warnings` 报告，不污染 baseline stdout |
+| v2.5 Stage Closeout Harness | `done` | `scripts/validate_stage_closeout.py`；`.ops/harness/stage_closeout_template.md`；`test_architecture_contracts`；`.ops/validation/stage_closeout_harness.json`；`.ops/reports/stage_closeout_harness_report.md` | 已固定阶段收口模板、truth sync、验证摘要、residual risk 与 commit message 检查；live commit / push 仍由主控按 diff 白名单执行，不自动化 |
 
 ## 已完成
 
@@ -92,17 +96,17 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 
 ## 下一步
 
-当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7 Longform Production Policy / Quality Gate / Reviewer Queue / Hard Gate 与 v1.8-0/v1.8-1/v1.8-2/v1.8-3 Genm 机制吸收已收口。v1.9-1 到 v1.9-5 Story Truth Template 已完成；v1.9-5 是小范围真实回归观察，不能据此扩大真实批量。后续改 CLI / workflow / skill adapter / `StateIO` / 章节产物时，先跑离线 harness 证明边界不退化。
+当前 P2-7 Platform runner 收敛已完成到 provider 质量与真实 demo 边界报告层，P2-7C 严格状态为 `done`。v1.3 Reference Sidecar 链路、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7 Longform Production Policy / Quality Gate / Reviewer Queue / Hard Gate、v1.8-0/v1.8-1/v1.8-2/v1.8-3 Genm 机制吸收、v1.9 Story Truth Template 与 v2.0-v2.5 Harness Engineering 已收口。v1.7-5 后 4 章 / 4000 字真实小批验证仍是 `observation`：流程可回归，但质量 gate 阻断下一批。
 
 优先任务：
 
 - **RAG 残余观察**：2026-05-16 已刷新 `.ops/reports/rag_recall_quality_report.md` 与 `.ops/validation/rag_recall_quality.json`；473 cards / 473 vectors，native sqlite-vec used，fallback=none，Layer 1/2 空召回均为 0，Layer 2 `expected_recall@5=0.917` / `recall@5=0.614`。保留 `candidate_k` / `asset_type` blocker 作为观察项；只有指标回退或新 gold query 暴露问题时再修。
-- **真实长篇生产化后续**：v1.7-4 已跑 4+5 共 9 章真实回归并暴露 review hard gate 阻断；v1.7-5 已修 prompt / input-bundle 的续写承接与低频锚点输入。下一步若继续真实长篇，只能做隔离小批验证并复跑 `ginga review`，不得直接扩大批量或自动改旧正文。
+- **真实长篇生产化后续**：v1.7-5 后 4 章 / 4000 字隔离真实验证已完成，但 hard gate 因连续开篇回环阻断下一批，且第 2-4 章低于 3500 字投稿质量阈值；下一步先修开篇回环与长度控制，再用 v2.3 harness 复跑同等 4 章小批，不得扩大批量或自动改旧正文。
 - **Model topology 后续**：v1.8-0 只做 observation，不接管 runtime；若后续要做 provider router，必须先补 live probe 证据、失败降级策略、same-chapter-single-writer 边界和 agent harness 回归。
 - **Candidate Truth Gate 后续**：v1.8-1 只统一术语；若后续要做通用候选接受链，必须先选一个现有 candidate surface 做窄切片，不得一次性重写 `StateIO` 或 promote flow。
 - **Genm 可观测性后续**：v1.8-3 已把 jury evidence pack、workflow stage observation 和 migration audit 落为 report-only 工具；后续若要接入 CI 或 stage runner，只能先扩观察指标，不得接管 workflow 执行或自动迁移文件。
-- **Story Truth Template 后续**：v1.9-5 已完成真实小样本回归并留下 observation；后续若要提高质量，先处理短章阈值、review 17 issues 和低频锚点持续性，不得直接把拆书候选、review report、market report 或 jury 原文写入 truth。
-- **Harness Engineering 后续**：v2.0 / v2.1 / v2.2 已把规则地图、自检和 CLI matrix 立住；下一步若继续做 harness，应按 `.ops/harness/README.md` 顺序进入 v2.3 真实 LLM preflight / postflight，再考虑 v2.4 多 agent contract validator、v2.5 阶段收口模板。
+- **Story Truth Template 后续**：短章阈值已从 2400 收紧到 3500+ 中文字；v1.7-5 后验证显示低频锚点未缺失，但 review 仍有 16 issues 与连续开篇回环，不能直接把拆书候选、review report、market report 或 jury 原文写入 truth。
+- **Harness Engineering 后续**：v2.0-v2.5 已接入 `scripts/verify_all.py` baseline；后续扩展只做小切片，保持 dry-run 默认、独立证据落点、主控 done 归属和阶段收口模板。
 
 ## 规划索引（不代表已完成）
 

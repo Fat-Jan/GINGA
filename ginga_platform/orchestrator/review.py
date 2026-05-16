@@ -16,6 +16,7 @@ from typing import Any
 from ginga_platform.orchestrator.cli.longform_policy import (
     DEFAULT_CHAPTER_BATCH_SIZE,
     MAX_REAL_LLM_CHAPTER_BATCH_SIZE,
+    MIN_SUBMISSION_CHINESE_CHARS,
     PRESSURE_TEST_BATCH_SIZE,
     count_chinese,
     evaluate_longform_hard_gate,
@@ -333,7 +334,7 @@ def _longform_chapter_issues(
                 code="short_chapter",
                 category="longform_quality",
                 message="章节中文正文低于 v1.7 gate 阈值，可能是批量生成后段质量下滑。",
-                evidence=f"chinese_chars={count_chinese(body_text)} < 2400",
+                evidence=f"chinese_chars={count_chinese(body_text)} < {MIN_SUBMISSION_CHINESE_CHARS}",
             )
         )
     forbidden_hits = check["forbidden_hits"]
@@ -417,7 +418,7 @@ def _batch_quality_snapshot(batch: list[dict[str, Any]], low_frequency_anchors: 
             opening_loop_chapters.append(chapter.get("name", ""))
         if low_frequency_anchors and not any(anchor in body for anchor in low_frequency_anchors):
             missing_low_frequency_anchor_chapters.append(chapter.get("name", ""))
-        if count_chinese(body) < 2400:
+        if count_chinese(body) < MIN_SUBMISSION_CHINESE_CHARS:
             short_chapters.append(chapter.get("name", ""))
         if longform_forbidden_hits(body):
             forbidden_hit_chapters.append(chapter.get("name", ""))

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import importlib
 import tempfile
 import unittest
 from pathlib import Path
@@ -46,7 +47,10 @@ class ArchitectureContractsTest(unittest.TestCase):
                 encoding="utf-8",
             )
             (repo_root / ".ops/harness/README.md").write_text(
-                "# Harness Map\n\nSTATUS.md\nscripts/verify_all.py\n",
+                "# Harness Map\n\nSTATUS.md\nscripts/verify_all.py\n"
+                "scripts/run_real_llm_harness.py\n"
+                "scripts/validate_multi_agent_harness.py\n"
+                "scripts/validate_stage_closeout.py\n",
                 encoding="utf-8",
             )
 
@@ -58,6 +62,71 @@ class ArchitectureContractsTest(unittest.TestCase):
             self.assertTrue(any("scripts/validate_harness_contracts.py" in error for error in report["errors"]))
             self.assertTrue(any("task_type" in error for error in report["errors"]))
             self.assertTrue(any("real_llm_policy" in error for error in report["errors"]))
+
+    def test_harness_contracts_require_v23_to_v25_wiring(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo_root = Path(tmpdir)
+            (repo_root / ".ops/harness").mkdir(parents=True)
+            (repo_root / "scripts").mkdir(parents=True)
+            (repo_root / "AGENTS.md").write_text(
+                "\n".join(
+                    [
+                        "# Agent 入口说明",
+                        "Harness Engineering",
+                        "STATUS.md",
+                        ".ops/validation/**",
+                        ".ops/reports/**",
+                        ".ops/governance/candidate_truth_gate.md",
+                        "StateIO",
+                        "真实 LLM",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            (repo_root / "scripts/validate_harness_contracts.py").write_text("# self\n", encoding="utf-8")
+            (repo_root / "scripts/run_real_llm_harness.py").write_text("# v2.3\n", encoding="utf-8")
+            (repo_root / "scripts/validate_multi_agent_harness.py").write_text("# v2.4\n", encoding="utf-8")
+            (repo_root / "scripts/validate_stage_closeout.py").write_text("# v2.5\n", encoding="utf-8")
+            (repo_root / ".ops/harness/README.md").write_text(
+                "\n".join(
+                    [
+                        "task_type",
+                        "docs_or_status",
+                        "architecture_boundary",
+                        "cli_or_workflow",
+                        "rag_or_prompt",
+                        "sidecar_or_observability",
+                        "real_llm_policy",
+                        "subagent_coordination",
+                        "scripts/validate_harness_contracts.py",
+                        "scripts/verify_all.py",
+                        ".ops/validation/**",
+                        ".ops/reports/**",
+                        "candidate-only",
+                        "report-only",
+                        "truth",
+                        "StateIO",
+                        "真实 LLM",
+                        "scripts/run_real_llm_harness.py",
+                        "scripts/validate_multi_agent_harness.py",
+                        "scripts/validate_stage_closeout.py",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            (repo_root / "scripts/verify_all.py").write_text(
+                "scripts/validate_harness_contracts.py\n",
+                encoding="utf-8",
+            )
+
+            report = {"checks": [], "warnings": [], "errors": []}
+            archlint.validate_harness_contracts(repo_root, report)
+
+            self.assertEqual(report["checks"][0]["status"], "FAIL")
+            errors = "\n".join(report["errors"])
+            self.assertIn("scripts/run_real_llm_harness.py", errors)
+            self.assertIn("scripts/validate_multi_agent_harness.py", errors)
+            self.assertIn("scripts/validate_stage_closeout.py", errors)
 
     def test_current_planning_hygiene_detects_stale_next_step_text(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -250,6 +319,59 @@ class ArchitectureContractsTest(unittest.TestCase):
             self.assertIn("warnings", data)
             self.assertIn("errors", data)
             self.assertEqual(data["warnings"], [])
+
+    def test_stage_closeout_validator_rejects_incomplete_template_and_commit_message(self) -> None:
+        stage_closeout = importlib.import_module("scripts.validate_stage_closeout")
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo_root = Path(tmpdir)
+            template_path = repo_root / "stage_closeout_template.md"
+            template_path.write_text(
+                "# Stage Closeout\n\n## Objective\n\nOnly a partial template.\n",
+                encoding="utf-8",
+            )
+
+            report = stage_closeout.validate_closeout(
+                template_path=template_path,
+                commit_message="update template",
+            )
+
+            self.assertEqual(report["status"], "FAIL")
+            self.assertIn("checks", report)
+            self.assertIn("errors", report)
+            self.assertIn("warnings", report)
+            self.assertTrue(any("Scope" in error for error in report["errors"]))
+            self.assertTrue(any("STATUS.md" in error for error in report["errors"]))
+            self.assertTrue(any("verification" in error.lower() for error in report["errors"]))
+            self.assertTrue(any("residual risk" in error.lower() for error in report["errors"]))
+
+    def test_stage_closeout_main_writes_json_and_markdown_report(self) -> None:
+        stage_closeout = importlib.import_module("scripts.validate_stage_closeout")
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            json_path = Path(tmpdir) / "stage-closeout.json"
+            report_path = Path(tmpdir) / "stage-closeout.md"
+            exit_code = stage_closeout.main(
+                [
+                    "--template",
+                    ".ops/harness/stage_closeout_template.md",
+                    "--json",
+                    str(json_path),
+                    "--report",
+                    str(report_path),
+                    "--commit-message",
+                    "v2.5 stage closeout harness: update template and validator; "
+                    "verification: focused unit test plus validate_stage_closeout; "
+                    "residual risk: live commit/push still requires operator review",
+                ]
+            )
+
+            self.assertEqual(exit_code, 0)
+            data = json.loads(json_path.read_text(encoding="utf-8"))
+            self.assertEqual(data["status"], "PASS")
+            self.assertEqual(data["errors"], [])
+            self.assertIsInstance(data["checks"], list)
+            self.assertIn("Stage Closeout Harness", report_path.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":  # pragma: no cover

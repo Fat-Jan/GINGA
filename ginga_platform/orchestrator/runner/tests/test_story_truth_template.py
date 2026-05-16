@@ -266,6 +266,8 @@ class ChapterInputBundleTest(unittest.TestCase):
         self.assertIn("previous_chapter_bridge", bundle)
         self.assertIn("opening_continuity_guard", bundle)
         self.assertIn("low_frequency_anchors", bundle)
+        self.assertEqual(bundle["min_submission_chinese_chars"], 3500)
+        self.assertEqual(bundle["minimum_body_chars"], 3500)
         self.assertEqual(bundle["truth_source"], "StateIO")
         self.assertFalse(bundle["reads_report_only_sources"])
         self.assertIn(".ops/book_analysis/**", bundle["forbidden_sources"])
@@ -341,6 +343,12 @@ class ChapterInputBundleTest(unittest.TestCase):
         self.assertIn("末日", prompt)
         self.assertIn("多子多福", prompt)
         self.assertIn("繁衍契约", prompt)
+        self.assertIn("正式投稿质量下限", prompt)
+        self.assertIn("不得低于 3600 个中文汉字", prompt)
+        self.assertIn("不得低于 3500 个中文汉字", prompt)
+        self.assertIn("不得把醒来、睁眼、灰白环境、体内微粒或天堑边缘当作新开场", prompt)
+        self.assertIn("禁止写“说不出的感觉”“难以言喻”“复杂的情绪”", prompt)
+        self.assertIn("少用或不用“突然”“猛然”“下一秒”", prompt)
 
     def test_chapter_input_bundle_uses_hard_gate_low_frequency_anchor_source(self) -> None:
         from ginga_platform.orchestrator.cli.demo_pipeline import build_chapter_input_bundle

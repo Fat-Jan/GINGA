@@ -1,0 +1,450 @@
+{
+  "kind": "ReviewDeslopReport",
+  "book_id": "v1-7-5-post-repair-v23-4000-small-batch",
+  "run_id": "v2-3-real-llm-review-gate",
+  "generated_at": "2026-05-16T06:10:44+00:00",
+  "status": "warn",
+  "passed": false,
+  "mode": "warn_only",
+  "auto_edit": false,
+  "projection": {
+    "kind": "ReviewDeslop",
+    "truth_source": "StateIO",
+    "is_state_truth": false,
+    "writes_runtime_state": false,
+    "output_boundary": ".ops/reviews/<book_id>/<run_id>/"
+  },
+  "rubric": {
+    "id": "platform_cn_webnovel_v1",
+    "scope": "report_only",
+    "enters_creation_prompt": false,
+    "categories": [
+      "anti_ai_style",
+      "platform_genre_fit",
+      "webnovel_readability",
+      "style_fingerprint"
+    ]
+  },
+  "data_sources": {
+    "state_dir": ".ops/real_llm_harness/v1-7-5-post-repair-4000-state/v1-7-5-post-repair-v23-4000-small-batch",
+    "state_domains": [
+      "locked",
+      "entity_runtime",
+      "workspace",
+      "retrieved",
+      "audit_log"
+    ],
+    "chapter_artifacts": [
+      ".ops/real_llm_harness/v1-7-5-post-repair-4000-state/v1-7-5-post-repair-v23-4000-small-batch/chapter_01.md",
+      ".ops/real_llm_harness/v1-7-5-post-repair-4000-state/v1-7-5-post-repair-v23-4000-small-batch/chapter_02.md",
+      ".ops/real_llm_harness/v1-7-5-post-repair-4000-state/v1-7-5-post-repair-v23-4000-small-batch/chapter_03.md",
+      ".ops/real_llm_harness/v1-7-5-post-repair-4000-state/v1-7-5-post-repair-v23-4000-small-batch/chapter_04.md"
+    ],
+    "forbidden_default_sources": [
+      ".ops/book_analysis/**",
+      ".ops/market_research/**",
+      ".ops/external_sources/**"
+    ]
+  },
+  "context": {
+    "topic": [
+      "玄幻黑暗 + 规则怪谈 + 末日多子多福"
+    ],
+    "forbidden_styles": [
+      "都市腔",
+      "科幻腔",
+      "游戏系统播报腔",
+      "轻小说吐槽腔"
+    ],
+    "anchor_phrases": [
+      "微粒",
+      "天堑",
+      "内宇宙"
+    ],
+    "premise_present": true
+  },
+  "summary": {
+    "chapter_count": 4,
+    "issue_count": 16,
+    "warn_count": 16,
+    "error_count": 0,
+    "longform_gate_issue_count": 6,
+    "reviewer_queue_count": 3,
+    "style_fingerprint_status": "measured"
+  },
+  "style_fingerprint": {
+    "scope": "report_only",
+    "auto_edit": false,
+    "writes_runtime_state": false,
+    "enters_creation_prompt": false,
+    "status": "measured",
+    "chapter_count": 4,
+    "total_chinese_chars": 13221,
+    "paragraph_count": 205,
+    "dialogue_line_count": 29,
+    "dialogue_line_ratio": 0.134,
+    "avg_sentence_chars": 23.4,
+    "sentence_length_buckets": {
+      "short": 130,
+      "medium": 350,
+      "long": 84
+    },
+    "anchor_phrase_hits": {
+      "微粒": 54,
+      "天堑": 6,
+      "内宇宙": 9
+    },
+    "style_pattern_hits": {
+      "generic_emotion": 3,
+      "cliche_metaphor": 0,
+      "abrupt_transition": 7,
+      "game_system_tone": 0,
+      "light_novel_meta": 0
+    },
+    "notes": [
+      "Style fingerprint is measured for review evidence only.",
+      "It must not auto-edit prose, write StateIO, or enter creation prompts."
+    ]
+  },
+  "longform_quality_gate": {
+    "enabled": true,
+    "mode": "warn_only",
+    "auto_edit": false,
+    "hard_gate": {
+      "enabled": true,
+      "mode": "block_next_real_llm_batch",
+      "window_size": 4,
+      "inspected_chapters": [
+        "chapter_01.md",
+        "chapter_02.md",
+        "chapter_03.md",
+        "chapter_04.md"
+      ],
+      "low_frequency_anchors": [
+        "血脉",
+        "末日",
+        "多子多福",
+        "繁衍契约"
+      ],
+      "block_reasons": [
+        "consecutive_opening_loop_risk"
+      ],
+      "should_block_next_real_llm_batch": true,
+      "chapter_checks": [
+        {
+          "chapter": "chapter_01.md",
+          "opening_loop_risk": true,
+          "missing_low_frequency_anchor": false,
+          "missing_foreshadow_marker": false,
+          "short_chapter": false,
+          "forbidden_hits": {}
+        },
+        {
+          "chapter": "chapter_02.md",
+          "opening_loop_risk": false,
+          "missing_low_frequency_anchor": false,
+          "missing_foreshadow_marker": false,
+          "short_chapter": true,
+          "forbidden_hits": {}
+        },
+        {
+          "chapter": "chapter_03.md",
+          "opening_loop_risk": true,
+          "missing_low_frequency_anchor": false,
+          "missing_foreshadow_marker": false,
+          "short_chapter": true,
+          "forbidden_hits": {}
+        },
+        {
+          "chapter": "chapter_04.md",
+          "opening_loop_risk": true,
+          "missing_low_frequency_anchor": false,
+          "missing_foreshadow_marker": false,
+          "short_chapter": true,
+          "forbidden_hits": {}
+        }
+      ]
+    },
+    "policy": {
+      "recommended_batch_size": 4,
+      "upper_bound": 5,
+      "pressure_test_only_at_or_above": 6
+    },
+    "low_frequency_anchors": [
+      "血脉",
+      "末日",
+      "多子多福",
+      "繁衍契约"
+    ],
+    "batch_state_snapshots": [
+      {
+        "batch_no": 1,
+        "chapter_range": "1-4",
+        "chapter_count": 4,
+        "state_snapshot": {
+          "protagonist": "未命名刺客",
+          "particles": 0,
+          "foreshadow_pool_size": 1,
+          "total_words": 15069,
+          "recent_events": [],
+          "anchors_present": [
+            "多子多福",
+            "末日",
+            "繁衍契约",
+            "血脉"
+          ]
+        },
+        "quality_snapshot": {
+          "opening_loop_chapters": [
+            "chapter_01.md",
+            "chapter_03.md",
+            "chapter_04.md"
+          ],
+          "missing_low_frequency_anchor_chapters": [],
+          "short_chapters": [
+            "chapter_02.md",
+            "chapter_03.md",
+            "chapter_04.md"
+          ],
+          "forbidden_hit_chapters": [],
+          "missing_foreshadow_chapters": []
+        }
+      }
+    ],
+    "issues": [
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_01.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉不是从皮肤表面传来的，而是像某种粘稠的黑色沥青，直接从骨髓深处涌出，沿着脊椎攀爬，最终在颅骨内炸开。无明睁开眼时，并没有看到天空，只有一片被灰白雾气切割得支离破碎的穹顶。那雾气并非水汽，而是无数细小的、死去的尘埃颗粒悬浮在半空，它们静止不动，仿佛时间在这里凝固成了实体。 他躺在一片由黑曜石碎片铺成的荒原上，身下是冰",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_quality",
+        "code": "short_chapter",
+        "chapter": "chapter_02.md",
+        "message": "章节中文正文低于 v1.7 gate 阈值，可能是批量生成后段质量下滑。",
+        "evidence": "chinese_chars=3091 < 3500",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_03.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉并未因意识的回归而消退，反而像是一根烧红的铁钎，顺着脊椎的缝隙狠狠楔入，将无明从混沌的深渊中强行拽回现实。他并没有立刻起身，而是保持着蜷缩的姿态，手指深深扣进黑曜石碎片的缝隙里。指尖传来的触感冰冷、粗糙，带着一种令人作呕的滑腻感——那是某种生物体液干涸后留下的结晶，混合着尘埃，构成了这片荒原的地表。 灰白的雾气依旧",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_quality",
+        "code": "short_chapter",
+        "chapter": "chapter_03.md",
+        "message": "章节中文正文低于 v1.7 gate 阈值，可能是批量生成后段质量下滑。",
+        "evidence": "chinese_chars=3042 < 3500",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_continuity",
+        "code": "opening_loop_risk",
+        "chapter": "chapter_04.md",
+        "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+        "evidence": "痛觉并未因意识的回归而消退，反而像是一根烧红的铁钎，顺着脊椎的缝隙狠狠楔入，将无明从混沌的深渊中强行拽回现实。他并没有立刻起身，而是保持着蜷缩的姿态，手指深深扣进黑曜石碎片的缝隙里。指尖传来的触感冰冷、粗糙，带着一种令人作呕的滑腻感——那是某种生物体液干涸后留下的结晶，混合着尘埃，构成了这片荒原的地表。 灰白的雾气依旧",
+        "action": "review_manually"
+      },
+      {
+        "severity": "warn",
+        "category": "longform_quality",
+        "code": "short_chapter",
+        "chapter": "chapter_04.md",
+        "message": "章节中文正文低于 v1.7 gate 阈值，可能是批量生成后段质量下滑。",
+        "evidence": "chinese_chars=3217 < 3500",
+        "action": "review_manually"
+      }
+    ],
+    "reviewer_queue": [
+      {
+        "chapter": "chapter_02.md",
+        "path": ".ops/real_llm_harness/v1-7-5-post-repair-4000-state/v1-7-5-post-repair-v23-4000-small-batch/chapter_02.md",
+        "reason_codes": [
+          "short_chapter"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_03.md",
+        "path": ".ops/real_llm_harness/v1-7-5-post-repair-4000-state/v1-7-5-post-repair-v23-4000-small-batch/chapter_03.md",
+        "reason_codes": [
+          "short_chapter"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      },
+      {
+        "chapter": "chapter_04.md",
+        "path": ".ops/real_llm_harness/v1-7-5-post-repair-4000-state/v1-7-5-post-repair-v23-4000-small-batch/chapter_04.md",
+        "reason_codes": [
+          "short_chapter"
+        ],
+        "recommended_reviewer": "longform_quality_reviewer",
+        "action": "review_manually"
+      }
+    ]
+  },
+  "issues": [
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "generic_emotion",
+      "chapter": "chapter_01.md",
+      "message": "抽象情绪替代具体动作。",
+      "evidence": "转瞬即逝，留下的只有剧烈的头痛和一种难以言喻的悲伤。他不知道这把刀从何而来，也不",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_01.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "还有的则像是被某种力量瞬间撕碎。 突然，一阵低沉的轰鸣声从城门方向传来。厚",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_01.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "晶体上。就在这一瞬间，他腹部的异物感突然加剧，那颗冰冷的种子剧烈跳动起来，仿",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_01.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "晶体，但在指尖即将接触到的瞬间，短刃突然发出一声嗡鸣，一股强大的吸力从刃口爆",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "generic_emotion",
+      "chapter": "chapter_02.md",
+      "message": "抽象情绪替代具体动作。",
+      "evidence": "充盈感变得更加强烈，同时也带来了一种难以言喻的快感。 男人倒在地上，身体迅速干",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_02.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "露出满口参差不齐的黑牙。他腹部的隆起突然破裂，一团黑色的物质从中喷射而出，直",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_02.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "光滑如镜。当他握住晶体的瞬间，脑海中突然闪过一幅画面：一座高耸入云的黑色巨塔",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "generic_emotion",
+      "chapter": "chapter_03.md",
+      "message": "抽象情绪替代具体动作。",
+      "evidence": "地，看着那人消失的方向，心中涌起一股复杂的情绪。他刚刚完成了一次杀戮，却没有感到丝",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_03.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "切。当无明的目光落在符文上时，脑海中突然闪过一丝尖锐的刺痛，紧接着，一个冰冷",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_03.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "无明停下脚步，看着对方恐惧的眼神。他突然意识到，自己并不想杀人。至少，现在不",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_01.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉不是从皮肤表面传来的，而是像某种粘稠的黑色沥青，直接从骨髓深处涌出，沿着脊椎攀爬，最终在颅骨内炸开。无明睁开眼时，并没有看到天空，只有一片被灰白雾气切割得支离破碎的穹顶。那雾气并非水汽，而是无数细小的、死去的尘埃颗粒悬浮在半空，它们静止不动，仿佛时间在这里凝固成了实体。 他躺在一片由黑曜石碎片铺成的荒原上，身下是冰",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_quality",
+      "code": "short_chapter",
+      "chapter": "chapter_02.md",
+      "message": "章节中文正文低于 v1.7 gate 阈值，可能是批量生成后段质量下滑。",
+      "evidence": "chinese_chars=3091 < 3500",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_03.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉并未因意识的回归而消退，反而像是一根烧红的铁钎，顺着脊椎的缝隙狠狠楔入，将无明从混沌的深渊中强行拽回现实。他并没有立刻起身，而是保持着蜷缩的姿态，手指深深扣进黑曜石碎片的缝隙里。指尖传来的触感冰冷、粗糙，带着一种令人作呕的滑腻感——那是某种生物体液干涸后留下的结晶，混合着尘埃，构成了这片荒原的地表。 灰白的雾气依旧",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_quality",
+      "code": "short_chapter",
+      "chapter": "chapter_03.md",
+      "message": "章节中文正文低于 v1.7 gate 阈值，可能是批量生成后段质量下滑。",
+      "evidence": "chinese_chars=3042 < 3500",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_continuity",
+      "code": "opening_loop_risk",
+      "chapter": "chapter_04.md",
+      "message": "章节开头疑似回到醒来/失忆/体内微粒/天堑边缘模板，可能把续写误判为重新开篇。",
+      "evidence": "痛觉并未因意识的回归而消退，反而像是一根烧红的铁钎，顺着脊椎的缝隙狠狠楔入，将无明从混沌的深渊中强行拽回现实。他并没有立刻起身，而是保持着蜷缩的姿态，手指深深扣进黑曜石碎片的缝隙里。指尖传来的触感冰冷、粗糙，带着一种令人作呕的滑腻感——那是某种生物体液干涸后留下的结晶，混合着尘埃，构成了这片荒原的地表。 灰白的雾气依旧",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "longform_quality",
+      "code": "short_chapter",
+      "chapter": "chapter_04.md",
+      "message": "章节中文正文低于 v1.7 gate 阈值，可能是批量生成后段质量下滑。",
+      "evidence": "chinese_chars=3217 < 3500",
+      "action": "review_manually"
+    }
+  ],
+  "suggestions": [
+    "把抽象心理和套话改成可观察动作、身体代价、环境反馈或对手反应。",
+    "按 v1.7 gate 复核异常章：先看批后状态快照，再处理回环、低频题材锚点和伏笔缺失。"
+  ]
+}
