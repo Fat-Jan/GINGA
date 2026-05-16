@@ -276,3 +276,27 @@ entries:
   payload:
     paths:
     - workspace.CHAPTER_INPUT_BUNDLE
+- ts: '2026-05-16T09:16:46+00:00'
+  source: dark_fantasy_adapter.enter_immersive_mode
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-16T09:16:46+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: immersive entered
+  action: log
+  payload:
+    checker_silenced: true
+- ts: '2026-05-16T09:16:46+00:00'
+  source: immersive_runner.chapter_4.input_bundle
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.CHAPTER_INPUT_BUNDLE

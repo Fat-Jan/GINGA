@@ -451,6 +451,7 @@ def run_harness(
     batch_schedule: str | Sequence[int] = "4",
     dry_run: bool = True,
     review_gate: bool = True,
+    resume: bool = False,
 ) -> dict[str, Any]:
     state_root = Path(state_root)
     json_output = Path(json_output)
@@ -504,7 +505,7 @@ def run_harness(
                 word_target=word_target,
                 batch_schedule=schedule,
                 dry_run=False,
-                resume=False,
+                resume=resume,
             )
     postflight = (
         {"status": "skipped", "errors": [], "warnings": [], "generation_summary": {"reason": "preflight_failed"}}
@@ -541,6 +542,7 @@ def run_harness(
         "json_output": str(json_output),
         "report_output": str(report_output),
         "review_output_root": str(review_output_root),
+        "resume": resume,
         "cost_boundary": cost,
         "isolation": isolation,
         "preflight": preflight,
@@ -567,6 +569,7 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser.add_argument("--word-target", type=int, default=4000)
     parser.add_argument("--batch-schedule", default="4")
     parser.add_argument("--no-review-gate", action="store_false", dest="review_gate")
+    parser.add_argument("--resume", action="store_true", help="resume an isolated partial state_root instead of restarting")
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--dry-run", dest="dry_run", action="store_true", default=True)
     mode.add_argument("--run", dest="dry_run", action="store_false")
@@ -588,6 +591,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         batch_schedule=args.batch_schedule,
         dry_run=args.dry_run,
         review_gate=args.review_gate,
+        resume=args.resume,
     )
     print(
         f"wrote {args.json_output} and {args.report_output}; "

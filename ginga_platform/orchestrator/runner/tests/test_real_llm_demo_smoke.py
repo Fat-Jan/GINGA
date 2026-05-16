@@ -321,6 +321,53 @@ class RealLLMDemoSmokeTest(unittest.TestCase):
         self.assertIn("failed_chapter", report)
         self.assertIn("short_chapter", report)
 
+    def test_v23_real_llm_harness_can_explicitly_resume_partial_longform_run(self) -> None:
+        from scripts import run_real_llm_harness
+        from scripts.run_real_llm_harness import run_harness
+
+        seen: dict[str, object] = {}
+
+        def fake_longform_smoke(**kwargs):
+            seen.update(kwargs)
+            return {
+                "passed": True,
+                "requested_chapters": 4,
+                "completed_chapters": 4,
+                "batch_runs": [],
+                "chapter_runs": [],
+                "drift_report": {
+                    "status": "stable",
+                    "short_chapters": [],
+                    "missing_foreshadow_chapters": [],
+                },
+            }
+
+        original = run_real_llm_harness.run_longform_smoke
+        run_real_llm_harness.run_longform_smoke = fake_longform_smoke
+        try:
+            with tempfile.TemporaryDirectory() as d:
+                root = Path(d)
+                payload = run_harness(
+                    profile="longform-small-batch",
+                    book_id="v23-resume",
+                    endpoint="久久",
+                    state_root=root / ".ops" / "real_llm_harness" / "state",
+                    json_output=root / ".ops" / "validation" / "real_llm_harness.json",
+                    report_output=root / ".ops" / "reports" / "real_llm_harness_report.md",
+                    review_output_root=root / ".ops" / "reviews",
+                    chapters=4,
+                    word_target=4000,
+                    batch_schedule="4",
+                    dry_run=False,
+                    review_gate=False,
+                    resume=True,
+                )
+        finally:
+            run_real_llm_harness.run_longform_smoke = original
+
+        self.assertTrue(payload["passed"])
+        self.assertIs(seen["resume"], True)
+
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
