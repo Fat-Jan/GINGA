@@ -344,11 +344,36 @@ class ChapterInputBundleTest(unittest.TestCase):
         self.assertIn("多子多福", prompt)
         self.assertIn("繁衍契约", prompt)
         self.assertIn("正式投稿质量下限", prompt)
-        self.assertIn("不得低于 3600 个中文汉字", prompt)
-        self.assertIn("不得低于 3500 个中文汉字", prompt)
+        self.assertIn("正文汉字数 3800-4200", prompt)
+        self.assertIn("表格、标题、注释、标点不计入", prompt)
+        self.assertIn("正文汉字数低于 3500", prompt)
         self.assertIn("不得把醒来、睁眼、灰白环境、体内微粒或天堑边缘当作新开场", prompt)
         self.assertIn("禁止写“说不出的感觉”“难以言喻”“复杂的情绪”", prompt)
         self.assertIn("少用或不用“突然”“猛然”“下一秒”", prompt)
+
+    def test_chapter_prompt_counts_body_chinese_chars_not_markdown_overhead(self) -> None:
+        from ginga_platform.orchestrator.cli.demo_pipeline import _build_chapter_prompt
+
+        state = {
+            "locked": {
+                "STORY_DNA": {"premise": "失忆刺客追索血脉契约", "conflict_engine": "末日城邦索债"},
+                "GENRE_LOCKED": {"topic": ["玄幻黑暗"], "style_lock": {"anchor_phrases": ["血脉", "末日"]}},
+                "WORLD": {"economy": "微粒"},
+                "PLOT_ARCHITECTURE": {"pivot_points": [{"ch": 1, "beat": "血门索债"}]},
+            },
+            "entity_runtime": {
+                "CHARACTER_STATE": {"protagonist": {"events": []}},
+                "FORESHADOW_STATE": {"pool": []},
+                "GLOBAL_SUMMARY": {"total_words": 0},
+            },
+        }
+
+        prompt = _build_chapter_prompt(state, word_target=4000, chapter_no=1)
+
+        self.assertIn("正文汉字数 3800-4200", prompt)
+        self.assertIn("表格、标题、注释、标点不计入", prompt)
+        self.assertIn("正文汉字数低于 3500", prompt)
+        self.assertNotIn("目标字数 4000 字", prompt)
 
     def test_chapter_input_bundle_uses_hard_gate_low_frequency_anchor_source(self) -> None:
         from ginga_platform.orchestrator.cli.demo_pipeline import build_chapter_input_bundle

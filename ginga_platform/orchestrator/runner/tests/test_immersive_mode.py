@@ -20,6 +20,7 @@ from ginga_platform.orchestrator.runner.state_io import StateIO
 from ginga_platform.orchestrator.meta_integration.checker_invoker import invoke_checkers
 from ginga_platform.skills.dark_fantasy_ultimate_engine.adapter import DarkFantasyAdapter
 from ginga_platform.orchestrator.cli.immersive_runner import ImmersiveRunner
+from ginga_platform.orchestrator.cli.immersive_runner import _repair_prompt
 
 
 class _BaseImmersiveTest(unittest.TestCase):
@@ -417,10 +418,35 @@ class ImmersiveRunnerRunBlockTest(unittest.TestCase):
         self.assertIsNone(result["last_error"])
         self.assertEqual(len(calls), 2)
         self.assertIn("质量修复", calls[1])
-        self.assertIn("不得低于 3500 个中文汉字", calls[1])
+        self.assertIn("正文汉字数 3800-4200", calls[1])
+        self.assertIn("表格、标题、注释、标点不计入", calls[1])
+        self.assertIn("正文汉字数低于 3500", calls[1])
         chapter_text = (self.state_root / "runner-book" / "chapter_01.md").read_text(encoding="utf-8")
         self.assertIn("血门索债", chapter_text)
         self.assertNotIn("痛觉并未因意识的回归而消退", chapter_text)
+
+    def test_repair_prompt_rewrites_from_failure_summary_without_full_draft_anchor(self) -> None:
+        long_problem_draft = (
+            "痛觉并未因意识的回归而消退，无明睁开眼，看见灰白雾气。"
+            "他重新确认体内微粒和短刃。"
+        ) * 80
+
+        prompt = _repair_prompt(
+            "BASE PROMPT",
+            long_problem_draft,
+            4000,
+            2,
+            attempt=1,
+            failure="short_chapter chinese_chars=3313 < 3500",
+        )
+
+        self.assertIn("正文汉字数 3800-4200", prompt)
+        self.assertIn("表格、标题、注释、标点不计入", prompt)
+        self.assertIn("7-10 个", prompt)
+        self.assertIn("上一版失败摘要", prompt)
+        self.assertIn("上一版短摘录", prompt)
+        self.assertLess(prompt.count("痛觉并未因意识的回归而消退"), 4)
+        self.assertNotIn("## 上一版问题稿", prompt)
 
     def test_run_block_allows_second_repair_before_failing_fast(self) -> None:
         calls: list[str] = []

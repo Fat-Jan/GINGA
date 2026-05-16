@@ -1,6 +1,6 @@
 # v2.3 Real LLM Harness Report
 
-- generated_at: `2026-05-16T07:50:50+00:00`
+- generated_at: `2026-05-16T08:08:47+00:00`
 - profile: `longform-small-batch`
 - dry_run: `True`
 - passed: `True`

@@ -85,7 +85,16 @@ def _chapter_excerpt_for_bridge(chapter_text: str, *, limit: int = 220) -> str:
         and not line.strip().startswith("#")
         and not line.strip().startswith("<!--")
     ]
-    excerpt = " ".join(lines[-4:])
+    compact: list[str] = []
+    seen: set[str] = set()
+    for line in lines:
+        chunks = [chunk.strip() for chunk in re.split(r"(?<=[。！？!?])", line) if chunk.strip()]
+        for chunk in chunks or [line]:
+            if chunk in seen:
+                continue
+            compact.append(chunk)
+            seen.add(chunk)
+    excerpt = " ".join(compact[-4:])
     return excerpt[:limit]
 
 
@@ -99,22 +108,25 @@ def _repair_prompt(
     failure: str | None = None,
 ) -> str:
     minimum_body_chars = max(MIN_SUBMISSION_CHINESE_CHARS, int(word_target * 0.9))
+    excerpt = _chapter_excerpt_for_bridge(chapter_text, limit=320)
     return "\n".join(
         [
             original_prompt,
             "",
             f"## 质量修复第 {attempt} 次",
             f"上一版第 {chapter_no} 章未通过真实长篇 gate，请重写完整章节正文。",
-            f"- 上一版失败原因：{failure or 'short_chapter/opening_loop_risk'}",
-            f"- 正文不得低于 {minimum_body_chars} 个中文汉字，且不得低于 {MIN_SUBMISSION_CHINESE_CHARS} 个中文汉字。",
-            f"- 必须新增至少 {max(600, minimum_body_chars // 5)} 个中文汉字的动作推进、对手反应、身体代价和规则后果，不得只改标题或局部润色。",
+            f"- 上一版失败摘要：{failure or 'short_chapter/opening_loop_risk'}",
+            f"- 长度口径只看正文汉字数 3800-4200；表格、标题、注释、标点不计入正文汉字数。",
+            f"- 正文汉字数不得低于 {minimum_body_chars}，且任何真实长篇小批正文汉字数低于 {MIN_SUBMISSION_CHINESE_CHARS} 必须视为失败。",
+            "- 必须重写为 7-10 个有实质推进的连续场景段落：动作推进、对手反应、身体代价、规则后果、伏笔推进都要落到正文。",
+            f"- 至少新增 {max(900, minimum_body_chars // 4)} 个正文汉字的具体事件推进，不得只改标题、局部润色或压缩上一版。",
             "- 首段必须承接上一章收束动作或当前场面压力，禁止重新醒来、睁眼、灰白环境、体内微粒、短刃等重启模板。",
             "- 删除“说不出的感觉”“难以言喻”“复杂的情绪”，用动作、代价、对手反应替代。",
             "- 少用或不用“突然”“猛然”“下一秒”；转折必须有明确动作因果。",
             "- 保留低频题材锚点：血脉、末日、多子多福、繁衍契约中至少一个。",
             "",
-            "## 上一版问题稿",
-            chapter_text[:1800],
+            "## 上一版短摘录（只用于避开重复，不要压缩改写）",
+            excerpt or "（无可用摘录）",
         ]
     )
 

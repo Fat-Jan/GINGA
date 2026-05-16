@@ -1,7 +1,7 @@
 {
   "harness_version": "v2.3",
   "generated_from": "scripts/run_real_llm_harness.py",
-  "generated_at": "2026-05-16T07:50:50+00:00",
+  "generated_at": "2026-05-16T08:08:47+00:00",
   "profile": "longform-small-batch",
   "dry_run": true,
   "passed": true,
