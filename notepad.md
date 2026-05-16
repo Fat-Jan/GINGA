@@ -4,7 +4,7 @@
 
 - 定位：Ginga 是以 workflow DSL + skill adapters + StateIO 为真实运行主线的小说创作平台底座，STATUS.md 是当前状态真值。
 - 入口：先看 AGENTS.md、STATUS.md、notepad.md、ARCHITECTURE.md。
-- 验证：常用 python3 scripts/verify_all.py、python3 scripts/run_agent_harness.py、python3 scripts/evaluate_rag_recall.py。
+- 验证：常用 python3 scripts/verify_all.py、python3 scripts/validate_harness_contracts.py、python3 scripts/run_agent_harness.py、python3 scripts/evaluate_rag_recall.py。
 - 坑点：P2-7C 已收口但仍只证明单章 smoke 边界；v1.7-0 已证明 `久久` 30 章真实 smoke，首个 drift 出现在 10 连发第 19 章；v1.7-1 已把批后状态快照、回环检测、低频题材锚点检测和异常章 reviewer queue 接入 `ginga review`；v1.7-2 已把 queue 先交外部模型评审并生成人工终审 brief；v1.7-3 已收紧正式真实 LLM 批量并启用生成前 hard gate；v1.7-4 已按 4+5 跑完 9 章真实回归，脚本级 drift=stable，但 `ginga review` 仍因第 6-9 章连续开篇回环和第 7/9 章低频锚点缺失阻断下一批，所以不能继续扩大真实生成；v1.8-3 `ginga observability` 只是 report-only evidence pack / workflow stage / migration audit，不跑 workflow、不迁移文件、不写 StateIO；v1.9-1 到 v1.9-5 已完成，其中 v1.9-5 是 4 章真实小样本 observation：脚本 passed 但 drift=needs_review、review warn/17 issues、短章来自 1200 字成本设置，不能据此扩大真实批量；v1.3-5 Reference Sidecar RAG 只证明显式 opt-in 可召回 approved promoted methodology 资产，不证明它会自动进入创作 workflow、默认 RAG 或 prompt 注入；v1.5 Review / deslop 只写 `.ops/reviews/<book_id>/<run_id>/` sidecar，不自动改正文、不写 StateIO、不调用 LLM、rubric 不进入创作 prompt；v1.6 Market Research Sidecar 只在显式授权下读 offline fixture，剥离 raw_text，默认不进 RAG；book_analysis 与市场原文仍不得默认进入 StateIO、RAG、prompt、raw_ideas、Foundation assets/schema 或 explorer/review 白名单。
 - 模型：内容生成默认走 ask-llm 端点 `久久`（qwen3.6-max-preview-nothinking，key 在 macOS Keychain）；评审别名 `jiujiu-jury` 已注册为 qwen3.6-max-preview-thinking，但 2026-05-15 对 132KB / 22KB / 5.5KB queue 包均 504，只保留为短输入手动 juror，不进默认 `ask-jury-safe` 主力；每章默认 4000 字；正式真实 LLM 批量生成推荐 4 章、上限 5 章，6 章及以上只作压力测试。
 
@@ -89,7 +89,7 @@ _原料/
 | 3 | Ark Jury Court 4 角法庭 | ✅ 完成 | `.ops/jury/jury-{1-4}-*.md`（4 票 revise） |
 | 4 | 综合判决与交付 | ✅ 完成 | `ARCHITECTURE.md` + `ROADMAP.md` |
 
-**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 到 v1.3-5 拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review 与 v1.7-3 Longform Hard Gate 已完成。v1.7-4 真实 4+5 章回归已给出观察结论：脚本级稳定，但 review hard gate 阻断下一批；真实长篇继续前先修续写输入包和低频锚点保持，仍不自动改正文。
+**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 到 v1.3-5 拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review 与 v1.7-3 Longform Hard Gate 已完成。v1.7-4 真实 4+5 章回归已给出观察结论：脚本级稳定，但 review hard gate 阻断下一批；v2.0 / v2.1 Harness Engineering 已完成规则地图和自检，后续才扩 CLI harness、真实 LLM harness、多 agent harness；真实长篇继续前先修续写输入包和低频锚点保持，仍不自动改正文。
 
 **新增规划**：v1.9 Story Truth Template 已落 `.ops/plans/v1-9-story-truth-template-plan.md`。v1.9-1 source audit、v1.9-2 schema / validator、v1.9-3 `StateIO` 项目/题材契约窄切片、v1.9-4 `workspace.CHAPTER_INPUT_BUNDLE`、v1.9-5 真实小样本回归均已完成；v1.9-5 的质量结论是 observation，不是扩大批量许可。
 

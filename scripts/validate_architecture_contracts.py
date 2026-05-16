@@ -11,6 +11,11 @@ from typing import Any
 
 import yaml
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+import validate_harness_contracts as harness_contracts
+
 
 WORKFLOW_PATH = Path("ginga_platform/orchestrator/workflows/novel_pipeline_mvp.yaml")
 SKILLS_DIR = Path("ginga_platform/skills")
@@ -30,6 +35,8 @@ P7_HISTORY_NOTICE_PATHS = (
     Path(".ops/p7-handoff/README.md"),
 )
 CANDIDATE_TRUTH_GATE_PATH = Path(".ops/governance/candidate_truth_gate.md")
+HARNESS_MAP_PATH = Path(".ops/harness/README.md")
+HARNESS_SELF_CHECK_PATH = Path("scripts/validate_harness_contracts.py")
 CODE_STATE_WRITE_ALLOWLIST = {
     Path("ginga_platform/orchestrator/runner/state_io.py"),
     Path("ginga_platform/orchestrator/cli/locked_patch.py"),
@@ -215,6 +222,16 @@ REQUIRED_CANDIDATE_TRUTH_GATE_MARKERS = (
     ".ops/model_topology/**",
     ".ops/book_analysis/**",
     "not enter default RAG",
+)
+REQUIRED_HARNESS_MAP_MARKERS = (
+    "task_type",
+    "docs_or_status",
+    "architecture_boundary",
+    "cli_or_workflow",
+    "rag_or_prompt",
+    "sidecar_or_observability",
+    "real_llm_policy",
+    "subagent_coordination",
 )
 GENM_OBSERVABILITY_PATH = Path("ginga_platform/orchestrator/genm_observability.py")
 GENM_OBSERVABILITY_REQUIRED_SNIPPETS = (
@@ -844,6 +861,36 @@ def validate_candidate_truth_gate(repo_root: Path, report: dict[str, Any]) -> No
     )
 
 
+def validate_harness_contracts(repo_root: Path, report: dict[str, Any]) -> None:
+    """Ensure v2.0 Harness Map and v2.1 self-check wiring are present."""
+    harness_report = harness_contracts.validate_repo(repo_root)
+    errors = list(harness_report.get("errors", []))
+
+    map_path = repo_root / HARNESS_MAP_PATH
+    try:
+        map_text = map_path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        map_text = ""
+        errors.append(f"{HARNESS_MAP_PATH}: missing v2.0 Harness Map")
+
+    missing_map_markers = [marker for marker in REQUIRED_HARNESS_MAP_MARKERS if marker not in map_text]
+    if missing_map_markers:
+        errors.append(f"{HARNESS_MAP_PATH}: missing task_type marker(s): {missing_map_markers}")
+
+    if not (repo_root / HARNESS_SELF_CHECK_PATH).exists():
+        errors.append(f"{HARNESS_SELF_CHECK_PATH}: missing v2.1 self-check script")
+
+    for error in errors:
+        add_error(report, HARNESS_MAP_PATH, "Harness Engineering", error)
+
+    add_check(
+        report,
+        "v2.0 Harness Map and v2.1 Harness self-check",
+        not errors,
+        "Harness Map, self-check script, and verify_all wiring are present",
+    )
+
+
 def validate_genm_observability_boundary(repo_root: Path, report: dict[str, Any]) -> None:
     """Ensure v1.8-3 optional Genm absorption remains report-only observability."""
     path = repo_root / GENM_OBSERVABILITY_PATH
@@ -893,6 +940,7 @@ def validate_repo(repo_root: Path | None = None) -> dict[str, Any]:
     validate_market_research_boundary(root, report)
     validate_model_topology_boundary(root, report)
     validate_candidate_truth_gate(root, report)
+    validate_harness_contracts(root, report)
     validate_genm_observability_boundary(root, report)
     report["status"] = "FAIL" if report["errors"] else "PASS"
     return report

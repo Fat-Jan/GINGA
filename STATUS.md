@@ -54,6 +54,8 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 | v1.9-3 Story Truth Template StateIO Slice | `done` | `ginga_platform/orchestrator/cli/demo_pipeline.py`；`ginga_platform/orchestrator/cli/__main__.py`；`test_story_truth_template`；`scripts/run_agent_harness.py` | 已在 `ginga init` 通过 `StateIO.apply` 写入 `locked.PROJECT_CONTRACT` 与 `locked.GENRE_CONTRACT`，并新增 CLI 参数 `--target-platform`、`--target-reader`、`--update-frequency`；不读取 `.ops/book_analysis/**`、不改默认 RAG |
 | v1.9-4 Story Truth Template Chapter Input Bundle | `done` | `ginga_platform/orchestrator/cli/demo_pipeline.py`；`test_story_truth_template`；`test_multi_chapter`；`scripts/run_agent_harness.py` | 已新增 `build_chapter_input_bundle()`，在 `run_workflow` 生成前经 `StateIO.apply` 写入 `workspace.CHAPTER_INPUT_BUNDLE`，包含章节目标、场景/段落蓝图、角色状态、世界规则、伏笔操作、上一章承接、开篇连续性和低频锚点；显式禁止 `.ops/book_analysis/**`、review/report/jury/market 输入 |
 | v1.9-5 Story Truth Template Longform Regression | `done` + `observation` | `.ops/validation/story_truth_template_longform_regression.json`；`.ops/reports/story_truth_template_longform_regression.md`；`.ops/longform_smoke/v1-9-5-story-truth/`；`.ops/reviews/story-truth-v195-regression/v1-9-5-story-truth-review/` | 已用 `久久` 在隔离 state_root 完成 4/4 章真实小样本，脚本级 `passed=true`，`workspace.CHAPTER_INPUT_BUNDLE` 在 immersive 每章前写入；但 drift=`needs_review`，review 为 warn/17 issues，且 1200 字低成本设置导致短章观测，不能据此扩大真实批量 |
+| v2.0 Harness Map | `done` | `.ops/harness/README.md`；`scripts/validate_harness_contracts.py`；`python3 scripts/validate_harness_contracts.py` | 已把任务类型映射到先读文件、禁区、最短反馈命令和证据落点；只做规则地图，不扩 CLI matrix、不跑真实 LLM、不接管多 agent 调度 |
+| v2.1 Harness Self-check | `done` | `scripts/validate_harness_contracts.py`；`scripts/verify_all.py`；`test_architecture_contracts.test_harness_contracts_require_map_and_self_check_markers`；`.ops/validation/harness_contracts.json`；`.ops/validation/architecture_contracts.json` | 已检查 `AGENTS.md`、`.ops/harness/README.md` 和 `verify_all.py` wiring；架构契约新增 `v2.0 Harness Map and v2.1 Harness self-check` 检查；后续 v2.2/v2.3/v2.4/v2.5 仍是 planned |
 
 ## 已完成
 
@@ -98,6 +100,7 @@ Ginga 当前不再只是把 `_原料/` 蒸馏成资产库，而是一个以 `wor
 - **Candidate Truth Gate 后续**：v1.8-1 只统一术语；若后续要做通用候选接受链，必须先选一个现有 candidate surface 做窄切片，不得一次性重写 `StateIO` 或 promote flow。
 - **Genm 可观测性后续**：v1.8-3 已把 jury evidence pack、workflow stage observation 和 migration audit 落为 report-only 工具；后续若要接入 CI 或 stage runner，只能先扩观察指标，不得接管 workflow 执行或自动迁移文件。
 - **Story Truth Template 后续**：v1.9-5 已完成真实小样本回归并留下 observation；后续若要提高质量，先处理短章阈值、review 17 issues 和低频锚点持续性，不得直接把拆书候选、review report、market report 或 jury 原文写入 truth。
+- **Harness Engineering 后续**：v2.0 / v2.1 已把规则地图和自检立住；下一步若继续做 harness，应按 `.ops/harness/README.md` 顺序进入 v2.2 CLI Harness Matrix，再考虑 v2.3 真实 LLM preflight / postflight、v2.4 多 agent contract validator、v2.5 阶段收口模板。
 
 ## 规划索引（不代表已完成）
 
@@ -128,6 +131,7 @@ python3 scripts/verify_all.py
 
 ```bash
 python -m unittest discover -s ginga_platform -p "test_*.py"
+python3 scripts/validate_harness_contracts.py
 python3 scripts/validate_architecture_contracts.py
 python3 scripts/validate_prompt_frontmatter.py --strict
 python3 scripts/report_prompt_quality.py foundation/assets/prompts
@@ -142,6 +146,7 @@ python3 scripts/evaluate_rag_recall.py
 
 - Unit tests：新增 agent harness / StateIO artifact 边界覆盖；完整数量以最新 `verify_all.py` 输出为准。
 - Architecture contracts：PASS，含 StateIO 写入边界检查（runtime_state YAML 写入限制在 StateIO / locked patch flow）。
+- Harness contracts：PASS，`.ops/harness/README.md` 的 v2.0 任务类型地图、`scripts/validate_harness_contracts.py` 自检和 `verify_all.py` baseline wiring 均已检查。
 - Agent harness：mock_harness PASS，覆盖 init / single run / multi_chapter / immersive / missing_state_error；报告 `.ops/reports/agent_harness_report.md`。
 - P2-7A runner 收敛：单章 mock run 可经 workflow DSL `G_chapter_draft` + `skill-router` + `dark-fantasy` adapter 写 `workspace.chapter_text`，并留下 H/R1/R2/R3/V1 `step_dispatch` 审计。
 - P2-7B runner 收敛：12 个默认 capability provider 契约测试通过；A-F/H/R1/R2/R3/V1 provider metadata 可审计，A 步读取运行参数，H/R/V 基于真实 inputs 生成 state_updates / release report；agent harness 继续覆盖 G/V1 dispatch 与 adapter 路径。

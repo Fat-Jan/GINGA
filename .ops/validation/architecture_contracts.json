@@ -1,0 +1,93 @@
+{
+  "status": "PASS",
+  "repo_root": "/Users/arm/Desktop/ginga",
+  "checks": [
+    {
+      "name": "workflow steps",
+      "status": "PASS",
+      "detail": "loaded 12 step(s)"
+    },
+    {
+      "name": "capability registry",
+      "status": "PASS",
+      "detail": "found 12 default capability id(s)"
+    },
+    {
+      "name": "foundation asset ids",
+      "status": "PASS",
+      "detail": "found 486 frontmatter id(s)"
+    },
+    {
+      "name": "skill-router file",
+      "status": "PASS",
+      "detail": "ginga_platform/orchestrator/router/skill_router.py"
+    },
+    {
+      "name": "skill contracts",
+      "status": "PASS",
+      "detail": "found 2 contract(s)"
+    },
+    {
+      "name": "recall forbidden paths",
+      "status": "PASS",
+      "detail": "contains 8 path(s)"
+    },
+    {
+      "name": "v1.3-0 book_analysis boundaries",
+      "status": "PASS",
+      "detail": "pollution docs and source manifest schema are present and constrained"
+    },
+    {
+      "name": "StateIO write boundary",
+      "status": "PASS",
+      "detail": "runtime_state YAML writes are limited to StateIO / locked patch flow"
+    },
+    {
+      "name": "current planning hygiene",
+      "status": "PASS",
+      "detail": "STATUS.md next step, stale doc wording, and .ops/p7 history notices are aligned"
+    },
+    {
+      "name": "P2-7 runner convergence",
+      "status": "PASS",
+      "detail": "single-run path keeps workflow DSL, skill-router, adapter, and StateIO dispatch wiring"
+    },
+    {
+      "name": "v1.4 BookView boundary",
+      "status": "PASS",
+      "detail": "BookView is constrained to .ops/book_views and does not write StateIO"
+    },
+    {
+      "name": "v1.5 Review boundary",
+      "status": "PASS",
+      "detail": "Review is constrained to warn-only .ops/reviews sidecar output"
+    },
+    {
+      "name": "v1.6 Market Research boundary",
+      "status": "PASS",
+      "detail": "Market Research is constrained to authorized offline .ops/market_research sidecar output"
+    },
+    {
+      "name": "v1.8-0 Model Topology observation boundary",
+      "status": "PASS",
+      "detail": "Model Topology is constrained to report-only .ops/model_topology observation output"
+    },
+    {
+      "name": "v1.8-1 Candidate Truth Gate wording",
+      "status": "PASS",
+      "detail": "candidate-only / report-only / truth gate wording is present"
+    },
+    {
+      "name": "v2.0 Harness Map and v2.1 Harness self-check",
+      "status": "PASS",
+      "detail": "Harness Map, self-check script, and verify_all wiring are present"
+    },
+    {
+      "name": "v1.8-3 Genm optional observability boundary",
+      "status": "PASS",
+      "detail": "Genm optional observability is constrained to report-only evidence/workflow/migration reports"
+    }
+  ],
+  "warnings": [],
+  "errors": []
+}

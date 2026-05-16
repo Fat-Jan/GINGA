@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "repo_root": "/Users/arm/Desktop/ginga",
+  "checks": [
+    {
+      "name": "AGENTS.md Harness Engineering entry",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "name": "v2.0 Harness Map",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "name": "v2.1 Harness self-check wiring",
+      "status": "PASS",
+      "missing": []
+    }
+  ],
+  "errors": []
+}

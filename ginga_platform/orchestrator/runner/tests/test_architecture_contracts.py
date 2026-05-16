@@ -25,6 +25,39 @@ class ArchitectureContractsTest(unittest.TestCase):
         self.assertIn("v1.8-0 Model Topology observation boundary", check_names)
         self.assertIn("v1.8-1 Candidate Truth Gate wording", check_names)
         self.assertIn("v1.8-3 Genm optional observability boundary", check_names)
+        self.assertIn("v2.0 Harness Map and v2.1 Harness self-check", check_names)
+
+    def test_harness_contracts_require_map_and_self_check_markers(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo_root = Path(tmpdir)
+            (repo_root / ".ops/harness").mkdir(parents=True)
+            (repo_root / "scripts").mkdir(parents=True)
+            (repo_root / "AGENTS.md").write_text(
+                "\n".join(
+                    [
+                        "# Agent 入口说明",
+                        "Harness Engineering",
+                        ".ops/validation/**",
+                        ".ops/reports/**",
+                        "StateIO",
+                        "真实 LLM",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            (repo_root / ".ops/harness/README.md").write_text(
+                "# Harness Map\n\nSTATUS.md\nscripts/verify_all.py\n",
+                encoding="utf-8",
+            )
+
+            report = {"checks": [], "warnings": [], "errors": []}
+            archlint.validate_harness_contracts(repo_root, report)
+
+            self.assertEqual(report["checks"][0]["name"], "v2.0 Harness Map and v2.1 Harness self-check")
+            self.assertEqual(report["checks"][0]["status"], "FAIL")
+            self.assertTrue(any("scripts/validate_harness_contracts.py" in error for error in report["errors"]))
+            self.assertTrue(any("task_type" in error for error in report["errors"]))
+            self.assertTrue(any("real_llm_policy" in error for error in report["errors"]))
 
     def test_current_planning_hygiene_detects_stale_next_step_text(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:

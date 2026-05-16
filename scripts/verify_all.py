@@ -32,6 +32,7 @@ BASELINE_COMMANDS: list[list[str]] = [
     ["python3", "scripts/validate_chapter_atoms.py", ".ops/book_analysis/v1-3-2-smoke-main"],
     ["python3", "scripts/validate_trope_recipes.py", ".ops/book_analysis/v1-3-3-smoke-main"],
     ["python3", "scripts/build_reference_sidecar_index.py"],
+    ["python3", "scripts/validate_harness_contracts.py"],
     ["python3", "scripts/validate_architecture_contracts.py"],
     ["python3", "scripts/validate_prompt_frontmatter.py", "--strict"],
     ["python3", "scripts/report_prompt_quality.py", "foundation/assets/prompts"],
