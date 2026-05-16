@@ -134,15 +134,27 @@ def longform_chapter_gate_check(
 ) -> dict[str, Any]:
     text = chapter.get("text", "")
     body_text = extract_chapter_body_text(text)
+    chapter_no = _chapter_number(chapter)
     return {
         "chapter": chapter.get("name", ""),
-        "opening_loop_risk": opening_loop_score(body_text) >= 3,
+        "opening_loop_risk": chapter_no > 1 and opening_loop_score(body_text) >= 3,
         "missing_low_frequency_anchor": bool(low_frequency_anchors)
         and not any(anchor in body_text for anchor in low_frequency_anchors),
         "missing_foreshadow_marker": "<!-- foreshadow:" not in text,
         "short_chapter": count_chinese(body_text) < MIN_SUBMISSION_CHINESE_CHARS,
         "forbidden_hits": longform_forbidden_hits(body_text),
     }
+
+
+def _chapter_number(chapter: dict[str, Any]) -> int:
+    raw = chapter.get("chapter_no") or (chapter.get("payload") or {}).get("chapter_no")
+    try:
+        if raw:
+            return int(raw)
+    except (TypeError, ValueError):
+        pass
+    match = re.search(r"chapter_(\d+)\.md$", str(chapter.get("name", "") or chapter.get("path", "")))
+    return int(match.group(1)) if match else 0
 
 
 def strip_html_comments(text: str) -> str:

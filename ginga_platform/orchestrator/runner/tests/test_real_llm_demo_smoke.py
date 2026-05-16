@@ -224,6 +224,13 @@ class RealLLMDemoSmokeTest(unittest.TestCase):
             self.assertIn("Preflight", report)
             self.assertIn("Review Gate", report)
 
+    def test_longform_4000_chapter_uses_full_generation_budget(self) -> None:
+        from ginga_platform.orchestrator.cli.demo_pipeline import _max_tokens_for_word_target
+
+        self.assertEqual(_max_tokens_for_word_target(4000), 12000)
+        self.assertEqual(_max_tokens_for_word_target(3500), 11200)
+        self.assertEqual(_max_tokens_for_word_target(800), 4096)
+
     def test_v23_real_llm_harness_preflight_rejects_unsafe_real_run(self) -> None:
         from scripts.run_real_llm_harness import run_harness
 

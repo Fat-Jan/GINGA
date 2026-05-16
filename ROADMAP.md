@@ -7,7 +7,7 @@
 **状态更新**：2026-05-16（依据 `STATUS.md`；本文件保留为历史规划 + 当前状态对照）
 **对应架构**：`ARCHITECTURE.md` v1
 
-> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A/P2-7B/P2-7C Platform runner 收敛。P2-7C 严格状态是 `done`：真实 LLM smoke 边界切片、provider 输出可读性、`context_snapshot`、`gap_report` 与 residual risk 报告均已收口；该证据仍只证明单章 smoke 边界，不证明长篇生产质量。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。新增规划路线只更新后续定位与版本索引，不改变当前生产完成度：拆书融梗 / `ReferenceTropeDistillation` 已完成 v1.3-0 到 v1.3-5，v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review 与 v1.7-3 Longform Hard Gate 已完成；RAG 残余仅观察，真实长篇生产化下一步是先让单章按正文汉字数新口径过线并通过 review gate，再恢复 4 章推荐批次，不自动改正文。
+> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A/P2-7B/P2-7C Platform runner 收敛。P2-7C 严格状态是 `done`：真实 LLM smoke 边界切片、provider 输出可读性、`context_snapshot`、`gap_report` 与 residual risk 报告均已收口；该证据仍只证明单章 smoke 边界，不证明长篇生产质量。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。新增规划路线只更新后续定位与版本索引，不改变当前生产完成度：拆书融梗 / `ReferenceTropeDistillation` 已完成 v1.3-0 到 v1.3-5，v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review 与 v1.7-3 Longform Hard Gate 已完成；RAG 残余仅观察；真实长篇生产化已通过单章正文长度 + review hard gate 探针，但 4 章恢复卡在第 4 章长输出，下一步先处理 endpoint 稳定性或切换端点后补齐 4/4。
 >
 > 若本文件与 `STATUS.md` 冲突，以 `STATUS.md` 为当前状态真值。
 
@@ -334,7 +334,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 - [x] Jury 修订追踪表（jury 23 条建议全部归属到具体任务编号，§七）
 - [x] 8 决策落地到 ARCHITECTURE §七 + 本文件任务编号
 
-**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-16，P2-7C Platform runner 收敛、v1.3-0 到 v1.3-5 的拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review 与 v1.7-3 Longform Hard Gate 均已收口。RAG 残余 `candidate_k` / `asset_type` blocker 仅作为观察项，只有指标回退或新 gold query 暴露问题时再修；真实长篇生产化下一步是先修单章正文长度控制，确认正文汉字数新口径过线且 review gate 不阻断，再恢复 4 章真实小批。
+**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-16，P2-7C Platform runner 收敛、v1.3-0 到 v1.3-5 的拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review 与 v1.7-3 Longform Hard Gate 均已收口。RAG 残余 `candidate_k` / `asset_type` blocker 仅作为观察项，只有指标回退或新 gold query 暴露问题时再修；真实长篇生产化下一步是处理 `久久` 长输出 504 / 中断问题，补齐第 4 章并导出 4/4 review gate。
 
 ---
 

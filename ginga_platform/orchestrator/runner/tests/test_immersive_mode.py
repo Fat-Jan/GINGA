@@ -421,6 +421,8 @@ class ImmersiveRunnerRunBlockTest(unittest.TestCase):
         self.assertIn("正文汉字数 4200-4600", calls[1])
         self.assertIn("表格、标题、注释、标点不计入", calls[1])
         self.assertIn("正文汉字数低于 3500", calls[1])
+        self.assertIn("9-11 个正文段落", calls[1])
+        self.assertIn("每个正文段落 380-520 个汉字", calls[1])
         chapter_text = (self.state_root / "runner-book" / "chapter_01.md").read_text(encoding="utf-8")
         self.assertIn("血门索债", chapter_text)
         self.assertNotIn("痛觉并未因意识的回归而消退", chapter_text)
@@ -442,11 +444,24 @@ class ImmersiveRunnerRunBlockTest(unittest.TestCase):
 
         self.assertIn("正文汉字数 4200-4600", prompt)
         self.assertIn("表格、标题、注释、标点不计入", prompt)
-        self.assertIn("7-10 个", prompt)
+        self.assertIn("9-11 个正文段落", prompt)
+        self.assertIn("每个正文段落 380-520 个汉字", prompt)
         self.assertIn("上一版失败摘要", prompt)
         self.assertIn("上一版短摘录", prompt)
         self.assertLess(prompt.count("痛觉并未因意识的回归而消退"), 4)
         self.assertNotIn("## 上一版问题稿", prompt)
+
+    def test_quality_gate_uses_submission_floor_not_word_target_ratio(self) -> None:
+        from ginga_platform.orchestrator.cli.immersive_runner import _quality_gate_failure
+
+        chapter = (
+            "| 写作自检 | 内容 |\n|---|---|\n| 当前锚定 | 血脉 |\n\n"
+            "# 第一章 · 血门索债\n\n"
+            + ("无明把清道夫骨牌按进城门血槽，守夜人抬灯逼他交出下一轮微粒收益。" * 120)
+            + "\n<!-- foreshadow: id=fh-floor planted_ch=1 expected_payoff=5 summary=血门索债 -->\n"
+        )
+
+        self.assertIsNone(_quality_gate_failure(chapter, word_target=4000, chapter_no=1))
 
     def test_run_block_allows_second_repair_before_failing_fast(self) -> None:
         calls: list[str] = []

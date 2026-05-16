@@ -1,0 +1,83 @@
+STORY_DNA:
+  premise: 失忆刺客无明在末日天堑边缘醒来，发现短刃能吞吐微粒，而每座城都被规则怪谈式禁令和血脉繁衍契约共同支配。
+  conflict_engine: 失忆刺客 vs 微粒掠夺集团；个体存续 vs 跨天堑生态
+  payoff_promise: 主角逐步觉醒、回收伏笔、改写微粒规则
+  word_target: 500000
+GENRE_LOCKED:
+  topic:
+  - 玄幻黑暗 + 规则怪谈 + 末日多子多福
+  style_lock:
+    tone:
+    - 暗黑
+    - 压抑
+    - 凶性显化
+    forbidden_styles:
+    - 都市腔
+    - 科幻腔
+    - 游戏系统播报腔
+    - 轻小说吐槽腔
+    anchor_phrases:
+    - 微粒
+    - 天堑
+    - 内宇宙
+WORLD:
+  cosmology: 四重天堑 / 内宇宙四阶
+  economy: 微粒为通货，总量硬上限 840000000
+PLOT_ARCHITECTURE:
+  acts:
+  - name: 第一幕：觉醒
+    chapters: 1-30
+  - name: 第二幕：争夺
+    chapters: 31-150
+  - name: 第三幕：改写
+    chapters: 151-300
+  pivot_points:
+  - ch: 1
+    type: 起
+    beat: 失忆刺客醒来，发现被植入未知微粒
+  - ch: 30
+    type: 转
+    beat: 首次跨越天堑边界
+PROJECT_CONTRACT:
+  positioning: 失忆刺客无明在末日天堑边缘醒来，发现短刃能吞吐微粒，而每座城都被规则怪谈式禁令和血脉繁衍契约共同支配。
+  target_platform: 番茄
+  target_reader: 男频长篇爽文读者
+  total_word_count_goal: 500000
+  update_frequency: daily
+  core_selling_points:
+  - 失忆主角逐步觉醒
+  - 微粒规则与天堑世界的持续揭示
+  - 压抑后的反击和伏笔回收
+  paid_conversion_points:
+  - 首次跨越天堑边界
+  - 核心身份反转
+  retention_targets:
+    chapter_1: 建立主角困境、核心异常和首个伏笔
+    chapter_3: 形成稳定追读问题
+    chapter_30: 完成第一幕大转折
+  source: v1.9-story-truth-template
+GENRE_CONTRACT:
+  profile_ref: 玄幻黑暗 + 规则怪谈 + 末日多子多福
+  core_payoffs:
+  - 觉醒
+  - 反击
+  - 规则破解
+  - 伏笔回收
+  reader_expectations:
+  - 核心爽点必须服务主角成长和世界规则揭示
+  - 压抑段落需要有明确释放承诺
+  - 章节结尾保留可追读的钩子或状态变化
+  golden_three_chapters:
+    chapter_1: 立住主角、异常和核心危机
+    chapter_2: 扩大冲突并引入可验证规则
+    chapter_3: 给出第一次小回报和更大问题
+  hook_strategy:
+    chapter_end: 状态变化、代价暴露或伏笔推进
+    avoid:
+    - 单纯设定说明
+    - 无承接的感官重启
+  taboos:
+  - 都市腔
+  - 游戏系统播报腔
+  - 无代价升级
+  source: v1.9-story-truth-template

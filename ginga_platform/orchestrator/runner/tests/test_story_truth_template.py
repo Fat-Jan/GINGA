@@ -347,6 +347,8 @@ class ChapterInputBundleTest(unittest.TestCase):
         self.assertIn("正文汉字数 4200-4600", prompt)
         self.assertIn("表格、标题、注释、标点不计入", prompt)
         self.assertIn("正文汉字数低于 3500", prompt)
+        self.assertIn("9-11 个正文段落", prompt)
+        self.assertIn("每个正文段落 380-520 个汉字", prompt)
         self.assertIn("不得把醒来、睁眼、灰白环境、体内微粒或天堑边缘当作新开场", prompt)
         self.assertIn("禁止写“说不出的感觉”“难以言喻”“复杂的情绪”", prompt)
         self.assertIn("少用或不用“突然”“猛然”“下一秒”", prompt)
@@ -373,6 +375,8 @@ class ChapterInputBundleTest(unittest.TestCase):
         self.assertIn("正文汉字数 4200-4600", prompt)
         self.assertIn("表格、标题、注释、标点不计入", prompt)
         self.assertIn("正文汉字数低于 3500", prompt)
+        self.assertIn("9-11 个正文段落", prompt)
+        self.assertIn("每个正文段落 380-520 个汉字", prompt)
         self.assertNotIn("目标字数 4000 字", prompt)
 
     def test_chapter_input_bundle_uses_hard_gate_low_frequency_anchor_source(self) -> None:

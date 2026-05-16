@@ -104,7 +104,8 @@ def _call_llm_or_mock(
 def _max_tokens_for_word_target(word_target: int) -> int:
     """Give Chinese prose enough budget to finish around the requested length."""
 
-    return max(4096, min(12000, int(word_target * 2.2)))
+    multiplier = 3.2 if word_target >= 3500 else 2.2
+    return max(4096, min(12000, int(word_target * multiplier)))
 
 
 def _state_io_kwargs(state_root: Path | str | None) -> dict[str, Any]:
@@ -329,7 +330,7 @@ def _build_chapter_prompt(state: dict, word_target: int, chapter_no: int = 1) ->
 
     target_minimum = BODY_CHINESE_TARGET_MIN
     target_ceiling = BODY_CHINESE_TARGET_MAX
-    minimum_body_chars = max(MIN_SUBMISSION_CHINESE_CHARS, int(word_target * 0.9))
+    minimum_body_chars = MIN_SUBMISSION_CHINESE_CHARS
 
     prompt = f"""你是「dark-fantasy-ultimate-engine」窄通道生产引擎，按下方设定写第{chapter_no}章。
 
@@ -374,7 +375,7 @@ def _build_chapter_prompt(state: dict, word_target: int, chapter_no: int = 1) ->
 2. 然后输出章节正文，章节标题用「{chapter_label}」
    - 长度口径只看正文汉字数 {target_minimum}-{target_ceiling}；表格、标题、注释、标点不计入正文汉字数
    - 正式投稿质量下限：正文汉字数不得低于 {minimum_body_chars}，且任何真实长篇小批正文汉字数低于 {MIN_SUBMISSION_CHINESE_CHARS} 必须视为失败；接近结尾但未达到字数时，继续推进场景，不要用总结段提前收束
-   - 用 7-10 个连续场景段落扩展动作、环境压迫、身体代价、对手反应和伏笔推进；不要用设定说明替代正文推进
+   - 用 9-11 个正文段落扩展动作、环境压迫、身体代价、对手反应和伏笔推进；每个正文段落 380-520 个汉字；不要用设定说明替代正文推进
    - 禁止输出提纲、说明、创作分析或“以下是正文”之类包装语
 3. 章节正文要求：
    - 暗黑、压抑、凶性显化、暴力美学
@@ -491,7 +492,7 @@ def build_chapter_input_bundle(
     return {
         "chapter_no": chapter_no,
         "word_target": word_target,
-        "minimum_body_chars": max(MIN_SUBMISSION_CHINESE_CHARS, int(word_target * 0.9)),
+        "minimum_body_chars": MIN_SUBMISSION_CHINESE_CHARS,
         "min_submission_chinese_chars": MIN_SUBMISSION_CHINESE_CHARS,
         "truth_source": "StateIO",
         "reads_report_only_sources": False,

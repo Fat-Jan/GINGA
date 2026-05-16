@@ -63,7 +63,7 @@ def _body_char_target(word_target: int) -> tuple[int, int]:
 
 
 def _minimum_body_chars(word_target: int) -> int:
-    return max(MIN_SUBMISSION_CHINESE_CHARS, int(word_target * 0.9))
+    return MIN_SUBMISSION_CHINESE_CHARS
 
 
 def _normalize_chapter_heading(chapter_text: str, chapter_no: int) -> str:
@@ -130,7 +130,7 @@ def _repair_prompt(
             f"- 上一版失败摘要：{failure or 'short_chapter/opening_loop_risk'}",
             f"- 长度口径只看正文汉字数 {target_minimum}-{target_ceiling}；表格、标题、注释、标点不计入正文汉字数。",
             f"- 正文汉字数不得低于 {minimum_body_chars}，且任何真实长篇小批正文汉字数低于 {MIN_SUBMISSION_CHINESE_CHARS} 必须视为失败。",
-            "- 必须重写为 7-10 个有实质推进的连续场景段落：动作推进、对手反应、身体代价、规则后果、伏笔推进都要落到正文。",
+            "- 必须重写为 9-11 个正文段落，每个正文段落 380-520 个汉字；动作推进、对手反应、身体代价、规则后果、伏笔推进都要落到正文。",
             f"- 至少新增 {max(900, minimum_body_chars // 4)} 个正文汉字的具体事件推进，不得只改标题、局部润色或压缩上一版。",
             "- 首段必须承接上一章收束动作或当前场面压力，禁止重新醒来、睁眼、灰白环境、体内微粒、短刃等重启模板。",
             "- 删除“说不出的感觉”“难以言喻”“复杂的情绪”，用动作、代价、对手反应替代。",

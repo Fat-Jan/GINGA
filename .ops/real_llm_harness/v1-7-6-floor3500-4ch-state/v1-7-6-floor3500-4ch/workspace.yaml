@@ -1,0 +1,126 @@
+task_plan: '# Task Plan — v1-7-6-floor3500-4ch
+
+
+  ## 目标
+
+  50 万字玄幻黑暗长篇 / Killer Use Case 验证
+
+  '
+findings: '# Findings — v1-7-6-floor3500-4ch
+
+
+  ## 初始设定
+
+  - 题材锁定: 玄幻黑暗 + 规则怪谈 + 末日多子多福
+
+  '
+progress: '# Progress — v1-7-6-floor3500-4ch
+
+
+  ## START 2026-05-16T16:46:21.425970
+
+  - init done
+
+  '
+workflow_flags:
+  immersive_mode: true
+  checker_silenced: true
+CHAPTER_INPUT_BUNDLE:
+  chapter_no: 4
+  word_target: 4000
+  minimum_body_chars: 3500
+  min_submission_chinese_chars: 3500
+  truth_source: StateIO
+  reads_report_only_sources: false
+  forbidden_sources:
+  - .ops/book_analysis/**
+  - .ops/reports/**
+  - .ops/reviews/**
+  - .ops/jury/**
+  - .ops/market_research/**
+  project_contract:
+    positioning: 失忆刺客无明在末日天堑边缘醒来，发现短刃能吞吐微粒，而每座城都被规则怪谈式禁令和血脉繁衍契约共同支配。
+    target_platform: 番茄
+    target_reader: 男频长篇爽文读者
+  genre_contract:
+    profile_ref: 玄幻黑暗 + 规则怪谈 + 末日多子多福
+    reader_expectations:
+    - 核心爽点必须服务主角成长和世界规则揭示
+    - 压抑段落需要有明确释放承诺
+    - 章节结尾保留可追读的钩子或状态变化
+    taboos:
+    - 都市腔
+    - 游戏系统播报腔
+    - 无代价升级
+  chapter_goal: 失忆刺客醒来，发现被植入未知微粒
+  scene_outline:
+  - scene: setup
+    goal: 承接状态并压入本章冲突
+  - scene: pressure
+    goal: 展示身体代价、对手反应或世界规则
+  - scene: turn
+    goal: 推进伏笔、爽点或章节钩子
+  paragraph_blueprint:
+  - part: opening
+    guard: 开篇必须承接上一章状态变化，避免重新醒来、重新观察灰白环境等循环。
+  - part: middle
+    guard: 每个场景必须有行动、代价或信息增量。
+  - part: ending
+    guard: 保留状态变化、伏笔推进或可追读钩子。
+  key_sentences:
+  - 主角逐步觉醒、回收伏笔、改写微粒规则
+  - 失忆刺客醒来，发现被植入未知微粒
+  active_character_state:
+  - role: protagonist
+    name: 未命名刺客
+    body:
+      hp: 100
+      mp: 80
+      status:
+      - 失忆
+      - 微粒残留
+    psyche:
+      mood: 警觉
+      beliefs:
+      - 不信任任何人
+      traumas:
+      - 记忆缺失带来的存在性恐惧
+    resources:
+      particles: 0
+      items: []
+    recent_events: []
+  relevant_world_rules:
+  - name: cosmology
+    rule: 四重天堑 / 内宇宙四阶
+  - name: economy
+    rule: 微粒为通货，总量硬上限 840000000
+  payoff_targets:
+  - 觉醒
+  - 反击
+  - 规则破解
+  - 伏笔回收
+  hook_or_foreshadow_ops:
+  - id: fh-001
+    status: open
+    expected_payoff: 30
+    summary: 短刃上的古老符文
+  previous_chapter_bridge: 缺少前章事件摘要；开篇需先确认上一章收束点。
+  opening_continuity_guard: 开篇必须承接上一章状态变化，避免重新醒来、重新观察灰白环境等循环。
+  low_frequency_anchors:
+  - 微粒
+  - 天堑
+  - 内宇宙
+  - 觉醒
+  - 反击
+  - 规则破解
+  - 伏笔回收
+  - 血脉
+  - 末日
+  - 多子多福
+  - 繁衍契约
+  recent_arc_summaries: []
+  risk_notes:
+  - 正式投稿质量下限为 3500+ 中文字；不得用低成本短章观测替代生产质量。
+  - 不得读取 candidate-only/report-only 外部来源。
+  - 不得把 review/jury/market 结论自动写入 truth。
+  - 不得绕过 StateIO 修改 runtime_state。

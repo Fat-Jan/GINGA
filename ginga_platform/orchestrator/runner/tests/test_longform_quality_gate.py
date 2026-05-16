@@ -35,6 +35,31 @@ class LongformQualityGateTest(unittest.TestCase):
 
         self.assertTrue(check["short_chapter"])
 
+    def test_chapter_gate_allows_first_chapter_origin_opening_only(self) -> None:
+        from ginga_platform.orchestrator.cli.longform_policy import longform_chapter_gate_check
+
+        origin_body = (
+            "无明睁开眼，发现自己仍在天堑边缘，体内微粒像虫卵一样蠕动，短刃贴着掌心发冷。"
+            "失忆留下的空洞吞噬判断，血脉契约和末日禁令在远处闪回。"
+        ) * 80
+        first = longform_chapter_gate_check(
+            chapter={
+                "name": "chapter_01.md",
+                "text": f"# 第一章\n\n{origin_body}\n<!-- foreshadow: id=fh-origin planted_ch=1 expected_payoff=5 summary=origin -->\n",
+            },
+            low_frequency_anchors=["血脉"],
+        )
+        second = longform_chapter_gate_check(
+            chapter={
+                "name": "chapter_02.md",
+                "text": f"# 第2章\n\n{origin_body}\n<!-- foreshadow: id=fh-loop planted_ch=2 expected_payoff=6 summary=loop -->\n",
+            },
+            low_frequency_anchors=["血脉"],
+        )
+
+        self.assertFalse(first["opening_loop_risk"])
+        self.assertTrue(second["opening_loop_risk"])
+
     def _seed_longform_book(self, root: Path, book_id: str = "longform-gate-book") -> None:
         from ginga_platform.orchestrator.runner.state_io import StateIO
 
