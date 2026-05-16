@@ -1,0 +1,255 @@
+{
+  "harness_version": "v2.3",
+  "generated_from": "scripts/run_real_llm_harness.py",
+  "generated_at": "2026-05-16T08:34:58+00:00",
+  "profile": "longform-small-batch",
+  "dry_run": false,
+  "passed": false,
+  "real_llm_executed": true,
+  "endpoint": "久久",
+  "book_id": "v1-7-6-body-floor-single-ch1",
+  "state_root": ".ops/real_llm_harness/v1-7-6-body-floor-single-ch1-state",
+  "json_output": ".ops/validation/v1_7_6_body_floor_single_ch1_real_llm_harness.json",
+  "report_output": ".ops/reports/v1_7_6_body_floor_single_ch1_real_llm_harness.md",
+  "review_output_root": ".ops/reviews",
+  "cost_boundary": {
+    "profile": "longform-small-batch",
+    "dry_run_default": true,
+    "run_requires_explicit_flag": true,
+    "estimated_real_llm_calls": 3,
+    "max_real_llm_calls": 3,
+    "max_generation_attempts_per_chapter": 3,
+    "requested_chapters": 1,
+    "max_chapters": 5,
+    "recommended_batch_size": 4,
+    "upper_bound": 5,
+    "pressure_test_only_at_or_above": 6,
+    "word_target": 4000,
+    "min_longform_word_target": 3500,
+    "batch_schedule": [
+      1
+    ],
+    "actual_cost_incurred": true
+  },
+  "isolation": {
+    "state_root": ".ops/real_llm_harness/v1-7-6-body-floor-single-ch1-state",
+    "json_output": ".ops/validation/v1_7_6_body_floor_single_ch1_real_llm_harness.json",
+    "report_output": ".ops/reports/v1_7_6_body_floor_single_ch1_real_llm_harness.md",
+    "review_output_root": ".ops/reviews",
+    "state_root_under_ops": true,
+    "json_under_validation": true,
+    "report_under_reports": true,
+    "review_under_ops_reviews": true,
+    "will_not_overwrite": [
+      "foundation/runtime_state/**",
+      ".ops/longform_smoke/**",
+      ".ops/real_llm_demo/**",
+      ".ops/reviews/** except selected review_output_root"
+    ]
+  },
+  "preflight": {
+    "status": "PASS",
+    "errors": [],
+    "warnings": [],
+    "checks": [
+      "explicit_dry_run_or_run_mode",
+      "real_llm_call_budget",
+      "isolated_state_root",
+      "isolated_validation_outputs",
+      "longform_batch_upper_bound",
+      "review_gate_configured"
+    ]
+  },
+  "postflight": {
+    "status": "FAIL",
+    "errors": [
+      {
+        "code": "generation_not_passed",
+        "severity": "error",
+        "detail": "underlying real LLM smoke did not pass"
+      }
+    ],
+    "warnings": [],
+    "generation_summary": {
+      "requested_chapters": 1,
+      "completed_chapters": 0,
+      "drift_status": "stable",
+      "failed_chapter": 1,
+      "failure_reason": "RuntimeError: chapter 1 failed quality gate after repair: short_chapter body_chinese_chars=2751 < 3600",
+      "failed_batches": [
+        1
+      ],
+      "short_chapters": [],
+      "missing_foreshadow_chapters": []
+    }
+  },
+  "review_gate": {
+    "status": "PASS",
+    "errors": [],
+    "warnings": [],
+    "report": {
+      "status": "pass",
+      "passed": true,
+      "issue_count": 0,
+      "review_report": ".ops/reviews/v1-7-6-body-floor-single-ch1/v2-3-real-llm-review-gate/review_report.json",
+      "hard_gate": {
+        "enabled": true,
+        "mode": "block_next_real_llm_batch",
+        "window_size": 4,
+        "inspected_chapters": [],
+        "low_frequency_anchors": [
+          "血脉",
+          "末日",
+          "多子多福",
+          "繁衍契约"
+        ],
+        "block_reasons": [],
+        "should_block_next_real_llm_batch": false,
+        "chapter_checks": []
+      }
+    }
+  },
+  "generation": {
+    "generated_from": "scripts/run_longform_llm_smoke.py",
+    "dry_run": false,
+    "passed": false,
+    "endpoint": "久久",
+    "book_id": "v1-7-6-body-floor-single-ch1",
+    "topic": "玄幻黑暗 + 规则怪谈 + 末日多子多福",
+    "premise": "失忆刺客无明在末日天堑边缘醒来，发现短刃能吞吐微粒，而每座城都被规则怪谈式禁令和血脉繁衍契约共同支配。",
+    "requested_chapters": 1,
+    "completed_chapters": 0,
+    "existing_completed_before": 0,
+    "resume": false,
+    "batch_schedule": [
+      1
+    ],
+    "batch_runs": [
+      {
+        "batch_no": 1,
+        "start_chapter": 1,
+        "end_chapter": 1,
+        "requested_size": 1,
+        "status": "failed",
+        "stdout_tail": "",
+        "error": "RuntimeError: chapter 1 failed quality gate after repair: short_chapter body_chinese_chars=2751 < 3600"
+      }
+    ],
+    "word_target": 4000,
+    "state_root": ".ops/real_llm_harness/v1-7-6-body-floor-single-ch1-state",
+    "anchors": [
+      "无明",
+      "短刃",
+      "微粒",
+      "天堑",
+      "规则",
+      "血脉",
+      "末日"
+    ],
+    "forbidden_terms": [
+      "系统提示",
+      "叮",
+      "恭喜获得",
+      "都市腔",
+      "轻小说吐槽"
+    ],
+    "production_policy": {
+      "recommended_batch_size": 4,
+      "upper_bound": 5,
+      "pressure_test_only_at_or_above": 6,
+      "min_submission_chinese_chars": 3500
+    },
+    "state_summary": {
+      "audit_entries": 12,
+      "total_words": 0,
+      "foreshadow_pool_size": 1,
+      "character_events": 0
+    },
+    "chapter_runs": [
+      {
+        "chapter_no": 1,
+        "batch_no": 1,
+        "batch_size": 1,
+        "status": "failed",
+        "path": ".ops/real_llm_harness/v1-7-6-body-floor-single-ch1-state/v1-7-6-body-floor-single-ch1/chapter_01.md",
+        "chars": 0,
+        "chinese_chars": 0,
+        "anchor_hits": {
+          "无明": 0,
+          "短刃": 0,
+          "微粒": 0,
+          "天堑": 0,
+          "规则": 0,
+          "血脉": 0,
+          "末日": 0
+        },
+        "forbidden_hits": {},
+        "foreshadow_markers": 0,
+        "stdout_tail": "",
+        "stderr_tail": "",
+        "error": "RuntimeError: chapter 1 failed quality gate after repair: short_chapter body_chinese_chars=2751 < 3600"
+      }
+    ],
+    "drift_report": {
+      "status": "stable",
+      "completed_chapters": 0,
+      "first_drift_chapter": null,
+      "first_drift_batch": null,
+      "low_anchor_chapters": [],
+      "forbidden_hit_chapters": [],
+      "short_chapters": [],
+      "missing_foreshadow_chapters": [],
+      "anchor_totals": {
+        "无明": 0,
+        "短刃": 0,
+        "微粒": 0,
+        "天堑": 0,
+        "规则": 0,
+        "血脉": 0,
+        "末日": 0
+      }
+    },
+    "batch_drift_summary": [
+      {
+        "batch_no": 1,
+        "batch_size": 1,
+        "chapters": [
+          1
+        ],
+        "completed": 0,
+        "low_anchor_chapters": [],
+        "forbidden_hit_chapters": [],
+        "short_chapters": []
+      }
+    ]
+  },
+  "residual_risk": [
+    {
+      "code": "real_llm_variability",
+      "severity": "medium",
+      "mitigation": "record endpoint, isolated state_root, generated artifacts, and review gate output for each run."
+    },
+    {
+      "code": "review_gate_is_report_only",
+      "severity": "medium",
+      "mitigation": "treat review hard-gate blocks as stop signals; do not auto-edit story text or write truth from reports."
+    },
+    {
+      "code": "longform_quality_not_proven_by_harness",
+      "severity": "medium",
+      "mitigation": "use small isolated batches and compare review output before widening any production run."
+    },
+    {
+      "code": "v1_7_5_followup_still_required",
+      "severity": "medium",
+      "mitigation": "after prompt continuity repair, only run isolated small-batch validation and rerun review; do not expand batch size directly."
+    }
+  ],
+  "gates": [
+    "preflight",
+    "cost_boundary",
+    "isolated_output",
+    "postflight",
+    "review_gate"
+  ]
+}

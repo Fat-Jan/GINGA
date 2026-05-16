@@ -39,6 +39,8 @@ from ginga_platform.orchestrator.runner.op_translator import (
     adapter_ops_to_state_updates,
 )
 from ginga_platform.orchestrator.cli.longform_policy import (
+    BODY_CHINESE_TARGET_MAX,
+    BODY_CHINESE_TARGET_MIN,
     MIN_SUBMISSION_CHINESE_CHARS,
     low_frequency_anchors as hard_gate_low_frequency_anchors,
 )
@@ -325,6 +327,8 @@ def _build_chapter_prompt(state: dict, word_target: int, chapter_no: int = 1) ->
     particles = (entity.get("RESOURCE_LEDGER", {}) or {}).get("particles", 0)
     bundle_block = _render_chapter_input_bundle_prompt(chapter_input_bundle)
 
+    target_minimum = BODY_CHINESE_TARGET_MIN
+    target_ceiling = BODY_CHINESE_TARGET_MAX
     minimum_body_chars = max(MIN_SUBMISSION_CHINESE_CHARS, int(word_target * 0.9))
 
     prompt = f"""你是「dark-fantasy-ultimate-engine」窄通道生产引擎，按下方设定写第{chapter_no}章。
@@ -368,7 +372,7 @@ def _build_chapter_prompt(state: dict, word_target: int, chapter_no: int = 1) ->
 ## 输出要求
 1. 必须先输出一个 markdown 表格《写作自检》（4 行：当前锚定 / 当前微粒 / 预计微粒变化 / 主要冲突）
 2. 然后输出章节正文，章节标题用「{chapter_label}」
-   - 长度口径只看正文汉字数 3800-4200；表格、标题、注释、标点不计入正文汉字数
+   - 长度口径只看正文汉字数 {target_minimum}-{target_ceiling}；表格、标题、注释、标点不计入正文汉字数
    - 正式投稿质量下限：正文汉字数不得低于 {minimum_body_chars}，且任何真实长篇小批正文汉字数低于 {MIN_SUBMISSION_CHINESE_CHARS} 必须视为失败；接近结尾但未达到字数时，继续推进场景，不要用总结段提前收束
    - 用 7-10 个连续场景段落扩展动作、环境压迫、身体代价、对手反应和伏笔推进；不要用设定说明替代正文推进
    - 禁止输出提纲、说明、创作分析或“以下是正文”之类包装语

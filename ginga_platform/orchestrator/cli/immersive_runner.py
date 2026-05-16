@@ -31,8 +31,11 @@ from ginga_platform.orchestrator.cli.demo_pipeline import (
 )
 from ginga_platform.orchestrator.cli.longform_policy import DEFAULT_CHAPTER_BATCH_SIZE
 from ginga_platform.orchestrator.cli.longform_policy import (
+    BODY_CHINESE_TARGET_MAX,
+    BODY_CHINESE_TARGET_MIN,
     MIN_SUBMISSION_CHINESE_CHARS,
     count_chinese,
+    extract_chapter_body_text,
     opening_loop_score,
 )
 
@@ -53,6 +56,14 @@ def _default_prompt_builder(state: dict, word_target: int, chapter_no: int) -> s
 
 def _chapter_label_number(chapter_no: int) -> str:
     return "一" if chapter_no == 1 else str(chapter_no)
+
+
+def _body_char_target(word_target: int) -> tuple[int, int]:
+    return BODY_CHINESE_TARGET_MIN, BODY_CHINESE_TARGET_MAX
+
+
+def _minimum_body_chars(word_target: int) -> int:
+    return max(MIN_SUBMISSION_CHINESE_CHARS, int(word_target * 0.9))
 
 
 def _normalize_chapter_heading(chapter_text: str, chapter_no: int) -> str:
@@ -107,7 +118,8 @@ def _repair_prompt(
     attempt: int = 1,
     failure: str | None = None,
 ) -> str:
-    minimum_body_chars = max(MIN_SUBMISSION_CHINESE_CHARS, int(word_target * 0.9))
+    target_minimum, target_ceiling = _body_char_target(word_target)
+    minimum_body_chars = _minimum_body_chars(word_target)
     excerpt = _chapter_excerpt_for_bridge(chapter_text, limit=320)
     return "\n".join(
         [
@@ -116,7 +128,7 @@ def _repair_prompt(
             f"## 质量修复第 {attempt} 次",
             f"上一版第 {chapter_no} 章未通过真实长篇 gate，请重写完整章节正文。",
             f"- 上一版失败摘要：{failure or 'short_chapter/opening_loop_risk'}",
-            f"- 长度口径只看正文汉字数 3800-4200；表格、标题、注释、标点不计入正文汉字数。",
+            f"- 长度口径只看正文汉字数 {target_minimum}-{target_ceiling}；表格、标题、注释、标点不计入正文汉字数。",
             f"- 正文汉字数不得低于 {minimum_body_chars}，且任何真实长篇小批正文汉字数低于 {MIN_SUBMISSION_CHINESE_CHARS} 必须视为失败。",
             "- 必须重写为 7-10 个有实质推进的连续场景段落：动作推进、对手反应、身体代价、规则后果、伏笔推进都要落到正文。",
             f"- 至少新增 {max(900, minimum_body_chars // 4)} 个正文汉字的具体事件推进，不得只改标题、局部润色或压缩上一版。",
@@ -134,18 +146,22 @@ def _repair_prompt(
 def _needs_quality_repair(chapter_text: str, word_target: int, chapter_no: int) -> bool:
     if word_target < MIN_SUBMISSION_CHINESE_CHARS:
         return False
-    opening_failed = chapter_no > 1 and opening_loop_score(chapter_text) >= 3
-    return count_chinese(chapter_text) < MIN_SUBMISSION_CHINESE_CHARS or opening_failed
+    body_text = extract_chapter_body_text(chapter_text)
+    opening_failed = chapter_no > 1 and opening_loop_score(body_text) >= 3
+    minimum_body_chars = _minimum_body_chars(word_target)
+    return count_chinese(body_text) < minimum_body_chars or opening_failed
 
 
 def _quality_gate_failure(chapter_text: str, word_target: int, chapter_no: int) -> str | None:
     if word_target < MIN_SUBMISSION_CHINESE_CHARS:
         return None
     failures: list[str] = []
-    chinese_chars = count_chinese(chapter_text)
-    opening_score = opening_loop_score(chapter_text)
-    if chinese_chars < MIN_SUBMISSION_CHINESE_CHARS:
-        failures.append(f"short_chapter chinese_chars={chinese_chars} < {MIN_SUBMISSION_CHINESE_CHARS}")
+    body_text = extract_chapter_body_text(chapter_text)
+    chinese_chars = count_chinese(body_text)
+    opening_score = opening_loop_score(body_text)
+    minimum_body_chars = _minimum_body_chars(word_target)
+    if chinese_chars < minimum_body_chars:
+        failures.append(f"short_chapter body_chinese_chars={chinese_chars} < {minimum_body_chars}")
     if chapter_no > 1 and opening_score >= 3:
         failures.append(f"opening_loop_risk score={opening_score}")
     return "; ".join(failures) if failures else None

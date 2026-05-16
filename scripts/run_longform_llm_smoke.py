@@ -29,6 +29,7 @@ from ginga_platform.orchestrator.cli.longform_policy import (
     MAX_REAL_LLM_CHAPTER_BATCH_SIZE,
     MIN_SUBMISSION_CHINESE_CHARS,
     PRESSURE_TEST_BATCH_SIZE,
+    extract_chapter_body_text,
 )
 
 DEFAULT_ENDPOINT = "久久"
@@ -231,6 +232,7 @@ def _chapter_result(
     batch_size: int,
 ) -> ChapterRun:
     text = _read_text(path)
+    body_text = extract_chapter_body_text(text)
     return ChapterRun(
         chapter_no=chapter_no,
         batch_no=batch_no,
@@ -238,7 +240,7 @@ def _chapter_result(
         status="ok" if path.exists() and text.strip() else "missing",
         path=str(path),
         chars=len(text),
-        chinese_chars=_count_chinese(text),
+        chinese_chars=_count_chinese(body_text),
         anchor_hits=_count_terms(text, anchors),
         forbidden_hits={term: count for term, count in _count_terms(text, forbidden).items() if count},
         foreshadow_markers=text.count("<!-- foreshadow:"),

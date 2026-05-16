@@ -418,7 +418,7 @@ class ImmersiveRunnerRunBlockTest(unittest.TestCase):
         self.assertIsNone(result["last_error"])
         self.assertEqual(len(calls), 2)
         self.assertIn("质量修复", calls[1])
-        self.assertIn("正文汉字数 3800-4200", calls[1])
+        self.assertIn("正文汉字数 4200-4600", calls[1])
         self.assertIn("表格、标题、注释、标点不计入", calls[1])
         self.assertIn("正文汉字数低于 3500", calls[1])
         chapter_text = (self.state_root / "runner-book" / "chapter_01.md").read_text(encoding="utf-8")
@@ -440,7 +440,7 @@ class ImmersiveRunnerRunBlockTest(unittest.TestCase):
             failure="short_chapter chinese_chars=3313 < 3500",
         )
 
-        self.assertIn("正文汉字数 3800-4200", prompt)
+        self.assertIn("正文汉字数 4200-4600", prompt)
         self.assertIn("表格、标题、注释、标点不计入", prompt)
         self.assertIn("7-10 个", prompt)
         self.assertIn("上一版失败摘要", prompt)

@@ -298,7 +298,7 @@ class RealLLMDemoSmokeTest(unittest.TestCase):
                     word_target=4000,
                     batch_schedule="4",
                     dry_run=False,
-                    review_gate=False,
+                    review_gate=True,
                 )
                 report = (root / ".ops" / "reports" / "real_llm_harness_report.md").read_text(encoding="utf-8")
         finally:
@@ -309,6 +309,8 @@ class RealLLMDemoSmokeTest(unittest.TestCase):
         self.assertEqual(summary["failed_chapter"], 1)
         self.assertIn("short_chapter", summary["failure_reason"])
         self.assertEqual(summary["failed_batches"], [1])
+        self.assertEqual(payload["review_gate"]["status"], "no_chapters")
+        self.assertEqual(payload["review_gate"]["warnings"][0]["code"], "review_gate_no_chapters")
         self.assertIn("failed_chapter", report)
         self.assertIn("short_chapter", report)
 

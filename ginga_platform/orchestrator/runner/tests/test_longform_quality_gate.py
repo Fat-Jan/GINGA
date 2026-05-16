@@ -9,6 +9,32 @@ from pathlib import Path
 
 
 class LongformQualityGateTest(unittest.TestCase):
+    def test_chapter_gate_counts_body_chinese_chars_without_markdown_overhead(self) -> None:
+        from ginga_platform.orchestrator.cli.longform_policy import (
+            count_chinese,
+            extract_chapter_body_text,
+            longform_chapter_gate_check,
+        )
+
+        markdown_overhead = (
+            "| 写作自检 | 内容 |\n|---|---|\n"
+            f"| 当前锚定 | {'血脉末日繁衍契约' * 25} |\n"
+            f"| 当前微粒 | {'微粒天堑规则' * 25} |\n\n"
+            "# 第一章 · 天堑之下的血肉契约\n\n"
+        )
+        body = "无明把清道夫骨牌按进城门血槽，守夜人抬灯逼他交出下一轮微粒收益。" * 110
+        text = markdown_overhead + body + "\n<!-- foreshadow: id=fh-body planted_ch=1 expected_payoff=5 summary=血门索债 -->\n"
+
+        self.assertGreaterEqual(count_chinese(text), 3500)
+        self.assertLess(count_chinese(extract_chapter_body_text(text)), 3500)
+
+        check = longform_chapter_gate_check(
+            chapter={"name": "chapter_01.md", "text": text},
+            low_frequency_anchors=["血脉"],
+        )
+
+        self.assertTrue(check["short_chapter"])
+
     def _seed_longform_book(self, root: Path, book_id: str = "longform-gate-book") -> None:
         from ginga_platform.orchestrator.runner.state_io import StateIO
 

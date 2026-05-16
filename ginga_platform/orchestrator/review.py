@@ -20,13 +20,13 @@ from ginga_platform.orchestrator.cli.longform_policy import (
     PRESSURE_TEST_BATCH_SIZE,
     count_chinese,
     evaluate_longform_hard_gate,
+    extract_chapter_body_text,
     first_body_excerpt,
     load_chapter_artifacts,
     longform_chapter_gate_check,
     longform_forbidden_hits,
     low_frequency_anchors,
     opening_loop_score,
-    strip_html_comments,
 )
 from ginga_platform.orchestrator.runner.state_io import StateIO
 
@@ -224,7 +224,7 @@ def _build_longform_quality_gate(*, state: dict[str, dict[str, Any]], chapters: 
 
 def _build_style_fingerprint(*, state: dict[str, dict[str, Any]], chapters: list[dict[str, Any]]) -> dict[str, Any]:
     text = "\n".join(chapter.get("text", "") for chapter in chapters)
-    body_text = strip_html_comments(text)
+    body_text = extract_chapter_body_text(text)
     sentences = _sentences(body_text)
     sentence_lengths = [count_chinese(sentence) for sentence in sentences if count_chinese(sentence) > 0]
     paragraphs = [paragraph for chapter in chapters for paragraph in _body_paragraphs(chapter.get("text", ""))]
@@ -295,7 +295,7 @@ def _longform_chapter_issues(
     low_frequency_anchors: list[str],
 ) -> list[dict[str, Any]]:
     issues: list[dict[str, Any]] = []
-    body_text = strip_html_comments(text)
+    body_text = extract_chapter_body_text(text)
     check = longform_chapter_gate_check(chapter=chapter, low_frequency_anchors=low_frequency_anchors)
     if check["opening_loop_risk"]:
         issues.append(
@@ -413,7 +413,7 @@ def _batch_quality_snapshot(batch: list[dict[str, Any]], low_frequency_anchors: 
     missing_foreshadow_chapters: list[str] = []
     for chapter in batch:
         text = chapter.get("text", "")
-        body = strip_html_comments(text)
+        body = extract_chapter_body_text(text)
         if opening_loop_score(body) >= 3:
             opening_loop_chapters.append(chapter.get("name", ""))
         if low_frequency_anchors and not any(anchor in body for anchor in low_frequency_anchors):

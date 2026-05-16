@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "stage closeout template exists",
+      "status": "PASS",
+      "detail": "/Users/arm/Desktop/ginga/.ops/harness/stage_closeout_template.md"
+    },
+    {
+      "name": "stage closeout template sections",
+      "status": "PASS",
+      "detail": "all required sections present"
+    },
+    {
+      "name": "stage closeout template markers",
+      "status": "PASS",
+      "detail": "all required markers present"
+    },
+    {
+      "name": "commit message discipline",
+      "status": "PASS",
+      "detail": "stage/update, verification, and residual risk wording present"
+    }
+  ],
+  "errors": [],
+  "warnings": []
+}

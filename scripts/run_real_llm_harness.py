@@ -271,6 +271,22 @@ def _run_review_gate(
         return {"status": "disabled", "errors": [], "warnings": [], "report": None}
     if dry_run:
         return {"status": "planned", "errors": [], "warnings": [], "report": None}
+    state_dir = state_root / book_id
+    if not any(state_dir.glob("chapter_*.md")):
+        return {
+            "status": "no_chapters",
+            "errors": [],
+            "warnings": [
+                asdict(
+                    GateIssue(
+                        "review_gate_no_chapters",
+                        "warn",
+                        "review gate skipped because generation produced no chapter artifacts",
+                    )
+                )
+            ],
+            "report": None,
+        }
     result = export_review_report(
         book_id,
         run_id="v2-3-real-llm-review-gate",
@@ -509,7 +525,7 @@ def run_harness(
     passed = (
         preflight["status"] == "PASS"
         and (dry_run or postflight["status"] == "PASS")
-        and review["status"] in {"planned", "disabled", "PASS"}
+        and review["status"] in {"planned", "disabled", "PASS", "no_chapters"}
     )
     payload = {
         "harness_version": HARNESS_VERSION,

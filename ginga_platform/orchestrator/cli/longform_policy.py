@@ -10,6 +10,8 @@ DEFAULT_CHAPTER_BATCH_SIZE = 4
 MAX_REAL_LLM_CHAPTER_BATCH_SIZE = 5
 PRESSURE_TEST_BATCH_SIZE = 6
 MIN_SUBMISSION_CHINESE_CHARS = 3500
+BODY_CHINESE_TARGET_MIN = 4200
+BODY_CHINESE_TARGET_MAX = 4600
 LONGFORM_HARD_GATE_MODE = "block_next_real_llm_batch"
 
 
@@ -131,7 +133,7 @@ def longform_chapter_gate_check(
     low_frequency_anchors: list[str],
 ) -> dict[str, Any]:
     text = chapter.get("text", "")
-    body_text = strip_html_comments(text)
+    body_text = extract_chapter_body_text(text)
     return {
         "chapter": chapter.get("name", ""),
         "opening_loop_risk": opening_loop_score(body_text) >= 3,
@@ -145,6 +147,21 @@ def longform_chapter_gate_check(
 
 def strip_html_comments(text: str) -> str:
     return re.sub(r"<!--.*?-->", "", text, flags=re.DOTALL)
+
+
+def extract_chapter_body_text(text: str) -> str:
+    """Return only prose body text, excluding markdown overhead and sidecar comments."""
+
+    without_comments = strip_html_comments(text)
+    body_lines: list[str] = []
+    for raw_line in without_comments.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if line.startswith("#") or line.startswith("|"):
+            continue
+        body_lines.append(raw_line)
+    return "\n".join(body_lines)
 
 
 def count_chinese(text: str) -> int:
@@ -179,11 +196,14 @@ def first_body_excerpt(text: str, *, limit: int = 160) -> str:
 
 __all__ = [
     "DEFAULT_CHAPTER_BATCH_SIZE",
+    "BODY_CHINESE_TARGET_MAX",
+    "BODY_CHINESE_TARGET_MIN",
     "LONGFORM_HARD_GATE_MODE",
     "MAX_REAL_LLM_CHAPTER_BATCH_SIZE",
     "PRESSURE_TEST_BATCH_SIZE",
     "count_chinese",
     "evaluate_longform_hard_gate",
+    "extract_chapter_body_text",
     "first_body_excerpt",
     "load_chapter_artifacts",
     "longform_chapter_gate_check",

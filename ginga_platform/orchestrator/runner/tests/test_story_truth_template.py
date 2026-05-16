@@ -344,7 +344,7 @@ class ChapterInputBundleTest(unittest.TestCase):
         self.assertIn("多子多福", prompt)
         self.assertIn("繁衍契约", prompt)
         self.assertIn("正式投稿质量下限", prompt)
-        self.assertIn("正文汉字数 3800-4200", prompt)
+        self.assertIn("正文汉字数 4200-4600", prompt)
         self.assertIn("表格、标题、注释、标点不计入", prompt)
         self.assertIn("正文汉字数低于 3500", prompt)
         self.assertIn("不得把醒来、睁眼、灰白环境、体内微粒或天堑边缘当作新开场", prompt)
@@ -370,7 +370,7 @@ class ChapterInputBundleTest(unittest.TestCase):
 
         prompt = _build_chapter_prompt(state, word_target=4000, chapter_no=1)
 
-        self.assertIn("正文汉字数 3800-4200", prompt)
+        self.assertIn("正文汉字数 4200-4600", prompt)
         self.assertIn("表格、标题、注释、标点不计入", prompt)
         self.assertIn("正文汉字数低于 3500", prompt)
         self.assertNotIn("目标字数 4000 字", prompt)
