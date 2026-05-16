@@ -3,7 +3,7 @@
 **版本**：v1 草案
 **作者**：主 agent（基于 4 scout 全量证据综合）
 
-> 历史说明：本文件是 2026-05-13 阶段 2 蒸馏草案，已被 `ARCHITECTURE.md` / `ROADMAP.md` 吸收；当前完成度与下一步以 `STATUS.md` 为准。截至 2026-05-14，S1/S2/S3 与 S4/Phase 2 native `sqlite-vec` + RAG 真实召回质量评估均已完成。
+> 历史说明：本文件是 2026-05-13 阶段 2 蒸馏草案，已被 `ARCHITECTURE.md` / `ROADMAP.md` 吸收；当前完成度与下一步以 `STATUS.md` 为准。截至 2026-05-14，S1/S2/S3 与 S4/Phase 2 native `sqlite-vec` + RAG 真实召回质量评估均已完成。本文件内路径默认仍按仓库根目录解释。
 
 **输入**：
 - `.ops/scout-reports/scout1-base.md`（30KB / 50 文件实读 / 基座 3 层结构 + schema + Top 18 模板）

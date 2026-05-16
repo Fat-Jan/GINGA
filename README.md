@@ -10,3 +10,5 @@ Ginga 是面向长篇小说创作的分层 agent harness / RAG / workflow 项目
 4. `ARCHITECTURE.md`：四层架构与关键设计。
 
 注意：`ROADMAP.md` 是历史/规划资料，不代表最新完成度。
+
+文档分类索引见 `docs/README.md`。所有文档内路径默认按仓库根目录解释。

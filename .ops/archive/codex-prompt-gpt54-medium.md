@@ -22,7 +22,7 @@
 ## 上下文
 - 项目路径：/Users/arm/Desktop/ginga
 - 主 agent（Claude Opus 4.7）已完成 Sprint 2 核心代码 + 测试（105/105 PASS），因网络中断 + endpoint 故障留下两条收尾任务
-- 详细 handoff：@/Users/arm/Desktop/ginga/.ops/handoff-to-codex-sprint2-remaining.md（必读）
+- 详细 handoff：@/Users/arm/Desktop/ginga/.ops/archive/handoff-to-codex-sprint2-remaining.md（必读）
 
 ## 你的任务（按优先级）
 
@@ -63,7 +63,7 @@
 
 ## 执行策略
 1. **并行启动**：Task 2 先跑（后台），Task 1 等 endpoint 恢复后跑（写范围互斥，无冲突）
-2. **心跳协议**：每 10 分钟或关键步骤追加心跳到 `.ops/handoff-to-codex-sprint2-remaining.md`
+2. **心跳协议**：每 10 分钟或关键步骤追加心跳到 `.ops/archive/handoff-to-codex-sprint2-remaining.md`
 3. **失败处理**：任一 task 失败必须写明原因 + 已尝试 fallback，不静默放弃
 
 ## 红线（P0，违反立即停止）
@@ -74,7 +74,7 @@
 ## 交付清单
 - [ ] Task 2: 461 个 `prompts-card-*.md` + 461 行 jsonl + stderr `batch done`
 - [ ] Task 1: 5 个 `chapter_NN.md`（每个 ≥3000 bytes）+ stdout `DoD PASS`
-- [ ] 心跳记录：`.ops/handoff-to-codex-sprint2-remaining.md` 追加进度
+- [ ] 心跳记录：`.ops/archive/handoff-to-codex-sprint2-remaining.md` 追加进度
 - [ ] 无回归：已完成产物（immersive-demo / 测试）零改动
 
 ## 开始执行

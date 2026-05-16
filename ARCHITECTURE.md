@@ -1,11 +1,11 @@
 # Ginga 小说创作系统架构（ARCHITECTURE v1）
 
 **版本**：v1（融合阶段 2 蒸馏方案 + 阶段 3 Ark Jury Court 4 角法庭评审）
-**取代**：`_distillation-plan.md`（保留作历史档案；本文件为权威架构）
+**取代**：`docs/archive/_distillation-plan.md`（保留作历史档案；本文件为权威架构）
 **作者**：主 agent 综合
 **完成日期**：2026-05-13
 **输入**：
-- 蒸馏方案 v1：`_distillation-plan.md`（47.6KB，阶段 2 输出）
+- 蒸馏方案 v1：`docs/archive/_distillation-plan.md`（47.6KB，阶段 2 输出）
 - 4 角法庭评审：`.ops/jury/jury-{1-4}-*.md`（共 ~32KB，4 票 revise 一致建议修订）
 - 4 Scout 实地报告：`.ops/scout-reports/scout{1-4}-*.md`（共 ~98KB）
 

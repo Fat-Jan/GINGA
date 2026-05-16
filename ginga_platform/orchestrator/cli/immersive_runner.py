@@ -71,6 +71,16 @@ def _normalize_chapter_heading(chapter_text: str, chapter_no: int) -> str:
     return chapter_text
 
 
+def _chapter_excerpt_for_bridge(chapter_text: str, *, limit: int = 220) -> str:
+    lines = [
+        line.strip()
+        for line in chapter_text.splitlines()
+        if line.strip() and not line.strip().startswith("|") and not line.strip().startswith("<!--")
+    ]
+    excerpt = " ".join(lines)
+    return excerpt[:limit]
+
+
 class ImmersiveRunner:
     """dark-fantasy 沉浸专线 N 章 block 运行器.
 
@@ -138,12 +148,18 @@ class ImmersiveRunner:
         self.adapter.enter_immersive_mode()
 
         chapter_paths: list[str] = []
+        previous_chapter_bridge: str | None = None
         try:
             # Step 2-3: 顺序跑 N 章
             for i in range(chapters):
                 ch_no = start_chapter_no + i
                 state_view = self.state_io.state  # dict-of-dict 视图
-                chapter_input_bundle = build_chapter_input_bundle(state_view, word_target, chapter_no=ch_no)
+                chapter_input_bundle = build_chapter_input_bundle(
+                    state_view,
+                    word_target,
+                    chapter_no=ch_no,
+                    previous_chapter_bridge_override=previous_chapter_bridge,
+                )
                 self.state_io.apply(
                     {"workspace.CHAPTER_INPUT_BUNDLE": chapter_input_bundle},
                     source=f"immersive_runner.chapter_{ch_no}.input_bundle",
@@ -153,6 +169,11 @@ class ImmersiveRunner:
                 prompt = self.prompt_builder(state_view, word_target, ch_no)
                 chapter_text = self.llm_caller(prompt, llm_endpoint)
                 chapter_text = _normalize_chapter_heading(chapter_text, ch_no)
+                previous_chapter_bridge = (
+                    f"上一章生成摘要：{_chapter_excerpt_for_bridge(chapter_text)}"
+                    if chapter_text.strip()
+                    else previous_chapter_bridge
+                )
 
                 # fake skill_output（demo_pipeline 没用 adapter，这里补：
                 # 第 N 章字数估算 → settlement.particle_balance.delta；其他字段留空）

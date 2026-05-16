@@ -270,6 +270,106 @@ class ChapterInputBundleTest(unittest.TestCase):
         self.assertFalse(bundle["reads_report_only_sources"])
         self.assertIn(".ops/book_analysis/**", bundle["forbidden_sources"])
 
+    def test_chapter_prompt_consumes_bundle_continuity_and_low_frequency_anchors(self) -> None:
+        from ginga_platform.orchestrator.cli.demo_pipeline import (
+            _build_chapter_prompt,
+            build_chapter_input_bundle,
+        )
+
+        state = {
+            "locked": {
+                "STORY_DNA": {
+                    "premise": "无明在末日天堑追索血脉繁衍契约",
+                    "conflict_engine": "血脉繁衍契约 vs 末日城邦",
+                    "payoff_promise": "每次力量增长都要付出血脉代价",
+                },
+                "GENRE_LOCKED": {
+                    "topic": ["玄幻黑暗", "末日多子多福"],
+                    "style_lock": {
+                        "tone": ["暗黑"],
+                        "forbidden_styles": ["游戏系统播报腔"],
+                        "anchor_phrases": ["微粒", "天堑", "血脉", "末日", "繁衍契约"],
+                    },
+                },
+                "GENRE_CONTRACT": {
+                    "core_payoffs": ["多子多福", "末日城邦"],
+                },
+            },
+            "entity_runtime": {
+                "CHARACTER_STATE": {
+                    "protagonist": {
+                        "name": "无明",
+                        "events": [
+                            {"ch": 5, "type": "rule_cost", "impact": "短刃记录了末日城邦的血脉代价"},
+                            {"ch": 6, "type": "contract", "impact": "繁衍契约要求无明交出下一次微粒收益"},
+                        ],
+                    }
+                },
+                "FORESHADOW_STATE": {
+                    "pool": [
+                        {
+                            "id": "fh-low-anchor",
+                            "status": "open",
+                            "expected_payoff": 11,
+                            "summary": "血脉契约会在末日城邦索债",
+                        }
+                    ]
+                },
+                "GLOBAL_SUMMARY": {
+                    "total_words": 24000,
+                    "arc_summaries": [
+                        {
+                            "arc": "chapter_1-5",
+                            "summary": "无明从天堑废墟进入末日城邦，短刃确认血脉债务",
+                        }
+                    ],
+                },
+            },
+        }
+
+        bundle = build_chapter_input_bundle(state, word_target=4000, chapter_no=7)
+        state["workspace"] = {"CHAPTER_INPUT_BUNDLE": bundle}
+        prompt = _build_chapter_prompt(state, word_target=4000, chapter_no=7)
+
+        self.assertIn("## 章节输入包", prompt)
+        self.assertIn("承接最近事件", prompt)
+        self.assertIn("繁衍契约要求无明交出下一次微粒收益", prompt)
+        self.assertIn("开篇必须承接上一章状态变化", prompt)
+        self.assertIn("禁止重新醒来", prompt)
+        self.assertIn("本章必须保持低频题材锚点", prompt)
+        self.assertIn("血脉", prompt)
+        self.assertIn("末日", prompt)
+        self.assertIn("多子多福", prompt)
+        self.assertIn("繁衍契约", prompt)
+
+    def test_chapter_input_bundle_uses_hard_gate_low_frequency_anchor_source(self) -> None:
+        from ginga_platform.orchestrator.cli.demo_pipeline import build_chapter_input_bundle
+
+        state = {
+            "locked": {
+                "STORY_DNA": {
+                    "premise": "无明在末日天堑追索血脉繁衍契约",
+                    "conflict_engine": "多子多福契约 vs 末日城邦",
+                },
+                "GENRE_LOCKED": {
+                    "topic": ["玄幻黑暗", "末日多子多福"],
+                    "style_lock": {"anchor_phrases": ["微粒", "天堑"]},
+                },
+            },
+            "entity_runtime": {
+                "CHARACTER_STATE": {"protagonist": {"events": []}},
+                "FORESHADOW_STATE": {"pool": []},
+                "GLOBAL_SUMMARY": {"total_words": 0},
+            },
+        }
+
+        bundle = build_chapter_input_bundle(state, word_target=4000, chapter_no=7)
+
+        self.assertIn("血脉", bundle["low_frequency_anchors"])
+        self.assertIn("末日", bundle["low_frequency_anchors"])
+        self.assertIn("多子多福", bundle["low_frequency_anchors"])
+        self.assertIn("繁衍契约", bundle["low_frequency_anchors"])
+
     def test_immersive_runner_writes_chapter_input_bundle(self) -> None:
         from ginga_platform.orchestrator.cli.demo_pipeline import init_book
         from ginga_platform.orchestrator.cli.immersive_runner import ImmersiveRunner

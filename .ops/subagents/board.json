@@ -3,7 +3,7 @@
   "project": "ginga-novel-distillation",
   "schema_note": "推荐状态机: queued -> assigned -> running -> validating -> done; 异常: stale/zombie/retry_wait/failed/blocked. done 只能由主 agent 复核后写入。底层派活规范见 .ops/subagents/dispatch-protocol.md。",
   "created_at": "2026-05-12T22:50:00+08:00",
-  "updated_at": "2026-05-16T01:49:41+08:00",
+  "updated_at": "2026-05-16T13:34:00+08:00",
   "tasks": [
     {
       "task_id": "scout-1-base",
@@ -1463,6 +1463,93 @@
       ],
       "blockers": [],
       "handoff_note": "Completed by main agent after subagent exploration and worker patch. v2.2 proves CLI matrix boundaries only; v2.3 real LLM preflight/postflight remains planned."
+    },
+    {
+      "task_id": "v1.7-5-diff-boundary-review",
+      "title": "v1.7-5 第二提交 diff / 归档边界审查",
+      "status": "done",
+      "owner": "Codex explorer Mill; main agent validated callback",
+      "model_contract": {
+        "provider": "OpenAI Codex subagent runtime",
+        "supports_explicit_model_param": true,
+        "model_tier": "inherited current session model; read-only explorer",
+        "reason": "任务是提交边界、未跟踪文件和归档路径审查，需要仓库上下文但不需要写权限",
+        "fallback": "若子代理不可用或模型参数不可用，主控用 git diff/name-status/status 本地完成审查"
+      },
+      "owned_files": [],
+      "forbidden_files": [
+        "all repository files (read-only task; no edits, no staging, no commit)"
+      ],
+      "input_refs": [
+        "git status --short --branch",
+        "git diff --name-status",
+        "git diff --stat",
+        "STATUS.md",
+        "ROADMAP.md",
+        "notepad.md",
+        "docs/README.md",
+        ".ops/archive/README.md",
+        "docs/archive/README.md"
+      ],
+      "expected_output": "read-only callback listing what belongs in the second commit, what should be excluded, and any archive/truth-file inconsistencies",
+      "verification": "main agent reviews callback, checks git status/name-status, and only then stages files",
+      "created_at": "2026-05-16T13:25:04+08:00",
+      "updated_at": "2026-05-16T13:34:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 1,
+      "evidence": [
+        "subagent Mill callback status=validating; no blocking diff-boundary risk for v1.7-5 implementation + truth-file sync",
+        "commit boundary: include v1.7-5 code/tests, STATUS.md/ROADMAP.md/notepad.md, validation JSON, and intentional docs/archive cleanup",
+        "exclude: three 0-byte .ops/jury/* files and local ginga.code-workspace unless explicitly intended",
+        "archive check: _distillation-plan.md moved to docs/archive/ and three .ops handoff/prompt docs moved to .ops/archive/ with active references updated",
+        "truth check: STATUS.md keeps v1.7-4 observation and records v1.7-5 done without production-readiness overclaim"
+      ],
+      "blockers": [],
+      "handoff_note": "Main agent accepted the read-only boundary review and will stage by whitelist, not git add ."
+    },
+    {
+      "task_id": "v1.7-5-implementation-review",
+      "title": "v1.7-5 Prompt Continuity Repair 实现与验证复核",
+      "status": "done",
+      "owner": "Codex explorer Tesla; main agent validated callback",
+      "model_contract": {
+        "provider": "OpenAI Codex subagent runtime",
+        "supports_explicit_model_param": true,
+        "model_tier": "inherited current session model; read-only explorer",
+        "reason": "任务是跨 demo_pipeline / immersive_runner / tests 的实现复核，需判断行为边界和验证证据",
+        "fallback": "若子代理不可用或模型参数不可用，主控运行 focused tests 与 verify_all --quick 后本地复核"
+      },
+      "owned_files": [],
+      "forbidden_files": [
+        "all repository files (read-only task; no edits, no staging, no commit)"
+      ],
+      "input_refs": [
+        "ginga_platform/orchestrator/cli/demo_pipeline.py",
+        "ginga_platform/orchestrator/cli/immersive_runner.py",
+        "ginga_platform/orchestrator/runner/tests/test_story_truth_template.py",
+        "ginga_platform/orchestrator/runner/tests/test_immersive_mode.py",
+        ".ops/validation/verify_all_quick.json",
+        ".ops/validation/review_quick_verify_2026-05-16.json",
+        "STATUS.md"
+      ],
+      "expected_output": "read-only callback identifying correctness risks, missing tests, verification gaps, and whether v1.7-5 can be locally committed",
+      "verification": "main agent reviews callback and reruns or cites existing verification before commit",
+      "created_at": "2026-05-16T13:25:04+08:00",
+      "updated_at": "2026-05-16T13:34:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 1,
+      "evidence": [
+        "subagent Tesla callback status=validating; no blocking implementation findings in v1.7-5 files",
+        "behavior confirmed: _build_chapter_prompt consumes workspace.CHAPTER_INPUT_BUNDLE",
+        "behavior confirmed: build_chapter_input_bundle reuses longform_policy.low_frequency_anchors source",
+        "behavior confirmed: ImmersiveRunner carries previous generated chapter excerpt into chapter 2-N bundle",
+        "boundary confirmed: no hard-gate loosening, no auto-edit old text, no production/batch expansion claim",
+        "verification inspected: verify_all_quick.json passed=true with all exit_code=0; review_quick_verify_2026-05-16.json passed=true with all exit_code=0"
+      ],
+      "blockers": [],
+      "handoff_note": "Ready for local commit after main-agent whitelist staging and final diff/status check."
     }
   ]
 }

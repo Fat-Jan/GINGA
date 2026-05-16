@@ -328,6 +328,36 @@ class ImmersiveRunnerRunBlockTest(unittest.TestCase):
             ],
         )
 
+    def test_run_block_carries_previous_chapter_excerpt_into_next_prompt(self) -> None:
+        captured_prompts: list[str] = []
+
+        def mock_llm(prompt: str, endpoint: str, **kw) -> str:
+            captured_prompts.append(prompt)
+            ch_no = len(captured_prompts)
+            if ch_no == 1:
+                return (
+                    "# 第一章 · 血契索债\n\n"
+                    "无明没有重新醒来，他沿着天堑血桥逼近末日城邦。"
+                    "短刃把血脉契约刻进掌心，微粒收益被下一轮索债锁死。"
+                    "<!-- foreshadow: id=fh-bridge-1 planted_ch=1 expected_payoff=6 summary=血脉索债 -->"
+                )
+            return "# 第2章 · 接债入城\n\n" + ("血脉契约压在城门上。" * 60)
+
+        runner = ImmersiveRunner(
+            "runner-book",
+            state_root=self.state_root,
+            llm_caller=mock_llm,
+        )
+        result = runner.run_block(chapters=2, word_target=200)
+
+        self.assertIsNone(result["last_error"])
+        self.assertEqual(len(captured_prompts), 2)
+        second_prompt = captured_prompts[1]
+        self.assertIn("上一章生成摘要", second_prompt)
+        self.assertIn("血契索债", second_prompt)
+        self.assertIn("短刃把血脉契约刻进掌心", second_prompt)
+        self.assertNotIn("缺少前章事件摘要", second_prompt)
+
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()

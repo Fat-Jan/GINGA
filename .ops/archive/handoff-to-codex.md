@@ -60,7 +60,7 @@ node "/Users/arm/.claude/plugins/cache/openai-codex/codex/1.0.4/scripts/codex-co
 
 完成后报告：报告路径 + 实际读取的文件总数（确认 = 475）+ Top 10 task 类型频次 + 总字数 + 长尾低频 task 类型清单。
 
-【强制】干活过程中持续追加进度到 /Users/arm/Desktop/ginga/.ops/scout-reports/scout3-progress.md（文件不存在就建，存在只 append 不覆盖，绝不用 sed/awk 改写）。触发条件：(1) 启动时写一条 START；(2) 每读完 50 个文件；(3) 每个 H2 章节开始/完成草拟；(4) 每发现新的或罕见的 task 类型；(5) 每发现一处与基座的明显重叠/冲突；(6) 任何工具失败或上下文压力告警；(7) 完成时写一条 DONE。格式协议（包含里程碑标题、已读 N/475、当前阶段、累计发现、下一步、异常）的完整版见 /Users/arm/Desktop/ginga/.ops/handoff-to-codex.md 的『进度流式回写协议』章节——你必须先读那段，然后照样追加。主 agent 会用 tail 监控；20 分钟没新 entry 视同 zombie。" 2>&1
+【强制】干活过程中持续追加进度到 /Users/arm/Desktop/ginga/.ops/scout-reports/scout3-progress.md（文件不存在就建，存在只 append 不覆盖，绝不用 sed/awk 改写）。触发条件：(1) 启动时写一条 START；(2) 每读完 50 个文件；(3) 每个 H2 章节开始/完成草拟；(4) 每发现新的或罕见的 task 类型；(5) 每发现一处与基座的明显重叠/冲突；(6) 任何工具失败或上下文压力告警；(7) 完成时写一条 DONE。格式协议（包含里程碑标题、已读 N/475、当前阶段、累计发现、下一步、异常）的完整版见 /Users/arm/Desktop/ginga/.ops/archive/handoff-to-codex.md 的『进度流式回写协议』章节——你必须先读那段，然后照样追加。主 agent 会用 tail 监控；20 分钟没新 entry 视同 zombie。" 2>&1
 ```
 
 返回会立刻给你一个 `task-XXXXXXXX-XXXXXX` job id。

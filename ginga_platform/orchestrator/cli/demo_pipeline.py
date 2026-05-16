@@ -38,6 +38,7 @@ from typing import Any
 from ginga_platform.orchestrator.runner.op_translator import (
     adapter_ops_to_state_updates,
 )
+from ginga_platform.orchestrator.cli.longform_policy import low_frequency_anchors as hard_gate_low_frequency_anchors
 from ginga_platform.orchestrator.registry.capability_registry import CapabilityRegistry
 from ginga_platform.orchestrator.runner.dsl_parser import Step, parse_workflow
 from ginga_platform.orchestrator.runner.state_io import StateIO
@@ -275,6 +276,7 @@ def _build_chapter_prompt(state: dict, word_target: int, chapter_no: int = 1) ->
     global_summary = entity.get("GLOBAL_SUMMARY", {}) or {}
     arc_summaries = global_summary.get("arc_summaries", []) or []
     char_events = char.get("events", []) or []
+    chapter_input_bundle = (state.get("workspace", {}) or {}).get("CHAPTER_INPUT_BUNDLE") or {}
 
     forbidden = "、".join(style.get("forbidden_styles", []))
     anchor = "、".join(style.get("anchor_phrases", []))
@@ -318,6 +320,7 @@ def _build_chapter_prompt(state: dict, word_target: int, chapter_no: int = 1) ->
 
     total_words = global_summary.get("total_words", 0)
     particles = (entity.get("RESOURCE_LEDGER", {}) or {}).get("particles", 0)
+    bundle_block = _render_chapter_input_bundle_prompt(chapter_input_bundle)
 
     prompt = f"""你是「dark-fantasy-ultimate-engine」窄通道生产引擎，按下方设定写第{chapter_no}章。
 
@@ -355,6 +358,8 @@ def _build_chapter_prompt(state: dict, word_target: int, chapter_no: int = 1) ->
 ## 待回收伏笔池（FORESHADOW_STATE）
 - {fh_items}
 
+{bundle_block}
+
 ## 输出要求
 1. 必须先输出一个 markdown 表格《写作自检》（4 行：当前锚定 / 当前微粒 / 预计微粒变化 / 主要冲突）
 2. 然后输出章节正文，目标字数 {word_target} 字（中文计算），章节标题用「{chapter_label}」
@@ -379,7 +384,49 @@ def _build_chapter_prompt(state: dict, word_target: int, chapter_no: int = 1) ->
     return prompt
 
 
-def build_chapter_input_bundle(state: dict, word_target: int, chapter_no: int = 1) -> dict[str, Any]:
+def _render_chapter_input_bundle_prompt(bundle: dict[str, Any]) -> str:
+    if not bundle:
+        return "## 章节输入包\n- 状态：未生成；按 StateIO 前情摘要写作。"
+    low_frequency_anchors = [str(item) for item in bundle.get("low_frequency_anchors", []) if str(item)]
+    low_frequency_line = "、".join(low_frequency_anchors) if low_frequency_anchors else "（无）"
+    recent_arc_lines = [
+        f"- {item.get('arc', '?')}: {str(item.get('summary', ''))[:120]}"
+        for item in bundle.get("recent_arc_summaries", [])
+        if isinstance(item, dict)
+    ]
+    foreshadow_lines = [
+        f"- {item.get('id', '<?>')} status={item.get('status', '?')} "
+        f"payoff={item.get('expected_payoff', '?')}: {str(item.get('summary', ''))[:100]}"
+        for item in bundle.get("hook_or_foreshadow_ops", [])
+        if isinstance(item, dict)
+    ]
+    risk_lines = [f"- {str(item)}" for item in bundle.get("risk_notes", []) if str(item)]
+    return "\n".join(
+        [
+            "## 章节输入包（workspace.CHAPTER_INPUT_BUNDLE，StateIO 派生）",
+            f"- 本章目标：{bundle.get('chapter_goal', '')}",
+            f"- 上一章承接：{bundle.get('previous_chapter_bridge', '')}",
+            f"- 开篇连续性：{bundle.get('opening_continuity_guard', '')}",
+            f"- 本章必须保持低频题材锚点：{low_frequency_line}",
+            "- 写作硬要求：开篇先承接上一章状态变化；禁止重新醒来、重新观察灰白环境、重新解释体内微粒或短刃来重启章节。",
+            "- 低频锚点硬要求：正文必须自然落入至少一个低频题材锚点，优先推进血脉、末日、多子多福、繁衍契约等长篇组合题材承诺。",
+            "### 最近 arc 摘要",
+            *(recent_arc_lines or ["- （暂无）"]),
+            "### 伏笔 / hook 操作",
+            *(foreshadow_lines or ["- （暂无）"]),
+            "### 风险提示",
+            *(risk_lines or ["- 不得读取 candidate-only/report-only 外部来源。"]),
+        ]
+    )
+
+
+def build_chapter_input_bundle(
+    state: dict,
+    word_target: int,
+    chapter_no: int = 1,
+    *,
+    previous_chapter_bridge_override: str | None = None,
+) -> dict[str, Any]:
     """Project StateIO truth/runtime state into the per-chapter input bundle.
 
     The bundle is a workspace projection for prompt preparation.  It reads only
@@ -417,11 +464,14 @@ def build_chapter_input_bundle(state: dict, word_target: int, chapter_no: int = 
             str(event.get("impact", ""))[:80] for event in recent_events
         ) if recent_events else "缺少前章事件摘要；开篇需先确认上一章收束点。"
         opening_guard = "开篇必须承接上一章状态变化，避免重新醒来、重新观察灰白环境等循环。"
+    if previous_chapter_bridge_override:
+        previous_chapter_bridge = previous_chapter_bridge_override
 
     low_frequency_anchors = list(
         dict.fromkeys(
             (genre_locked.get("style_lock", {}) or {}).get("anchor_phrases", [])
             + genre_contract.get("core_payoffs", [])
+            + hard_gate_low_frequency_anchors(state)
         )
     )
 

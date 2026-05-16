@@ -122,14 +122,14 @@
 codex-companion task \
   --background \
   --write \
-  --prompt "$(cat .ops/handoff-to-codex-sprint2-remaining.md | sed -n '/^### Task 1/,/^---$/p')" \
+  --prompt "$(cat .ops/archive/handoff-to-codex-sprint2-remaining.md | sed -n '/^### Task 1/,/^---$/p')" \
   --output .ops/codex-task1-s2-demo.log
 
 # Task 2 (立即可启动)
 codex-companion task \
   --background \
   --write \
-  --prompt "$(cat .ops/handoff-to-codex-sprint2-remaining.md | sed -n '/^### Task 2/,/^---$/p')" \
+  --prompt "$(cat .ops/archive/handoff-to-codex-sprint2-remaining.md | sed -n '/^### Task 2/,/^---$/p')" \
   --output .ops/codex-task2-L-annotate.log
 ```
 
