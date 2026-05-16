@@ -1,0 +1,47 @@
+version: "1.0"
+
+roles:
+  prose_writer:
+    description: 正文生成（4000+ 字中文长篇）
+    primary: 久久
+    fallback: [ioll-mix]
+    max_tokens: 12000
+    timeout: 300
+
+  reviewer:
+    description: 质量评审
+    primary: jiujiu-jury
+    fallback: [ioll-grok]
+    max_tokens: 4096
+    timeout: 120
+
+  repair:
+    description: 章节修复
+    primary: 久久
+    fallback: [ioll-mix]
+    max_tokens: 12000
+    timeout: 300
+
+  probe:
+    description: model-topology 最小探针
+    primary: 久久
+    fallback: []
+    max_tokens: 64
+    timeout: 30
+
+defaults:
+  endpoint: 久久
+  max_tokens: 4096
+  timeout: 300
+  max_retries: 1
+
+health:
+  久久:
+    last_verified: 2026-05-16
+    known_issues:
+      - 长输出偶发 504
+  jiujiu-jury:
+    last_verified: 2026-05-15
+    known_issues:
+      - 大包连续 504
+      - 只适合短输入

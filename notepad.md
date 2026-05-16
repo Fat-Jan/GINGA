@@ -90,7 +90,7 @@ _原料/
 | 3 | Ark Jury Court 4 角法庭 | ✅ 完成 | `.ops/jury/jury-{1-4}-*.md`（4 票 revise） |
 | 4 | 综合判决与交付 | ✅ 完成 | `ARCHITECTURE.md` + `ROADMAP.md` |
 
-**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 到 v1.3-5 拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review、v1.7-3 Longform Hard Gate 与 v1.7-5 Prompt Continuity Repair 已完成。v2.0-v2.5 Harness Engineering 已完成并接入 `verify_all.py` baseline。v1.7-6 已补齐单章 probe、单章 review、4/4 小批复验和 4 章 final review 证据；下一步不是直接扩大批量，而是 v1.7-7，把第 4 章出现过的长输出稳定性、补长、开篇修复和 style warn rewrite 收敛成可审计自动路径。
+**下一步**：P2-7C provider 质量与真实 demo 已收口；v1.3-0 到 v1.3-5 拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review、v1.7-3 Longform Hard Gate 与 v1.7-5 Prompt Continuity Repair 已完成。v2.0-v2.5 Harness Engineering 已完成并接入 `verify_all.py` baseline。v2.6a LLM Config 代码层已完成并通过离线验证，v2.6b 真实 fallback 验证仍未做。v1.7-6 已补齐单章 probe、单章 review、4/4 小批复验和 4 章 final review 证据；下一步不是直接扩大批量，而是 v1.7-7，把第 4 章出现过的长输出稳定性、补长、开篇修复和 style warn rewrite 收敛成可审计自动路径。
 
 **新增规划**：v1.9 Story Truth Template 已落 `.ops/plans/v1-9-story-truth-template-plan.md`。v1.9-1 source audit、v1.9-2 schema / validator、v1.9-3 `StateIO` 项目/题材契约窄切片、v1.9-4 `workspace.CHAPTER_INPUT_BUNDLE`、v1.9-5 真实小样本回归均已完成；v1.9-5 的质量结论是 observation，不是扩大批量许可。
 

@@ -334,7 +334,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 - [x] Jury 修订追踪表（jury 23 条建议全部归属到具体任务编号，§七）
 - [x] 8 决策落地到 ARCHITECTURE §七 + 本文件任务编号
 
-**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-16，P2-7C Platform runner 收敛、v1.3-0 到 v1.3-5 的拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review 与 v1.7-3 Longform Hard Gate 均已收口。RAG 残余 `candidate_k` / `asset_type` blocker 仅作为观察项，只有指标回退或新 gold query 暴露问题时再修；真实长篇 v1.7-6 已补齐单章 probe、单章 review、4/4 小批复验和 final review gate，但 style warn 清零两次真实 stylegate 仍失败。下一步是 v1.7-7：把长输出稳定性、补长、开篇修复和 style warn rewrite 收敛成可审计自动路径，再考虑新的真实批量扩大。
+**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-16，P2-7C Platform runner 收敛、v1.3-0 到 v1.3-5 的拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review 与 v1.7-3 Longform Hard Gate 均已收口。RAG 残余 `candidate_k` / `asset_type` blocker 仅作为观察项，只有指标回退或新 gold query 暴露问题时再修；真实长篇 v1.7-6 已补齐单章 probe、单章 review、4/4 小批复验和 final review gate，但 style warn 清零两次真实 stylegate 仍失败。v2.6a LLM Config 已完成离线代码层收口，真实 fallback 验证仍留在 v2.6b。下一步是 v1.7-7：把长输出稳定性、补长、开篇修复和 style warn rewrite 收敛成可审计自动路径，再考虑新的真实批量扩大。
 
 ---
 

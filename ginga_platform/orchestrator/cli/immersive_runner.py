@@ -11,7 +11,7 @@
     → exit_immersive_mode（batch apply pending_updates 经 op_translator + state_io.transaction）
 
 接入说明：
-    - 默认 ``llm_caller`` 走 ``ginga_platform.orchestrator.cli.demo_pipeline._call_llm``（subprocess 调 ask-llm）。
+    - 默认 ``llm_caller`` 走 ``ginga_platform.orchestrator.cli.llm_config``（subprocess 调 ask-llm）。
     - 单元测试可注入 mock_callable(prompt, endpoint) -> str 替代真实 LLM。
     - chapter_text 落盘：每章一份 ``chapter_<NN>.md`` 到 ``foundation/runtime_state/<book_id>/``。
 """
@@ -42,8 +42,9 @@ from ginga_platform.orchestrator.cli.longform_policy import (
 
 # 默认 LLM 调用器（subprocess ask-llm）——延迟 import 避免 demo_pipeline 依赖闭环
 def _default_llm_caller(prompt: str, endpoint: str, max_tokens: int = 4096) -> str:
-    from ginga_platform.orchestrator.cli.demo_pipeline import _call_llm
-    return _call_llm(prompt, endpoint, max_tokens=max_tokens)
+    from ginga_platform.orchestrator.cli.llm_config import call_llm_with_fallback
+
+    return call_llm_with_fallback(prompt, endpoint=endpoint, max_tokens=max_tokens)
 
 
 def _default_prompt_builder(state: dict, word_target: int, chapter_no: int) -> str:

@@ -88,8 +88,8 @@ def main(argv: list[str] | None = None) -> int:
     p_run.add_argument("book_id")
     p_run.add_argument(
         "--llm-endpoint",
-        default="久久",
-        help="ask-llm 端点 alias（默认 久久）",
+        default=None,
+        help="ask-llm 端点 alias（默认从 llm_config.yaml 读取）",
     )
     p_run.add_argument(
         "--word-target",
@@ -278,6 +278,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"✅ init done: {state_root / args.book_id}")
         return 0
     elif args.cmd == "run":
+        llm_endpoint = args.llm_endpoint
+        if llm_endpoint is None:
+            from ginga_platform.orchestrator.cli.llm_config import load_config
+
+            llm_endpoint = load_config().get("defaults", {}).get("endpoint", "久久")
         requested_chapters = (
             args.chapters
             if args.chapters is not None
@@ -306,7 +311,7 @@ def main(argv: list[str] | None = None) -> int:
             runner = ImmersiveRunner(args.book_id, state_root=args.state_root, llm_caller=llm_caller)
             result = runner.run_block(
                 chapters=requested_chapters,
-                llm_endpoint=args.llm_endpoint,
+                llm_endpoint=llm_endpoint,
                 word_target=args.word_target,
                 execution_mode=execution_mode,
             )
@@ -322,7 +327,7 @@ def main(argv: list[str] | None = None) -> int:
             result = run_multi_chapter(
                 args.book_id,
                 chapters=requested_chapters,
-                llm_endpoint=args.llm_endpoint,
+                llm_endpoint=llm_endpoint,
                 word_target=args.word_target,
                 state_root=args.state_root,
                 mock_llm=args.mock_llm,
@@ -342,7 +347,7 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         chapter_path = run_workflow(
             args.book_id,
-            llm_endpoint=args.llm_endpoint,
+            llm_endpoint=llm_endpoint,
             word_target=args.word_target,
             state_root=args.state_root,
             mock_llm=args.mock_llm,

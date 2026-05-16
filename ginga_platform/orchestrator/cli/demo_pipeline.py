@@ -29,7 +29,6 @@ from __future__ import annotations
 import json
 import re
 import shutil
-import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -568,27 +567,9 @@ def build_chapter_input_bundle(
 
 def _call_llm(prompt: str, endpoint: str, max_tokens: int = 4096) -> str:
     """调用 ask-llm 子进程，返回 LLM 输出。失败 raise."""
-    cmd = [
-        "ask-llm",
-        endpoint,
-        "--max-tokens",
-        str(max_tokens),
-        "-s",  # stream
-    ]
-    proc = subprocess.run(
-        cmd,
-        input=prompt,
-        capture_output=True,
-        text=True,
-        timeout=300,
-    )
-    if proc.returncode != 0:
-        raise RuntimeError(
-            f"ask-llm {endpoint} failed (exit={proc.returncode}): {proc.stderr[:500]}"
-        )
-    if not proc.stdout.strip():
-        raise RuntimeError(f"ask-llm {endpoint} returned empty output")
-    return proc.stdout
+    from ginga_platform.orchestrator.cli.llm_config import call_llm_with_fallback
+
+    return call_llm_with_fallback(prompt, endpoint=endpoint, max_tokens=max_tokens)
 
 
 # ---------- foreshadow / chapter rollup helpers ------------------------------
@@ -870,7 +851,7 @@ def _workflow_step_dispatch(
 
 def run_workflow(
     book_id: str,
-    llm_endpoint: str = "久久",
+    llm_endpoint: str | None = None,
     word_target: int = 4000,
     chapter_no: int = 1,
     *,
@@ -896,6 +877,11 @@ def run_workflow(
     if chapter_no < 1:
         print(f"❌ chapter_no must be >= 1, got {chapter_no}", file=sys.stderr)
         return None
+
+    if llm_endpoint is None:
+        from ginga_platform.orchestrator.cli.llm_config import load_config
+
+        llm_endpoint = load_config().get("defaults", {}).get("endpoint", "久久")
 
     sio.audit("cli.run.A_through_F", severity="info", msg="setup steps skipped (seeded by init)")
 
