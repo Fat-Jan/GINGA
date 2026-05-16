@@ -1,0 +1,219 @@
+{
+  "kind": "ReviewDeslopReport",
+  "book_id": "v1-7-6-floor3500-single-ch1",
+  "run_id": "v1-7-6-floor3500-single-final-review",
+  "generated_at": "2026-05-16T09:26:41+00:00",
+  "status": "warn",
+  "passed": false,
+  "mode": "warn_only",
+  "auto_edit": false,
+  "projection": {
+    "kind": "ReviewDeslop",
+    "truth_source": "StateIO",
+    "is_state_truth": false,
+    "writes_runtime_state": false,
+    "output_boundary": ".ops/reviews/<book_id>/<run_id>/"
+  },
+  "rubric": {
+    "id": "platform_cn_webnovel_v1",
+    "scope": "report_only",
+    "enters_creation_prompt": false,
+    "categories": [
+      "anti_ai_style",
+      "platform_genre_fit",
+      "webnovel_readability",
+      "style_fingerprint"
+    ]
+  },
+  "data_sources": {
+    "state_dir": ".ops/real_llm_harness/v1-7-6-floor3500-single-ch1-state/v1-7-6-floor3500-single-ch1",
+    "state_domains": [
+      "locked",
+      "entity_runtime",
+      "workspace",
+      "retrieved",
+      "audit_log"
+    ],
+    "chapter_artifacts": [
+      ".ops/real_llm_harness/v1-7-6-floor3500-single-ch1-state/v1-7-6-floor3500-single-ch1/chapter_01.md"
+    ],
+    "forbidden_default_sources": [
+      ".ops/book_analysis/**",
+      ".ops/market_research/**",
+      ".ops/external_sources/**"
+    ]
+  },
+  "context": {
+    "topic": [
+      "玄幻黑暗 + 规则怪谈 + 末日多子多福"
+    ],
+    "forbidden_styles": [
+      "都市腔",
+      "科幻腔",
+      "游戏系统播报腔",
+      "轻小说吐槽腔"
+    ],
+    "anchor_phrases": [
+      "微粒",
+      "天堑",
+      "内宇宙"
+    ],
+    "premise_present": true
+  },
+  "summary": {
+    "chapter_count": 1,
+    "issue_count": 4,
+    "warn_count": 4,
+    "error_count": 0,
+    "longform_gate_issue_count": 0,
+    "reviewer_queue_count": 0,
+    "style_fingerprint_status": "measured"
+  },
+  "style_fingerprint": {
+    "scope": "report_only",
+    "auto_edit": false,
+    "writes_runtime_state": false,
+    "enters_creation_prompt": false,
+    "status": "measured",
+    "chapter_count": 1,
+    "total_chinese_chars": 4142,
+    "paragraph_count": 11,
+    "dialogue_line_count": 5,
+    "dialogue_line_ratio": 0.625,
+    "avg_sentence_chars": 25.0,
+    "sentence_length_buckets": {
+      "short": 24,
+      "medium": 105,
+      "long": 37
+    },
+    "anchor_phrase_hits": {
+      "微粒": 22,
+      "天堑": 6,
+      "内宇宙": 0
+    },
+    "style_pattern_hits": {
+      "generic_emotion": 0,
+      "cliche_metaphor": 0,
+      "abrupt_transition": 4,
+      "game_system_tone": 0,
+      "light_novel_meta": 0
+    },
+    "notes": [
+      "Style fingerprint is measured for review evidence only.",
+      "It must not auto-edit prose, write StateIO, or enter creation prompts."
+    ]
+  },
+  "longform_quality_gate": {
+    "enabled": true,
+    "mode": "warn_only",
+    "auto_edit": false,
+    "hard_gate": {
+      "enabled": true,
+      "mode": "block_next_real_llm_batch",
+      "window_size": 4,
+      "inspected_chapters": [
+        "chapter_01.md"
+      ],
+      "low_frequency_anchors": [
+        "血脉",
+        "末日",
+        "多子多福",
+        "繁衍契约"
+      ],
+      "block_reasons": [],
+      "should_block_next_real_llm_batch": false,
+      "chapter_checks": [
+        {
+          "chapter": "chapter_01.md",
+          "opening_loop_risk": false,
+          "missing_low_frequency_anchor": false,
+          "missing_foreshadow_marker": false,
+          "short_chapter": false,
+          "forbidden_hits": {}
+        }
+      ]
+    },
+    "policy": {
+      "recommended_batch_size": 4,
+      "upper_bound": 5,
+      "pressure_test_only_at_or_above": 6
+    },
+    "low_frequency_anchors": [
+      "血脉",
+      "末日",
+      "多子多福",
+      "繁衍契约"
+    ],
+    "batch_state_snapshots": [
+      {
+        "batch_no": 1,
+        "chapter_range": "1-1",
+        "chapter_count": 1,
+        "state_snapshot": {
+          "protagonist": "未命名刺客",
+          "particles": 0,
+          "foreshadow_pool_size": 1,
+          "total_words": 4792,
+          "recent_events": [],
+          "anchors_present": [
+            "末日",
+            "繁衍契约",
+            "血脉"
+          ]
+        },
+        "quality_snapshot": {
+          "opening_loop_chapters": [
+            "chapter_01.md"
+          ],
+          "missing_low_frequency_anchor_chapters": [],
+          "short_chapters": [],
+          "forbidden_hit_chapters": [],
+          "missing_foreshadow_chapters": []
+        }
+      }
+    ],
+    "issues": [],
+    "reviewer_queue": []
+  },
+  "issues": [
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_01.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "是他的领域，杀戮的领域。短刃上的符文突然爆发出一阵强烈的蓝光，照亮了周围昏暗",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_01.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "他挥舞弯刀砍向残影，却只斩断了空气。下一秒，冰冷的触感贴上了他的咽喉。无明出现",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_01.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "很快被恐惧掩盖。他知道，如果不听话，下一秒就会变成尸体。 两人一前一后走在荒",
+      "action": "review_manually"
+    },
+    {
+      "severity": "warn",
+      "category": "anti_ai_style",
+      "code": "abrupt_transition",
+      "chapter": "chapter_01.md",
+      "message": "高频突转词需要确认是否由动作因果支撑。",
+      "evidence": "。当他凝视其中一个符号时，体内的微粒突然剧烈震动起来，短刃上的符文也随之共鸣",
+      "action": "review_manually"
+    }
+  ],
+  "suggestions": [
+    "把抽象心理和套话改成可观察动作、身体代价、环境反馈或对手反应。"
+  ]
+}

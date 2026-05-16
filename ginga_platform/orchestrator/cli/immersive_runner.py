@@ -146,10 +146,16 @@ def _repair_prompt(
 def _needs_quality_repair(chapter_text: str, word_target: int, chapter_no: int) -> bool:
     if word_target < MIN_SUBMISSION_CHINESE_CHARS:
         return False
-    body_text = extract_chapter_body_text(chapter_text)
-    opening_failed = chapter_no > 1 and opening_loop_score(body_text) >= 3
-    minimum_body_chars = _minimum_body_chars(word_target)
-    return count_chinese(body_text) < minimum_body_chars or opening_failed
+    return _quality_gate_failure(chapter_text, word_target, chapter_no) is not None
+
+
+def _style_warn_hits(body_text: str) -> dict[str, int]:
+    patterns = {
+        "generic_emotion": r"说不出的感觉|难以言喻|复杂的情绪",
+        "cliche_metaphor": r"命运的齿轮|内心深处|仿佛.*?命运",
+        "abrupt_transition": r"突然|猛然|下一秒",
+    }
+    return {name: len(re.findall(pattern, body_text)) for name, pattern in patterns.items() if re.findall(pattern, body_text)}
 
 
 def _quality_gate_failure(chapter_text: str, word_target: int, chapter_no: int) -> str | None:
@@ -164,6 +170,11 @@ def _quality_gate_failure(chapter_text: str, word_target: int, chapter_no: int) 
         failures.append(f"short_chapter body_chinese_chars={chinese_chars} < {minimum_body_chars}")
     if chapter_no > 1 and opening_score >= 3:
         failures.append(f"opening_loop_risk score={opening_score}")
+    style_hits = _style_warn_hits(body_text)
+    if style_hits:
+        failures.append(
+            "style_warn " + ", ".join(f"{name}={count}" for name, count in sorted(style_hits.items()))
+        )
     return "; ".join(failures) if failures else None
 
 

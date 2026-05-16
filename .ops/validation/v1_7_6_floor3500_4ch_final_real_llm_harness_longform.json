@@ -1,0 +1,176 @@
+{
+  "generated_from": "scripts/run_longform_llm_smoke.py",
+  "dry_run": false,
+  "passed": true,
+  "endpoint": "久久",
+  "book_id": "v1-7-6-floor3500-4ch",
+  "topic": "玄幻黑暗 + 规则怪谈 + 末日多子多福",
+  "premise": "失忆刺客无明在末日天堑边缘醒来，发现短刃能吞吐微粒，而每座城都被规则怪谈式禁令和血脉繁衍契约共同支配。",
+  "requested_chapters": 4,
+  "completed_chapters": 4,
+  "existing_completed_before": 4,
+  "resume": true,
+  "batch_schedule": [
+    4
+  ],
+  "batch_runs": [],
+  "word_target": 4000,
+  "state_root": ".ops/real_llm_harness/v1-7-6-floor3500-4ch-state",
+  "anchors": [
+    "无明",
+    "短刃",
+    "微粒",
+    "天堑",
+    "规则",
+    "血脉",
+    "末日"
+  ],
+  "forbidden_terms": [
+    "系统提示",
+    "叮",
+    "恭喜获得",
+    "都市腔",
+    "轻小说吐槽"
+  ],
+  "production_policy": {
+    "recommended_batch_size": 4,
+    "upper_bound": 5,
+    "pressure_test_only_at_or_above": 6,
+    "min_submission_chinese_chars": 3500
+  },
+  "state_summary": {
+    "audit_entries": 38,
+    "total_words": 0,
+    "foreshadow_pool_size": 1,
+    "character_events": 0
+  },
+  "chapter_runs": [
+    {
+      "chapter_no": 1,
+      "batch_no": 1,
+      "batch_size": 4,
+      "status": "ok",
+      "path": ".ops/real_llm_harness/v1-7-6-floor3500-4ch-state/v1-7-6-floor3500-4ch/chapter_01.md",
+      "chars": 5604,
+      "chinese_chars": 4797,
+      "anchor_hits": {
+        "无明": 33,
+        "短刃": 19,
+        "微粒": 6,
+        "天堑": 5,
+        "规则": 5,
+        "血脉": 3,
+        "末日": 2
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 2,
+      "batch_no": 1,
+      "batch_size": 4,
+      "status": "ok",
+      "path": ".ops/real_llm_harness/v1-7-6-floor3500-4ch-state/v1-7-6-floor3500-4ch/chapter_02.md",
+      "chars": 4321,
+      "chinese_chars": 3638,
+      "anchor_hits": {
+        "无明": 25,
+        "短刃": 16,
+        "微粒": 16,
+        "天堑": 6,
+        "规则": 3,
+        "血脉": 4,
+        "末日": 3
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 3,
+      "batch_no": 1,
+      "batch_size": 4,
+      "status": "ok",
+      "path": ".ops/real_llm_harness/v1-7-6-floor3500-4ch-state/v1-7-6-floor3500-4ch/chapter_03.md",
+      "chars": 4412,
+      "chinese_chars": 3735,
+      "anchor_hits": {
+        "无明": 38,
+        "短刃": 13,
+        "微粒": 22,
+        "天堑": 7,
+        "规则": 4,
+        "血脉": 4,
+        "末日": 3
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 1,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    },
+    {
+      "chapter_no": 4,
+      "batch_no": 1,
+      "batch_size": 4,
+      "status": "ok",
+      "path": ".ops/real_llm_harness/v1-7-6-floor3500-4ch-state/v1-7-6-floor3500-4ch/chapter_04.md",
+      "chars": 4711,
+      "chinese_chars": 3912,
+      "anchor_hits": {
+        "无明": 32,
+        "短刃": 7,
+        "微粒": 24,
+        "天堑": 2,
+        "规则": 5,
+        "血脉": 5,
+        "末日": 2
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 2,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": ""
+    }
+  ],
+  "drift_report": {
+    "status": "stable",
+    "completed_chapters": 4,
+    "first_drift_chapter": null,
+    "first_drift_batch": null,
+    "low_anchor_chapters": [],
+    "forbidden_hit_chapters": [],
+    "short_chapters": [],
+    "missing_foreshadow_chapters": [],
+    "anchor_totals": {
+      "无明": 128,
+      "短刃": 55,
+      "微粒": 68,
+      "天堑": 20,
+      "规则": 17,
+      "血脉": 16,
+      "末日": 10
+    }
+  },
+  "batch_drift_summary": [
+    {
+      "batch_no": 1,
+      "batch_size": 4,
+      "chapters": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "completed": 4,
+      "low_anchor_chapters": [],
+      "forbidden_hit_chapters": [],
+      "short_chapters": []
+    }
+  ]
+}

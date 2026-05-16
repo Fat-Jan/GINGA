@@ -300,3 +300,39 @@ entries:
   payload:
     paths:
     - workspace.CHAPTER_INPUT_BUNDLE
+- ts: '2026-05-16T09:19:23+00:00'
+  source: dark_fantasy_adapter.enter_immersive_mode
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-16T09:19:23+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: immersive entered
+  action: log
+  payload:
+    checker_silenced: true
+- ts: '2026-05-16T09:19:23+00:00'
+  source: immersive_runner.chapter_4.input_bundle
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.CHAPTER_INPUT_BUNDLE
+- ts: '2026-05-16T09:23:38+00:00'
+  source: manual.ch4_candidate_reopen_after_llm_append
+  severity: info
+  msg: 'artifact written: chapter_04.md'
+  action: log
+  payload:
+    chapter_no: 4
+    execution_mode: real_llm_demo
+    repair: manual_opening_rewrite_after_llm_append
+    artifact_type: chapter_text
+    path: .ops/real_llm_harness/v1-7-6-floor3500-4ch-state/v1-7-6-floor3500-4ch/chapter_04.md
+    bytes: 13618
