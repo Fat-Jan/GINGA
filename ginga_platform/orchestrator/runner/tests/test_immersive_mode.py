@@ -448,6 +448,8 @@ class ImmersiveRunnerRunBlockTest(unittest.TestCase):
         self.assertIn("每个正文段落 380-520 个汉字", prompt)
         self.assertIn("上一版失败摘要", prompt)
         self.assertIn("上一版短摘录", prompt)
+        self.assertIn("禁止出现“突然”“猛然”“下一秒”", prompt)
+        self.assertIn("命运的齿轮", prompt)
         self.assertLess(prompt.count("痛觉并未因意识的回归而消退"), 4)
         self.assertNotIn("## 上一版问题稿", prompt)
 
