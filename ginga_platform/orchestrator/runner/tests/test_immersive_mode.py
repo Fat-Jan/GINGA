@@ -582,6 +582,34 @@ class ImmersiveRunnerRunBlockTest(unittest.TestCase):
         self.assertIn("城门深处的绞盘", chapter_text)
         self.assertNotIn("命运的齿轮", chapter_text)
 
+    def test_run_block_deterministically_rewrites_long_cliche_metaphor_before_writing(self) -> None:
+        calls: list[str] = []
+        style_warn_chapter = (
+            "# 第一章 · 血门索债\n\n"
+            + ("无明把清道夫骨牌按进城门血槽，守夜人抬灯逼他交出下一轮微粒收益。" * 90)
+            + "仿佛城门后的血雾、碎骨、契约铜钉和守夜人的灯火都在推着他的命运往下坠。"
+            + ("血脉契约把末日城门压得发出裂响，无明用短刃逼近守夜人。" * 90)
+            + "\n\n<!-- foreshadow: id=fh-style planted_ch=1 expected_payoff=5 summary=血门索债 -->"
+        )
+
+        def mock_llm(prompt: str, endpoint: str, **kw) -> str:
+            calls.append(prompt)
+            return style_warn_chapter
+
+        runner = ImmersiveRunner(
+            "runner-book",
+            state_root=self.state_root,
+            llm_caller=mock_llm,
+        )
+        result = runner.run_block(chapters=1, word_target=4000)
+
+        self.assertIsNone(result["last_error"])
+        self.assertEqual(len(calls), 3)
+        chapter_text = (self.state_root / "runner-book" / "chapter_01.md").read_text(encoding="utf-8")
+        self.assertNotIn("仿佛", chapter_text)
+        self.assertNotIn("命运", chapter_text)
+        self.assertIn("血契", chapter_text)
+
     def test_run_block_deterministic_rewrite_clears_hard_and_best_effort_soft(self) -> None:
         calls: list[str] = []
         style_warn_chapter = (

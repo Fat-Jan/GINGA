@@ -176,7 +176,7 @@ def _rewrite_style_warn_terms(chapter_text: str) -> str:
     rewritten = chapter_text
     for old, new in hard_replacements.items():
         rewritten = rewritten.replace(old, new)
-    rewritten = re.sub(r"仿佛([^。！？\n]{0,24})命运", r"像\1血契", rewritten)
+    rewritten = re.sub(r"仿佛([^\n]*?)命运", r"像\1血契", rewritten)
     rewritten = re.sub(r"(?<=[。！？\n])([^。！？\n]{0,2})突然", r"\1这时", rewritten)
     rewritten = rewritten.replace("突然", "倏地")
     rewritten = re.sub(r"(?<=[。！？\n])([^。！？\n]{0,2})猛然", r"\1随即", rewritten)
