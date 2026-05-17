@@ -1,0 +1,181 @@
+entries:
+- ts: '2026-05-17T02:01:22+00:00'
+  source: cli.init.A-E_setup
+  severity: info
+  msg: applied 12 update(s)
+  action: log
+  payload:
+    paths:
+    - locked.STORY_DNA.premise
+    - locked.STORY_DNA.conflict_engine
+    - locked.STORY_DNA.payoff_promise
+    - locked.STORY_DNA.word_target
+    - locked.GENRE_LOCKED.topic
+    - locked.GENRE_LOCKED.style_lock
+    - locked.WORLD.cosmology
+    - locked.WORLD.economy
+    - locked.PLOT_ARCHITECTURE.acts
+    - locked.PLOT_ARCHITECTURE.pivot_points
+    - locked.PROJECT_CONTRACT
+    - locked.GENRE_CONTRACT
+- ts: '2026-05-17T02:01:22+00:00'
+  source: cli.init.F_state_init
+  severity: info
+  msg: applied 6 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.CHARACTER_STATE
+    - entity_runtime.RESOURCE_LEDGER.particles
+    - entity_runtime.RESOURCE_LEDGER.items
+    - entity_runtime.FORESHADOW_STATE.pool
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - entity_runtime.GLOBAL_SUMMARY.arc_summaries
+- ts: '2026-05-17T02:01:22+00:00'
+  source: cli.init.workspace_seed
+  severity: info
+  msg: applied 3 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.task_plan
+    - workspace.findings
+    - workspace.progress
+- ts: '2026-05-17T02:01:22+00:00'
+  source: cli.init
+  severity: info
+  msg: 'book initialized: id=v1-7-7b-marker-rerun2 topic=玄幻黑暗 + 规则怪谈 + 末日多子多福 target=500000'
+  action: log
+  payload:
+    locked_premise: 失忆刺客无明在末日天堑边缘醒来，发现短刃能吞吐微粒，而每座城都被规则怪谈式禁令和血脉繁衍契约共同支配。
+- ts: '2026-05-17T02:01:22+00:00'
+  source: dark_fantasy_adapter.enter_immersive_mode
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-17T02:01:22+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: immersive entered
+  action: log
+  payload:
+    checker_silenced: true
+- ts: '2026-05-17T02:01:22+00:00'
+  source: immersive_runner.chapter_1.input_bundle
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.CHAPTER_INPUT_BUNDLE
+- ts: '2026-05-17T02:06:53+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_01.md'
+  action: log
+  payload:
+    chapter_no: 1
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: .ops/real_llm_harness/v1-7-7b-marker-rerun2-state/v1-7-7b-marker-rerun2/chapter_01.md
+    bytes: 12871
+- ts: '2026-05-17T02:06:53+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 1 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 1
+    word_count: 3807
+    file: .ops/real_llm_harness/v1-7-7b-marker-rerun2-state/v1-7-7b-marker-rerun2/chapter_01.md
+- ts: '2026-05-17T02:06:53+00:00'
+  source: immersive_runner.chapter_2.input_bundle
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.CHAPTER_INPUT_BUNDLE
+- ts: '2026-05-17T02:08:59+00:00'
+  source: immersive_runner
+  severity: info
+  msg: 'artifact written: chapter_02.md'
+  action: log
+  payload:
+    chapter_no: 2
+    execution_mode: real_llm_demo
+    artifact_type: chapter_text
+    path: .ops/real_llm_harness/v1-7-7b-marker-rerun2-state/v1-7-7b-marker-rerun2/chapter_02.md
+    bytes: 15297
+- ts: '2026-05-17T02:08:59+00:00'
+  source: immersive_runner
+  severity: info
+  msg: chapter 2 drafted (immersive, pending apply)
+  action: log
+  payload:
+    chapter_no: 2
+    word_count: 4554
+    file: .ops/real_llm_harness/v1-7-7b-marker-rerun2-state/v1-7-7b-marker-rerun2/chapter_02.md
+- ts: '2026-05-17T02:08:59+00:00'
+  source: immersive_runner.chapter_3.input_bundle
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.CHAPTER_INPUT_BUNDLE
+- ts: '2026-05-17T02:14:00+00:00'
+  source: immersive_runner
+  severity: error
+  msg: 'chapter 3 failed quality gate after repair: opening_loop_risk score=3; style_warn
+    generic_emotion=1'
+  action: block
+  payload:
+    chapter_paths:
+    - .ops/real_llm_harness/v1-7-7b-marker-rerun2-state/v1-7-7b-marker-rerun2/chapter_01.md
+    - .ops/real_llm_harness/v1-7-7b-marker-rerun2-state/v1-7-7b-marker-rerun2/chapter_02.md
+- ts: '2026-05-17T02:14:00+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-17T02:14:00+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode.batch
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.chapter_text
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+- ts: '2026-05-17T02:14:00+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+- ts: '2026-05-17T02:14:00+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: 2 chapters batch applied
+  action: log
+  payload:
+    applied_paths: 2
+    chapter_count: 2
+- ts: '2026-05-17T02:14:00+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: R2_consistency_check triggered (immersive_block)
+  action: log
+  payload:
+    scope: immersive_block
+    chapter_count: 2

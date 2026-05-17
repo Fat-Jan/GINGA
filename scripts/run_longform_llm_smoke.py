@@ -307,6 +307,11 @@ def _batch_drift_summary(chapter_runs: list[ChapterRun]) -> list[dict[str, Any]]
     return summary
 
 
+def _failed_chapter_from_error(error: str) -> int | None:
+    match = re.search(r"chapter\s+(\d+)\s+failed quality gate", error)
+    return int(match.group(1)) if match else None
+
+
 def _build_report(payload: dict[str, Any]) -> str:
     lines = [
         "# Longform Jiujiu Smoke Report",
@@ -482,14 +487,16 @@ def run_longform_smoke(
                         batch_size=size,
                     ))
             except Exception as exc:  # noqa: BLE001 - report and stop.
-                batch_runs.append(BatchRun(batch_no, start, end, size, "failed", "", f"{type(exc).__name__}: {exc}"))
+                error = f"{type(exc).__name__}: {exc}"
+                failed_chapter_no = _failed_chapter_from_error(error) or start
+                batch_runs.append(BatchRun(batch_no, start, end, size, "failed", "", error))
                 chapter_runs.append(
                     ChapterRun(
-                        chapter_no=start,
+                        chapter_no=failed_chapter_no,
                         batch_no=batch_no,
                         batch_size=size,
                         status="failed",
-                        path=str(_chapter_path(state_root, book_id, start)),
+                        path=str(_chapter_path(state_root, book_id, failed_chapter_no)),
                         chars=0,
                         chinese_chars=0,
                         anchor_hits={term: 0 for term in anchors},
@@ -497,7 +504,7 @@ def run_longform_smoke(
                         foreshadow_markers=0,
                         stdout_tail="",
                         stderr_tail="",
-                        error=f"{type(exc).__name__}: {exc}",
+                        error=error,
                     )
                 )
                 break

@@ -1857,6 +1857,68 @@
         "Minimum gap before v2.6b live proof: support temporary config injection or explicitly approve a dedicated probe role."
       ],
       "handoff_note": "Blocked by safe config injection gap. Runbook is ready, but v2.6b live fallback is not complete and no real call was made."
+    },
+    {
+      "task_id": "v1.7-7b-marker-rerun3-real-llm-validation",
+      "title": "v1.7-7b 修复后真实 4 章小批验收",
+      "status": "done",
+      "owner": "main agent (OpenAI Codex main session; current GPT-5-class coding model)",
+      "model_contract": {
+        "provider": "OpenAI Codex main session + ask-llm endpoint 久久",
+        "supports_explicit_model_param": true,
+        "model_tier": "current session coding owner-pass; content generation endpoint qwen3.6-max-preview-nothinking via 久久",
+        "reason": "用户显式要求真实 4 章小批验收；需要主控同时判定脚本、章节正文、style gate、伏笔 marker 与 review hard gate",
+        "fallback": "若真实端点连续失败，保留 isolated state/report 作为 observation，不伪造 passed=true；若 hard gate 阻断，保持 v1.7-7 in_progress 或 blocked"
+      },
+      "owned_files": [
+        "ginga_platform/orchestrator/cli/immersive_runner.py",
+        "scripts/run_longform_llm_smoke.py",
+        "ginga_platform/orchestrator/runner/tests/test_immersive_mode.py",
+        "ginga_platform/orchestrator/runner/tests/test_longform_failure_reporting.py",
+        ".ops/real_llm_harness/v1-7-7b-marker-rerun3-state/**",
+        ".ops/validation/v1_7_7b_marker_rerun3_real_llm_harness.json",
+        ".ops/validation/v1_7_7b_marker_rerun3_real_llm_harness_longform.json",
+        ".ops/reports/v1_7_7b_marker_rerun3_real_llm_harness.md",
+        ".ops/reports/v1_7_7b_marker_rerun3_real_llm_harness_longform.md",
+        ".ops/reviews/v1-7-7b-marker-rerun3/**",
+        "STATUS.md",
+        "ROADMAP.md",
+        "notepad.md",
+        ".ops/subagents/board.json"
+      ],
+      "forbidden_files": [
+        "foundation/runtime_state/**",
+        "default RAG expansion",
+        "automatic story text edits from review",
+        "mixing rerun1/rerun2 failed evidence into rerun3 pass claim"
+      ],
+      "input_refs": [
+        ".ops/validation/v1_7_7b_marker_rerun1_real_llm_harness.json",
+        ".ops/validation/v1_7_7b_marker_rerun2_real_llm_harness.json",
+        ".ops/validation/v1_7_7b_marker_rerun3_real_llm_harness.json",
+        ".ops/reviews/v1-7-7b-marker-rerun3/v2-3-real-llm-review-gate/review_report.json",
+        "STATUS.md v1.7-7 row"
+      ],
+      "expected_output": "fresh isolated real 4-chapter rerun where script passed=true, no short chapters, no hard style warn, no missing foreshadow marker, and review hard gate does not block the next batch; truth files classify remaining warn-only issues as observation",
+      "verification": "python3 scripts/run_real_llm_harness.py --profile longform-small-batch --run --book-id v1-7-7b-marker-rerun3 --endpoint 久久 --state-root .ops/real_llm_harness/v1-7-7b-marker-rerun3-state --json-output .ops/validation/v1_7_7b_marker_rerun3_real_llm_harness.json --report-output .ops/reports/v1_7_7b_marker_rerun3_real_llm_harness.md; python3 -m json.tool on harness/review JSON; focused unit tests and verify_all quick before closeout",
+      "created_at": "2026-05-17T10:20:00+08:00",
+      "updated_at": "2026-05-17T10:34:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 3,
+      "max_attempts": 3,
+      "evidence": [
+        "rerun1 failed: chapter 3 failed quality gate after repair with short_chapter body_chinese_chars=3197 < 3500 and cliche_metaphor=1; review hard gate did not block existing 2 chapters",
+        "main-agent repair: second repair prompt adds length safety margin; failure reporting now parses actual failed chapter from immersive error",
+        "rerun2 failed: chapter 3 failed quality gate after repair with opening_loop_risk score=3 and generic_emotion=1; report correctly identified failed_chapter=3",
+        "main-agent repair: repair prompt repeats previous_chapter_bridge for opening-loop failures and deterministic quality rewrite clears residual opening loop + hard style terms before artifact write",
+        "focused validation passed: test_immersive_mode, test_longform_llm_smoke, test_longform_failure_reporting, test_real_llm_demo_smoke, test_story_truth_template, test_longform_quality_gate",
+        "rerun3 real validation passed: script passed=true, postflight PASS, generation passed=true, completed_chapters=4, review_gate status PASS",
+        "rerun3 chapter body chars: chapter_01=3920, chapter_02=3527, chapter_03=5742, chapter_04=3808; all >= 3500",
+        "rerun3 markers/style: each chapter has foreshadow_markers=1; hard_style_warn is empty for all chapters; review hard gate should_block_next_real_llm_batch=false and block_reasons=[]",
+        "residual observation: review_report status=warn issue_count=9, including warn-only forbidden style hits 系统提示/叮 on chapters 1/2 and drift_report.status=needs_review"
+      ],
+      "blockers": [],
+      "handoff_note": "User acceptance gates are satisfied on rerun3. Keep residual warn-only issues as observation and require another clean real 4-chapter round or gate promotion before using this as v3.0/full-production trigger."
     }
   ]
 }

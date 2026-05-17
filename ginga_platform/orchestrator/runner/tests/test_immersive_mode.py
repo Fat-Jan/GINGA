@@ -457,6 +457,62 @@ class ImmersiveRunnerRunBlockTest(unittest.TestCase):
         self.assertLess(prompt.count("痛觉并未因意识的回归而消退"), 4)
         self.assertNotIn("## 上一版问题稿", prompt)
 
+    def test_second_repair_prompt_intensifies_short_and_hard_style_failure(self) -> None:
+        prompt = _repair_prompt(
+            "BASE PROMPT",
+            "命运的齿轮在血雾深处转动。" * 40,
+            4000,
+            3,
+            attempt=2,
+            failure="short_chapter body_chinese_chars=3197 < 3500; style_warn cliche_metaphor=1",
+        )
+
+        self.assertIn("上一轮修复仍未通过", prompt)
+        self.assertIn("不要以 3500 为目标", prompt)
+        self.assertIn("本轮正文目标至少 4200 个中文正文汉字", prompt)
+        self.assertIn("10 个正文段落", prompt)
+        self.assertIn("第 10 段前不得收束", prompt)
+        self.assertIn("cliche_metaphor", prompt)
+        self.assertIn("命运的齿轮", prompt)
+
+    def test_repair_prompt_repeats_previous_chapter_bridge_for_opening_loop_failure(self) -> None:
+        prompt = _repair_prompt(
+            "BASE PROMPT",
+            "无明睁开眼，看见灰白雾气，体内微粒撞击短刃。" * 20,
+            4000,
+            3,
+            attempt=2,
+            failure="opening_loop_risk score=3; style_warn generic_emotion=1",
+            previous_chapter_bridge="上一章生成摘要：守夜人抬灯索债，血门已经裂开。",
+        )
+
+        self.assertIn("本章第一段必须承接", prompt)
+        self.assertIn("守夜人抬灯索债", prompt)
+        self.assertIn("禁止把醒来、睁眼、灰白环境、体内微粒或短刃当作开篇支点", prompt)
+
+    def test_deterministic_quality_rewrite_clears_residual_opening_loop_and_hard_style(self) -> None:
+        from ginga_platform.orchestrator.cli.immersive_runner import (
+            _quality_gate_failure,
+            _rewrite_quality_gate_terms,
+        )
+
+        chapter = (
+            "# 第3章 · 血门索债\n\n"
+            + (
+                "无明睁开眼，看见灰白雾气，体内微粒撞击短刃，难以言喻的迟疑压住喉咙。"
+                "血脉契约把末日城门压得发出裂响，守夜人抬灯逼他交出下一轮收益。"
+            ) * 90
+            + "\n\n<!-- foreshadow: id=fh-opening planted_ch=3 expected_payoff=9 summary=血门索债 -->"
+        )
+
+        self.assertIn("opening_loop_risk", _quality_gate_failure(chapter, 4000, 3) or "")
+
+        rewritten = _rewrite_quality_gate_terms(chapter, 3)
+
+        self.assertIsNone(_quality_gate_failure(rewritten, 4000, 3))
+        self.assertNotIn("睁开眼", rewritten)
+        self.assertNotIn("难以言喻", rewritten)
+
     def test_quality_gate_uses_submission_floor_not_word_target_ratio(self) -> None:
         from ginga_platform.orchestrator.cli.immersive_runner import _quality_gate_failure
 

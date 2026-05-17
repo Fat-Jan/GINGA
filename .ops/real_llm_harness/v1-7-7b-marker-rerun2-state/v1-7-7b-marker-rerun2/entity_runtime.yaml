@@ -1,0 +1,37 @@
+CHARACTER_STATE:
+  protagonist:
+    name: 未命名刺客
+    inventory:
+    - item: 刻有古老符文的短刃
+      count: 1
+    abilities:
+    - skill: 影迹潜行
+      level: 5
+      cooldown: 0
+    body:
+      hp: 100
+      mp: 80
+      status:
+      - 失忆
+      - 微粒残留
+    psyche:
+      mood: 警觉
+      beliefs:
+      - 不信任任何人
+      traumas:
+      - 记忆缺失带来的存在性恐惧
+    relations: []
+    events: []
+RESOURCE_LEDGER:
+  particles: 0
+  items: []
+FORESHADOW_STATE:
+  pool:
+  - id: fh-001
+    planted_ch: 1
+    expected_payoff: 30
+    status: open
+    summary: 短刃上的古老符文
+GLOBAL_SUMMARY:
+  total_words: 9223
+  arc_summaries: []

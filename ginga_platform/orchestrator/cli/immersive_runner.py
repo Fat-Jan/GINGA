@@ -121,10 +121,20 @@ def _repair_prompt(
     *,
     attempt: int = 1,
     failure: str | None = None,
+    previous_chapter_bridge: str | None = None,
 ) -> str:
     target_minimum, target_ceiling = _body_char_target(word_target)
     minimum_body_chars = _minimum_body_chars(word_target)
     excerpt = _chapter_excerpt_for_bridge(chapter_text, limit=320)
+    escalated = attempt >= 2
+    escalation_lines = [
+        "- 上一轮修复仍未通过；不要以 3500 为目标，本轮正文目标至少 4200 个中文正文汉字，宁可接近上限也不要贴近下限。",
+        "- 必须写满 10 个正文段落；第 10 段前不得收束、总结或转入尾声，每段都要有新的动作、代价或规则后果。",
+    ] if escalated else []
+    bridge_lines = [
+        f"- 本章第一段必须承接：{previous_chapter_bridge}",
+        "- 禁止把醒来、睁眼、灰白环境、体内微粒或短刃当作开篇支点；只能把这些元素放在承接动作之后。",
+    ] if chapter_no > 1 and previous_chapter_bridge else []
     return "\n".join(
         [
             original_prompt,
@@ -132,6 +142,8 @@ def _repair_prompt(
             f"## 质量修复第 {attempt} 次",
             f"上一版第 {chapter_no} 章未通过真实长篇 gate，请重写完整章节正文。",
             f"- 上一版失败摘要：{failure or 'short_chapter/opening_loop_risk'}",
+            *escalation_lines,
+            *bridge_lines,
             f"- 长度口径只看正文汉字数 {target_minimum}-{target_ceiling}；表格、标题、注释、标点不计入正文汉字数。",
             f"- 正文汉字数不得低于 {minimum_body_chars}，且任何真实长篇小批正文汉字数低于 {MIN_SUBMISSION_CHINESE_CHARS} 必须视为失败。",
             "- 必须重写为 9-11 个正文段落，每个正文段落 380-520 个汉字；动作推进、对手反应、身体代价、规则后果、伏笔推进都要落到正文。",
@@ -184,6 +196,33 @@ def _rewrite_style_warn_terms(chapter_text: str) -> str:
     rewritten = rewritten.replace("猛然", "骤然")
     rewritten = rewritten.replace("下一秒", "下一息")
     return rewritten
+
+
+def _rewrite_quality_gate_terms(chapter_text: str, chapter_no: int) -> str:
+    rewritten = _rewrite_style_warn_terms(chapter_text)
+    if chapter_no <= 1:
+        return rewritten
+    replacements = {
+        "睁开眼": "抬手按住裂开的血门",
+        "醒来": "从上一轮索债里撑住身体",
+        "灰白雾气": "血门裂缝里的冷雾",
+        "体内微粒": "掌心微粒",
+        "短刃": "债刃",
+    }
+    lines = rewritten.splitlines()
+    body_line_seen = False
+    for idx, line in enumerate(lines):
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or stripped.startswith("|") or stripped.startswith("<!--"):
+            continue
+        if body_line_seen:
+            continue
+        body_line_seen = True
+        fixed = line
+        for old, new in replacements.items():
+            fixed = fixed.replace(old, new)
+        lines[idx] = fixed
+    return "\n".join(lines)
 
 
 def _quality_gate_failure(chapter_text: str, word_target: int, chapter_no: int) -> str | None:
@@ -307,6 +346,7 @@ class ImmersiveRunner:
                             ch_no,
                             attempt=attempt,
                             failure=repair_failure,
+                            previous_chapter_bridge=previous_chapter_bridge,
                         )
                         chapter_text = self.llm_caller(repair_prompt, llm_endpoint)
                         chapter_text = _normalize_chapter_heading(chapter_text, ch_no)
@@ -314,7 +354,7 @@ class ImmersiveRunner:
                         if not repair_failure:
                             break
                     if repair_failure:
-                        rewritten_chapter = _rewrite_style_warn_terms(chapter_text)
+                        rewritten_chapter = _rewrite_quality_gate_terms(chapter_text, ch_no)
                         rewritten_failure = _quality_gate_failure(rewritten_chapter, word_target, ch_no)
                         if not rewritten_failure:
                             chapter_text = rewritten_chapter
