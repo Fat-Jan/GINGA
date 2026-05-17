@@ -13,6 +13,13 @@ MIN_SUBMISSION_CHINESE_CHARS = 3500
 BODY_CHINESE_TARGET_MIN = 4200
 BODY_CHINESE_TARGET_MAX = 4600
 LONGFORM_HARD_GATE_MODE = "block_next_real_llm_batch"
+STYLE_WARN_PATTERNS = {
+    "generic_emotion": r"说不出的感觉|难以言喻|复杂的情绪",
+    "cliche_metaphor": r"命运的齿轮|内心深处|仿佛.*?命运",
+    "abrupt_transition": r"突然|猛然|下一秒",
+}
+HARD_STYLE_WARN_NAMES = frozenset({"generic_emotion", "cliche_metaphor"})
+SOFT_STYLE_WARN_NAMES = frozenset({"abrupt_transition"})
 
 
 def validate_real_llm_batch_size(chapters: int, *, mock_llm: bool = False) -> None:
@@ -143,6 +150,7 @@ def longform_chapter_gate_check(
         "missing_foreshadow_marker": "<!-- foreshadow:" not in text,
         "short_chapter": count_chinese(body_text) < MIN_SUBMISSION_CHINESE_CHARS,
         "forbidden_hits": longform_forbidden_hits(body_text),
+        "soft_style_warn": soft_style_warn_hits(body_text),
     }
 
 
@@ -185,6 +193,22 @@ def longform_forbidden_hits(text: str) -> dict[str, int]:
     return {term: text.count(term) for term in terms if text.count(term)}
 
 
+def style_warn_hits(text: str) -> dict[str, int]:
+    return {
+        name: len(matches)
+        for name, pattern in STYLE_WARN_PATTERNS.items()
+        if (matches := re.findall(pattern, text))
+    }
+
+
+def hard_style_warn_hits(text: str) -> dict[str, int]:
+    return {name: count for name, count in style_warn_hits(text).items() if name in HARD_STYLE_WARN_NAMES}
+
+
+def soft_style_warn_hits(text: str) -> dict[str, int]:
+    return {name: count for name, count in style_warn_hits(text).items() if name in SOFT_STYLE_WARN_NAMES}
+
+
 def opening_loop_score(text: str) -> int:
     opening = first_body_excerpt(text, limit=900)
     signal_patterns = (
@@ -210,19 +234,25 @@ __all__ = [
     "DEFAULT_CHAPTER_BATCH_SIZE",
     "BODY_CHINESE_TARGET_MAX",
     "BODY_CHINESE_TARGET_MIN",
+    "HARD_STYLE_WARN_NAMES",
     "LONGFORM_HARD_GATE_MODE",
     "MAX_REAL_LLM_CHAPTER_BATCH_SIZE",
     "PRESSURE_TEST_BATCH_SIZE",
+    "SOFT_STYLE_WARN_NAMES",
+    "STYLE_WARN_PATTERNS",
     "count_chinese",
     "evaluate_longform_hard_gate",
     "extract_chapter_body_text",
     "first_body_excerpt",
+    "hard_style_warn_hits",
     "load_chapter_artifacts",
     "longform_chapter_gate_check",
     "longform_forbidden_hits",
     "low_frequency_anchors",
     "opening_loop_score",
+    "soft_style_warn_hits",
     "strip_html_comments",
+    "style_warn_hits",
     "validate_longform_hard_gate",
     "validate_real_llm_batch_size",
 ]

@@ -3,7 +3,7 @@
   "project": "ginga-novel-distillation",
   "schema_note": "推荐状态机: queued -> assigned -> running -> validating -> done; 异常: stale/zombie/retry_wait/failed/blocked. done 只能由主 agent 复核后写入。底层派活规范见 .ops/subagents/dispatch-protocol.md。",
   "created_at": "2026-05-12T22:50:00+08:00",
-  "updated_at": "2026-05-16T13:34:00+08:00",
+  "updated_at": "2026-05-17T08:02:00+08:00",
   "tasks": [
     {
       "task_id": "scout-1-base",
@@ -1701,6 +1701,107 @@
       ],
       "blockers": [],
       "handoff_note": "Main agent reviewed worker output and accepted v2.5 as done; live commit/push remains a separate closeout action."
+    },
+    {
+      "task_id": "v1.7-7a-style-warn-offline",
+      "title": "v1.7-7a Style Warn 分级离线实现",
+      "status": "done",
+      "owner": "Worker A / Huygens (agent 019e3324-930d-7a50-9ea4-5f6af648300c; OpenAI Codex subagent runtime; inherited GPT-5-class coding model)",
+      "model_contract": {
+        "provider": "OpenAI Codex subagent runtime",
+        "supports_explicit_model_param": true,
+        "model_tier": "inherited current session model; coding worker",
+        "reason": "边界清晰的离线代码任务，已有码内初版与 handoff，适合单 worker 按锁定写范围实现并跑 deterministic tests",
+        "fallback": "若 worker 遇到循环 import 或测试设计冲突，停止并回报；主控拆小为 longform_policy helper 提取与 immersive_runner gate 两步"
+      },
+      "owned_files": [
+        "ginga_platform/orchestrator/cli/immersive_runner.py",
+        "ginga_platform/orchestrator/cli/longform_policy.py",
+        "ginga_platform/orchestrator/runner/tests/test_immersive_mode.py",
+        "ginga_platform/orchestrator/runner/tests/test_story_truth_template.py",
+        ".ops/p7-handoff/v1-7-7a-style-warn-offline.md"
+      ],
+      "forbidden_files": [
+        "demo_pipeline.py",
+        "ginga_platform/orchestrator/review.py",
+        "ginga_platform/orchestrator/runner/state_io.py",
+        "ginga_platform/orchestrator/cli/__main__.py",
+        "STATUS.md",
+        "ROADMAP.md",
+        "notepad.md",
+        ".ops/real_llm_harness/**"
+      ],
+      "input_refs": [
+        ".ops/plans/v1-7-7-style-warn-revised-plan.md",
+        ".ops/subagents/v1-7-7a-codex-handoff.md",
+        ".ops/subagents/dispatch-protocol.md"
+      ],
+      "expected_output": "offline code change where abrupt_transition is soft/report-only, generic_emotion and cliche_metaphor remain hard failures, deterministic rewrite clears hard terms, and focused tests cover hard/soft mixed cases",
+      "verification": "python -m unittest ginga_platform.orchestrator.runner.tests.test_immersive_mode ginga_platform.orchestrator.runner.tests.test_story_truth_template -v; python -m unittest discover -s ginga_platform -p 'test_*.py'; python3 scripts/verify_all.py --quick",
+      "created_at": "2026-05-17T07:33:22+08:00",
+      "updated_at": "2026-05-17T08:02:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 2,
+      "evidence": [
+        "worker callback status=validating; changed immersive_runner.py, longform_policy.py, test_immersive_mode.py, test_story_truth_template.py, and .ops/p7-handoff/v1-7-7a-style-warn-offline.md",
+        "main-agent diff review: longform_policy now separates hard_style_warn_hits generic_emotion/cliche_metaphor from soft_style_warn_hits abrupt_transition; immersive quality gate blocks only hard style warn",
+        "main-agent validation: python -m unittest ginga_platform.orchestrator.runner.tests.test_immersive_mode ginga_platform.orchestrator.runner.tests.test_story_truth_template -v passed (46 tests)",
+        "main-agent validation: python -m unittest discover -s ginga_platform -p 'test_*.py' passed (292 tests)",
+        "main-agent validation: python3 scripts/verify_all.py --quick passed (13/13)",
+        "scope confirmed: no real LLM run was executed for v1.7-7a; v1.7-7b remains a separate live validation gate"
+      ],
+      "blockers": [],
+      "handoff_note": "Main agent reviewed worker output and accepted v1.7-7a offline code as done. v1.7-7b real 4-chapter LLM validation is still pending and must not be inferred from offline tests."
+    },
+    {
+      "task_id": "v2.6b-live-fallback-runbook",
+      "title": "v2.6b Live Fallback 验证方案",
+      "status": "blocked",
+      "owner": "Explorer B / Ohm (agent 019e3324-d19d-7091-8997-65a9384be9a6; OpenAI Codex subagent runtime; inherited GPT-5-class explorer)",
+      "model_contract": {
+        "provider": "OpenAI Codex subagent runtime",
+        "supports_explicit_model_param": true,
+        "model_tier": "inherited current session model; read-only explorer",
+        "reason": "真实 fallback 验证需要先明确安全 runbook、隔离输出和成本边界；当前阶段只读规划，不做网络真实调用",
+        "fallback": "若发现现有 llm_config fallback 语义不足以验证，报告 blocker 和最小代码缺口，不修改代码"
+      },
+      "owned_files": [
+        ".ops/reports/v2_6b_live_fallback_runbook.md"
+      ],
+      "forbidden_files": [
+        "ginga_platform/**",
+        "llm_config.yaml",
+        "STATUS.md",
+        "ROADMAP.md",
+        "notepad.md",
+        ".ops/real_llm_harness/**",
+        ".ops/validation/**"
+      ],
+      "input_refs": [
+        ".ops/plans/v2-6-llm-config-plan.md",
+        ".ops/reports/stage_closeout_v2_6a_llm_config.md",
+        "llm_config.yaml",
+        "ginga_platform/orchestrator/cli/llm_config.py"
+      ],
+      "expected_output": "read-only runbook for v2.6b live fallback smoke, including exact command proposal, isolated output paths, cost/risk boundary, pass/fail fields, and statement that no mock/dry-run proves model-side stability",
+      "verification": "test -f .ops/reports/v2_6b_live_fallback_runbook.md && grep -q 'no mock' .ops/reports/v2_6b_live_fallback_runbook.md",
+      "created_at": "2026-05-17T07:33:22+08:00",
+      "updated_at": "2026-05-17T07:38:30+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 1,
+      "evidence": [
+        "explorer callback status=blocked; wrote .ops/reports/v2_6b_live_fallback_runbook.md",
+        "main-agent validation: test -f .ops/reports/v2_6b_live_fallback_runbook.md && grep -qi 'no mock' .ops/reports/v2_6b_live_fallback_runbook.md passed",
+        "scope confirmed: no runtime code, llm_config.yaml, validation artifact, or real LLM call was modified/executed"
+      ],
+      "blockers": [
+        "Current call_llm_with_fallback disables fallback when endpoint= is passed; role-based fallback requires project config.",
+        "No dedicated failing-primary live_fallback_probe role exists in llm_config.yaml, and this explorer was forbidden from modifying config/runtime.",
+        "Minimum gap before v2.6b live proof: support temporary config injection or explicitly approve a dedicated probe role."
+      ],
+      "handoff_note": "Blocked by safe config injection gap. Runbook is ready, but v2.6b live fallback is not complete and no real call was made."
     }
   ]
 }

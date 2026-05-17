@@ -4,10 +4,10 @@
 **取代**：`docs/archive/_distillation-plan.md` §八（保留作历史档案）
 **作者**：主 agent 综合
 **完成日期**：2026-05-13
-**状态更新**：2026-05-16（依据 `STATUS.md`；本文件保留为历史规划 + 当前状态对照）
+**状态更新**：2026-05-17（依据 `STATUS.md`；本文件保留为历史规划 + 当前状态对照）
 **对应架构**：`ARCHITECTURE.md` v1
 
-> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A/P2-7B/P2-7C Platform runner 收敛。P2-7C 严格状态是 `done`：真实 LLM smoke 边界切片、provider 输出可读性、`context_snapshot`、`gap_report` 与 residual risk 报告均已收口；该证据仍只证明单章 smoke 边界，不证明长篇生产质量。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。新增规划路线只更新后续定位与版本索引，不改变当前生产完成度：拆书融梗 / `ReferenceTropeDistillation` 已完成 v1.3-0 到 v1.3-5，v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review 与 v1.7-3 Longform Hard Gate 已完成；RAG 残余仅观察；v1.7-6 已完成单章正文长度 + review hard gate 探针，并恢复 4/4 章小批复验，final review hard gate 不阻断。边界是第 4 章使用真实 LLM append + 手动开篇去回环修正，且 style warn 清零两次同等真实 stylegate 仍失败，因此仍是 observation，不是全自动扩大批量许可。
+> 当前进度：S1、S2、S3 已全部完成；S4 / Phase 2 已完成 native `sqlite-vec` 接入、RAG 真实召回质量评估、P2 可回归评估收口、RAG 质量小迭代、P2-5 agent harness 补强与 P2-7A/P2-7B/P2-7C Platform runner 收敛。P2-7C 严格状态是 `done`：真实 LLM smoke 边界切片、provider 输出可读性、`context_snapshot`、`gap_report` 与 residual risk 报告均已收口；该证据仍只证明单章 smoke 边界，不证明长篇生产质量。Layer 2 当前 `recall@5=0.614`、`expected_recall@5=0.917`。新增规划路线只更新后续定位与版本索引，不改变当前生产完成度：拆书融梗 / `ReferenceTropeDistillation` 已完成 v1.3-0 到 v1.3-5，v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 到 v1.7-5、v2.0-v2.5 Harness Engineering 已完成；v1.7-6 仍是 observation；v1.7-7a 已完成 style warn 分级离线代码层，v1.7-7b 真实 4 章验证仍待做且应先提交 / 备份 v1.7-7a；v2.6b 真实 fallback 验证 blocked；v3.0 Agent Interface 继续 planned。
 >
 > 若本文件与 `STATUS.md` 冲突，以 `STATUS.md` 为当前状态真值。
 
@@ -334,7 +334,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 - [x] Jury 修订追踪表（jury 23 条建议全部归属到具体任务编号，§七）
 - [x] 8 决策落地到 ARCHITECTURE §七 + 本文件任务编号
 
-**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-16，P2-7C Platform runner 收敛、v1.3-0 到 v1.3-5 的拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 Longform Production Policy、v1.7-1 Longform Quality Gate、v1.7-2 Reviewer Queue Review 与 v1.7-3 Longform Hard Gate 均已收口。RAG 残余 `candidate_k` / `asset_type` blocker 仅作为观察项，只有指标回退或新 gold query 暴露问题时再修；真实长篇 v1.7-6 已补齐单章 probe、单章 review、4/4 小批复验和 final review gate，但 style warn 清零两次真实 stylegate 仍失败。v2.6a LLM Config 已完成离线代码层收口，真实 fallback 验证仍留在 v2.6b。下一步是 v1.7-7：把长输出稳定性、补长、开篇修复和 style warn rewrite 收敛成可审计自动路径，再考虑新的真实批量扩大。
+**当前下一步**：以 `STATUS.md` 为准；截至 2026-05-17，P2-7C Platform runner 收敛、v1.3-0 到 v1.3-5 的拆书融梗支线、v1.4 BookView / explorer、v1.5 Review / deslop、v1.6 Market Research Sidecar、v1.7-0 到 v1.7-5、v2.0-v2.5 Harness Engineering 均已收口；v1.7-6 仍是 observation。v1.7-7a Style Warn 分级离线代码层已完成；下一步是先提交 / 备份 v1.7-7a 验证切片，再做 v1.7-7b 的 4 章真实 LLM 验证，不得用离线测试替代真实小批证据。v2.6b 真实 fallback 验证已有 runbook，但因缺少临时 config 注入或专用 probe role 仍 blocked。v3.0 Agent Interface 继续 planned。
 
 ---
 
@@ -353,7 +353,7 @@ S4 依赖 S3（治理完成 + RAG 稳定才能加 Phase 2 复杂阶段）
 | **v1.4 / Book Workspace View + Explorer** | 从 StateIO/artifacts 派生可读书目视图与只读查询，不产生第二状态真值 | ✅ done | 已完成 `BookView` projection、`ginga inspect` 与 `ginga query`；输出限定 `.ops/book_views/<book_id>/<run_id>/`，默认输入白名单不包含 `.ops/book_analysis/**` |
 | **v1.5 / Review + Anti-AI warn-only gate** | 审稿、去 AI 味、平台 rubric 报告化；只做审计/报告，不自动改正文 | ✅ done | 已完成 `ginga review` 与 `.ops/reviews/<book_id>/<run_id>/` sidecar；rubric 只用于 review report，不进入创作 prompt |
 | **v1.6 / Market Research Sidecar** | 扫榜、外部研究、市场信号报告，带采集时间、来源和数据质量状态 | ✅ done | 已完成显式授权 + offline fixture sidecar；外部原文剥离，默认不进 RAG |
-| **v1.7 / Longform Production Policy + Gate** | 真实 LLM 长篇批量策略、成本/质量 smoke、jury 评审、CLI 上限保护、正式质量 gate、queue 外部评审与人工终审 brief、生成前 hard gate、prompt 连续性修复 | 🟢 v1.7-0 done；v1.7-1 done；v1.7-2 done；v1.7-3 done；v1.7-4 observation；v1.7-5 done；v1.7-6 observation；v1.7-7 planned | `久久` 30 章真实 smoke 显示 10 连发开始 drift；当前正式批量生成推荐 4 章、上限 5 章，6 章及以上只作压力测试；v1.7-4 已按 4+5 生成 9/9 章且脚本级 drift=stable，但 `ginga review` hard gate 仍因第 6-9 章连续开篇回环阻断下一批；v1.7-5 已修 prompt 消费 `CHAPTER_INPUT_BUNDLE`、hard gate 低频锚点同源和沉浸批内上一章摘要承接；v1.7-6 已通过单章探针并恢复 4/4 小批，final review hard gate 不阻断，但第 4 章含真实 LLM append + 手动开篇修正且 style warn 清零两次真实 stylegate 仍失败，仍不等于全自动扩大批量许可；v1.7-7 应聚焦确定性 rewrite / 负样本 prompt / 自动修复路径 |
+| **v1.7 / Longform Production Policy + Gate** | 真实 LLM 长篇批量策略、成本/质量 smoke、jury 评审、CLI 上限保护、正式质量 gate、queue 外部评审与人工终审 brief、生成前 hard gate、prompt 连续性修复、style warn 分级 | 🟢 v1.7-0 done；v1.7-1 done；v1.7-2 done；v1.7-3 done；v1.7-4 observation；v1.7-5 done；v1.7-6 observation；v1.7-7 in_progress | `久久` 30 章真实 smoke 显示 10 连发开始 drift；当前正式批量生成推荐 4 章、上限 5 章，6 章及以上只作压力测试；v1.7-5 已修 prompt 消费 `CHAPTER_INPUT_BUNDLE`、hard gate 低频锚点同源和沉浸批内上一章摘要承接；v1.7-6 已通过单章探针并恢复 4/4 小批，final review hard gate 不阻断，但第 4 章含真实 LLM append + 手动开篇修正，仍不等于全自动扩大批量许可；v1.7-7a 已把 `abrupt_transition` 降为 report-only soft warn，并保持 `generic_emotion` / `cliche_metaphor` hard fail；v1.7-7b 仍需 4 章真实 LLM 小批验证 |
 | **v1.8 / Genm 治理机制吸收** | 从 Genm 吸收 role/stage/provider 观察矩阵、candidate/report/truth 门禁语言、style fingerprint 与可选可观测性指标，先做报告和治理规则，不接管 runtime | 🟢 v1.8-0 done；v1.8-1 done；v1.8-2 done；v1.8-3 done | 已完成 `ginga model-topology observe`、`.ops/governance/candidate_truth_gate.md`、`ginga review` 的 report-only style fingerprint，以及 `ginga observability` 的 evidence pack / workflow stage / migration audit 三类只读报告；默认 `probe_live=false`，不写 `StateIO`，不改变 workflow/provider 路由；candidate 晋升 truth 必须先过人工接受、schema、污染检查、写入口和审计证据 |
 | **v1.9 / Story Truth Template** | 从原料整理小说真值模板，再用拆书产物、题材系列和长篇 drift 证据做缺口校验 | 🟢 v1.9-1 done；🟢 v1.9-2 done；🟢 v1.9-3 done；🟢 v1.9-4 done；🟢 v1.9-5 done + observation | 已完成 source audit、只读 schema / validator、`StateIO` 项目/题材契约窄切片、`workspace.CHAPTER_INPUT_BUNDLE` 与 4 章真实小样本回归；回归 drift=`needs_review`，不得扩大批量 |
 | **v2 / 完整创作运营线** | N/P/D/V 阶段、发布后数据分析、版本管理、第 3+ skill 接入、封面/发布包 | ⏳ 按触发条件推进 | 不抢 v1.2 / v1.3 前置 |

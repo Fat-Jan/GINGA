@@ -168,6 +168,25 @@ class StoryTruthTemplateValidatorTest(unittest.TestCase):
 
 
 class StoryTruthTemplateStateSliceTest(unittest.TestCase):
+    def test_longform_gate_reports_soft_style_warn_without_block_reason(self) -> None:
+        from ginga_platform.orchestrator.cli.longform_policy import evaluate_longform_hard_gate
+
+        state = {"locked": {"GENRE_LOCKED": {"style_lock": {"anchor_phrases": ["血脉"]}}}}
+        chapter = {
+            "name": "chapter_01.md",
+            "text": (
+                "# 第一章 · 血门索债\n\n"
+                + ("突然，血脉契约把末日城门压得发出裂响，无明用短刃逼近守夜人。" * 120)
+                + "\n\n<!-- foreshadow: id=fh-soft planted_ch=1 expected_payoff=5 summary=血门索债 -->"
+            ),
+        }
+
+        gate = evaluate_longform_hard_gate(state=state, chapters=[chapter])
+
+        self.assertFalse(gate["should_block_next_real_llm_batch"])
+        self.assertEqual(gate["block_reasons"], [])
+        self.assertEqual(gate["chapter_checks"][0]["soft_style_warn"], {"abrupt_transition": 120})
+
     def test_init_book_writes_project_and_genre_contracts_through_stateio(self) -> None:
         from ginga_platform.orchestrator.cli.demo_pipeline import init_book
         from ginga_platform.orchestrator.runner.state_io import StateIO

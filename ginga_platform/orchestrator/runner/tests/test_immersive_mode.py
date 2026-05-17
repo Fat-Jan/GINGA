@@ -465,6 +465,36 @@ class ImmersiveRunnerRunBlockTest(unittest.TestCase):
 
         self.assertIsNone(_quality_gate_failure(chapter, word_target=4000, chapter_no=1))
 
+    def test_quality_gate_allows_soft_abrupt_transition_only(self) -> None:
+        from ginga_platform.orchestrator.cli.immersive_runner import _quality_gate_failure
+
+        chapter = (
+            "| 写作自检 | 内容 |\n|---|---|\n| 当前锚定 | 血脉 |\n\n"
+            "# 第一章 · 血门索债\n\n"
+            + ("突然，守夜人把清道夫骨牌压进城门血槽，无明随即逼近灯下裂开的繁衍契约。" * 150)
+            + "\n<!-- foreshadow: id=fh-soft planted_ch=1 expected_payoff=5 summary=血门索债 -->\n"
+        )
+
+        self.assertIsNone(_quality_gate_failure(chapter, word_target=4000, chapter_no=1))
+
+    def test_quality_gate_blocks_hard_style_warn_only(self) -> None:
+        from ginga_platform.orchestrator.cli.immersive_runner import _quality_gate_failure
+
+        chapter = (
+            "| 写作自检 | 内容 |\n|---|---|\n| 当前锚定 | 血脉 |\n\n"
+            "# 第一章 · 血门索债\n\n"
+            + ("无明把清道夫骨牌按进城门血槽，命运的齿轮在血雾深处转动。" * 120)
+            + "\n<!-- foreshadow: id=fh-hard planted_ch=1 expected_payoff=5 summary=血门索债 -->\n"
+        )
+
+        failure = _quality_gate_failure(chapter, word_target=4000, chapter_no=1)
+
+        self.assertIsNotNone(failure)
+        assert failure is not None
+        self.assertIn("style_warn", failure)
+        self.assertIn("cliche_metaphor", failure)
+        self.assertNotIn("abrupt_transition", failure)
+
     def test_run_block_repairs_review_style_warn_patterns_before_writing(self) -> None:
         calls: list[str] = []
         style_warn_chapter = (
@@ -497,6 +527,89 @@ class ImmersiveRunnerRunBlockTest(unittest.TestCase):
         chapter_text = (self.state_root / "runner-book" / "chapter_01.md").read_text(encoding="utf-8")
         self.assertNotIn("突然", chapter_text)
         self.assertNotIn("命运的齿轮", chapter_text)
+
+    def test_run_block_allows_soft_style_warn_without_repair(self) -> None:
+        calls: list[str] = []
+        soft_warn_chapter = (
+            "# 第一章 · 血门索债\n\n"
+            + ("无明把清道夫骨牌按进城门血槽，守夜人抬灯逼他交出下一轮微粒收益。" * 90)
+            + "突然，守夜人的灯火压低，城门血槽里传出骨牌碎裂的响声。"
+            + ("血脉契约把末日城门压得发出裂响，无明用短刃逼近守夜人。" * 90)
+            + "\n\n<!-- foreshadow: id=fh-style planted_ch=1 expected_payoff=5 summary=血门索债 -->"
+        )
+
+        def mock_llm(prompt: str, endpoint: str, **kw) -> str:
+            calls.append(prompt)
+            return soft_warn_chapter
+
+        runner = ImmersiveRunner(
+            "runner-book",
+            state_root=self.state_root,
+            llm_caller=mock_llm,
+        )
+        result = runner.run_block(chapters=1, word_target=4000)
+
+        self.assertIsNone(result["last_error"])
+        self.assertEqual(len(calls), 1)
+        chapter_text = (self.state_root / "runner-book" / "chapter_01.md").read_text(encoding="utf-8")
+        self.assertIn("突然", chapter_text)
+        self.assertIn("守夜人的灯火压低", chapter_text)
+
+    def test_run_block_deterministically_rewrites_residual_style_warn_before_writing(self) -> None:
+        calls: list[str] = []
+        style_warn_chapter = (
+            "# 第一章 · 血门索债\n\n"
+            + ("无明把清道夫骨牌按进城门血槽，守夜人抬灯逼他交出下一轮微粒收益。" * 90)
+            + "命运的齿轮在血雾深处转动，守夜人的灯火压低，城门血槽里传出骨牌碎裂的响声。"
+            + ("血脉契约把末日城门压得发出裂响，无明用短刃逼近守夜人。" * 90)
+            + "\n\n<!-- foreshadow: id=fh-style planted_ch=1 expected_payoff=5 summary=血门索债 -->"
+        )
+
+        def mock_llm(prompt: str, endpoint: str, **kw) -> str:
+            calls.append(prompt)
+            return style_warn_chapter
+
+        runner = ImmersiveRunner(
+            "runner-book",
+            state_root=self.state_root,
+            llm_caller=mock_llm,
+        )
+        result = runner.run_block(chapters=1, word_target=4000)
+
+        self.assertIsNone(result["last_error"])
+        self.assertEqual(len(calls), 3)
+        chapter_text = (self.state_root / "runner-book" / "chapter_01.md").read_text(encoding="utf-8")
+        self.assertIn("城门深处的绞盘", chapter_text)
+        self.assertNotIn("命运的齿轮", chapter_text)
+
+    def test_run_block_deterministic_rewrite_clears_hard_and_best_effort_soft(self) -> None:
+        calls: list[str] = []
+        style_warn_chapter = (
+            "# 第一章 · 血门索债\n\n"
+            + ("无明把清道夫骨牌按进城门血槽，守夜人抬灯逼他交出下一轮微粒收益。" * 90)
+            + "突然，命运的齿轮在血雾深处转动，守夜人的灯火猛然压低。"
+            + ("血脉契约把末日城门压得发出裂响，无明用短刃逼近守夜人。" * 90)
+            + "\n\n<!-- foreshadow: id=fh-style planted_ch=1 expected_payoff=5 summary=血门索债 -->"
+        )
+
+        def mock_llm(prompt: str, endpoint: str, **kw) -> str:
+            calls.append(prompt)
+            return style_warn_chapter
+
+        runner = ImmersiveRunner(
+            "runner-book",
+            state_root=self.state_root,
+            llm_caller=mock_llm,
+        )
+        result = runner.run_block(chapters=1, word_target=4000)
+
+        self.assertIsNone(result["last_error"])
+        self.assertEqual(len(calls), 3)
+        chapter_text = (self.state_root / "runner-book" / "chapter_01.md").read_text(encoding="utf-8")
+        self.assertNotIn("命运的齿轮", chapter_text)
+        self.assertNotIn("突然", chapter_text)
+        self.assertNotIn("猛然", chapter_text)
+        self.assertIn("城门深处的绞盘", chapter_text)
 
     def test_run_block_allows_second_repair_before_failing_fast(self) -> None:
         calls: list[str] = []
