@@ -385,7 +385,7 @@ def _build_chapter_prompt(state: dict, word_target: int, chapter_no: int = 1) ->
    - 禁止出现：都市腔 / 科幻腔 / 游戏系统播报腔 / 轻小说吐槽 / 散文抒情
    - 不准写"系统提示""叮""恭喜获得"等游戏腔表达
 4. 章节正文末尾如果发生微粒结算，输出《章节结算》表格（可选）
-5. 如果埋下新伏笔，在结尾追加一行： `<!-- foreshadow: id=<fh-NNN> planted_ch={chapter_no} expected_payoff=<章号> summary=<简述> -->`（注释会被 demo_pipeline 抽取）
+5. 每章必须输出至少 1 行可机读伏笔标记：`<!-- foreshadow: id=<fh-NNN> planted_ch={chapter_no} expected_payoff=<章号> summary=<简述> -->`；如果本章只推进旧伏笔，也要把本章的铺垫、推进或回收线索写成 marker（注释会被 demo_pipeline 抽取）
 
 ## 红线
 - 不暴露思维链（不要写"我先想..."）

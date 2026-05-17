@@ -1,7 +1,7 @@
 {
   "status": "PASS",
   "board": ".ops/subagents/board.json",
-  "task_count": 45,
+  "task_count": 48,
   "checks": [
     {
       "name": "board shape",

@@ -1,0 +1,113 @@
+entries:
+- ts: '2026-05-17T00:34:04+00:00'
+  source: cli.init.A-E_setup
+  severity: info
+  msg: applied 12 update(s)
+  action: log
+  payload:
+    paths:
+    - locked.STORY_DNA.premise
+    - locked.STORY_DNA.conflict_engine
+    - locked.STORY_DNA.payoff_promise
+    - locked.STORY_DNA.word_target
+    - locked.GENRE_LOCKED.topic
+    - locked.GENRE_LOCKED.style_lock
+    - locked.WORLD.cosmology
+    - locked.WORLD.economy
+    - locked.PLOT_ARCHITECTURE.acts
+    - locked.PLOT_ARCHITECTURE.pivot_points
+    - locked.PROJECT_CONTRACT
+    - locked.GENRE_CONTRACT
+- ts: '2026-05-17T00:34:04+00:00'
+  source: cli.init.F_state_init
+  severity: info
+  msg: applied 6 update(s)
+  action: log
+  payload:
+    paths:
+    - entity_runtime.CHARACTER_STATE
+    - entity_runtime.RESOURCE_LEDGER.particles
+    - entity_runtime.RESOURCE_LEDGER.items
+    - entity_runtime.FORESHADOW_STATE.pool
+    - entity_runtime.GLOBAL_SUMMARY.total_words
+    - entity_runtime.GLOBAL_SUMMARY.arc_summaries
+- ts: '2026-05-17T00:34:04+00:00'
+  source: cli.init.workspace_seed
+  severity: info
+  msg: applied 3 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.task_plan
+    - workspace.findings
+    - workspace.progress
+- ts: '2026-05-17T00:34:04+00:00'
+  source: cli.init
+  severity: info
+  msg: 'book initialized: id=v1-7-7b-style-warn-final topic=玄幻黑暗 + 规则怪谈 + 末日多子多福 target=500000'
+  action: log
+  payload:
+    locked_premise: 失忆刺客无明在末日天堑边缘醒来，发现短刃能吞吐微粒，而每座城都被规则怪谈式禁令和血脉繁衍契约共同支配。
+- ts: '2026-05-17T00:34:04+00:00'
+  source: dark_fantasy_adapter.enter_immersive_mode
+  severity: info
+  msg: applied 2 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-17T00:34:04+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: immersive entered
+  action: log
+  payload:
+    checker_silenced: true
+- ts: '2026-05-17T00:34:04+00:00'
+  source: immersive_runner.chapter_1.input_bundle
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.CHAPTER_INPUT_BUNDLE
+- ts: '2026-05-17T00:38:37+00:00'
+  source: immersive_runner
+  severity: error
+  msg: 'chapter 1 failed quality gate after repair: style_warn cliche_metaphor=1'
+  action: block
+  payload:
+    chapter_paths: []
+- ts: '2026-05-17T00:38:37+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.checker_silenced
+- ts: '2026-05-17T00:38:37+00:00'
+  source: dark_fantasy_adapter.exit_immersive_mode
+  severity: info
+  msg: applied 1 update(s)
+  action: log
+  payload:
+    paths:
+    - workspace.workflow_flags.immersive_mode
+- ts: '2026-05-17T00:38:37+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: 0 chapters batch applied
+  action: log
+  payload:
+    applied_paths: 0
+    chapter_count: 0
+- ts: '2026-05-17T00:38:37+00:00'
+  source: dark_fantasy_adapter
+  severity: info
+  msg: R2_consistency_check triggered (immersive_block)
+  action: log
+  payload:
+    scope: immersive_block
+    chapter_count: 0

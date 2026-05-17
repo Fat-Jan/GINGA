@@ -140,6 +140,7 @@ def _repair_prompt(
             "- 删除“说不出的感觉”“难以言喻”“复杂的情绪”，用动作、代价、对手反应替代。",
             "- 转折必须有明确动作因果；禁止出现“突然”“猛然”“下一秒”“命运的齿轮”“内心深处”“仿佛…命运”等 review style warn 词/句式。",
             "- 保留低频题材锚点：血脉、末日、多子多福、繁衍契约中至少一个。",
+            f"- 每章必须输出至少 1 行可机读伏笔标记：<!-- foreshadow: id=<fh-NNN> planted_ch={chapter_no} expected_payoff=<章号> summary=<简述> -->；即使只推进旧伏笔，也要把本章铺垫、推进或回收线索写成 marker。",
             "",
             "## 上一版短摘录（只用于避开重复，不要压缩改写）",
             excerpt or "（无可用摘录）",
@@ -197,6 +198,8 @@ def _quality_gate_failure(chapter_text: str, word_target: int, chapter_no: int) 
         failures.append(f"short_chapter body_chinese_chars={chinese_chars} < {minimum_body_chars}")
     if chapter_no > 1 and opening_score >= 3:
         failures.append(f"opening_loop_risk score={opening_score}")
+    if "<!-- foreshadow:" not in chapter_text:
+        failures.append("missing_foreshadow_marker")
     hard_hits = _hard_style_warn_hits(body_text)
     if hard_hits:
         failures.append(

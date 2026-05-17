@@ -1755,6 +1755,61 @@
       "handoff_note": "Main agent reviewed worker output and accepted v1.7-7a offline code as done. v1.7-7b real 4-chapter LLM validation is still pending and must not be inferred from offline tests."
     },
     {
+      "task_id": "v1.7-7b-foreshadow-marker-gate-repair",
+      "title": "v1.7-7b 缺伏笔 marker 生成前置修复",
+      "status": "done",
+      "owner": "main agent (OpenAI Codex main session; current GPT-5-class coding model)",
+      "model_contract": {
+        "provider": "OpenAI Codex main session",
+        "supports_explicit_model_param": true,
+        "model_tier": "current session model; coding owner-pass",
+        "reason": "v1.7-7b 真实 LLM 失败证据、生成 gate、prompt 契约和 truth files 需要主控统一判定，避免把旧真实产物误标为通过",
+        "fallback": "若 baseline 验证失败，保持 status=validating/blocked 并记录失败命令；若真实端点不稳定，不伪造生产质量结论"
+      },
+      "owned_files": [
+        "ginga_platform/orchestrator/cli/demo_pipeline.py",
+        "ginga_platform/orchestrator/cli/immersive_runner.py",
+        "ginga_platform/orchestrator/runner/tests/test_immersive_mode.py",
+        "ginga_platform/orchestrator/runner/tests/test_story_truth_template.py",
+        "STATUS.md",
+        "ROADMAP.md",
+        "notepad.md",
+        ".ops/subagents/board.json"
+      ],
+      "forbidden_files": [
+        "foundation/runtime_state/**",
+        "default RAG expansion",
+        "automatic story text edits from review",
+        "real LLM rerun without explicit cost boundary"
+      ],
+      "input_refs": [
+        ".ops/validation/v1_7_7b_final_real_llm_harness.json",
+        ".ops/validation/v1_7_7b_final_retry1_real_llm_harness.json",
+        ".ops/reports/v1_7_7b_final_retry1_real_llm_harness.md",
+        ".ops/reviews/v1-7-7b-style-warn-final-retry1/v2-3-real-llm-review-gate/review_report.json",
+        "STATUS.md v1.7-7 row"
+      ],
+      "expected_output": "missing foreshadow marker is treated as generation-time repair/fail-fast before chapter artifact write, prompt and repair prompt require one machine-readable marker per chapter, and truth files reflect that v1.7-7b was attempted but remains in_progress until a repaired real 4-chapter run passes",
+      "verification": "python -m unittest ginga_platform.orchestrator.runner.tests.test_immersive_mode ginga_platform.orchestrator.runner.tests.test_story_truth_template ginga_platform.orchestrator.runner.tests.test_longform_quality_gate -v; python3 scripts/verify_all.py --quick",
+      "created_at": "2026-05-17T09:00:00+08:00",
+      "updated_at": "2026-05-17T09:20:00+08:00",
+      "checkpoint_due_at": null,
+      "attempt_count": 1,
+      "max_attempts": 1,
+      "evidence": [
+        "red test confirmed old behavior: _quality_gate_failure returned None for long chapter without <!-- foreshadow: marker, and run_block wrote the chapter without repair",
+        "main-agent change: demo_pipeline prompt now requires at least one machine-readable foreshadow marker per chapter",
+        "main-agent change: immersive repair prompt repeats the marker requirement and _quality_gate_failure fails missing_foreshadow_marker before writing artifacts",
+        "focused validation: python -m unittest ginga_platform.orchestrator.runner.tests.test_immersive_mode ginga_platform.orchestrator.runner.tests.test_story_truth_template ginga_platform.orchestrator.runner.tests.test_longform_quality_gate -v passed (52 tests)",
+        "baseline validation: python3 scripts/verify_all.py --quick passed (13/13)",
+        "truth sync: STATUS.md, ROADMAP.md, and notepad.md now record that v1.7-7b real retry generated 4/4 but review hard gate blocked next batch due missing foreshadow marker on chapters 2 and 3"
+      ],
+      "blockers": [
+        "Repair has not yet been revalidated with a fresh real 4-chapter v1.7-7b run; do not mark v1.7-7 overall done until that evidence exists."
+      ],
+      "handoff_note": "Code/truth repair is done and baseline-validated. Next gate is an explicit-cost repaired v1.7-7b real 4-chapter rerun."
+    },
+    {
       "task_id": "v2.6b-live-fallback-runbook",
       "title": "v2.6b Live Fallback 验证方案",
       "status": "blocked",

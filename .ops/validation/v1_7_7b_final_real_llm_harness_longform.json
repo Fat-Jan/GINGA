@@ -1,0 +1,114 @@
+{
+  "generated_from": "scripts/run_longform_llm_smoke.py",
+  "dry_run": false,
+  "passed": false,
+  "endpoint": "久久",
+  "book_id": "v1-7-7b-style-warn-final",
+  "topic": "玄幻黑暗 + 规则怪谈 + 末日多子多福",
+  "premise": "失忆刺客无明在末日天堑边缘醒来，发现短刃能吞吐微粒，而每座城都被规则怪谈式禁令和血脉繁衍契约共同支配。",
+  "requested_chapters": 4,
+  "completed_chapters": 0,
+  "existing_completed_before": 0,
+  "resume": false,
+  "batch_schedule": [
+    4
+  ],
+  "batch_runs": [
+    {
+      "batch_no": 1,
+      "start_chapter": 1,
+      "end_chapter": 4,
+      "requested_size": 4,
+      "status": "failed",
+      "stdout_tail": "",
+      "error": "RuntimeError: chapter 1 failed quality gate after repair: style_warn cliche_metaphor=1"
+    }
+  ],
+  "word_target": 4000,
+  "state_root": ".ops/real_llm_harness/v1-7-7b-final-state",
+  "anchors": [
+    "无明",
+    "短刃",
+    "微粒",
+    "天堑",
+    "规则",
+    "血脉",
+    "末日"
+  ],
+  "forbidden_terms": [
+    "系统提示",
+    "叮",
+    "恭喜获得",
+    "都市腔",
+    "轻小说吐槽"
+  ],
+  "production_policy": {
+    "recommended_batch_size": 4,
+    "upper_bound": 5,
+    "pressure_test_only_at_or_above": 6,
+    "min_submission_chinese_chars": 3500
+  },
+  "state_summary": {
+    "audit_entries": 12,
+    "total_words": 0,
+    "foreshadow_pool_size": 1,
+    "character_events": 0
+  },
+  "chapter_runs": [
+    {
+      "chapter_no": 1,
+      "batch_no": 1,
+      "batch_size": 4,
+      "status": "failed",
+      "path": ".ops/real_llm_harness/v1-7-7b-final-state/v1-7-7b-style-warn-final/chapter_01.md",
+      "chars": 0,
+      "chinese_chars": 0,
+      "anchor_hits": {
+        "无明": 0,
+        "短刃": 0,
+        "微粒": 0,
+        "天堑": 0,
+        "规则": 0,
+        "血脉": 0,
+        "末日": 0
+      },
+      "forbidden_hits": {},
+      "foreshadow_markers": 0,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "error": "RuntimeError: chapter 1 failed quality gate after repair: style_warn cliche_metaphor=1"
+    }
+  ],
+  "drift_report": {
+    "status": "stable",
+    "completed_chapters": 0,
+    "first_drift_chapter": null,
+    "first_drift_batch": null,
+    "low_anchor_chapters": [],
+    "forbidden_hit_chapters": [],
+    "short_chapters": [],
+    "missing_foreshadow_chapters": [],
+    "anchor_totals": {
+      "无明": 0,
+      "短刃": 0,
+      "微粒": 0,
+      "天堑": 0,
+      "规则": 0,
+      "血脉": 0,
+      "末日": 0
+    }
+  },
+  "batch_drift_summary": [
+    {
+      "batch_no": 1,
+      "batch_size": 4,
+      "chapters": [
+        1
+      ],
+      "completed": 0,
+      "low_anchor_chapters": [],
+      "forbidden_hit_chapters": [],
+      "short_chapters": []
+    }
+  ]
+}

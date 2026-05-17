@@ -372,6 +372,8 @@ class ChapterInputBundleTest(unittest.TestCase):
         self.assertIn("禁止写“说不出的感觉”“难以言喻”“复杂的情绪”", prompt)
         self.assertIn("禁止出现“突然”“猛然”“下一秒”", prompt)
         self.assertIn("命运的齿轮", prompt)
+        self.assertIn("每章必须输出至少 1 行可机读伏笔标记", prompt)
+        self.assertIn("<!-- foreshadow:", prompt)
 
     def test_chapter_prompt_counts_body_chinese_chars_not_markdown_overhead(self) -> None:
         from ginga_platform.orchestrator.cli.demo_pipeline import _build_chapter_prompt
